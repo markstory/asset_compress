@@ -100,10 +100,13 @@ class JsFile extends AssetCompressAppModel {
  *
  * @return string Full path to the $object
  **/
-	protected function _findFile($object) {
+	protected function _findFile($object, $path = null) {
 		$filename = Inflector::underscore($object) . '.js';
 		if (empty($this->_fileLists)) {
 			$this->_readDirs();
+		}
+		if ($path !== null) {
+			return $path . $filename;
 		}
 		foreach ($this->_fileLists as $path => $files) {
 			foreach ($files as $file) {
@@ -140,7 +143,11 @@ class JsFile extends AssetCompressAppModel {
 		while (!feof($fileHandle)) {
 			$line = fgets($fileHandle);
 			if (preg_match($this->requirePattern, $line, $requiredObject)) {
-				$filename = $this->_findFile($requiredObject[2]);
+				if ($requiredObject[1] == '"') {
+					$filename = $this->_findFile($requiredObject[2], dirname($filename) . DS);
+				} else {
+					$filename = $this->_findFile($requiredObject[2]);
+				}
 				$this->_record($this->_preprocess($filename));
 			} else {
 				$this->_record($line);
