@@ -32,7 +32,7 @@ class JsFileTestCase extends CakeTestCase {
 	function testSimpleProcess() {
 		$this->JsFile->searchPaths = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes',
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
 		$result = $this->JsFile->process('Template');
 		$expected = <<<TEXT

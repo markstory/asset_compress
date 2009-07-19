@@ -20,6 +20,12 @@ class JsFile extends AssetCompressAppModel {
  **/
 	public $searchPaths = array();
 /**
+ * Remove inline comments?
+ *
+ * @var boolean
+ **/
+	public $stripComments = false;
+/**
  * Contains a hashmap of path -> filescans
  *
  * @var array
@@ -31,6 +37,12 @@ class JsFile extends AssetCompressAppModel {
  * @var array
  **/
 	protected $_loaded = array();
+/**
+ * buffer for processed Output
+ *
+ * @var string
+ **/
+	protected $_processedOutput = '';
 /**
  * pattern for finding dependancies.
  *
@@ -55,6 +67,15 @@ class JsFile extends AssetCompressAppModel {
 		
 	}
 /**
+ * resets the pre-processor
+ *
+ * @return void
+ **/
+	public function reset() {
+		$this->_loaded = array();
+		$this->_processedOutput = '';
+	}
+/**
  * Process a set of Files / NamedObjects togehter resolving and directives as needed.
  * The files/NamedObjects must be on the searchPaths for things to work.
  *
@@ -65,10 +86,14 @@ class JsFile extends AssetCompressAppModel {
 		if (!is_array($objects)) {
 			$objects = (array)$objects;
 		}
+		$out = '';
 		foreach ($objects as $object) {
 			$fileName = $this->_findFile($object);
-			
+			$this->_preprocess($fileName);
 		}
+		$out = $this->_processedOutput;
+		$this->reset();
+		return $out;
 	}
 /**
  * Scan each of the $searchPaths for the named object / filename
@@ -83,7 +108,7 @@ class JsFile extends AssetCompressAppModel {
 		foreach ($this->_fileLists as $path => $files) {
 			foreach ($files as $file) {
 				if ($filename == $file) {
-					return $file;
+					return $path . $file;
 				}
 			}
 		}
@@ -100,5 +125,39 @@ class JsFile extends AssetCompressAppModel {
 			list($dirs, $files) = $this->_Folder->read();
 			$this->_fileLists[$path] = $files;
 		}
+	}
+/**
+ * Preprocess a specific file and do any nesteds inclusions that are required.
+ *
+ * @return string The Fully processed file
+ **/
+	protected function _preprocess($filename) {
+		if (isset($this->_loaded[$filename])) {
+			return '';
+		}
+		$this->_loaded[$filename] = true;
+		$fileHandle = fopen($filename, 'r');
+		while (!feof($fileHandle)) {
+			$line = fgets($fileHandle);
+			if (preg_match($this->requirePattern, $line, $requiredObject)) {
+				$filename = $this->_findFile($requiredObject[2]);
+				$this->_record($this->_preprocess($filename));
+			} else {
+				$this->_record($line);
+			}
+		}
+		return "\n";
+	}
+/**
+ * Records a line to the buffer.  Strips comments if that has been enabled.
+ *
+ * @return void
+ **/
+	protected function _record($line) {
+		if ($this->stripComments) {
+			$this->_processedOutput .= $this->_stripComments($line);
+			return;
+		}
+		$this->_processedOutput .= $line;
 	}
 }
