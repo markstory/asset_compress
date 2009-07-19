@@ -133,7 +133,7 @@ class JsFile extends AssetCompressAppModel {
  **/
 	protected function _preprocess($filename) {
 		if (isset($this->_loaded[$filename])) {
-			return '';
+			return "\n";
 		}
 		$this->_loaded[$filename] = true;
 		$fileHandle = fopen($filename, 'r');

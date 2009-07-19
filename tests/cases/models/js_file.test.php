@@ -44,7 +44,7 @@ var Template = new Class({
 
 });
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEqual(trim($result), $expected);
 
 		$result = $this->JsFile->process('nested_class');
 		$expected = <<<TEXT
@@ -57,6 +57,61 @@ var BaseClassTwo = BaseClass.extend({
 // Remove me
 // remove me too
 var NestedClass = BaseClassTwo.extend({
+
+});
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test that files included more than once only show up once.
+ *
+ * @return void
+ **/
+	function testDoubleInclusions() {
+		$this->JsFile->stripComments = false;
+		$this->JsFile->searchPaths = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
+		);
+		$result = $this->JsFile->process('DoubleInclusion');
+		$expected = <<<TEXT
+var BaseClass = new Class({
+
+});
+var BaseClassTwo = BaseClass.extend({
+
+});
+
+var DoubleInclusion = new Class({
+
+});
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test gluing more than one thing together
+ *
+ * @return void
+ **/
+	function testMoreThanOneArg() {
+		$this->JsFile->stripComments = false;
+		$this->JsFile->searchPaths = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
+		);
+		$result = $this->JsFile->process(array('Template', 'DoubleInclusion'));
+		$expected = <<<TEXT
+var BaseClass = new Class({
+
+});
+var Template = new Class({
+
+});
+var BaseClassTwo = BaseClass.extend({
+
+});
+
+var DoubleInclusion = new Class({
 
 });
 TEXT;
