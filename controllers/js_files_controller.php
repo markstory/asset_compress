@@ -29,7 +29,7 @@ class JsFilesController extends AssetCompressAppController {
 		$compress = Cache::read($key, 'asset_compress');
 		if (empty($compress)) {
 			$compress = $this->JsFile->process($objects);
-			if (Configure::read('debug') > 0) {
+			if (Configure::read('debug') == 0) {
 				Cache::write($key, $compress, 'asset_compress');
 			}
 		}
