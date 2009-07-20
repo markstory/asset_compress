@@ -54,7 +54,6 @@ var BaseClass = new Class({
 var Template = new Class({
 
 });
-
 TEXT;
 		$this->assertEqual($result, $expected);
 
@@ -71,7 +70,6 @@ var BaseClassTwo = BaseClass.extend({
 var NestedClass = BaseClassTwo.extend({
 
 });
-
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -97,7 +95,6 @@ var BaseClassTwo = BaseClass.extend({
 var DoubleInclusion = new Class({
 
 });
-
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -126,11 +123,9 @@ var BaseClassTwo = BaseClass.extend({
 var DoubleInclusion = new Class({
 
 });
-
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
-
 /**
  * test that <foo> scans all search paths for a suitable file. Unlike "foo" which only scans the 
  * current dir.
@@ -158,7 +153,6 @@ var AnotherClass = Class.extend({
 var Slideshow = new Class({
 
 });
-
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -186,7 +180,6 @@ var AnotherClass = Class.extend({
 var Slideshow = new Class({
 
 });
-
 TEXT;
 		$this->assertEqual($result, $expected);
 
@@ -196,7 +189,6 @@ All
 be
 not
 here
-
 TEXT;
 		$this->assertEqual($result, $expected);
 	}

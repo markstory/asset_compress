@@ -112,7 +112,7 @@ class JsFile extends AssetCompressAppModel {
 			$fileName = $this->_findFile($object);
 			$this->_preprocess($fileName);
 		}
-		$out = $this->_processedOutput;
+		$out = trim($this->_processedOutput);
 		$this->reset();
 		return $out;
 	}
