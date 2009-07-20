@@ -12,7 +12,6 @@ class JsFile extends AssetCompressAppModel {
 	public $name = 'JsFile';
 
 	public $useTable = false;
-
 /**
  * Paths to search files on.
  *
@@ -25,6 +24,18 @@ class JsFile extends AssetCompressAppModel {
  * @var boolean
  **/
 	public $stripComments = false;
+/**
+ * pattern for finding dependancies.
+ *
+ * @var string
+ **/
+	public $requirePattern = '/^\s?\/\/\=\s*require\s*([\"\<])([^\"\>]+)[\"\>]/';
+/**
+ * Pattern used to match comments
+ *
+ * @var string
+ **/
+	public $commentPattern = '/\s*\/\/.+$/';
 /**
  * Contains a hashmap of path -> filescans
  *
@@ -44,27 +55,34 @@ class JsFile extends AssetCompressAppModel {
  **/
 	protected $_processedOutput = '';
 /**
- * pattern for finding dependancies.
- *
- * @var string
- **/
-	public $requirePattern = '/^\s?\/\/\=\s*require\s*([\"\<])([^\"\>]+)[\"\>]/';
-/**
  * constructor for the model
  *
  * @return void
  **/
-	public function __construct($id = null, $table = null, $ds = null) {
+	public function __construct($iniFile = null) {
 		$this->_Folder = new Folder(APP);
-		$this->_readConfig();
+		if (!is_string($iniFile)) {
+			$this->_pluginPath() . 'config' . DS . 'config.ini';
+		}
+		$this->_readConfig($iniFile);
 	}
 /**
  * Reads the configuration file and copies out settings into member vars
  *
+ * @param string $filename Name of config file to load.
  * @return void
  **/
-	protected function _readConfig() {
-		
+	protected function _readConfig($filename) {
+		if (!is_string($filename) || !file_exists($filename)) {
+			return false;
+		}
+		$settings = parse_ini_file($filename, true);
+		$names = array('stripComments', 'searchPaths', 'requirePattern', 'commentPattern');
+		foreach ($names as $name) {
+			if (isset($settings['Javascript'][$name])) {
+				$this->{$name} = $settings['Javascript'][$name];
+			}
+		}
 	}
 /**
  * resets the pre-processor
@@ -170,5 +188,13 @@ class JsFile extends AssetCompressAppModel {
 			return;
 		}
 		$this->_processedOutput .= $line;
+	}
+/**
+ * Remove // Comments in a line.
+ *
+ * @return string code line with no comments
+ **/
+	protected function _stripComments($line) {
+		return preg_replace($this->commentPattern, '', $line);
 	}
 }

@@ -11,6 +11,17 @@ class JsFileTestCase extends CakeTestCase {
 		$this->_pluginPath = $this->_findPlugin();
 	}
 /**
+ * test the constuction and ini reading.
+ *
+ * @return void
+ **/
+	function testConstruction() {
+		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$JsFile = new JsFile($testFile);
+		$this->assertTrue($JsFile->stripComments);
+		$this->assertEqual($JsFile->searchPaths, array('/test/path', '/other/path'));
+	}
+/**
  * find the asset_compress path
  *
  * @return void
@@ -136,6 +147,34 @@ TEXT;
 function test(thing) {
 	/* this comment will stay */
 	thing.doStuff(); //remove me too.
+	return thing;
+}
+var AnotherClass = Class.extend({
+
+});
+var Slideshow = new Class({
+
+});
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test Stripping comments out.
+ *
+ * @return void
+ **/
+	function testCommentStripping() {
+		$this->JsFile->stripComments = true;
+		$this->JsFile->searchPaths = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
+		);
+		$result = $this->JsFile->process('Slideshow');
+		$expected = <<<TEXT
+
+function test(thing) {
+	/* this comment will stay */
+	thing.doStuff();
 	return thing;
 }
 var AnotherClass = Class.extend({
