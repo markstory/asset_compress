@@ -29,13 +29,13 @@ class JsFile extends AssetCompressAppModel {
  *
  * @var string
  **/
-	public $requirePattern = '/^\s?\/\/\=\s*require\s*([\"\<])([^\"\>]+)[\"\>]/';
+	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
 /**
  * Pattern used to match comments
  *
  * @var string
  **/
-	public $commentPattern = '/\s*\/\/.+$/';
+	public $commentPattern = '/^\s*\/\/.*$/s';
 /**
  * Contains a hashmap of path -> filescans
  *
@@ -62,7 +62,7 @@ class JsFile extends AssetCompressAppModel {
 	public function __construct($iniFile = null) {
 		$this->_Folder = new Folder(APP);
 		if (!is_string($iniFile)) {
-			$this->_pluginPath() . 'config' . DS . 'config.ini';
+			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
 		}
 		$this->_readConfig($iniFile);
 	}
@@ -82,6 +82,9 @@ class JsFile extends AssetCompressAppModel {
 			if (isset($settings['Javascript'][$name])) {
 				$this->{$name} = $settings['Javascript'][$name];
 			}
+		}
+		if (empty($this->searchPaths)) {
+			throw new Exception('searchPaths was empty! Make sure you configured at least one searchPaths[] in your config.ini file');
 		}
 	}
 /**
@@ -144,6 +147,10 @@ class JsFile extends AssetCompressAppModel {
  * @return void
  **/
 	protected function _readDirs() {
+		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
+		foreach ($this->searchPaths as $i => $path) {
+			$this->searchPaths[$i] = str_replace(array_keys($constantMap), array_values($constantMap), $path);
+		}
 		foreach ($this->searchPaths as $path) {
 			$this->_Folder->cd($path);
 			list($dirs, $files) = $this->_Folder->read();
@@ -158,7 +165,7 @@ class JsFile extends AssetCompressAppModel {
  **/
 	protected function _preprocess($filename) {
 		if (isset($this->_loaded[$filename])) {
-			return "\n";
+			return '';
 		}
 		$this->_loaded[$filename] = true;
 		$fileHandle = fopen($filename, 'r');
@@ -175,7 +182,8 @@ class JsFile extends AssetCompressAppModel {
 				$this->_record($line);
 			}
 		}
-		return "\n";
+		$this->_record("\n");
+		return '';
 	}
 /**
  * Records a line to the buffer.  Strips comments if that has been enabled.
@@ -195,6 +203,7 @@ class JsFile extends AssetCompressAppModel {
  * @return string code line with no comments
  **/
 	protected function _stripComments($line) {
-		return preg_replace($this->commentPattern, '', $line);
+		$return = preg_replace($this->commentPattern, '', $line);
+		return $return;
 	}
 }

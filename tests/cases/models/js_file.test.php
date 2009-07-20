@@ -54,8 +54,9 @@ var BaseClass = new Class({
 var Template = new Class({
 
 });
+
 TEXT;
-		$this->assertEqual(trim($result), $expected);
+		$this->assertEqual($result, $expected);
 
 		$result = $this->JsFile->process('nested_class');
 		$expected = <<<TEXT
@@ -70,6 +71,7 @@ var BaseClassTwo = BaseClass.extend({
 var NestedClass = BaseClassTwo.extend({
 
 });
+
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -92,10 +94,10 @@ var BaseClass = new Class({
 var BaseClassTwo = BaseClass.extend({
 
 });
-
 var DoubleInclusion = new Class({
 
 });
+
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -121,10 +123,10 @@ var Template = new Class({
 var BaseClassTwo = BaseClass.extend({
 
 });
-
 var DoubleInclusion = new Class({
 
 });
+
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -146,7 +148,8 @@ TEXT;
 // this comment should be removed
 function test(thing) {
 	/* this comment will stay */
-	thing.doStuff(); //remove me too.
+	// I'm gone
+	thing.doStuff(); //I get to stay
 	return thing;
 }
 var AnotherClass = Class.extend({
@@ -155,6 +158,7 @@ var AnotherClass = Class.extend({
 var Slideshow = new Class({
 
 });
+
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
@@ -171,10 +175,9 @@ TEXT;
 		);
 		$result = $this->JsFile->process('Slideshow');
 		$expected = <<<TEXT
-
 function test(thing) {
 	/* this comment will stay */
-	thing.doStuff();
+	thing.doStuff(); //I get to stay
 	return thing;
 }
 var AnotherClass = Class.extend({
@@ -183,6 +186,17 @@ var AnotherClass = Class.extend({
 var Slideshow = new Class({
 
 });
+
+TEXT;
+		$this->assertEqual($result, $expected);
+
+		$result = $this->JsFile->process('lots_of_comments');
+		$expected = <<<TEXT
+All
+be
+not
+here
+
 TEXT;
 		$this->assertEqual($result, $expected);
 	}

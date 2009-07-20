@@ -34,6 +34,7 @@ class JsFilesController extends AssetCompressAppController {
 			}
 		}
 		$this->header('Content-Type', 'text/javascript');
+		$this->layout = 'script';
 		$this->set('contents', $compress);
 		$this->render('contents');
 	}
