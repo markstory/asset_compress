@@ -48,7 +48,7 @@ class JsFile extends AssetCompressAppModel {
  *
  * @var string
  **/
-	public $requirePattern = '/^\s?\/\/\s*\=\s*require\s([\"|<])([^\"\>]+)\1/';
+	public $requirePattern = '/^\s?\/\/\=\s*require\s*([\"\<])([^\"\>]+)[\"\>]/';
 /**
  * constructor for the model
  *
@@ -102,16 +102,19 @@ class JsFile extends AssetCompressAppModel {
  **/
 	protected function _findFile($object, $path = null) {
 		$filename = Inflector::underscore($object) . '.js';
-		if (empty($this->_fileLists)) {
-			$this->_readDirs();
-		}
 		if ($path !== null) {
 			return $path . $filename;
+		}
+		if (empty($this->_fileLists)) {
+			$this->_readDirs();
 		}
 		foreach ($this->_fileLists as $path => $files) {
 			foreach ($files as $file) {
 				if ($filename == $file) {
 					return $path . $file;
+				}
+				if (strpos($filename, DS) !== false && file_exists($path . $filename)) {
+					return $path . $filename;
 				}
 			}
 		}
@@ -132,7 +135,8 @@ class JsFile extends AssetCompressAppModel {
 /**
  * Preprocess a specific file and do any nesteds inclusions that are required.
  *
- * @return string The Fully processed file
+ * @param string $filename Name of the file to load and preprocess
+ * @return string The Fully processed file, or "\n" if in a recursive call
  **/
 	protected function _preprocess($filename) {
 		if (isset($this->_loaded[$filename])) {

@@ -117,6 +117,36 @@ var DoubleInclusion = new Class({
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that <foo> scans all search paths for a suitable file. Unlike "foo" which only scans the 
+ * current dir.
+ *
+ * @return void
+ **/
+	function testAngleBracketScanning() {
+		$this->JsFile->stripComments = false;
+		$this->JsFile->searchPaths = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
+		);
+		$result = $this->JsFile->process('Slideshow');
+		$expected = <<<TEXT
+// this comment should be removed
+function test(thing) {
+	/* this comment will stay */
+	thing.doStuff(); //remove me too.
+	return thing;
+}
+var AnotherClass = Class.extend({
+
+});
+var Slideshow = new Class({
+
+});
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
 /**
  * endTest
  *
