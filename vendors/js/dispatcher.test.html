@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>Dispatcher.js test</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="../JSSpec/JSSpec.css" />
+		<script type="text/javascript" src="../JSSpec/JSSpec.js"></script>
+		<script type="text/javascript" src="../JSSpec/diff_match_patch.js"></script>
+
+		<script src="dispatcher.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+//Setup
+	App.users = {
+		beforeActionFired: false,
+
+		test_method: function () {
+			this.methodMessage = 'test_method run';
+		},
+		beforeAction: function () {
+			this.beforeActionFired = true;
+		}
+	};
+	App.nogood = {};
+	
+describe('Dispatcher.dispatch fires method if it exists', {
+	'method triggers on dispatch': function () {
+		App.Dispatcher.dispatch('users/test_method');
+
+		value_of(App.users.methodMessage).should_be('test_method run');
+		value_of(App.users.beforeActionFired).should_be(true);
+	}
+});
+</script>
+
+
+
+</head>
+	<body>
+
+	</body>
+</html>
