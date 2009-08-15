@@ -74,6 +74,20 @@ class AssetCompressHelper extends AppHelper {
 			}
 		}
 	}
-
-
+/**
+ * Include a Javascript file.  All files with the same `$destination` will be compressed into one file.
+ *
+ * @return void
+ **/
+	public function javascript($file, $destination = 'default') {
+		
+	}
+/**
+ * Include a CSS file.  All files with the same `$destination` will be compressed into one file.
+ *
+ * @return void
+ **/
+	public function css($file, $destination = 'default') {
+		
+	}
 }
