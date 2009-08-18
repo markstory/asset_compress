@@ -35,13 +35,25 @@ class AssetCompressHelper extends AppHelper {
 		)
 	);
 /**
+ * Scripts to be included keyed by final filename.
+ *
+ * @var array
+ **/
+	protected $_scripts = array();
+/**
+ * CSS files to be included keyed by final filename.
+ *
+ * @var array
+ **/
+	protected $_css = array();
+/**
  * Disable autoInclusion of view js files.
  *
  * @var string
  **/
 	public $autoInclude = true;
 /**
- * Set options lazy way
+ * Set options, merge with existing options.
  *
  * @return void
  **/
@@ -76,18 +88,32 @@ class AssetCompressHelper extends AppHelper {
 	}
 /**
  * Include a Javascript file.  All files with the same `$destination` will be compressed into one file.
+ * Compression/concatenation will only occur if debug == 0.  
+ * Otherwise all files will be appended to $scripts_for_layout during beforeRender.
  *
+ * @param string $file Name of file to include.
+ * @param string $destination Name of file that $file should be compacted into.
  * @return void
  **/
 	public function javascript($file, $destination = 'default') {
-		
+		if (empty($this->_scripts[$destination]) {
+			$this->_scripts[$destination] = array();
+		}
+		$this->_scripts[$destination][] = $file;
 	}
 /**
  * Include a CSS file.  All files with the same `$destination` will be compressed into one file.
+ * Compression/concatenation will only occur if debug == 0.  
+ * Otherwise all files will be appended to $scripts_for_layout during beforeRender.
  *
+ * @param string $file Name of file to include.
+ * @param string $destination Name of file that $file should be compacted into.
  * @return void
  **/
 	public function css($file, $destination = 'default') {
-		
+		if (empty($this->_css[$destination]) {
+			$this->_css[$destination] = array();
+		}
+		$this->_css[$destination][] = $file;
 	}
 }
