@@ -25,17 +25,17 @@ class JsFile extends AssetCompressAppModel {
  **/
 	public $stripComments = false;
 /**
+ * Flag for keeping track comment block status.
+ *
+ * @var boolean
+ **/
+	protected $_inCommentBlock = false;
+/**
  * pattern for finding dependancies.
  *
  * @var string
  **/
 	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
-/**
- * Pattern used to match comments
- *
- * @var string
- **/
-	public $commentPattern = '/^\s*\/\/.*$/s';
 /**
  * Contains a hashmap of path -> filescans
  *
@@ -203,7 +203,27 @@ class JsFile extends AssetCompressAppModel {
  * @return string code line with no comments
  **/
 	protected function _stripComments($line) {
-		$return = preg_replace($this->commentPattern, '', $line);
-		return $return;
+		$inlineComment = '#^\s*//.*$#s';
+		$blockCommentLine = '#^\s*/\*+.*\*+/#s';
+		$blockCommentStart = '#^\s*/\*+(?!!).*#s';
+		$blockCommentEnd = '#^\s*\*+/.*#s';
+
+		if ($this->_inCommentBlock) {
+			if (preg_match($blockCommentEnd, $line)) {
+				$this->_inCommentBlock = false;
+			}
+			return '';
+		}
+		if (preg_match($inlineComment, $line)) {
+			return '';
+		}
+		if (preg_match($blockCommentLine, $line)) {
+			return '';
+		}
+		if (preg_match($blockCommentStart, $line)) {
+			$this->_inCommentBlock = true;
+			return '';
+		}
+		return $line;
 	}
 }

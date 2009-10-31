@@ -1,3 +1,6 @@
+/*!
+Important comment
+*/
 // this
 //
 // file has 
@@ -14,3 +17,16 @@ be
 not
 // \/\ test
 here
+/******
+multi line comments
+*/
+	/* should be erased */
+/*
+None of these
+*/
+	/** Should *****/
+/*
+be
+here
+anymore
+*****/
