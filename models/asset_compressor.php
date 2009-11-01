@@ -57,7 +57,7 @@ abstract class AssetCompressor extends Object {
  *
  * @return void
  **/
-	public function __construct($iniFile = null) {
+	public function __construct($iniFile = '') {
 		$this->_Folder = new Folder(APP);
 		if (!is_string($iniFile)) {
 			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
@@ -71,7 +71,7 @@ abstract class AssetCompressor extends Object {
  * @return void
  **/
 	protected function _readConfig($filename) {
-		if (!is_string($filename) || !file_exists($filename)) {
+		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
 			return false;
 		}
 		$settings = parse_ini_file($filename, true);
@@ -119,6 +119,22 @@ abstract class AssetCompressor extends Object {
 		return $out;
 	}
 /**
+ * Read all the $searchPaths and cache the files inside of each.
+ *
+ * @return void
+ **/
+	protected function _readDirs() {
+		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
+		foreach ($this->searchPaths as $i => $path) {
+			$this->searchPaths[$i] = str_replace(array_keys($constantMap), array_values($constantMap), $path);
+		}
+		foreach ($this->searchPaths as $path) {
+			$this->_Folder->cd($path);
+			list($dirs, $files) = $this->_Folder->read();
+			$this->_fileLists[$path] = $files;
+		}
+	}
+/**
  * resets the pre-processor
  *
  * @return void
@@ -146,4 +162,11 @@ abstract class AssetCompressor extends Object {
  * @return string The path to $object's file.
  **/
 	abstract protected function _findFile($object);
+/**
+ * Preprocess the file as needed
+ *
+ * @param string $filename name of file to process
+ * @return string The processed file contents
+ **/
+	abstract protected function _preprocess($filename);
 }

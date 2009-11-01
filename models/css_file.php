@@ -8,7 +8,21 @@
  * @package asset_compress
  * @author Mark Story
  **/
-class CssFile extends AssetCompressAppModel {
+App::import('Model', 'AssetCompress.AssetCompressor');
+
+class CssFile extends AssetCompressor {
+/**
+ * config file key name
+ *
+ * @var string
+ **/
+	protected $_configKeyName = 'Css';
+/**
+ * properties to be read from ini file.
+ *
+ * @var array
+ **/
+	protected $_configProperties = array('searchPaths', 'stripComments');
 /**
  * pattern for finding @import.
  *
@@ -39,22 +53,6 @@ class CssFile extends AssetCompressAppModel {
 			}
 		}
 		throw new Exception('Could not locate file for ' . $object);
-	}
-/**
- * Read all the $searchPaths and cache the files inside of each.
- *
- * @return void
- **/
-	protected function _readDirs() {
-		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
-		foreach ($this->searchPaths as $i => $path) {
-			$this->searchPaths[$i] = str_replace(array_keys($constantMap), array_values($constantMap), $path);
-		}
-		foreach ($this->searchPaths as $path) {
-			$this->_Folder->cd($path);
-			list($dirs, $files) = $this->_Folder->read();
-			$this->_fileLists[$path] = $files;
-		}
 	}
 /**
  * Preprocess a specific file and do any nesteds inclusions that are required.

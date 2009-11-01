@@ -1,5 +1,7 @@
 <?php
 
+App::import('Model', 'AssetCompress.JsFile');
+
 class JsFileTestCase extends CakeTestCase {
 /**
  * startTest
@@ -7,7 +9,7 @@ class JsFileTestCase extends CakeTestCase {
  * @return void
  **/
 	function startTest() {
-		$this->JsFile = ClassRegistry::init('AssetCompress.JsFile');
+		$this->JsFile = new JsFile();
 		$this->_pluginPath = $this->_findPlugin();
 	}
 /**

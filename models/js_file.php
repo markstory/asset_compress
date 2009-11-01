@@ -59,22 +59,6 @@ class JsFile extends AssetCompressor {
 		throw new Exception('Could not locate file for ' . $object);
 	}
 /**
- * Read all the $searchPaths and cache the files inside of each.
- *
- * @return void
- **/
-	protected function _readDirs() {
-		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
-		foreach ($this->searchPaths as $i => $path) {
-			$this->searchPaths[$i] = str_replace(array_keys($constantMap), array_values($constantMap), $path);
-		}
-		foreach ($this->searchPaths as $path) {
-			$this->_Folder->cd($path);
-			list($dirs, $files) = $this->_Folder->read();
-			$this->_fileLists[$path] = $files;
-		}
-	}
-/**
  * Preprocess a specific file and do any nesteds inclusions that are required.
  *
  * @param string $filename Name of the file to load and preprocess
