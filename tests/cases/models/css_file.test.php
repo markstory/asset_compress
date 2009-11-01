@@ -62,4 +62,22 @@ body {
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test removal of comment blocks.
+ *
+ * @return void
+ **/
+	function testCommentRemoval() {
+		$this->CssFile->stripComments = true;
+		$this->CssFile->searchPaths = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS,
+		);
+		$result = $this->CssFile->process('has_comments');
+		$expected = <<<TEXT
+body {
+	color:#000;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
 }
