@@ -83,7 +83,7 @@ class CssFile extends AssetCompressor {
 		return '';
 	}
 /**
- * Remove // Comments in a line.
+ * Remove comments in a line.
  *
  * @return string code line with no comments
  **/

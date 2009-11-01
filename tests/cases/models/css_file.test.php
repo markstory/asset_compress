@@ -22,8 +22,9 @@ class CssFileTestCase extends CakeTestCase {
  * @return void
  **/
 	function startTest() {
-		$this->CssFile = new CssFile();
 		$this->_pluginPath = $this->_findPlugin();
+		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->CssFile = new CssFile($testFile);
 	}
 /**
  * test the constuction and ini reading.

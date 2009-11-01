@@ -9,8 +9,9 @@ class JsFileTestCase extends CakeTestCase {
  * @return void
  **/
 	function startTest() {
-		$this->JsFile = new JsFile();
 		$this->_pluginPath = $this->_findPlugin();
+		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->JsFile = new JsFile($testFile);
 	}
 /**
  * test the constuction and ini reading.
