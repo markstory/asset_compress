@@ -11,7 +11,7 @@
  */
 class AssetCompressHelper extends AppHelper {
 
-	public $helpers = array('Javascript');
+	public $helpers = array('Html', 'Javascript');
 /**
  * Options for the helper
  *

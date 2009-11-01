@@ -8,55 +8,20 @@
  * @package asset_compress
  * @author Mark Story
  **/
-App::import('Model', 'AssetCompress.AssetCompressor');
-
-class JsFile extends AssetCompressor {
+class CssFile extends AssetCompressAppModel {
 /**
- * pattern for finding dependancies.
+ * pattern for finding @import.
  *
  * @var string
  **/
-	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
-/**
- * constructor for the model
- *
- * @return void
- **/
-	public function __construct($iniFile = null) {
-		$this->_Folder = new Folder(APP);
-		if (!is_string($iniFile)) {
-			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
-		}
-		$this->_readConfig($iniFile);
-	}
-/**
- * Reads the configuration file and copies out settings into member vars
- *
- * @param string $filename Name of config file to load.
- * @return void
- **/
-	protected function _readConfig($filename) {
-		if (!is_string($filename) || !file_exists($filename)) {
-			return false;
-		}
-		$settings = parse_ini_file($filename, true);
-		$names = array('stripComments', 'searchPaths', 'requirePattern', 'commentPattern');
-		foreach ($names as $name) {
-			if (isset($settings['Javascript'][$name])) {
-				$this->{$name} = $settings['Javascript'][$name];
-			}
-		}
-		if (empty($this->searchPaths)) {
-			throw new Exception('searchPaths was empty! Make sure you configured at least one searchPaths[] in your config.ini file');
-		}
-	}
+	public $importPattern = '//';
 /**
  * Scan each of the $searchPaths for the named object / filename
  *
  * @return string Full path to the $object
  **/
 	protected function _findFile($object, $path = null) {
-		$filename = Inflector::underscore($object) . '.js';
+		$filename = Inflector::underscore($object) . '.css';
 		if ($path !== null) {
 			return $path . $filename;
 		}
@@ -118,6 +83,18 @@ class JsFile extends AssetCompressor {
 		}
 		$this->_record("\n");
 		return '';
+	}
+/**
+ * Records a line to the buffer.  Strips comments if that has been enabled.
+ *
+ * @return void
+ **/
+	protected function _record($line) {
+		if ($this->stripComments) {
+			$this->_processedOutput .= $this->_stripComments($line);
+			return;
+		}
+		$this->_processedOutput .= $line;
 	}
 /**
  * Remove // Comments in a line.
