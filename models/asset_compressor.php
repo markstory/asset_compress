@@ -5,6 +5,18 @@
  */
 abstract class AssetCompressor extends Object {
 /**
+ * config.ini key name for this asset types configuration.
+ *
+ * @var string
+ **/
+	protected $_configKeyName = '';
+/**
+ * Properties to be read when parsing the ini file
+ *
+ * @var array
+ **/
+	protected $_configProperties = array();
+/**
  * Paths to search files on.
  *
  * @var array Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
@@ -40,6 +52,38 @@ abstract class AssetCompressor extends Object {
  * @var string
  **/
 	protected $_processedOutput = '';
+/**
+ * constructor for the model
+ *
+ * @return void
+ **/
+	public function __construct($iniFile = null) {
+		$this->_Folder = new Folder(APP);
+		if (!is_string($iniFile)) {
+			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
+		}
+		$this->_readConfig($iniFile);
+	}
+/**
+ * Reads the configuration file and copies out settings into member vars
+ *
+ * @param string $filename Name of config file to load.
+ * @return void
+ **/
+	protected function _readConfig($filename) {
+		if (!is_string($filename) || !file_exists($filename)) {
+			return false;
+		}
+		$settings = parse_ini_file($filename, true);
+		foreach ($this->_configProperties as $name) {
+			if (isset($settings[$this->_configKeyName][$name])) {
+				$this->{$name} = $settings[$this->_configKeyName][$name];
+			}
+		}
+		if (empty($this->searchPaths)) {
+			throw new Exception('searchPaths was empty! Make sure you configured at least one searchPaths[] in your config.ini file');
+		}
+	}
 /**
  * find the asset_compress path
  *
@@ -83,6 +127,7 @@ abstract class AssetCompressor extends Object {
 		$this->_loaded = array();
 		$this->_processedOutput = '';
 	}
+
 /**
  * Records a line to the buffer.  Strips comments if that has been enabled.
  *

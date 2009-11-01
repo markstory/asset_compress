@@ -1,7 +1,7 @@
 <?php
 /**
- * Javascript File Preprocessor model.
- * Preprocesss JS files for //= require statements.
+ * CSS File Preprocessor model.
+ * Preprocesss CSS files for @import() statements.
  * 
  * Uses Plugin config.ini file for path and other directive information.
  *
@@ -83,18 +83,6 @@ class CssFile extends AssetCompressAppModel {
 		}
 		$this->_record("\n");
 		return '';
-	}
-/**
- * Records a line to the buffer.  Strips comments if that has been enabled.
- *
- * @return void
- **/
-	protected function _record($line) {
-		if ($this->stripComments) {
-			$this->_processedOutput .= $this->_stripComments($line);
-			return;
-		}
-		$this->_processedOutput .= $line;
 	}
 /**
  * Remove // Comments in a line.

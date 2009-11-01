@@ -3,6 +3,10 @@
  * Javascript File Preprocessor model.
  * Preprocesss JS files for //= require statements.
  * 
+ * Implements many of the same features that Sprockets does, and was directly 
+ * inspired by Sprockets for ruby by Sam Stephenson <http://conio.net/>
+ * and <http://getsprockets.org/>˝
+ * 
  * Uses Plugin config.ini file for path and other directive information.
  *
  * @package asset_compress
@@ -12,44 +16,23 @@ App::import('Model', 'AssetCompress.AssetCompressor');
 
 class JsFile extends AssetCompressor {
 /**
+ * Key name for the config file.
+ *
+ * @var string
+ **/
+	protected $_configKeyName = 'Javascript';
+/**
+ * Properties to set from the config file.
+ *
+ * @var array
+ **/
+	protected $_configProperties = array('stripComments', 'searchPaths', 'requirePattern');
+/**
  * pattern for finding dependancies.
  *
  * @var string
  **/
 	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
-/**
- * constructor for the model
- *
- * @return void
- **/
-	public function __construct($iniFile = null) {
-		$this->_Folder = new Folder(APP);
-		if (!is_string($iniFile)) {
-			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
-		}
-		$this->_readConfig($iniFile);
-	}
-/**
- * Reads the configuration file and copies out settings into member vars
- *
- * @param string $filename Name of config file to load.
- * @return void
- **/
-	protected function _readConfig($filename) {
-		if (!is_string($filename) || !file_exists($filename)) {
-			return false;
-		}
-		$settings = parse_ini_file($filename, true);
-		$names = array('stripComments', 'searchPaths', 'requirePattern', 'commentPattern');
-		foreach ($names as $name) {
-			if (isset($settings['Javascript'][$name])) {
-				$this->{$name} = $settings['Javascript'][$name];
-			}
-		}
-		if (empty($this->searchPaths)) {
-			throw new Exception('searchPaths was empty! Make sure you configured at least one searchPaths[] in your config.ini file');
-		}
-	}
 /**
  * Scan each of the $searchPaths for the named object / filename
  *
