@@ -59,7 +59,7 @@ abstract class AssetCompressor extends Object {
  **/
 	public function __construct($iniFile = null) {
 		$this->_Folder = new Folder(APP);
-		if (empty($iniFile)) {
+		if (!is_string($iniFile) || empty($iniFile)) {
 			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
 		}
 		$this->_readConfig($iniFile);

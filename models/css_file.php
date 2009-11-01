@@ -28,7 +28,7 @@ class CssFile extends AssetCompressor {
  *
  * @var string
  **/
-	public $importPattern = '/^\s*@import\s*(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\))/';
+	public $importPattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)))/';
 /**
  * Scan each of the $searchPaths for the named object / filename
  *
