@@ -3,5 +3,3 @@
 class AssetCompressAppController extends AppController {
 
 }
-
-?>
