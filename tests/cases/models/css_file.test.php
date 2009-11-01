@@ -3,6 +3,20 @@ App::import('Model', 'AssetCompress.CssFile');
 
 class CssFileTestCase extends CakeTestCase {
 /**
+ * find the asset_compress path
+ *
+ * @return void
+ **/
+	function _findPlugin() {
+		$paths = Configure::read('pluginPaths');
+		foreach ($paths as $path) {
+			if (is_dir($path . 'asset_compress')) {
+				return $path . 'asset_compress' . DS;
+			}
+		}
+		throw new Exception('Could not find my directory, bailing hard!');
+	}
+/**
  * startTest
  *
  * @return void
@@ -23,17 +37,29 @@ class CssFileTestCase extends CakeTestCase {
 		$this->assertEqual($CssFile->searchPaths, array('/test/css', '/test/css/more'));
 	}
 /**
- * find the asset_compress path
+ * test @import processing
  *
  * @return void
  **/
-	function _findPlugin() {
-		$paths = Configure::read('pluginPaths');
-		foreach ($paths as $path) {
-			if (is_dir($path . 'asset_compress')) {
-				return $path . 'asset_compress' . DS;
-			}
-		}
-		throw new Exception('Could not find my directory, bailing hard!');
+	function testImportProcessing() {
+		$this->CssFile->stripComments = false;
+		$this->CssFile->searchPaths = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS,
+		);
+		$result = $this->CssFile->process('has_import');
+		$expected = <<<TEXT
+* {
+	margin:0;
+	padding:0;
+}
+#nav {
+	width:100%;
+}
+body {
+	color:#f00;
+	background:#000;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
 	}
 }

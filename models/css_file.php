@@ -28,14 +28,17 @@ class CssFile extends AssetCompressor {
  *
  * @var string
  **/
-	public $importPattern = '//';
+	public $importPattern = '/^\s*@import\s*(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\))/';
 /**
  * Scan each of the $searchPaths for the named object / filename
  *
  * @return string Full path to the $object
  **/
 	protected function _findFile($object, $path = null) {
-		$filename = Inflector::underscore($object) . '.css';
+		$filename = Inflector::underscore($object);
+		if (substr($filename, -4) != '.css') {
+			$filename .= '.css';
+		}
 		if ($path !== null) {
 			return $path . $filename;
 		}
@@ -68,12 +71,9 @@ class CssFile extends AssetCompressor {
 		$fileHandle = fopen($filename, 'r');
 		while (!feof($fileHandle)) {
 			$line = fgets($fileHandle);
-			if (preg_match($this->requirePattern, $line, $requiredObject)) {
-				if ($requiredObject[1] == '"') {
-					$filename = $this->_findFile($requiredObject[2], dirname($filename) . DS);
-				} else {
-					$filename = $this->_findFile($requiredObject[2]);
-				}
+			if (preg_match($this->importPattern, $line, $requiredObject)) {
+				$required = empty($requiredObject[2]) ? $requiredObject[4] : $requiredObject[2];
+				$filename = $this->_findFile($required);
 				$this->_record($this->_preprocess($filename));
 			} else {
 				$this->_record($line);
