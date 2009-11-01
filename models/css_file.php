@@ -90,8 +90,7 @@ class CssFile extends AssetCompressor {
 	protected function _stripComments($line) {
 		$blockCommentLine = '#^\s*/\*+.*\*+/#s';
 		$blockCommentStart = '#^\s*/\*+(?!!).*#s';
-		$blockCommentEnd = '#^\s*\*+/.*#s';
-
+		$blockCommentEnd = '#^.*\*+/.*#s';
 		if ($this->_inCommentBlock) {
 			if (preg_match($blockCommentEnd, $line)) {
 				$this->_inCommentBlock = false;

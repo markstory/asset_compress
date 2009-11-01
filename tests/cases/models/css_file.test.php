@@ -63,6 +63,10 @@ body {
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+		function getTests() {
+			return array('start', 'startCase', 'testCommentRemoval', 'endCase', 'end');
+		}
+	
 /**
  * test removal of comment blocks.
  *
@@ -77,6 +81,10 @@ TEXT;
 		$expected = <<<TEXT
 body {
 	color:#000;
+}
+#match-timeline {
+	clear:both;
+	padding-top:10px;
 }
 TEXT;
 		$this->assertEqual($result, $expected);
