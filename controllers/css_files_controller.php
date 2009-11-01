@@ -1,13 +1,13 @@
 <?php
 /**
- * JsFiles Controller handles Javascript file requests.
+ * CssFiles Controller handles CSS file requests.
  *
  * @package asset_compress
  * @author Mark Story
  **/
-class JsFilesController extends AssetCompressAppController {
+class CssFilesController extends AssetCompressAppController {
 
-	public $name = 'JsFiles';
+	public $name = 'CssFiles';
 /**
  * beforefilter callback
  *
@@ -28,12 +28,12 @@ class JsFilesController extends AssetCompressAppController {
 		$key = implode('-', $objects);
 		$compress = Cache::read($key, 'asset_compress');
 		if (empty($compress)) {
-			$compress = $this->JsFile->process($objects);
+			$compress = $this->CssFile->process($objects);
 			if (Configure::read('debug') == 0) {
 				Cache::write($key, $compress, 'asset_compress');
 			}
 		}
-		$this->header('Content-Type', 'text/javascript');
+		$this->header('Content-Type', 'text/css');
 		$this->layout = 'script';
 		$this->viewPath = 'generic';
 		$this->set('contents', $compress);
