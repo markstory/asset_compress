@@ -3,26 +3,12 @@ App::import('Model', 'AssetCompress.CssFile');
 
 class CssFileTestCase extends CakeTestCase {
 /**
- * find the asset_compress path
- *
- * @return void
- **/
-	function _findPlugin() {
-		$paths = Configure::read('pluginPaths');
-		foreach ($paths as $path) {
-			if (is_dir($path . 'asset_compress')) {
-				return $path . 'asset_compress' . DS;
-			}
-		}
-		throw new Exception('Could not find my directory, bailing hard!');
-	}
-/**
  * startTest
  *
  * @return void
  **/
 	function startTest() {
-		$this->_pluginPath = $this->_findPlugin();
+		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 		$this->CssFile = new CssFile($testFile);
 	}
