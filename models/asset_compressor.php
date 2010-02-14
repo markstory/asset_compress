@@ -60,7 +60,7 @@ abstract class AssetCompressor extends Object {
 	public function __construct($iniFile = null) {
 		$this->_Folder = new Folder(APP);
 		if (!is_string($iniFile) || empty($iniFile)) {
-			$iniFile = $this->_pluginPath() . 'config' . DS . 'config.ini';
+			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
 		}
 		$this->_readConfig($iniFile);
 	}
@@ -85,22 +85,10 @@ abstract class AssetCompressor extends Object {
 		}
 	}
 /**
- * find the asset_compress path
- *
- * @return void
- **/
-	protected function _pluginPath() {
-		$paths = Configure::read('pluginPaths');
-		foreach ($paths as $path) {
-			if (is_dir($path . 'asset_compress')) {
-				return $path . 'asset_compress' . DS;
-			}
-		}
-		throw new Exception('Could not find my directory, bailing hard!');
-	}
-/**
  * Process a set of Files / NamedObjects togehter resolving and directives as needed.
  * The files/NamedObjects must be on the searchPaths for things to work.
+ *
+ * If the configuration indicates the creation of cache files those files will be created
  *
  * @param array Array of files/NamedObjects to join together.
  * @return string String of Joined together files.
@@ -114,6 +102,10 @@ abstract class AssetCompressor extends Object {
 			$fileName = $this->_findFile($object);
 			$this->_preprocess($fileName);
 		}
+		/*
+		TODO implement a filter set.  So you could add a number of classes/functions to apply to the 
+		concatenated output.  Like compressors etc.
+		*/
 		$out = trim($this->_processedOutput);
 		$this->reset();
 		return $out;
