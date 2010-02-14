@@ -36,12 +36,15 @@ class CssFilesController extends AssetCompressAppController {
 
 		$compress = Cache::read('css-' . $keyname, 'asset_compress');
 		if (empty($compress)) {
-			$compress = $this->CssFile->process($objects);
-			if (Configure::read('debug') < 2 && $this->CssFile->cachingOn()) {
-				$this->CssFile->cache($keyname, $compress);
+			try {
+				$compress = $this->CssFile->process($objects);
+				if (Configure::read('debug') < 2 && $this->CssFile->cachingOn()) {
+					$this->CssFile->cache($keyname, $compress);
+				}
+			} catch (Exception $e) {
+				$this->log($e->getMessage());
 			}
 		}
-		$this->header('Content-Type', 'text/css');
 		header('Content-Type: text/css');
 		$this->layout = 'script';
 		$this->viewPath = 'generic';
