@@ -16,21 +16,7 @@ class JsFilesControllerTestCase extends CakeTestCase {
 		$this->JsFiles = new JsFilesControllerMock();
 		$this->JsFiles->plugin = 'AssetCompress';
 		$this->JsFiles->JsFile = new JsFileMock();
-		$this->_pluginPath = $this->_findPlugin();
-	}
-/**
- * find the asset_compress path
- *
- * @return void
- **/
-	function _findPlugin() {
-		$paths = Configure::read('pluginPaths');
-		foreach ($paths as $path) {
-			if (is_dir($path . 'asset_compress')) {
-				return $path . 'asset_compress' . DS;
-			}
-		}
-		throw new Exception('Could not find my directory, bailing hard!');
+		$this->_pluginPath = App::pluginPath('AssetCompress');
 	}
 /**
  * endTest
@@ -48,11 +34,12 @@ class JsFilesControllerTestCase extends CakeTestCase {
  **/
 	function testJoin() {
 		Configure::write('Cache.disable', true);
-		$this->JsFiles->expectOnce('header', array('Content-Type', 'text/javascript'));
+		$this->JsFiles->expectOnce('header', array('Content-Type: text/javascript'));
 		$this->JsFiles->JsFile->expectOnce('process', array(array('One', 'Two')));
 		$this->JsFiles->JsFile->setReturnValue('process', 'Im glued together');
 		$this->JsFiles->expectOnce('render', array('contents'));
-		$this->JsFiles->join('One', 'Two');
+		$this->JsFiles->params['url']['file'] = array('One', 'Two');
+		$this->JsFiles->get('default');
 
 		$this->assertEqual($this->JsFiles->layout, 'script');
 		$this->assertEqual($this->JsFiles->viewVars['contents'], 'Im glued together');

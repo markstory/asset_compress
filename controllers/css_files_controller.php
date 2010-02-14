@@ -45,7 +45,7 @@ class CssFilesController extends AssetCompressAppController {
 				$this->log($e->getMessage());
 			}
 		}
-		header('Content-Type: text/css');
+		$this->header('Content-Type: text/css');
 		$this->layout = 'script';
 		$this->viewPath = 'generic';
 		$this->set('contents', $compress);
