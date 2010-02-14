@@ -5,12 +5,19 @@
  * Handle inclusion assets using the AssetCompress features for concatenating and
  * compressing asset files.
  *
+ * You add files to be compressed using `script` and `css`.  All files added to a key name
+ * will be processed and joined before being served.  When in debug = 2, no files are cached.
+ * 
+ * If debug = 0, the processed file will be cached to disk.  You can also use the routes
+ * and config file to create static 'built' files. These built files must have unique names, or 
+ * as they are made they will overwrite each other.
+ *
  * @package asset_compress.helpers
  * @author Mark Story
  */
 class AssetCompressHelper extends AppHelper {
 
-	public $helpers = array('Html', 'Javascript');
+	public $helpers = array('Html');
 /**
  * Options for the helper
  *
@@ -25,12 +32,12 @@ class AssetCompressHelper extends AppHelper {
 		'cssCompressUrl' => array(
 			'plugin' => 'asset_compress',
 			'controller' => 'css_files',
-			'action' => 'join'
+			'action' => 'get'
 		),
 		'jsCompressUrl' => array(
 			'plugin' => 'asset_compress',
 			'controller' => 'js_files',
-			'action' => 'join'
+			'action' => 'get'
 		)
 	);
 /**
@@ -91,35 +98,37 @@ class AssetCompressHelper extends AppHelper {
 		foreach ($files as $file) {
 			$includeFile = $this->options['autoIncludePath'] . $file;
 			if (file_exists($includeFile)) {
-				$this->Javascript->link($file, false);
+				$this->Html->script($file, array('inline' => false));
 			}
 		}
 	}
 /**
- * Includes css + js assets.  If debug = 0, a cache file will be used when responding.
+ * Includes css + js assets.  If debug = 0 check the config settings and either look for a premade cache
+ * file or use requestAction.  When file caching is enabled the first requestAction will create the cache
+ * file used for all subsequent requests.
  *
- * @return void
+ * @param boolean $inline Whether you want the files inline or added to scripts_for_layout
+ * @return string Empty string or string containing asset link tags.
  **/
 	public function includeAssets($inline = true) {
-		$out = '';
+		$out = array();
 		foreach ($this->_scripts as $destination => $files) {
-			$objects = implode('/', $files);
-			$url = Router::url($this->options['jsCompressUrl'] + array($objects));
-			$out .= $this->Javascript->link($url, $inline);
+			$fileString = 'file[]=' . implode('&file[]=', $files);
+			$url = Router::url(array_merge($this->options['jsCompressUrl'], array($destination, '?' => $fileString)));
+			$out[] = $this->Html->script($url, array('inline' => $inline));
 			$this->_scripts[$destination] = array();
 		}
 		foreach ($this->_css as $destination => $files) {
-			$objects = implode('/', $files);
-			$url = Router::url($this->options['cssCompressUrl'] + array($objects));
-			$out .= $this->Html->css($url, null, array(), $inline);
+			$fileString = 'file[]=' . implode('&file[]=', $files);
+			$url = Router::url(array_merge($this->options['cssCompressUrl'] + array($destination, '?' => $fileString)));
+			$out[] = $this->Html->css($url, null, array('inline' => $inline));
 			$this->_css[$destination] = array();
 		}
-		return $out;
+		return implode("\n", $out);
 	}
 /**
  * Include a Javascript file.  All files with the same `$destination` will be compressed into one file.
  * Compression/concatenation will only occur if debug == 0.
- * Otherwise all files will be appended to $scripts_for_layout during beforeRender.
  *
  * @param string $file Name of file to include.
  * @param string $destination Name of file that $file should be compacted into.
@@ -133,8 +142,7 @@ class AssetCompressHelper extends AppHelper {
 	}
 /**
  * Include a CSS file.  All files with the same `$destination` will be compressed into one file.
- * Compression/concatenation will only occur if debug == 0.  
- * Otherwise all files will be appended to $scripts_for_layout during beforeRender.
+ * Compression/concatenation will only occur if debug == 0.
  *
  * @param string $file Name of file to include.
  * @param string $destination Name of file that $file should be compacted into.

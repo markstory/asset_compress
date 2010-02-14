@@ -21,19 +21,28 @@ class CssFilesController extends AssetCompressAppController {
 /**
  * Concatenates the requested Objects/files Together based on the settings in the config.ini
  *
+ * If debug < 2 concatenations will be cached to disk.  You can use the cacheFiles config setting
+ * to write concatenated/filtered files to a webroot path.
+ *
+ * Files to be appended are added as query string parameters `file[]=name`
+ *
  * @return void
  **/
-	public function join() {
-		$objects = func_get_args();
-		$key = implode('-', $objects);
-		$compress = Cache::read($key, 'asset_compress');
+	public function get($keyname = null) {
+		$objects = array();
+		if (!empty($this->params['url']['file'])) {
+			$objects = $this->params['url']['file'];
+		}
+
+		$compress = Cache::read('css-' . $keyname, 'asset_compress');
 		if (empty($compress)) {
 			$compress = $this->CssFile->process($objects);
-			if (Configure::read('debug') == 0) {
-				Cache::write($key, $compress, 'asset_compress');
+			if (Configure::read('debug') < 2 && $this->CssFile->cachingOn()) {
+				$this->CssFile->cache($keyname, $compress);
 			}
 		}
 		$this->header('Content-Type', 'text/css');
+		header('Content-Type: text/css');
 		$this->layout = 'script';
 		$this->viewPath = 'generic';
 		$this->set('contents', $compress);

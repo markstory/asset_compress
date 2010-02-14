@@ -21,16 +21,21 @@ class JsFilesController extends AssetCompressAppController {
 /**
  * Concatenates the requested Objects/files Together based on the settings in the config.ini
  *
+  * If debug < 2 concatenations will be cached to disk.  You can use the cacheFiles config setting
+ * to write concatenated/filtered files to a webroot path.
+ *
  * @return void
  **/
-	public function join() {
-		$objects = func_get_args();
-		$key = implode('-', $objects);
-		$compress = Cache::read($key, 'asset_compress');
+	public function get($keyname = null) {
+		$objects = array();
+		if (!empty($this->params['url']['file'])) {
+			$objects = $this->params['url']['file'];
+		}
+		$compress = Cache::read('js-' . $keyname, 'asset_compress');
 		if (empty($compress)) {
 			$compress = $this->JsFile->process($objects);
-			if (Configure::read('debug') == 0) {
-				Cache::write($key, $compress, 'asset_compress');
+			if (Configure::read('debug') < 2 && $this->JsFile->cachingOn()) {
+				$this->JsFile->cache($compress);
 			}
 		}
 		$this->header('Content-Type', 'text/javascript');
