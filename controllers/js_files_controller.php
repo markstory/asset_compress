@@ -8,6 +8,7 @@
 class JsFilesController extends AssetCompressAppController {
 
 	public $name = 'JsFiles';
+
 /**
  * beforefilter callback
  *
@@ -18,6 +19,7 @@ class JsFilesController extends AssetCompressAppController {
 			$this->Auth->enabled = false;
 		}
 	}
+
 /**
  * Concatenates the requested Objects/files Together based on the settings in the config.ini
  *

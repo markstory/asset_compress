@@ -8,6 +8,7 @@
 class CssFilesController extends AssetCompressAppController {
 
 	public $name = 'CssFiles';
+
 /**
  * beforefilter callback
  *
@@ -18,6 +19,7 @@ class CssFilesController extends AssetCompressAppController {
 			$this->Auth->enabled = false;
 		}
 	}
+
 /**
  * Concatenates the requested Objects/files Together based on the settings in the config.ini
  *

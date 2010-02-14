@@ -114,13 +114,19 @@ class AssetCompressHelper extends AppHelper {
 		$out = array();
 		foreach ($this->_scripts as $destination => $files) {
 			$fileString = 'file[]=' . implode('&file[]=', $files);
-			$url = Router::url(array_merge($this->options['jsCompressUrl'], array($destination, '?' => $fileString)));
+			$url = Router::url(array_merge(
+				$this->options['jsCompressUrl'], 
+				array($destination . '.js', '?' => $fileString)
+			));
 			$out[] = $this->Html->script($url, array('inline' => $inline));
 			$this->_scripts[$destination] = array();
 		}
 		foreach ($this->_css as $destination => $files) {
 			$fileString = 'file[]=' . implode('&file[]=', $files);
-			$url = Router::url(array_merge($this->options['cssCompressUrl'] + array($destination, '?' => $fileString)));
+			$url = Router::url(array_merge(
+				$this->options['cssCompressUrl'],
+				array($destination . '.css', '?' => $fileString)
+			));
 			$out[] = $this->Html->css($url, null, array('inline' => $inline));
 			$this->_css[$destination] = array();
 		}
