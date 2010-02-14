@@ -86,6 +86,7 @@ abstract class AssetCompressor extends Object {
 		}
 		$this->_readConfig($iniFile);
 	}
+
 /**
  * Reads the configuration file and copies out settings into member vars
  *
@@ -106,6 +107,7 @@ abstract class AssetCompressor extends Object {
 			throw new Exception('searchPaths was empty! Make sure you configured at least one searchPaths[] in your config.ini file');
 		}
 	}
+
 /**
  * Process a set of Files / NamedObjects togehter resolving and directives as needed.
  * The files/NamedObjects must be on the searchPaths for things to work.
@@ -132,15 +134,15 @@ abstract class AssetCompressor extends Object {
 		$this->reset();
 		return $out;
 	}
+
 /**
  * Read all the $searchPaths and cache the files inside of each.
  *
  * @return void
  **/
 	protected function _readDirs() {
-		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
 		foreach ($this->searchPaths as $i => $path) {
-			$this->searchPaths[$i] = str_replace(array_keys($constantMap), array_values($constantMap), $path);
+			$this->searchPaths[$i] = $this->_replacePathConstants($path);
 		}
 		foreach ($this->searchPaths as $path) {
 			$this->_Folder->cd($path);
@@ -148,6 +150,19 @@ abstract class AssetCompressor extends Object {
 			$this->_fileLists[$path] = $files;
 		}
 	}
+
+/**
+ * Replaces the file path constants used in Config files.
+ * Will replace APP and WEBROOT
+ *
+ * @param string $path Path to replace constants on 
+ * @return string constants replaced
+ */
+	protected function _replacePathConstants($path) {
+		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
+		return str_replace(array_keys($constantMap), array_values($constantMap), $path);
+	}
+
 /**
  * resets the pre-processor
  *
@@ -203,6 +218,13 @@ abstract class AssetCompressor extends Object {
  * @return void
  */
 	public function cache($key, $content) {
-		
+		$writeDirectory = $this->_replacePathConstants($this->cacheFilePath);
+		if (!is_writable($writeDirectory)) {
+			throw new Exception(sprintf('Cannot write to %s bailing on writing cache file.', $writeDirectory));
+		}
+		$filename = $writeDirectory . $key;
+		$this->log($filename);
+		$file = new File($filename, true);
+		return $file->write($content);
 	}
 }

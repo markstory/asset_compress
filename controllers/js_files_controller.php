@@ -38,7 +38,7 @@ class JsFilesController extends AssetCompressAppController {
 			try {
 				$compress = $this->JsFile->process($objects);
 				if (Configure::read('debug') < 2 && $this->JsFile->cachingOn()) {
-					$this->JsFile->cache($compress);
+					$this->JsFile->cache($keyname, $compress);
 				}
 			} catch (Exception $e) {
 				$this->log($e->getMessage());
