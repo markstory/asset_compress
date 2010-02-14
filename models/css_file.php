@@ -18,18 +18,21 @@ class CssFile extends AssetCompressor {
  * @var string
  **/
 	protected $_configKeyName = 'Css';
+
 /**
  * properties to be read from ini file.
  *
  * @var array
  **/
 	protected $_configProperties = array('searchPaths', 'stripComments', 'cacheFilePath', 'cacheFiles');
+
 /**
  * pattern for finding @import.
  *
  * @var string
  **/
 	public $importPattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)))/';
+
 /**
  * Scan each of the $searchPaths for the named object / filename
  *
@@ -58,6 +61,7 @@ class CssFile extends AssetCompressor {
 		}
 		throw new Exception('Could not locate file for ' . $object);
 	}
+
 /**
  * Preprocess a specific file and do any nesteds inclusions that are required.
  *
@@ -83,6 +87,7 @@ class CssFile extends AssetCompressor {
 		$this->_record("\n");
 		return '';
 	}
+
 /**
  * Remove comments in a line.
  *
