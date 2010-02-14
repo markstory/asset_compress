@@ -10,7 +10,8 @@
  * 
  * If debug = 0, the processed file will be cached to disk.  You can also use the routes
  * and config file to create static 'built' files. These built files must have unique names, or 
- * as they are made they will overwrite each other.
+ * as they are made they will overwrite each other.  You can clear built files
+ * with the shell provided in the plugin.
  *
  * @package asset_compress.helpers
  * @author Mark Story
@@ -18,6 +19,7 @@
 class AssetCompressHelper extends AppHelper {
 
 	public $helpers = array('Html');
+
 /**
  * Options for the helper
  *
@@ -40,24 +42,28 @@ class AssetCompressHelper extends AppHelper {
 			'action' => 'get'
 		)
 	);
+
 /**
  * Scripts to be included keyed by final filename.
  *
  * @var array
  **/
 	protected $_scripts = array();
+
 /**
  * CSS files to be included keyed by final filename.
  *
  * @var array
  **/
 	protected $_css = array();
+
 /**
  * Disable autoInclusion of view js files.
  *
  * @var string
  **/
 	public $autoInclude = true;
+
 /**
  * Set options, merge with existing options.
  *
@@ -66,6 +72,7 @@ class AssetCompressHelper extends AppHelper {
 	public function options($options) {
 		$this->options = Set::merge($options);
 	}
+
 /**
  * AfterRender callback.
  *
@@ -81,6 +88,7 @@ class AssetCompressHelper extends AppHelper {
 		$this->_includeViewJs();
 		$this->includeAssets(false);
 	}
+
 /**
  * Includes the auto view js files if enabled.
  *
@@ -102,6 +110,7 @@ class AssetCompressHelper extends AppHelper {
 			}
 		}
 	}
+
 /**
  * Includes css + js assets.  If debug = 0 check the config settings and either look for a premade cache
  * file or use requestAction.  When file caching is enabled the first requestAction will create the cache
@@ -132,6 +141,7 @@ class AssetCompressHelper extends AppHelper {
 		}
 		return implode("\n", $out);
 	}
+
 /**
  * Include a Javascript file.  All files with the same `$destination` will be compressed into one file.
  * Compression/concatenation will only occur if debug == 0.
@@ -146,6 +156,7 @@ class AssetCompressHelper extends AppHelper {
 		}
 		$this->_scripts[$destination][] = $file;
 	}
+
 /**
  * Include a CSS file.  All files with the same `$destination` will be compressed into one file.
  * Compression/concatenation will only occur if debug == 0.
