@@ -1,1 +1,4 @@
-<?php echo $contents; ?>
+<?php
+echo $contents;
+Configure::write('debug', 0);
+?>
