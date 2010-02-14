@@ -10,48 +10,70 @@ abstract class AssetCompressor extends Object {
  * @var string
  **/
 	protected $_configKeyName = '';
+
 /**
  * Properties to be read when parsing the ini file
  *
  * @var array
  **/
 	protected $_configProperties = array();
+
 /**
  * Paths to search files on.
  *
  * @var array Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
  **/
 	public $searchPaths = array();
+
 /**
  * Remove inline comments?
  *
  * @var boolean
  **/
 	public $stripComments = false;
+
+/**
+ * File path cached files should be saved to.
+ *
+ * @var string
+ */
+	public $cacheFilePath = null;
+
+/**
+ * Should cache files be made.
+ *
+ * @var boolean
+ */
+	public $cacheFiles = false;
+
 /**
  * Flag for keeping track comment block status.
  *
  * @var boolean
  **/
 	protected $_inCommentBlock = false;
+
 /**
  * Contains a hashmap of path -> filescans
  *
  * @var array
  **/
 	protected $_fileLists;
+
 /**
  * An array of already loaded + processed files, used to prevent double inclusion and infinite loops.
  *
  * @var array
  **/
 	protected $_loaded = array();
+
 /**
  * buffer for processed Output
  *
  * @var string
  **/
 	protected $_processedOutput = '';
+
 /**
  * constructor for the model
  *
@@ -148,12 +170,23 @@ abstract class AssetCompressor extends Object {
 		}
 		$this->_processedOutput .= $line;
 	}
+
+/**
+ * Check if caching is on for this asset.
+ *
+ * @return void
+ */
+	public function cachingOn() {
+		return $this->cacheFiles && !empty($this->cacheFilePath);
+	}
+
 /**
  * Find the file that matches an $object name.
  *
  * @return string The path to $object's file.
  **/
 	abstract protected function _findFile($object);
+
 /**
  * Preprocess the file as needed
  *
@@ -161,4 +194,15 @@ abstract class AssetCompressor extends Object {
  * @return string The processed file contents
  **/
 	abstract protected function _preprocess($filename);
+
+/**
+ * Write a cache file for a specific key/
+ *
+ * @param string $key The filename to write.
+ * @param string $content The content to write.
+ * @return void
+ */
+	public function cache($key, $content) {
+		
+	}
 }
