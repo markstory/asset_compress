@@ -1,7 +1,8 @@
 <?php
 /**
  * CSS File Preprocessor model.
- * Preprocesss CSS files for @import() statements.
+ * Preprocesss CSS files for @import() statements. All @import() statements will be
+ * inlined, making one larger CSS file.
  * 
  * Uses Plugin config.ini file for path and other directive information.
  *

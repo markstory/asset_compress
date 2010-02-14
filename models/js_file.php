@@ -30,6 +30,11 @@ class JsFile extends AssetCompressor {
 /**
  * pattern for finding dependancies.
  *
+ * matches:
+ *
+ * - //= require "foo"
+ * - //= require <foo>
+ *
  * @var string
  **/
 	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
