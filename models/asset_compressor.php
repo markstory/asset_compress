@@ -3,7 +3,7 @@
  * Resource compressor base class for File compacting models.
  *
  */
-abstract class AssetCompressor extends Object {
+abstract class AssetCompressor {
 /**
  * config.ini key name for this asset types configuration.
  *
@@ -211,6 +211,16 @@ abstract class AssetCompressor extends Object {
 	abstract protected function _preprocess($filename);
 
 /**
+ * get the header line for a cached file.
+ * Helps denote files cached by plugin so they can be cleared.
+ *
+ * @return string File header string.
+ */
+	protected function _getFileHeader() {
+		return "/* asset_compress " . time() . " */\n";
+	}
+
+/**
  * Write a cache file for a specific key/
  *
  * @param string $key The filename to write.
@@ -222,9 +232,10 @@ abstract class AssetCompressor extends Object {
 		if (!is_writable($writeDirectory)) {
 			throw new Exception(sprintf('Cannot write to %s bailing on writing cache file.', $writeDirectory));
 		}
+		$header = $this->_getFileHeader();
 		$filename = $writeDirectory . $key;
-		$this->log($filename);
 		$file = new File($filename, true);
-		return $file->write($content);
+		return $file->write($header . $content);
 	}
+
 }
