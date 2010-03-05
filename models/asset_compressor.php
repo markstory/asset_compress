@@ -159,7 +159,7 @@ abstract class AssetCompressor {
  * @return string constants replaced
  */
 	protected function _replacePathConstants($path) {
-		$constantMap = array('APP' => APP, 'WEBROOT' => WWW_ROOT);
+		$constantMap = array('APP/' => APP, 'WEBROOT/' => WWW_ROOT);
 		return str_replace(array_keys($constantMap), array_values($constantMap), $path);
 	}
 
@@ -221,11 +221,20 @@ abstract class AssetCompressor {
 	}
 
 /**
+ * get the directory cached files are written to.
+ *
+ * @return string Path for files.
+ */
+	public function cacheDir() {
+		return $this->_replacePathConstants($this->cacheFilePath);
+	}
+
+/**
  * Write a cache file for a specific key/
  *
  * @param string $key The filename to write.
  * @param string $content The content to write.
- * @return void
+ * @return boolean sucess of write operation.
  */
 	public function cache($key, $content) {
 		$writeDirectory = $this->_replacePathConstants($this->cacheFilePath);
@@ -234,8 +243,7 @@ abstract class AssetCompressor {
 		}
 		$header = $this->_getFileHeader();
 		$filename = $writeDirectory . $key;
-		$file = new File($filename, true);
-		return $file->write($header . $content);
+		return file_put_contents($filename, $header . $content);
 	}
 
 }
