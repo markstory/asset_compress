@@ -7,9 +7,9 @@
  *
  * You add files to be compressed using `script` and `css`.  All files added to a key name
  * will be processed and joined before being served.  When in debug = 2, no files are cached.
- * 
+ *
  * If debug = 0, the processed file will be cached to disk.  You can also use the routes
- * and config file to create static 'built' files. These built files must have unique names, or 
+ * and config file to create static 'built' files. These built files must have unique names, or
  * as they are made they will overwrite each other.  You can clear built files
  * with the shell provided in the plugin.
  *
@@ -28,7 +28,7 @@ class AssetCompressHelper extends AppHelper {
  * - `cssCompressUrl` - Url to use for getting compressed css files.
  *
  * @var array
- **/
+ */
 	public $options = array(
 		'autoIncludePath' => 'views',
 		'cssCompressUrl' => array(
@@ -47,28 +47,28 @@ class AssetCompressHelper extends AppHelper {
  * Scripts to be included keyed by final filename.
  *
  * @var array
- **/
+ */
 	protected $_scripts = array();
 
 /**
  * CSS files to be included keyed by final filename.
  *
  * @var array
- **/
+ */
 	protected $_css = array();
 
 /**
  * Disable autoInclusion of view js files.
  *
  * @var string
- **/
+ */
 	public $autoInclude = true;
 
 /**
  * Set options, merge with existing options.
  *
  * @return void
- **/
+ */
 	public function options($options) {
 		$this->options = Set::merge($options);
 	}
@@ -83,7 +83,7 @@ class AssetCompressHelper extends AppHelper {
  * http://bakery.cakephp.org/articles/view/automatic-javascript-includer-helper
  *
  * @return void
- **/
+ */
 	public function afterRender() {
 		$this->_includeViewJs();
 		$this->includeAssets(false);
@@ -93,7 +93,7 @@ class AssetCompressHelper extends AppHelper {
  * Includes the auto view js files if enabled.
  *
  * @return void
- **/
+ */
 	protected function _includeViewJs() {
 		if (!$this->autoInclude) {
 			return;
@@ -118,28 +118,45 @@ class AssetCompressHelper extends AppHelper {
  *
  * @param boolean $inline Whether you want the files inline or added to scripts_for_layout
  * @return string Empty string or string containing asset link tags.
- **/
+ */
 	public function includeAssets($inline = true) {
 		$out = array();
-		foreach ($this->_scripts as $destination => $files) {
-			$fileString = 'file[]=' . implode('&file[]=', $files);
-			$url = Router::url(array_merge(
-				$this->options['jsCompressUrl'], 
-				array($destination . '.js', '?' => $fileString)
-			));
-			$out[] = $this->Html->script($url, array('inline' => $inline));
-			$this->_scripts[$destination] = array();
-		}
-		foreach ($this->_css as $destination => $files) {
-			$fileString = 'file[]=' . implode('&file[]=', $files);
-			$url = Router::url(array_merge(
-				$this->options['cssCompressUrl'],
-				array($destination . '.css', '?' => $fileString)
-			));
-			$out[] = $this->Html->css($url, null, array('inline' => $inline));
-			$this->_css[$destination] = array();
-		}
+
+		$scripts = $this->_generateFiles('_scripts', 'jsCompressUrl', '.js', $inline);
+		$css = $this->_generateFiles('_css', 'cssCompressUrl', '.css', $inline);
+		$out = array_merge($scripts, $css);
 		return implode("\n", $out);
+	}
+
+/**
+ * Generates a asset set. Kind of a hacky method, but better than two loops I think.
+ *
+ * @param string $type Either '_scripts', or '_css
+ * @param string $urlKey Either 'cssCompressUrl' or 'jsCompressUrl'
+ * @param string $extension The extension of the final output file.
+ * @param string $inline Inline or not,
+ * @return array
+ */
+	private function _generateFiles($type, $urlKey, $extension, $inline) {
+		$assets = array();
+		foreach ($this->{$type} as $destination => $files) {
+			$fileString = 'file[]=' . implode('&file[]=', $files);
+
+			$destination .= $extension;
+			$url = Router::url(array_merge($this->options[$urlKey], array($destination, '?' => $fileString)));
+
+			list($base, $query) = explode('?', $url);
+			if (file_exists(WWW_ROOT . $base)) {
+				$url = $base;
+			}
+			if ($type == '_css') {
+				$assets[] = $this->Html->css($url, null, array('inline' => $inline));
+			} else {
+				$assets[] = $this->Html->script($url, array('inline' => $inline));
+			}
+			$this->{$type}[$destination] = array();
+		}
+		return $assets;
 	}
 
 /**
@@ -149,7 +166,7 @@ class AssetCompressHelper extends AppHelper {
  * @param string $file Name of file to include.
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
- **/
+ */
 	public function script($file, $destination = 'default') {
 		if (empty($this->_scripts[$destination])) {
 			$this->_scripts[$destination] = array();
@@ -164,7 +181,7 @@ class AssetCompressHelper extends AppHelper {
  * @param string $file Name of file to include.
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
- **/
+ */
 	public function css($file, $destination = 'default') {
 		if (empty($this->_css[$destination])) {
 			$this->_css[$destination] = array();
