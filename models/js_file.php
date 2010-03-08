@@ -27,7 +27,8 @@ class JsFile extends AssetCompressor {
  * @var array
  **/
 	protected $_configProperties = array('stripComments', 'searchPaths', 'requirePattern', 
-		'cacheFilePath', 'cacheFiles');
+		'cacheFilePath', 'cacheFiles', 'filters'
+	);
 /**
  * pattern for finding dependancies.
  *

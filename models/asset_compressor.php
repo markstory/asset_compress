@@ -47,6 +47,20 @@ abstract class AssetCompressor {
 	public $cacheFiles = false;
 
 /**
+ * Attached filters, contains only the string names of the filters.
+ *
+ * @var array
+ */
+	public $filters = array();
+
+/**
+ * Filter objects that will be run
+ *
+ * @var array
+ */
+	protected $_filterObjects = array();
+
+/**
  * Flag for keeping track comment block status.
  *
  * @var boolean
@@ -126,10 +140,7 @@ abstract class AssetCompressor {
 			$fileName = $this->_findFile($object);
 			$this->_preprocess($fileName);
 		}
-		/*
-		TODO implement a filter set.  So you could add a number of classes/functions to apply to the 
-		concatenated output.  Like compressors etc.
-		*/
+		$this->_applyFilters();
 		$out = trim($this->_processedOutput);
 		$this->reset();
 		return $out;
@@ -184,6 +195,54 @@ abstract class AssetCompressor {
 			return;
 		}
 		$this->_processedOutput .= $line;
+	}
+
+/**
+ * Apply the defined filter sets to the processedOutput.
+ *
+ * Filters are defined in the config file as a class to run.  This class must implement the
+ * `AssetFilterInterface` in the plugin.  Each filter will be run in the order defined in
+ * the configuration file.
+ * 
+ * The method should return the results of its application as a string.
+ * If you use more than one filter, make sure they don't clobber each other :)
+ *
+ * @return void
+ * @throws Exception
+ */
+	protected function _applyFilters() {
+		if (empty($this->filters)) {
+			return;
+		}
+		$this->_loadFilters();
+		if (empty($this->_filterObjects)) {
+			return;
+		}
+		$output = $this->_processedOutput;
+		foreach ($this->_filterObjects as $filter) {
+			$output = $filter->filter($output);
+		}
+		$this->_processedOutput = $output;
+	}
+
+/**
+ * Loads the filters defined in $filters from the app/libs dir.
+ *
+ * @return void
+ */
+	protected function _loadFilters() {
+		foreach ($this->filters as $filter) {
+			App::import('Lib', 'asset_compress/' . $filter);
+			$className = $filter . 'Filter';
+			if (!class_exists($className)) {
+				throw new Exception(sprintf('Cannot not load %s filter.', $filter));
+			}
+			$filterObj = new $className();
+			if (!$filterObj instanceof AssetFilterInterface) {
+				throw new Exception('Cannot use filters that do not implenment AssetFilterInterface');
+			}
+			$this->_filterObjects[] = $filterObj;
+		}
 	}
 
 /**
@@ -247,3 +306,4 @@ abstract class AssetCompressor {
 	}
 
 }
+
