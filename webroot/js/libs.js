@@ -2,56 +2,17 @@
 License:
 	MIT-style license.
 */
-if (window.App == undefined) {
-	window.App = {};
+if (window.AssetCompress == undefined) {
+	window.AssetCompress = {};
 }
 if (window.basePath == undefined) {
 	window.basePath = '/';
 }
 
-// set the url used to load additional js class files.
-App.classUrl = window.basePath + 'asset_compress/js_files/join/'
-
-/*
-Fire Application events. Used to trigger logic for blocks of your application's Javascript
-When combined with the automatic javascript includer on the server you can call
-
-	App.Dispatcher.dispatch('users/index');
-
-This will fire:
-
- - App.users.beforeAction (if it exists)
- - App.users.index (if it exists)
-
-Will return the value from the called action or return false if the method was not found.
-*/
-App.Dispatcher = function () {
-	var PATH_SEPARATOR = '/';
-
-	return {
-		dispatch: function (url) {
-			var params = this._parseUrl(url);
-			if (App[params.controller] === undefined || App[params.controller][params.action] === undefined) {
-				return false;
-			}
-			if (typeof App[params.controller].beforeAction == 'function') {
-				App[params.controller].beforeAction(params);
-			}
-			return App[params.controller][params.action](params);
-		},
-		
-		_parseUrl: function (url) {
-			var params = {};
-			var urlParts = url.split(PATH_SEPARATOR);
-			if (urlParts.length == 1) {
-				urlParts[1] = 'index';
-			}
-			params.controller = urlParts[0];
-			params.action = urlParts[1];
-			return params;
-		}
-	}
-}();
+// Set the url used to load additional js class files.
+if (AssetCompress.url == undefined) {
+	AssetCompress.classUrl = window.basePath + 'asset_compress/js_files/join/'
+}
 
 /*
 Load class/resource files from the compressor.
@@ -66,7 +27,7 @@ Example
 
 Will load Template, and OtherClass through the asset_compressor and fire the function when complete.
 */
-App.load = function () {
+AssetCompress.load = function () {
 
 	function _appendScript(filename, callback) {
 		var head = document.getElementsByTagName("head")[0];
@@ -91,7 +52,7 @@ App.load = function () {
 	}
 	for (var i = args.length; i; i--) {
 		var className = args[i];
-		if (window.className !== undefined) {
+		if (window[className] !== undefined) {
 			delete args[i];
 		}
 	}
@@ -99,22 +60,3 @@ App.load = function () {
 	_appendScript(filename, readyCallback);
 };
 
-/*
-Used to safely declare a controller namespace, so js files for actions can safely create their
-controller object.
-
-Example:
-
-	App.makeController('users');
-	App.users.edit = {
-		...
-	};
-
-*/
-App.makeController = function (name) {
-	if (this[name] === undef) {
-		this[name] = {};
-		return this[name];
-	}
-	return this[name];
-};
