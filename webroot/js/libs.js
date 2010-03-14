@@ -11,7 +11,7 @@ if (window.basePath == undefined) {
 
 // Set the url used to load additional js class files.
 if (AssetCompress.url == undefined) {
-	AssetCompress.classUrl = window.basePath + 'asset_compress/js_files/join/'
+	AssetCompress.classUrl = window.basePath + 'asset_compress/js_files/get/'
 }
 
 /*
@@ -50,13 +50,15 @@ AssetCompress.load = function () {
 	if (typeof args[args.length -1] == 'function') {
 		readyCallback = args.pop();
 	}
-	for (var i = args.length; i; i--) {
+	var buildName = [];
+	for (var i = args.length; i--;) {
 		var className = args[i];
+		buildName.push(className);
 		if (window[className] !== undefined) {
 			delete args[i];
 		}
 	}
-	var filename = App.classUrl + args.join('/');
+	var filename = AssetCompress.classUrl + buildName.reverse().join('-') + '?file[]=' + args.join('&file[]=');
 	_appendScript(filename, readyCallback);
 };
 
