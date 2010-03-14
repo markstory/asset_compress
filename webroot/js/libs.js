@@ -61,7 +61,13 @@ AssetCompress.load = function () {
 			delete args[i];
 		}
 	}
-	filename = AssetCompress.classUrl + buildName.reverse().join('-') + '?file[]=' + args.join('&file[]=');
+	filename = AssetCompress.classUrl + 
+		AssetCompress.underscore(buildName.reverse().join('')) + '.js' + 
+		'?file[]=' + args.join('&file[]=');
+
 	_appendScript(filename, readyCallback);
 };
+AssetCompress.underscore = function (camelCased) {
+	return camelCased.replace(/([A-Z])(?=[a-z0-9])/g, '_$1', '_\1').toLowerCase().substring(1);
+}
 
