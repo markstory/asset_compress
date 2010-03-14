@@ -44,21 +44,24 @@ AssetCompress.load = function () {
 		head.appendChild(script);
 	}
 
-	var args = Array.prototype.slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments),
+		readyCallback = function () {},
+		buildName = [],
+		i, className,
+		filename;
 
-	var readyCallback = function () {};
 	if (typeof args[args.length -1] == 'function') {
 		readyCallback = args.pop();
 	}
-	var buildName = [];
-	for (var i = args.length; i--;) {
-		var className = args[i];
+
+	for (i = args.length; i--;) {
+		className = args[i];
 		buildName.push(className);
 		if (window[className] !== undefined) {
 			delete args[i];
 		}
 	}
-	var filename = AssetCompress.classUrl + buildName.reverse().join('-') + '?file[]=' + args.join('&file[]=');
+	filename = AssetCompress.classUrl + buildName.reverse().join('-') + '?file[]=' + args.join('&file[]=');
 	_appendScript(filename, readyCallback);
 };
 
