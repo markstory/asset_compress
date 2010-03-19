@@ -121,10 +121,10 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeAssets($inline = true) {
 		$out = array();
-
-		$scripts = $this->_generateFiles('_scripts', 'jsCompressUrl', '.js', $inline);
+		
 		$css = $this->_generateFiles('_css', 'cssCompressUrl', '.css', $inline);
-		$out = array_merge($scripts, $css);
+		$scripts = $this->_generateFiles('_scripts', 'jsCompressUrl', '.js', $inline);
+		$out = array_merge($css, $scripts);
 		return implode("\n", $out);
 	}
 
