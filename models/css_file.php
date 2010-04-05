@@ -24,7 +24,7 @@ class CssFile extends AssetCompressor {
  *
  * @var array
  **/
-	protected $_configProperties = array('searchPaths', 'stripComments', 'cacheFilePath', 'cacheFiles');
+	protected $_configProperties = array('filters', 'searchPaths', 'stripComments', 'cacheFilePath', 'cacheFiles');
 
 /**
  * pattern for finding @import.
