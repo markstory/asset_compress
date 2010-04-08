@@ -143,7 +143,10 @@ class AssetCompressHelper extends AppHelper {
 			$fileString = 'file[]=' . implode('&file[]=', $files);
 
 			$destination .= $extension;
-			$url = Router::url(array_merge($this->options[$urlKey], array($destination, '?' => $fileString)));
+			$url = Router::url(array_merge(
+				$this->options[$urlKey],
+				array($destination, '?' => $fileString, 'base' => false)
+			));
 
 			list($base, $query) = explode('?', $url);
 			if (file_exists(WWW_ROOT . $base)) {
