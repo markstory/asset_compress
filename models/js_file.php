@@ -21,14 +21,7 @@ class JsFile extends AssetCompressor {
  * @var string
  **/
 	protected $_configKeyName = 'Javascript';
-/**
- * Properties to set from the config file.
- *
- * @var array
- **/
-	protected $_configProperties = array('stripComments', 'searchPaths', 'requirePattern', 
-		'cacheFilePath', 'cacheFiles', 'filters'
-	);
+
 /**
  * pattern for finding dependancies.
  *

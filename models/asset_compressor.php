@@ -12,46 +12,23 @@ abstract class AssetCompressor {
 	protected $_configKeyName = '';
 
 /**
- * Properties to be read when parsing the ini file
- *
- * @var array
- **/
-	protected $_configProperties = array();
-
-/**
- * Paths to search files on.
- *
- * @var array Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
- **/
-	public $searchPaths = array();
-
-/**
- * Remove inline comments?
- *
- * @var boolean
- **/
-	public $stripComments = false;
-
-/**
- * File path cached files should be saved to.
- *
- * @var string
- */
-	public $cacheFilePath = null;
-
-/**
- * Should cache files be made.
- *
- * @var boolean
- */
-	public $cacheFiles = false;
-
-/**
- * Attached filters, contains only the string names of the filters.
- *
+ * An array of settings, these values are merged with the ones defined in the ini file.
+ * 
+ * - `searchPaths` - Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
+ * - `stripComments` - Remove inline comments?
+ * - `cacheFilePath` - File path cached files should be saved to.
+ * - `cacheFiles` - Should cache files be made.
+ * - `filters` - Attached filters, contains only the string names of the filters.
+ * 
  * @var array
  */
-	public $filters = array();
+	public $settings = array(
+		'searchPaths' => array(),
+		'stripComments' => false,
+		'cacheFilePath' => null,
+		'cacheFiles' => false,
+		'filters' => array()
+	);
 
 /**
  * Filter objects that will be run
@@ -111,13 +88,9 @@ abstract class AssetCompressor {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
 			return false;
 		}
-		$settings = parse_ini_file($filename, true);
-		foreach ($this->_configProperties as $name) {
-			if (isset($settings[$this->_configKeyName][$name])) {
-				$this->{$name} = $settings[$this->_configKeyName][$name];
-			}
-		}
-		if (empty($this->searchPaths)) {
+		$iniSettings = parse_ini_file($filename, true);
+		$this->settings = array_merge($this->settings, $iniSettings[$this->_configKeyName]);
+		if (empty($this->settings['searchPaths'])) {
 			throw new Exception('searchPaths was empty! Make sure you configured at least one searchPaths[] in your config.ini file');
 		}
 	}
@@ -152,10 +125,10 @@ abstract class AssetCompressor {
  * @return void
  **/
 	protected function _readDirs() {
-		foreach ($this->searchPaths as $i => $path) {
-			$this->searchPaths[$i] = $this->_replacePathConstants($path);
+		foreach ($this->settings['searchPaths'] as $i => $path) {
+			$this->settings['searchPaths'][$i] = $this->_replacePathConstants($path);
 		}
-		foreach ($this->searchPaths as $path) {
+		foreach ($this->settings['searchPaths'] as $path) {
 			$this->_Folder->cd($path);
 			list($dirs, $files) = $this->_Folder->read();
 			$this->_fileLists[$path] = $files;
@@ -190,7 +163,7 @@ abstract class AssetCompressor {
  * @return void
  **/
 	protected function _record($line) {
-		if ($this->stripComments) {
+		if ($this->settings['stripComments']) {
 			$this->_processedOutput .= $this->_stripComments($line);
 			return;
 		}
@@ -211,7 +184,7 @@ abstract class AssetCompressor {
  * @throws Exception
  */
 	protected function _applyFilters() {
-		if (empty($this->filters)) {
+		if (empty($this->settings['filters'])) {
 			return;
 		}
 		$this->_loadFilters();
@@ -231,7 +204,7 @@ abstract class AssetCompressor {
  * @return void
  */
 	protected function _loadFilters() {
-		foreach ($this->filters as $filter) {
+		foreach ($this->setttings['filters'] as $filter) {
 			App::import('Lib', 'asset_compress/' . $filter);
 			$className = $filter . 'Filter';
 			if (!class_exists($className)) {
@@ -251,7 +224,7 @@ abstract class AssetCompressor {
  * @return void
  */
 	public function cachingOn() {
-		return $this->cacheFiles && !empty($this->cacheFilePath);
+		return $this->settings['cacheFiles'] && !empty($this->settings['cacheFilePath']);
 	}
 
 /**
@@ -285,7 +258,7 @@ abstract class AssetCompressor {
  * @return string Path for files.
  */
 	public function cacheDir() {
-		return $this->_replacePathConstants($this->cacheFilePath);
+		return $this->_replacePathConstants($this->settings['cacheFilePath']);
 	}
 
 /**
@@ -296,7 +269,7 @@ abstract class AssetCompressor {
  * @return boolean sucess of write operation.
  */
 	public function cache($key, $content) {
-		$writeDirectory = $this->_replacePathConstants($this->cacheFilePath);
+		$writeDirectory = $this->_replacePathConstants($this->settings['cacheFilePath']);
 		if (!is_writable($writeDirectory)) {
 			throw new Exception(sprintf('Cannot write to %s bailing on writing cache file.', $writeDirectory));
 		}

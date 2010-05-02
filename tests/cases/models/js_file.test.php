@@ -21,8 +21,8 @@ class JsFileTestCase extends CakeTestCase {
 	function testConstruction() {
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 		$JsFile = new JsFile($testFile);
-		$this->assertTrue($JsFile->stripComments);
-		$this->assertEqual($JsFile->searchPaths, array('/test/path', '/other/path'));
+		$this->assertTrue($JsFile->settings['stripComments']);
+		$this->assertEqual($JsFile->settings['searchPaths'], array('/test/path', '/other/path'));
 	}
 
 /**
@@ -31,8 +31,8 @@ class JsFileTestCase extends CakeTestCase {
  * @return void
  **/
 	function testSimpleProcess() {
-		$this->JsFile->stripComments = false;
-		$this->JsFile->searchPaths = array(
+		$this->JsFile->settings['stripComments'] = false;
+		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
@@ -69,8 +69,8 @@ TEXT;
  * @return void
  **/
 	function testDoubleInclusions() {
-		$this->JsFile->stripComments = false;
-		$this->JsFile->searchPaths = array(
+		$this->JsFile->settings['stripComments'] = false;
+		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
@@ -94,8 +94,8 @@ TEXT;
  * @return void
  **/
 	function testMoreThanOneArg() {
-		$this->JsFile->stripComments = false;
-		$this->JsFile->searchPaths = array(
+		$this->JsFile->settings['stripComments'] = false;
+		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
@@ -123,8 +123,8 @@ TEXT;
  * @return void
  **/
 	function testAngleBracketScanning() {
-		$this->JsFile->stripComments = false;
-		$this->JsFile->searchPaths = array(
+		$this->JsFile->settings['stripComments'] = false;
+		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
@@ -155,8 +155,8 @@ TEXT;
  * @return void
  **/
 	function testCommentStripping() {
-		$this->JsFile->stripComments = true;
-		$this->JsFile->searchPaths = array(
+		$this->JsFile->settings['stripComments'] = true;
+		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 		);
 		$result = $this->JsFile->process('LibraryFile');

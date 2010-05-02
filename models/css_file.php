@@ -20,13 +20,6 @@ class CssFile extends AssetCompressor {
 	protected $_configKeyName = 'Css';
 
 /**
- * properties to be read from ini file.
- *
- * @var array
- **/
-	protected $_configProperties = array('filters', 'searchPaths', 'stripComments', 'cacheFilePath', 'cacheFiles');
-
-/**
  * pattern for finding @import.
  *
  * @var string
