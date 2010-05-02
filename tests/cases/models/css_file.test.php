@@ -20,8 +20,8 @@ class CssFileTestCase extends CakeTestCase {
 	function testConstruction() {
 		$testFile = $this->_pluginPath . 'tests/test_files/config/config.ini';
 		$CssFile = new CssFile($testFile);
-		$this->assertTrue($CssFile->stripComments);
-		$this->assertEqual($CssFile->searchPaths, array('/test/css', '/test/css/more'));
+		$this->assertTrue($CssFile->settings['stripComments']);
+		$this->assertEqual($CssFile->settings['searchPaths'], array('/test/css', '/test/css/more'));
 	}
 /**
  * test @import processing
@@ -29,8 +29,8 @@ class CssFileTestCase extends CakeTestCase {
  * @return void
  **/
 	function testImportProcessing() {
-		$this->CssFile->stripComments = false;
-		$this->CssFile->searchPaths = array(
+		$this->CssFile->settings['stripComments'] = false;
+		$this->CssFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests/test_files/css/',
 		);
 		$result = $this->CssFile->process('has_import');
@@ -55,8 +55,8 @@ TEXT;
  * @return void
  **/
 	function testCommentRemoval() {
-		$this->CssFile->stripComments = true;
-		$this->CssFile->searchPaths = array(
+		$this->CssFile->settings['stripComments'] = true;
+		$this->CssFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests/test_files/css/',
 		);
 		$result = $this->CssFile->process('has_comments');
@@ -78,10 +78,10 @@ TEXT;
  * @return void
  */
 	function testCachingAndFileHeaders() {
-		$this->CssFile->stripComments = true;
-		$this->CssFile->cacheFiles = true;
-		$this->CssFile->cacheFilePath = TMP . 'tests' . DS;
-		$this->CssFile->searchPaths = array(
+		$this->CssFile->settings['stripComments'] = true;
+		$this->CssFile->settings['cacheFiles'] = true;
+		$this->CssFile->settings['cacheFilePath'] = TMP . 'tests' . DS;
+		$this->CssFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests/test_files/css/',
 		);
 		$contents = $this->CssFile->process('has_comments');
