@@ -72,7 +72,10 @@ abstract class AssetCompressor {
  **/
 	public function __construct($iniFile = null) {
 		$this->_Folder = new Folder(APP);
-		if (!is_string($iniFile) || empty($iniFile)) {
+		if (empty($iniFile)) {
+			$iniFile = CONFIGS . 'asset_compress.ini';
+		}
+		if (!file_exists($iniFile)) {
 			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
 		}
 		$this->_readConfig($iniFile);
