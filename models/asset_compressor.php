@@ -27,8 +27,16 @@ abstract class AssetCompressor {
 		'stripComments' => false,
 		'cacheFilePath' => null,
 		'cacheFiles' => false,
-		'filters' => array()
+		'filters' => array(),
+		'timestamp' => false
 	);
+
+/**
+ * Filename that contains the timestamp value for stamping files.
+ *
+ * @var string
+ */
+	public $timestampFilename = 'asset_compress_build_time';
 
 /**
  * Filter objects that will be run
@@ -277,8 +285,59 @@ abstract class AssetCompressor {
 			throw new Exception(sprintf('Cannot write to %s bailing on writing cache file.', $writeDirectory));
 		}
 		$header = $this->_getFileHeader();
+		if ($this->settings['timestamp']) {
+			$key = $this->_timestampFilename($key);
+		}
 		$filename = $writeDirectory . $key;
 		return file_put_contents($filename, $header . $content);
+	}
+
+/**
+ * Creates a file in APP/tmp that contains a timestamp this file
+ * is used for timestampping assets as they get built.
+ *
+ * @return void
+ */
+	public function createBuildTimestamp() {
+		$path = TMP . $this->timestampFilename;
+		$time = time();
+		file_put_contents($path, $time);
+	}
+
+/**
+ * Clears the build timestamp file.
+ *
+ * @return void
+ */
+	public function clearBuildTimestamp() {
+		unlink(TMP . $this->timestampFilename);
+	}
+
+/**
+ * Appends a timestamp after the last extension in a file name or simply appends
+ * the timestamp if there is no extension.  Does not use the current time. This 
+ * would allow for DOS attacks by randomly hitting timestamp filenames and forcing the
+ * server to build additional files. Instead a secondary
+ * file is used for getting the timestamp.  To clear this file use the console.
+ *
+ * @return string filename with a timestamp added.
+ * @see AssetCompressor::$timestampFilename
+ */
+	protected function _timestampFilename($name) {
+		$ext = null;
+		$dot = strrpos($name, '.');
+		if ($dot !== false) {
+			$ext = substr($name, $dot);
+			$name = substr($name, 0, $dot);
+		}
+		$timestampFile = TMP . $this->timestampFilename;
+		if (file_exists($timestampFile)) {
+			$timestamp = file_get_contents(TMP . $this->timestampFilename);	
+		} else {
+			$timestamp = time();
+			$this->createBuildTimestamp();
+		}
+		return $name . '.' . $timestamp . $ext;
 	}
 
 }

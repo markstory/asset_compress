@@ -183,6 +183,62 @@ here
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that js files cache correctly.
+ *
+ * @return void
+ */
+	function testFileCaching() {
+		$this->JsFile->settings['stripComments'] = true;
+		$this->JsFile->settings['cacheFiles'] = true;
+		$this->JsFile->settings['cacheFilePath'] = TMP . 'tests' . DS;
+		$this->JsFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests/test_files/js/',
+		);
+		$contents = 'some javascript;';
+		$result = $this->JsFile->cache('test_js_asset', $contents);
+		$this->assertTrue($result);
+
+		$time = time();
+		$expected = <<<TEXT
+/* asset_compress $time */
+some javascript;
+TEXT;
+		$contents = file_get_contents(TMP . 'tests/test_js_asset');
+		$this->assertEqual($contents, $expected);
+		unlink(TMP . 'tests/test_js_asset');
+	}
+
+/**
+ * test that files get timestampped when the setting is on.
+ *
+ * @return void
+ */
+	function testFileTimestampping() {
+		$this->JsFile->clearBuildTimestamp();
+		$this->JsFile->settings['stripComments'] = true;
+		$this->JsFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+		);
+		$this->JsFile->settings['cacheFiles'] = true;
+		$this->JsFile->settings['cacheFilePath'] = TMP . 'tests' . DS;
+		$this->JsFile->settings['timestamp'] = true;
+		$contents ='some javascript';
+
+		$result = $this->JsFile->cache('test_js_asset.js', $contents);
+		$this->assertTrue($result);
+
+		$time = time();
+		$expected = <<<TEXT
+/* asset_compress $time */
+some javascript
+TEXT;
+		$contents = file_get_contents(TMP . 'tests/test_js_asset.' . $time . '.js');
+		$this->assertEqual($contents, $expected);
+		unlink(TMP . 'tests/test_js_asset.' . $time . '.js');
+	}
+
 /**
  * endTest
  *
