@@ -337,7 +337,10 @@ abstract class AssetCompressor {
 			$timestamp = time();
 			$this->createBuildTimestamp();
 		}
-		return $name . '.' . $timestamp . $ext;
+		if (strpos($name, $timestamp) === false) {
+			$name .= '.' . $timestamp;
+		}
+		return $name . $ext;
 	}
 
 }

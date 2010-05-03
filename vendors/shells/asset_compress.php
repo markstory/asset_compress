@@ -25,10 +25,12 @@ class AssetCompressShell extends Shell {
 		$this->hr();
 		$this->_clearJs();
 
+		$this->out('');
 		$this->out('Clearing CSS build files:');
 		$this->hr();
 		$this->_clearCss();
 		
+		$this->out('');
 		$this->out('Updating build timestamp file:');
 		$this->hr();
 		$this->JsFile->clearBuildTimestamp();
