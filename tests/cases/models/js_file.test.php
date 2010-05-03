@@ -234,8 +234,20 @@ TEXT;
 /* asset_compress $time */
 some javascript
 TEXT;
-		$contents = file_get_contents(TMP . 'tests/test_js_asset.' . $time . '.js');
-		$this->assertEqual($contents, $expected);
+		$result = file_get_contents(TMP . 'tests/test_js_asset.' . $time . '.js');
+		$this->assertEqual($result, $expected);
+		unlink(TMP . 'tests/test_js_asset.' . $time . '.js');
+
+		$time = time();
+		$result = $this->JsFile->cache('test_js_asset.' . $time . '.js', $contents);
+		$this->assertTrue($result);
+
+		$expected = <<<TEXT
+/* asset_compress $time */
+some javascript
+TEXT;
+		$result = file_get_contents(TMP . 'tests/test_js_asset.' . $time . '.js');
+		$this->assertEqual($result, $expected);
 		unlink(TMP . 'tests/test_js_asset.' . $time . '.js');
 	}
 
