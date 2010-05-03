@@ -65,6 +65,35 @@ class AssetCompressHelper extends AppHelper {
 	public $autoInclude = true;
 
 /**
+ * parsed ini file values.
+ *
+ * @var array
+ */
+	protected $_iniFile;
+
+/**
+ * Contains the build timestamp from the file.
+ *
+ * @var string
+ */
+	protected $_buildTimestamp;
+
+/**
+ * Constructor - finds and parses the ini file the plugin uses.
+ *
+ * @return void
+ */
+	public function __construct($options) {
+		if (empty($iniFile)) {
+			$iniFile = CONFIGS . 'asset_compress.ini';
+		}
+		if (!is_string($iniFile) || !file_exists($iniFile)) {
+			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
+		}
+		$this->_iniFile = parse_ini_file($iniFile, true);
+	}
+
+/**
  * Set options, merge with existing options.
  *
  * @return void
@@ -121,7 +150,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeAssets($inline = true) {
 		$out = array();
-		
+
 		$css = $this->_generateFiles('_css', 'cssCompressUrl', '.css', $inline);
 		$scripts = $this->_generateFiles('_scripts', 'jsCompressUrl', '.js', $inline);
 		$out = array_merge($css, $scripts);
@@ -141,6 +170,11 @@ class AssetCompressHelper extends AppHelper {
 		$assets = array();
 		foreach ($this->{$type} as $destination => $files) {
 			$fileString = 'file[]=' . implode('&file[]=', $files);
+			$iniKey = $type == '_css' ? 'Css' : 'Javascript';
+
+			if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
+				$destination = $this->_timestampFile($destination);
+			}
 
 			$destination .= $extension;
 			$url = Router::url(array_merge(
@@ -160,6 +194,18 @@ class AssetCompressHelper extends AppHelper {
 			$this->{$type}[$destination] = array();
 		}
 		return $assets;
+	}
+
+/**
+ * Adds the build timestamp to a filename
+ *
+ * @return void
+ */
+	protected function _timestampFile($name) {
+		if (empty($this->_buildTimestamp)) {
+			$this->_buildTimestamp = '.' . file_get_contents(TMP . 'asset_compress_build_time');
+		}
+		return $name . $this->_buildTimestamp;
 	}
 
 /**

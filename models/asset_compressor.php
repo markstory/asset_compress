@@ -36,7 +36,7 @@ abstract class AssetCompressor {
  *
  * @var string
  */
-	public $timestampFilename = 'asset_compress_build_time';
+	protected $_timestampFilename = 'asset_compress_build_time';
 
 /**
  * Filter objects that will be run
@@ -299,7 +299,7 @@ abstract class AssetCompressor {
  * @return void
  */
 	public function createBuildTimestamp() {
-		$path = TMP . $this->timestampFilename;
+		$path = TMP . $this->_timestampFilename;
 		$time = time();
 		file_put_contents($path, $time);
 	}
@@ -310,7 +310,7 @@ abstract class AssetCompressor {
  * @return void
  */
 	public function clearBuildTimestamp() {
-		unlink(TMP . $this->timestampFilename);
+		unlink(TMP . $this->_timestampFilename);
 	}
 
 /**
@@ -330,9 +330,9 @@ abstract class AssetCompressor {
 			$ext = substr($name, $dot);
 			$name = substr($name, 0, $dot);
 		}
-		$timestampFile = TMP . $this->timestampFilename;
+		$timestampFile = TMP . $this->_timestampFilename;
 		if (file_exists($timestampFile)) {
-			$timestamp = file_get_contents(TMP . $this->timestampFilename);	
+			$timestamp = file_get_contents($timestampFile);
 		} else {
 			$timestamp = time();
 			$this->createBuildTimestamp();
