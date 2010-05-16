@@ -83,11 +83,13 @@ class AssetCompressHelper extends AppHelper {
  *
  * @return void
  */
-	public function __construct($options) {
-		if (empty($iniFile)) {
+	public function __construct($options = array()) {
+		if (!empty($options['iniFile'])) {
+			$iniFile = $options['iniFile'];
+		} else {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
-		if (!is_string($iniFile) || !file_exists($iniFile)) {
+		if (!file_exists($iniFile)) {
 			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
 		}
 		$this->_iniFile = parse_ini_file($iniFile, true);
