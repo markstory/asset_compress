@@ -18,6 +18,12 @@ class JsFilesController extends AssetCompressAppController {
 		if (isset($this->Auth)) {
 			$this->Auth->enabled = false;
 		}
+		
+		if ($this->view == 'Theme') {
+			foreach (array_reverse($this->JsFile->settings['searchPaths']) as $searchPath) {
+				array_unshift($this->JsFile->settings['searchPaths'], str_replace('WEBROOT', 'APP/views/themed/'.$this->theme.'/webroot', $searchPath));
+			}
+		}
 	}
 
 /**

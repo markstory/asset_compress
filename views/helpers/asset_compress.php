@@ -135,9 +135,9 @@ class AssetCompressHelper extends AppHelper {
 		);
 
 		foreach ($files as $file) {
-			$includeFile = $this->options['autoIncludePath'] . $file;
+			$includeFile = JS.$this->options['autoIncludePath'] .DS. $file;
 			if (file_exists($includeFile)) {
-				$this->Html->script($file, array('inline' => false));
+				$this->Html->script($this->options['autoIncludePath'].'/'.$file, array('inline' => false));
 			}
 		}
 	}
