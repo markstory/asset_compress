@@ -104,4 +104,52 @@ TEXT;
 		$this->assertEqual($contents, $expected);
 		unlink(TMP . 'tests/test_css_asset');
 	}
+
+/**
+ * test using addTheme() to set the theme.
+ *
+ * @return void
+ */
+	function testSettingTheme() {
+		$this->CssFile->settings['searchPaths'] = array(
+			'WEBROOT/something/',
+			'WEBROOT/something/else/'
+		);
+		$this->CssFile->addTheme('test_theme');
+
+		$expected = array(
+			'APP/views/themed/test_theme/webroot/something/',
+			'APP/views/themed/test_theme/webroot/something/else/',
+			'WEBROOT/something/',
+			'WEBROOT/something/else/'
+		);
+		$this->assertEqual($this->CssFile->settings['searchPaths'], $expected);
+	}
+
+/**
+ * test using addTheme() with non app dir themes
+ *
+ * @return void
+ */
+	function testSettingThemeWithAlternatePaths() {
+		$alternatePath = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS;
+		App::build(array(
+			'views' => array($alternatePath)
+		));
+		$this->CssFile->settings['searchPaths'] = array(
+			'WEBROOT/something/',
+			'WEBROOT/something/else/'
+		);
+		$this->CssFile->addTheme('test_theme');
+
+		$expected = array(
+			$alternatePath . 'themed/test_theme/webroot/something/',
+			$alternatePath . 'themed/test_theme/webroot/something/else/',
+			'WEBROOT/something/',
+			'WEBROOT/something/else/'
+		);
+		$this->assertEqual($this->CssFile->settings['searchPaths'], $expected);
+		
+		App::build();
+	}
 }

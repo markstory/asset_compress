@@ -18,11 +18,8 @@ class CssFilesController extends AssetCompressAppController {
 		if (isset($this->Auth)) {
 			$this->Auth->enabled = false;
 		}
-		
-		if ($this->view == 'Theme') {
-			foreach (array_reverse($this->CssFile->settings['searchPaths']) as $searchPath) {
-				array_unshift($this->CssFile->settings['searchPaths'], str_replace('WEBROOT', 'APP/views/themed/'.$this->theme.'/webroot', $searchPath));
-			}
+		if ($this->view === 'Theme' && !empty($this->theme)) {
+			$this->CssFile->addTheme($this->theme);
 		}
 	}
 

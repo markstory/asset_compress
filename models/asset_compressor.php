@@ -314,6 +314,32 @@ abstract class AssetCompressor {
 	}
 
 /**
+ * Adds additional searchPaths for the Theme parameter.
+ * duplicates all the existing configured paths and adds in a theme version.
+ *
+ * @param string $theme The theme you are adding.
+ * @return void
+ */
+	public function addTheme($theme) {
+		$themePath = 'APP/views/themed/' . $theme . '/webroot';
+
+		$viewPaths = App::path('views');
+		foreach ($viewPaths as $viewPath) {
+			$path = $viewPath . 'themed' . DS . $theme . DS . 'webroot';
+			if (is_dir($path)) {
+				$themePath = $path;
+				break;
+			}
+		}
+		foreach (array_reverse($this->settings['searchPaths']) as $searchPath) {
+			array_unshift(
+				$this->settings['searchPaths'],
+				str_replace('WEBROOT', $themePath, $searchPath)
+			);
+		}
+	}
+
+/**
  * Appends a timestamp after the last extension in a file name or simply appends
  * the timestamp if there is no extension.  Does not use the current time. This 
  * would allow for DOS attacks by randomly hitting timestamp filenames and forcing the
