@@ -12,4 +12,13 @@ Please report any issues you have with the plugin to the [issue tracker](http://
 
 ## License
 
-Asset Compress is offered under an MIT license.
+Asset Compress is offered under an [MIT license](http://www.opensource.org/licenses/mit-license.php).
+
+## Copyright
+
+2010 Mark Story (http://mark-story.com)
+
+### Authors
+
+* Mark Story
+* Ben McClure
