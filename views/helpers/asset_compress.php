@@ -214,7 +214,7 @@ class AssetCompressHelper extends AppHelper {
  * Include a Javascript file.  All files with the same `$destination` will be compressed into one file.
  * Compression/concatenation will only occur if debug == 0.
  *
- * @param string $file Name of file to include.
+ * @param mixed $file Either a string filename or an array of filenames to include.
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
  */
@@ -222,14 +222,14 @@ class AssetCompressHelper extends AppHelper {
 		if (empty($this->_scripts[$destination])) {
 			$this->_scripts[$destination] = array();
 		}
-		$this->_scripts[$destination][] = $file;
+		$this->_scripts[$destination] = array_merge($this->_scripts[$destination], (array)$file);
 	}
 
 /**
  * Include a CSS file.  All files with the same `$destination` will be compressed into one file.
  * Compression/concatenation will only occur if debug == 0.
  *
- * @param string $file Name of file to include.
+ * @param mixed $file Either a string filename or an array of filenames to include.
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
  */
@@ -237,6 +237,6 @@ class AssetCompressHelper extends AppHelper {
 		if (empty($this->_css[$destination])) {
 			$this->_css[$destination] = array();
 		}
-		$this->_css[$destination][] = $file;
+		$this->_css[$destination] = array_merge($this->_css[$destination], (array)$file);
 	}
 }
