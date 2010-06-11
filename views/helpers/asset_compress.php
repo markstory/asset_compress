@@ -179,6 +179,15 @@ class AssetCompressHelper extends AppHelper {
 			}
 
 			$destination .= $extension;
+
+			//escape out of prefixes.
+			$prefixes = Router::prefixes();
+			foreach ($prefixes as $prefix) {
+				if (!array_key_exists($prefix, $this->options[$urlKey])) {
+					$this->options[$urlKey][$prefix] = false;
+				}
+			}
+			
 			$url = Router::url(array_merge(
 				$this->options[$urlKey],
 				array($destination, '?' => $fileString, 'base' => false)
