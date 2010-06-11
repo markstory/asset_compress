@@ -147,6 +147,8 @@ class AssetCompressHelper extends AppHelper {
  * file or use requestAction.  When file caching is enabled the first requestAction will create the cache
  * file used for all subsequent requests.
  *
+ * Calling this method will clear the asset caches.
+ *
  * @param boolean $inline Whether you want the files inline or added to scripts_for_layout
  * @return string Empty string or string containing asset link tags.
  */
@@ -156,6 +158,7 @@ class AssetCompressHelper extends AppHelper {
 		$css = $this->_generateFiles('_css', 'cssCompressUrl', '.css', $inline);
 		$scripts = $this->_generateFiles('_scripts', 'jsCompressUrl', '.js', $inline);
 		$out = array_merge($css, $scripts);
+		$this->_scripts = $this->_css = array();
 		return implode("\n", $out);
 	}
 
