@@ -38,6 +38,7 @@ class JsFilesController extends AssetCompressAppController {
 		if (!empty($this->params['url']['file'])) {
 			$objects = $this->params['url']['file'];
 		}
+		$compress = '';
 		try {
 			$compress = $this->JsFile->process($objects);
 			if (Configure::read('debug') < 2 && $this->JsFile->cachingOn()) {
