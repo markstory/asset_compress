@@ -38,7 +38,7 @@ class CssFilesController extends AssetCompressAppController {
 		if (!empty($this->params['url']['file'])) {
 			$objects = $this->params['url']['file'];
 		}
-
+		$compress = '';
 		try {
 			$compress = $this->CssFile->process($objects);
 			if (Configure::read('debug') < 2 && $this->CssFile->cachingOn()) {
