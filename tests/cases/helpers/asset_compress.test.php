@@ -10,7 +10,10 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  **/
 	function startTest() {
-		$this->Helper = new AssetCompressHelper();
+		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+
+		$this->Helper = new AssetCompressHelper(array('iniFile' => $testFile));
 		$this->Helper->Html = new HtmlHelper();
 		Router::reload();
 	}
@@ -31,6 +34,89 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$result = $this->Helper->includeAssets();
 		$this->assertPattern('#"/some/dir/asset_compress#', $result, 'double dir set %s');
 	}
+
+/**
+ * test css addition
+ *
+ * @return void
+ */
+	function testCssOrderPreserving() {
+		$this->Helper->css('base');
+		$this->Helper->css('reset');
+		
+		$result = $this->Helper->includeAssets();
+		$expected = array(
+			'link' => array(
+				'type' => 'text/css',
+				'rel' => 'stylesheet',
+				'href' => '/asset_compress/css_files/get/default.css?file[]=base&file[]=reset'
+			)
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test script addition
+ *
+ * @return void
+ */
+	function testScriptOrderPreserving() {
+		$this->Helper->script('libraries');
+		$this->Helper->script('thing');
+
+		$result = $this->Helper->includeAssets();
+		$expected = array(
+			'script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries&file[]=thing'
+			),
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+
+/**
+ * test generating two script files.
+ *
+ * @return void
+ */
+	function testMultipleScriptFiles() {
+		$this->Helper->script('libraries', 'default');
+		$this->Helper->script('thing', 'second');
+
+		$result = $this->Helper->includeAssets();
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries'
+			)),
+			'/script',
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/second.js?file[]=thing'
+			)),
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test timestamping assets.
+ *
+ * @return void
+ */
+	function testTimestampping() {
+		Configure::write('debug', 1);
+		$this->Helper->script('libraries', 'default');
+		$result = $this->Helper->includeAssets();
+		$this->assertPattern('/default\.\d+\.js/', $result);
+
+		Configure::write('debug', 2);
+	}
+
+
+
 /**
  * end a test
  *
