@@ -185,6 +185,30 @@ TEXT;
 	}
 
 /**
+ * try removing poorly formatted comments.
+ *
+ * @return void
+ */
+	function testPoorlyFormattedCommentRemoval() {
+		$this->JsFile->settings['stripComments'] = true;
+		$this->JsFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+		);
+		$result = $this->JsFile->process('BadComments');
+		$expected = <<<TEXT
+(function($){function Foo(){this.bar=[];}})
+
+function something() {
+	return 1 + 1;
+}
+function two() {
+	return 1 + 1;
+}
+TEXT;
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * test that js files cache correctly.
  *
  * @return void
