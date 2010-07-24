@@ -47,7 +47,7 @@ class CssFile extends AssetCompressor {
 				if ($filename == $file) {
 					return $path . $file;
 				}
-				if (strpos($filename, DS) !== false && file_exists($path . $filename)) {
+				if (strpos($filename, '/') !== false && file_exists($path . str_replace('/', DS, $filename))) {
 					return $path . $filename;
 				}
 			}
