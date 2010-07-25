@@ -72,11 +72,16 @@ class AssetCompressShell extends Shell {
 	protected function _clearDirectory($path) {
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
+			if(in_array($file->getFilename(), array('.', '..'))) {
+				continue;
+			}
 			$fileInfo = new SplFileObject($file->getPathname());
 			$line = $fileInfo->fgets();
 			if (preg_match('#^/\* asset_compress \d+ \*/$#', $line)) {
-				$this->out('Deleting ' . $fileInfo->getPathname());
-				unlink($fileInfo->getPathname());
+				$pathName = $fileInfo->getPathname();
+				unset($fileInfo);
+				$this->out('Deleting ' . $pathName);
+				unlink($pathName);
 			}
 		}
 	}
