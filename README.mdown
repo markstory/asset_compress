@@ -22,3 +22,4 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * Mark Story
 * Ben McClure
+* Igor Fomin
