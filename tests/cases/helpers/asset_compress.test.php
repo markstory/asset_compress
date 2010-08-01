@@ -19,6 +19,15 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * end a test
+ *
+ * @return void
+ **/
+	function endTest() {
+		unset($this->Helper);
+	}
+
+/**
  * test that assets only have one base path attached
  *
  * @return void
@@ -117,12 +126,4 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 
 
 
-/**
- * end a test
- *
- * @return void
- **/
-	function endTest() {
-		unset($this->Helper);
-	}
 }
