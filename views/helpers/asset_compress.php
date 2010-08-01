@@ -34,12 +34,14 @@ class AssetCompressHelper extends AppHelper {
 		'cssCompressUrl' => array(
 			'plugin' => 'asset_compress',
 			'controller' => 'css_files',
-			'action' => 'get'
+			'action' => 'get',
+			'ext' => 'css'
 		),
 		'jsCompressUrl' => array(
 			'plugin' => 'asset_compress',
 			'controller' => 'js_files',
-			'action' => 'get'
+			'action' => 'get',
+			'ext' => 'js'
 		)
 	);
 
@@ -183,10 +185,15 @@ class AssetCompressHelper extends AppHelper {
 	public function includeCss() {
 		$files = func_get_args();
 		if (count($files) == 0) {
-			
-		} else {
-			
+			$files = array_keys($this->_css);
 		}
+		foreach ($files as $destination) {
+			$output[] = $this->_generateAsset(
+				'css', $destination, $this->_css[$destination], $this->options['cssCompressUrl']
+			);
+			unset($this->_css[$destination]);
+		}
+		return implode("\n", $output);
 	}
 
 /**
@@ -209,10 +216,56 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeJs() {
 		$files = func_get_args();
+		$output = array();
 		if (count($files) == 0) {
-			
+			$files = array_keys($this->_scripts);
+		}
+		foreach ($files as $destination) {
+			$output[] = $this->_generateAsset(
+				'script', $destination, $this->_scripts[$destination], $this->options['jsCompressUrl']
+			);
+			unset($this->_scripts[$destination]);
+		}
+		return implode("\n", $output);
+	}
+
+/**
+ * Generates the asset tag of the chosen $method
+ *
+ * @param string $method Method name to call on HtmlHelper
+ * @param string $destination The destination file to be generated.
+ * @param array $url Array of url keys for making the asset location.
+ * @return string Asset tag.
+ */
+	protected function _generateAsset($method, $destination, $files, $url) {
+		$fileString = 'file[]=' . implode('&file[]=', $files);
+		$iniKey = $method == 'script' ? 'Javascript' : 'Css';
+
+		if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
+			$destination = $this->_timestampFile($destination);
+		}
+
+		//escape out of prefixes.
+		$prefixes = Router::prefixes();
+		foreach ($prefixes as $prefix) {
+			if (!array_key_exists($prefix, $url)) {
+				$url[$prefix] = false;
+			}
+		}
+
+		$url = Router::url(array_merge(
+			$url,
+			array($destination, '?' => $fileString, 'base' => false)
+		));
+
+		list($base, $query) = explode('?', $url);
+		if (file_exists(WWW_ROOT . $base)) {
+			$url = $base;
+		}
+		if ($method == 'script') {
+			return $this->Html->script($url);
 		} else {
-			
+			return $this->Html->css($url);
 		}
 	}
 

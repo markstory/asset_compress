@@ -16,6 +16,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->Helper = new AssetCompressHelper(array('iniFile' => $testFile));
 		$this->Helper->Html = new HtmlHelper();
 		Router::reload();
+		Configure::write('debug', 2);
 	}
 
 /**
@@ -132,6 +133,32 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries'
 			)),
 			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test includeCss() with multiple destination files.
+ *
+ * @return void
+ */
+	function testIncludeCssMultipleDestination() {
+		$this->Helper->css('libraries', 'default');
+		$this->Helper->css('thing', 'second');
+		$this->Helper->css('other', 'third');
+
+		$result = $this->Helper->includeCss('second', 'default');
+		$expected = array(
+			array('link' => array(
+				'type' => 'text/css',
+				'rel' => 'stylesheet',
+				'href' => '/asset_compress/css_files/get/second.css?file[]=thing'
+			)),
+			array('link' => array(
+				'type' => 'text/css',
+				'rel' => 'stylesheet',
+				'href' => '/asset_compress/css_files/get/default.css?file[]=libraries'
+			)),
 		);
 		$this->assertTags($result, $expected);
 	}
