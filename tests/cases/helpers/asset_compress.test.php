@@ -111,6 +111,32 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * test includeJs() with multiple destination files.
+ *
+ * @return void
+ */
+	function testIncludeJsMultipleDestination() {
+		$this->Helper->script('libraries', 'default');
+		$this->Helper->script('thing', 'second');
+		$this->Helper->script('other', 'third');
+
+		$result = $this->Helper->includeJs('second', 'default');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/second.js?file[]=thing'
+			)),
+			'/script',
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries'
+			)),
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test timestamping assets.
  *
  * @return void
@@ -123,7 +149,5 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 
 		Configure::write('debug', 2);
 	}
-
-
 
 }

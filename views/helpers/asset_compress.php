@@ -163,6 +163,60 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
+ * Include the CSS files 
+ *
+ * ### Usage
+ *
+ * #### Include one destination file:
+ * `$assetCompress->includeCss('default');`
+ *
+ * #### Include multiple files:
+ * `$assetCompress->includeCss('default', 'reset', 'themed');`
+ *
+ * #### Include all the files:
+ * `$assetCompress->includeCss();`
+ *
+ * @param string $name Name of the destination file to include.  You can pass any number of strings in to
+ *    include multiple files.  Leave null to include all files.
+ * @return string A string containing the link tags
+ */
+	public function includeCss() {
+		$files = func_get_args();
+		if (count($files) == 0) {
+			
+		} else {
+			
+		}
+	}
+
+/**
+ * Include the Javascript files 
+ *
+ * ### Usage
+ *
+ * #### Include one destination file:
+ * `$assetCompress->includeJs('default');`
+ *
+ * #### Include multiple files:
+ * `$assetCompress->includeJs('default', 'reset', 'themed');`
+ *
+ * #### Include all the files:
+ * `$assetCompress->includeJs();`
+ *
+ * @param string $name Name of the destination file to include.  You can pass any number of strings in to
+ *    include multiple files.  Leave null to include all files.
+ * @return string A string containing the script tags.
+ */
+	public function includeJs() {
+		$files = func_get_args();
+		if (count($files) == 0) {
+			
+		} else {
+			
+		}
+	}
+
+/**
  * Generates a asset set. Kind of a hacky method, but better than two loops I think.
  *
  * @param string $type Either '_scripts', or '_css
@@ -216,8 +270,10 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	protected function _timestampFile($name) {
-		if (empty($this->_buildTimestamp)) {
+		if (empty($this->_buildTimestamp) && file_exists(TMP . 'asset_compress_build_time')) {
 			$this->_buildTimestamp = '.' . file_get_contents(TMP . 'asset_compress_build_time');
+		} elseif (empty($this->_buildTimestamp)) {
+			$this->_buildTimestamp = '.' . time();
 		}
 		return $name . $this->_buildTimestamp;
 	}
