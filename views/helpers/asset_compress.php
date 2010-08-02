@@ -155,13 +155,9 @@ class AssetCompressHelper extends AppHelper {
  * @return string Empty string or string containing asset link tags.
  */
 	public function includeAssets($inline = true) {
-		$out = array();
-
-		$css = $this->_generateFiles('_css', 'cssCompressUrl', '.css', $inline);
-		$scripts = $this->_generateFiles('_scripts', 'jsCompressUrl', '.js', $inline);
-		$out = array_merge($css, $scripts);
-		$this->_scripts = $this->_css = array();
-		return implode("\n", $out);
+		$css = $this->includeCss();
+		$js = $this->includeJs();
+		return $css . "\n" . $js;
 	}
 
 /**
@@ -184,6 +180,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeCss() {
 		$files = func_get_args();
+		$output = array();
 		if (count($files) == 0) {
 			$files = array_keys($this->_css);
 		}
@@ -267,54 +264,6 @@ class AssetCompressHelper extends AppHelper {
 		} else {
 			return $this->Html->css($url);
 		}
-	}
-
-/**
- * Generates a asset set. Kind of a hacky method, but better than two loops I think.
- *
- * @param string $type Either '_scripts', or '_css
- * @param string $urlKey Either 'cssCompressUrl' or 'jsCompressUrl'
- * @param string $extension The extension of the final output file.
- * @param string $inline Inline or not,
- * @return array
- */
-	private function _generateFiles($type, $urlKey, $extension, $inline) {
-		$assets = array();
-		foreach ($this->{$type} as $destination => $files) {
-			$fileString = 'file[]=' . implode('&file[]=', $files);
-			$iniKey = $type == '_css' ? 'Css' : 'Javascript';
-
-			if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
-				$destination = $this->_timestampFile($destination);
-			}
-
-			$destination .= $extension;
-
-			//escape out of prefixes.
-			$prefixes = Router::prefixes();
-			foreach ($prefixes as $prefix) {
-				if (!array_key_exists($prefix, $this->options[$urlKey])) {
-					$this->options[$urlKey][$prefix] = false;
-				}
-			}
-			
-			$url = Router::url(array_merge(
-				$this->options[$urlKey],
-				array($destination, '?' => $fileString, 'base' => false)
-			));
-
-			list($base, $query) = explode('?', $url);
-			if (file_exists(WWW_ROOT . $base)) {
-				$url = $base;
-			}
-			if ($type == '_css') {
-				$assets[] = $this->Html->css($url, null, array('inline' => $inline));
-			} else {
-				$assets[] = $this->Html->script($url, array('inline' => $inline));
-			}
-			$this->{$type}[$destination] = array();
-		}
-		return $assets;
 	}
 
 /**
