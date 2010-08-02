@@ -119,7 +119,6 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function afterRender() {
 		$this->_includeViewJs();
-		$this->includeAssets(false);
 	}
 
 /**
@@ -137,7 +136,7 @@ class AssetCompressHelper extends AppHelper {
 		);
 
 		foreach ($files as $file) {
-			$includeFile = JS.$this->options['autoIncludePath'] . DS . $file;
+			$includeFile = JS . $this->options['autoIncludePath'] . DS . $file;
 			if (file_exists($includeFile)) {
 				$this->Html->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
 			}
