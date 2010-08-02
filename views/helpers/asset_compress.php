@@ -179,17 +179,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeCss() {
 		$files = func_get_args();
-		$output = array();
-		if (count($files) == 0) {
-			$files = array_keys($this->_css);
-		}
-		foreach ($files as $destination) {
-			$output[] = $this->_generateAsset(
-				'css', $destination, $this->_css[$destination], $this->options['cssCompressUrl']
-			);
-			unset($this->_css[$destination]);
-		}
-		return implode("\n", $output);
+		return $this->_genericInclude($files, '_css', 'cssCompressUrl');
 	}
 
 /**
@@ -212,15 +202,30 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeJs() {
 		$files = func_get_args();
-		$output = array();
+		return $this->_genericInclude($files, '_scripts', 'jsCompressUrl');
+	}
+
+/**
+ * The generic version of includeCss and includeJs
+ *
+ * @param array $files Array of destination/build files to include
+ * @param string $property The property to use
+ * @param string $urlKey The key that contains the url for the build files.
+ * @return string A string containing asset tags.
+ */
+	protected function _genericInclude($files, $property, $urlKey) {
 		if (count($files) == 0) {
-			$files = array_keys($this->_scripts);
+			$files = array_keys($this->{$property});
 		}
+		$output = array();
 		foreach ($files as $destination) {
+			if (empty($this->{$property}[$destination])) {
+				continue;
+			}
 			$output[] = $this->_generateAsset(
-				'script', $destination, $this->_scripts[$destination], $this->options['jsCompressUrl']
+				$property, $destination, $this->{$property}[$destination], $this->options[$urlKey]
 			);
-			unset($this->_scripts[$destination]);
+			unset($this->{$property}[$destination]);
 		}
 		return implode("\n", $output);
 	}
@@ -235,7 +240,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	protected function _generateAsset($method, $destination, $files, $url) {
 		$fileString = 'file[]=' . implode('&file[]=', $files);
-		$iniKey = $method == 'script' ? 'Javascript' : 'Css';
+		$iniKey = $method == '_scripts' ? 'Javascript' : 'Css';
 
 		if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
 			$destination = $this->_timestampFile($destination);
@@ -258,7 +263,7 @@ class AssetCompressHelper extends AppHelper {
 		if (file_exists(WWW_ROOT . $base)) {
 			$url = $base;
 		}
-		if ($method == 'script') {
+		if ($method == '_scripts') {
 			return $this->Html->script($url);
 		} else {
 			return $this->Html->css($url);

@@ -164,6 +164,27 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that including assets removes them from the list of files to be included.
+ *
+ * @return void
+ */
+	function testIncludingFilesRemovesFromQueue() {
+		$this->Helper->css('libraries', 'default');
+		$result = $this->Helper->includeCss('default');
+		$expected = array(
+			'link' => array(
+				'type' => 'text/css',
+				'rel' => 'stylesheet',
+				'href' => '/asset_compress/css_files/get/default.css?file[]=libraries'
+			)
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Helper->includeCss('default');
+		$this->assertEqual($result, '');
+	}
+
+/**
  * test timestamping assets.
  *
  * @return void
