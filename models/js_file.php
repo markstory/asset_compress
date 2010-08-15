@@ -33,13 +33,17 @@ class JsFile extends AssetCompressor {
  * @var string
  **/
 	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
+
 /**
  * Scan each of the $searchPaths for the named object / filename
  *
  * @return string Full path to the $object
  **/
 	protected function _findFile($object, $path = null) {
-		$filename = Inflector::underscore($object) . '.js';
+		$filename = $object;
+		if (substr($filename, -3) != '.js') {
+			$filename .= '.js';
+		}
 		if ($path !== null) {
 			return $path . $filename;
 		}

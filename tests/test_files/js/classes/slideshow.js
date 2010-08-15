@@ -1,5 +1,5 @@
 //= require <library_file>
-//= require <secondary/AnotherClass>
+//= require <secondary/another_class>
 var Slideshow = new Class({
 
 });

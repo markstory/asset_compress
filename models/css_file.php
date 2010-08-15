@@ -32,7 +32,7 @@ class CssFile extends AssetCompressor {
  * @return string Full path to the $object
  **/
 	protected function _findFile($object, $path = null) {
-		$filename = Inflector::underscore($object);
+		$filename = $object;
 		if (substr($filename, -4) != '.css') {
 			$filename .= '.css';
 		}

@@ -36,7 +36,7 @@ class JsFileTestCase extends CakeTestCase {
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
-		$result = $this->JsFile->process('Template');
+		$result = $this->JsFile->process('template');
 		$expected = <<<TEXT
 var BaseClass = new Class({
 
@@ -74,7 +74,7 @@ TEXT;
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
-		$result = $this->JsFile->process('DoubleInclusion');
+		$result = $this->JsFile->process('double_inclusion');
 		$expected = <<<TEXT
 var BaseClass = new Class({
 
@@ -99,7 +99,7 @@ TEXT;
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
-		$result = $this->JsFile->process(array('Template', 'DoubleInclusion'));
+		$result = $this->JsFile->process(array('template', 'double_inclusion'));
 		$expected = <<<TEXT
 var BaseClass = new Class({
 
@@ -128,7 +128,7 @@ TEXT;
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . 'classes' . DS,
 		);
-		$result = $this->JsFile->process('Slideshow');
+		$result = $this->JsFile->process('slideshow');
 		$expected = <<<TEXT
 /*!
  this comment will stay
@@ -159,7 +159,7 @@ TEXT;
 		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 		);
-		$result = $this->JsFile->process('LibraryFile');
+		$result = $this->JsFile->process('library_file');
 		$expected = <<<TEXT
 /*!
  this comment will stay
@@ -194,7 +194,7 @@ TEXT;
 		$this->JsFile->settings['searchPaths'] = array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
 		);
-		$result = $this->JsFile->process('BadComments');
+		$result = $this->JsFile->process('bad_comments');
 		$expected = <<<TEXT
 (function($){function Foo(){this.bar=[];}})
 
@@ -214,12 +214,16 @@ TEXT;
  * @return void
  */
 	function testFileCaching() {
-		$this->JsFile->settings['stripComments'] = true;
-		$this->JsFile->settings['cacheFiles'] = true;
-		$this->JsFile->settings['cacheFilePath'] = TMP . 'tests' . DS;
-		$this->JsFile->settings['searchPaths'] = array(
-			$this->_pluginPath . 'tests/test_files/js/',
+		$this->JsFile->settings = array(
+			'stripComments' => true,
+			'cachFiles' => true,
+			'cacheFilePath' => TMP . 'tests' . DS,
+			'searchPaths' => array(
+				$this->_pluginPath . 'tests/test_files/js/',
+			),
+			'timestamp' => false
 		);
+
 		$contents = 'some javascript;';
 		$result = $this->JsFile->cache('test_js_asset', $contents);
 		$this->assertTrue($result);
