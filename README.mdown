@@ -23,3 +23,25 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Mark Story
 * Ben McClure
 * Igor Fomin
+
+### Changelog
+
+#### 0.3
+
+** Backwards incompatible changes**
+
+* Inflection of file names for javascript and css was removed.  This affects both the helper, and the directives supported by each file type.
+* Auto inclusion of all build files in the `afterRender()` callback was removed.  You now need to manually call `includeAssets()`.
+
+** Other changes **
+
+* `AssetCompressHelper::includeAssets()` takes an array of build files you wish to output in that call.  This lets you place some build files at the top of the document, and others at the bottom.
+* `AssetCompressHelper::includeJs()` and `AssetCompressHelper::includeCss()` were added.  These methods function similar to `includeAssets()`.  Each allows you to only include some of the build files.
+
+
+#### 0.2
+
+* Timestampping of build files was added.
+* Filters for CSS files were fixed.
+* Location for asset_compress.ini file was moved into `app/config/asset_compres.ini`.
+* Files in themes should now be auto discovered.
