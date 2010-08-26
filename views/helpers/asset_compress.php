@@ -30,6 +30,8 @@ class AssetCompressHelper extends AppHelper {
  * @var array
  */
 	public $options = array(
+		'autoInclude' => true,
+		'autoIncludeDest' => 'default',
 		'autoIncludePath' => 'views',
 		'cssCompressUrl' => array(
 			'plugin' => 'asset_compress',
@@ -58,13 +60,6 @@ class AssetCompressHelper extends AppHelper {
  * @var array
  */
 	protected $_css = array();
-
-/**
- * Disable autoInclusion of view js files.
- *
- * @var string
- */
-	public $autoInclude = true;
 
 /**
  * parsed ini file values.
@@ -127,7 +122,7 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	protected function _includeViewJs() {
-		if (!$this->autoInclude) {
+		if (!$this->options['autoInclude']) {
 			return;
 		}
 		$files = array(
@@ -138,7 +133,7 @@ class AssetCompressHelper extends AppHelper {
 		foreach ($files as $file) {
 			$includeFile = JS . $this->options['autoIncludePath'] . DS . $file;
 			if (file_exists($includeFile)) {
-				$this->Html->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
+				$this->script($this->options['autoIncludePath'] . '/' . $file, $this->options['autoIncludeDest']);
 			}
 		}
 	}
