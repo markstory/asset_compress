@@ -152,4 +152,57 @@ TEXT;
 		
 		App::build();
 	}
+
+/**
+ * test extension detection
+ *
+ * @return void
+ */
+	function testValidExtension() {
+		$filename = 'avatar.png';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'default.css';
+		$this->assertTrue($this->CssFile->validExtension($filename));
+
+		$filename = 'default.1282920894.css';
+		$this->assertTrue($this->CssFile->validExtension($filename));
+
+		$filename = 'bl.1282920894.jpg';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'default.js';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'default.1282920894.js';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'readme.txt';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'readme.md';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'README.MD';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'my.my.my.Xlsx';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'mysoopersecretpassword';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'ÒÓÔÕŌŎǑŐƠØǾ.txt';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = 'военных.js';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = '除此之外.js';
+		$this->assertFalse($this->CssFile->validExtension($filename));
+
+		$filename = '除此之外.css';
+		$this->assertTrue($this->CssFile->validExtension($filename));
+	}
+
 }

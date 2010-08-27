@@ -369,5 +369,40 @@ abstract class AssetCompressor {
 		return $name . $ext;
 	}
 
-}
 
+/**
+ * Inspect and returns the extension of passed filename
+ *
+ * @return string extension or null
+ */
+	public function getFileExtension($file) {
+		if (empty($file)) {
+			return null;
+		}
+		if ( ($pos = strrpos($file, '.')) !== false) {
+			return substr($file, $pos + 1);
+		}
+		return null;
+	}
+
+/**
+ * @param string $file filename
+ * @return boolean true if extension is valid for the calling model
+ */
+	public function validExtension($file) {
+		$caller = get_class($this);
+		switch ($caller) {
+		case 'CssFile':
+			return $this->getFileExtension($file) == 'css';
+			break;
+		case 'JsFile':
+			return $this->getFileExtension($file) == 'js';
+			break;
+		default:
+			return false;
+			break;
+		}
+		return false;
+	}
+
+}

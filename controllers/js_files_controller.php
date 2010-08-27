@@ -34,6 +34,10 @@ class JsFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function get($keyname = null) {
+		if (! $this->JsFile->validExtension($this->params['pass'][0])) {
+			$this->cakeError('error404');
+			return;
+		}
 		$objects = array();
 		if (!empty($this->params['url']['file'])) {
 			$objects = $this->params['url']['file'];
