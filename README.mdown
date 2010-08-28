@@ -23,6 +23,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Mark Story
 * Ben McClure
 * Igor Fomin
+* Rachman Chavik
 
 ### Changelog
 
@@ -37,6 +38,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * `AssetCompressHelper::includeAssets()` takes an array of build files you wish to output in that call.  This lets you place some build files at the top of the document, and others at the bottom.
 * `AssetCompressHelper::includeJs()` and `AssetCompressHelper::includeCss()` were added.  These methods function similar to `includeAssets()`.  Each allows you to only include some of the build files.
+* Assets that do not exist now return 404 errors.
 
 
 #### 0.2
