@@ -15,13 +15,19 @@ class CssFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function beforeFilter() {
-		parent::beforeFilter();
 		if (isset($this->Auth)) {
 			$this->Auth->enabled = false;
 		}
 		if ($this->view === 'Theme' && !empty($this->theme)) {
 			$this->CssFile->addTheme($this->theme);
 		}
+	}
+/**
+ * beforeRender callback
+ *
+ * @return void
+ **/
+	public function beforeRender() {
 	}
 
 /**

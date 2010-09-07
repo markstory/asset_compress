@@ -15,7 +15,6 @@ class JsFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function beforeFilter() {
-		parent::beforeFilter();
 		if (isset($this->Auth)) {
 			$this->Auth->enabled = false;
 		}
@@ -23,7 +22,14 @@ class JsFilesController extends AssetCompressAppController {
 			$this->JsFile->addTheme($this->theme);
 		}
 	}
-
+/**
+ * beforeRender callback
+ *
+ * @return void
+ **/
+	public function beforeRender() {
+	}
+	
 /**
  * Concatenates the requested Objects/files Together based on the settings in the config.ini
  *
