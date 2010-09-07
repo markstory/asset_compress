@@ -31,7 +31,7 @@ class CssFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function get($keyname = null) {
-		if (!$this->CssFile->validExtension($this->params['pass'][0])) {
+		if (!$this->CssFile->validExtension($this->params['pass'][0]) && strtolower($this->params['url']['ext'])!='css') {
 			$this->cakeError('error404');
 			return;
 		}
