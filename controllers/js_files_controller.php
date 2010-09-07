@@ -15,6 +15,7 @@ class JsFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function beforeFilter() {
+		parent::beforeFilter();
 		if (isset($this->Auth)) {
 			$this->Auth->enabled = false;
 		}
@@ -34,7 +35,7 @@ class JsFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function get($keyname = null) {
-		if (! $this->JsFile->validExtension($this->params['pass'][0])) {
+		if (! $this->JsFile->validExtension($this->params['pass'][0]) && strtolower($this->params['url']['ext'])!='js') {
 			$this->cakeError('error404');
 			return;
 		}
