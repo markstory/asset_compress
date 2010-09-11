@@ -15,9 +15,6 @@ class CssFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function beforeFilter() {
-		if (isset($this->Auth)) {
-			$this->Auth->enabled = false;
-		}
 		if ($this->view === 'Theme' && !empty($this->theme)) {
 			$this->CssFile->addTheme($this->theme);
 		}
