@@ -15,6 +15,7 @@ class JsFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function beforeFilter() {
+	  parent::beforeFilter();
 		if ($this->view === 'Theme' && !empty($this->theme)) {
 			$this->JsFile->addTheme($this->theme);
 		}
