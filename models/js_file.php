@@ -23,6 +23,13 @@ class JsFile extends AssetCompressor {
 	protected $_configKeyName = 'Javascript';
 
 /**
+ * Extension value, used with validExtension()
+ *
+ * @var string
+ */
+	protected $_extension = 'js';
+
+/**
  * pattern for finding dependancies.
  *
  * matches:

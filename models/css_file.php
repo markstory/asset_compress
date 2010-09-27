@@ -20,6 +20,13 @@ class CssFile extends AssetCompressor {
 	protected $_configKeyName = 'Css';
 
 /**
+ * Extension value, used with validExtension()
+ *
+ * @var string
+ */
+	protected $_extension = 'css';
+
+/**
  * pattern for finding @import.
  *
  * @var string

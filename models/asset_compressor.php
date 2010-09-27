@@ -12,6 +12,13 @@ abstract class AssetCompressor {
 	protected $_configKeyName = '';
 
 /**
+ * Extension value.
+ *
+ * @var string
+ */
+	protected $_extension = null;
+
+/**
  * An array of settings, these values are merged with the ones defined in the ini file.
  * 
  * - `searchPaths` - Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
@@ -386,23 +393,16 @@ abstract class AssetCompressor {
 	}
 
 /**
+ * Check a file names extension against the Asset types
+ *
  * @param string $file filename
  * @return boolean true if extension is valid for the calling model
  */
 	public function validExtension($file) {
-		$caller = get_class($this);
-		switch ($caller) {
-		case 'CssFile':
-			return $this->getFileExtension($file) == 'css';
-			break;
-		case 'JsFile':
-			return $this->getFileExtension($file) == 'js';
-			break;
-		default:
-			return false;
-			break;
+		if (!$this->_extension) {
+			throw new Exception('Cannot check extension, as $_extension is empty.');
 		}
-		return false;
+		return $this->getFileExtension($file) == $this->_extension;
 	}
 
 }
