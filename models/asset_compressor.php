@@ -223,10 +223,14 @@ abstract class AssetCompressor {
  */
 	protected function _loadFilters() {
 		foreach ($this->settings['filters'] as $filter) {
-			App::import('Lib', 'asset_compress/' . $filter);
 			$className = $filter . 'Filter';
+
+			App::import('Lib', 'asset_compress/' . $filter);
 			if (!class_exists($className)) {
-				throw new Exception(sprintf('Cannot not load %s filter.', $filter));
+				App::import('Lib', 'AssetCompress.filter/' . $filter);
+				if (!class_exists($className)) {
+					throw new Exception(sprintf('Cannot not load %s filter.', $filter));
+				}
 			}
 			$filterObj = new $className();
 			if (!$filterObj instanceof AssetFilterInterface) {

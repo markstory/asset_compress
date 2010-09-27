@@ -2,6 +2,14 @@
 
 App::import('Model', 'AssetCompress.JsFile');
 
+if (!class_exists('JsMin')) {
+	class JsMin {
+		public static function minify($content) {
+			return $content;
+		}
+	}
+}
+
 class JsFileTestCase extends CakeTestCase {
 /**
  * startTest
@@ -329,6 +337,20 @@ TEXT;
 
 		$filename = '除此之外.css';
 		$this->assertFalse($this->JsFile->validExtension($filename));
+	}
+
+/**
+ * test loading the jsmin filter.
+ *
+ * @return void
+ */
+	function testLoadingBuiltInFilters() {
+		$this->JsFile->settings['filters'] = array('JsMin');
+		$this->JsFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+		);
+		$result = $this->JsFile->process('library_file');
+		$this->assertTrue(class_exists('JsMinFilter'), 'Filter not loaded.');
 	}
 
 /**
