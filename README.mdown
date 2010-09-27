@@ -39,6 +39,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * `AssetCompressHelper::includeAssets()` takes an array of build files you wish to output in that call.  This lets you place some build files at the top of the document, and others at the bottom.
 * `AssetCompressHelper::includeJs()` and `AssetCompressHelper::includeCss()` were added.  These methods function similar to `includeAssets()`.  Each allows you to only include some of the build files.
 * Assets that do not exist now return 404 errors.
+* Two basic filters have been added.  `JsMin` and `CssMin` are now built-in filters.  Both require you to put their libraries in `app/vendors`.
 
 
 #### 0.2
