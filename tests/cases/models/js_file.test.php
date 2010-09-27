@@ -354,6 +354,24 @@ TEXT;
 	}
 
 /**
+ * Make sure that exceptions occur when bad filters are used.
+ *
+ * @return void
+ */
+	function testExceptionOnBadFilter() {
+		$this->JsFile->settings['filters'] = array('FilterThatDoesNotExist');
+		$this->JsFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
+		);
+		try {
+			$result = $this->JsFile->process('library_file');
+			$this->fail('No exception');
+		} catch (Exception $e) {
+			$this->assertTrue(true, 'Exception thrown');
+		}
+	}
+
+/**
  * endTest
  *
  * @return void
