@@ -59,7 +59,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 			'link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/default.css?file[]=base&file[]=reset'
+				'href' => '/asset_compress/css_files/get/default.css?file[]=base&amp;file[]=reset'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -78,7 +78,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$expected = array(
 			'script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries&file[]=thing'
+				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries&amp;file[]=thing'
 			),
 			'/script'
 		);

@@ -234,7 +234,7 @@ class AssetCompressHelper extends AppHelper {
  * @return string Asset tag.
  */
 	protected function _generateAsset($method, $destination, $files, $url) {
-		$fileString = 'file[]=' . implode('&file[]=', $files);
+		$fileString = 'file[]=' . implode('&amp;file[]=', $files);
 		$iniKey = $method == '_scripts' ? 'Javascript' : 'Css';
 
 		if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
