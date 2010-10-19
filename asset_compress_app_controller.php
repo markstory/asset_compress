@@ -8,5 +8,5 @@
  * @author Mark Story
  */
 class AssetCompressAppController extends Controller {
-
+	public $components = false;
 }
