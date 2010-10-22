@@ -32,6 +32,7 @@ class JsFilesController extends AssetCompressAppController {
  **/
 	public function get($keyname = null) {
 		if (
+			empty($this->params['pass']) ||
 			!$this->JsFile->validExtension($this->params['pass'][0]) && 
 			(isset($this->params['url']['ext']) && strtolower($this->params['url']['ext']) != 'js')
 		) {
