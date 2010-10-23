@@ -46,11 +46,18 @@ class AssetCompressHelper extends AppHelper {
 	);
 
 /**
- * Scripts to be included keyed by final filename.
+ * Head scripts to be included keyed by final filename.
  *
  * @var array
  */
-	protected $_scripts = array();
+	protected $_topScripts = array();
+
+/**
+ * Bottom scripts to be included keyed by final filename.
+ *
+ * @var array
+ */
+	protected $_bottomScripts = array();
 
 /**
  * CSS files to be included keyed by final filename.
@@ -144,19 +151,41 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Includes css + js assets.  If debug = 0 check the config settings and either look for a premade cache
+ * Includes top css + js assets.  If debug = 0 check the config settings and either look for a premade cache
  * file or use requestAction.  When file caching is enabled the first requestAction will create the cache
  * file used for all subsequent requests.
  *
- * Calling this method will clear the asset caches.
+ * Calling this method will clear the top asset caches.
  *
  * @param boolean $inline Whether you want the files inline or added to scripts_for_layout
  * @return string Empty string or string containing asset link tags.
  */
-	public function includeAssets($inline = true) {
+	public function includeTopAssets($inline = true) {
 		$css = $this->includeCss();
-		$js = $this->includeJs();
+		$js = $this->includeTopJs();
 		return $css . "\n" . $js;
+	}
+
+/**
+ * Includes bottom js assets.  If debug = 0 check the config settings and either look for a premade cache
+ * file or use requestAction.  When file caching is enabled the first requestAction will create the cache
+ * file used for all subsequent requests.
+ *
+ * Calling this method will clear the bottom asset caches.
+ *
+ * @param boolean $inline Whether you want the files inline or added to scripts_for_layout
+ * @return string Empty string or string containing asset link tags.
+ */	
+	public function includeBottomAssets($inline = true) {
+		$js = $this->includeBottomJs();
+		return $js;
+	}
+
+/**
+* Alias for includeTopAssets()
+*/
+	public function includeAssets($inline = true) {
+		return $this->includeTopAssets($inline);
 	}
 
 /**
@@ -183,28 +212,51 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Include the Javascript files 
+ * Include the Javascript files to the top
  *
  * ### Usage
  *
  * #### Include one destination file:
- * `$assetCompress->includeJs('default');`
+ * `$assetCompress->includeTopJs('default');`
  *
  * #### Include multiple files:
- * `$assetCompress->includeJs('default', 'reset', 'themed');`
+ * `$assetCompress->includeTopJs('default', 'reset', 'themed');`
  *
  * #### Include all the files:
- * `$assetCompress->includeJs();`
+ * `$assetCompress->includeTopJs();`
  *
  * @param string $name Name of the destination file to include.  You can pass any number of strings in to
  *    include multiple files.  Leave null to include all files.
  * @return string A string containing the script tags.
- */
-	public function includeJs() {
+ */ 
+	public function includeTopJs() {
 		$files = func_get_args();
-		return $this->_genericInclude($files, '_scripts', 'jsCompressUrl');
+		return $this->_genericInclude($files, '_topScripts', 'jsCompressUrl');
 	}
 
+/**
+ * Include the Javascript files to the bottom
+ *
+ * ### Usage
+ *
+ * #### Include one destination file:
+ * `$assetCompress->includeBottomJs('default');`
+ *
+ * #### Include multiple files:
+ * `$assetCompress->includeBottomJs('default', 'reset', 'themed');`
+ *
+ * #### Include all the files:
+ * `$assetCompress->includeBottomJs();`
+ *
+ * @param string $name Name of the destination file to include.  You can pass any number of strings in to
+ *    include multiple files.  Leave null to include all files.
+ * @return string A string containing the script tags.
+ */ 	
+	public function includeBottomJs() {
+		$files = func_get_args();
+		return $this->_genericInclude($files, '_bottomScripts', 'jsCompressUrl');
+	}
+	
 /**
  * The generic version of includeCss and includeJs
  *
@@ -240,7 +292,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	protected function _generateAsset($method, $destination, $files, $url) {
 		$fileString = 'file[]=' . implode('&amp;file[]=', $files);
-		$iniKey = $method == '_scripts' ? 'Javascript' : 'Css';
+		$iniKey = $method == '_css' ? 'Css' : 'Javascript';
 
 		if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
 			$destination = $this->_timestampFile($destination);
@@ -263,10 +315,10 @@ class AssetCompressHelper extends AppHelper {
 		if (file_exists(WWW_ROOT . $base)) {
 			$url = $base;
 		}
-		if ($method == '_scripts') {
-			return $this->Html->script($url);
-		} else {
+		if ($method == '_css') {
 			return $this->Html->css($url);
+		} else {			
+			return $this->Html->script($url);
 		}
 	}
 
@@ -292,11 +344,35 @@ class AssetCompressHelper extends AppHelper {
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
  */
-	public function script($file, $destination = 'default') {
-		if (empty($this->_scripts[$destination])) {
-			$this->_scripts[$destination] = array();
+	public function script($property = '_topScripts', $file, $destination = 'default') {
+		if (empty($this->{$property}[$destination])) {
+			$this->{$property}[$destination] = array();
 		}
-		$this->_scripts[$destination] = array_merge($this->_scripts[$destination], (array)$file);
+		$this->{$property}[$destination] = array_merge($this->{$property}[$destination], (array)$file);
+	}
+
+/**
+ * Include a Header Javascript file.  All files with the same `$destination` will be compressed into one file.
+ * Compression/concatenation will only occur if debug == 0.
+ *
+ * @param mixed $file Either a string filename or an array of filenames to include.
+ * @param string $destination Name of file that $file should be compacted into, if $destination == 'default' the filename will be a concatenation of js filenames or a md5 hash
+ * @return void
+ */
+	public function topScript($file, $destination = 'default') {
+		$this->script('_topScripts', $file, $destination);
+	}
+
+/**
+ * Include a Bottom Javascript file.  All files with the same `$destination` will be compressed into one file.
+ * Compression/concatenation will only occur if debug == 0.
+ *
+ * @param mixed $file Either a string filename or an array of filenames to include.
+ * @param string $destination Name of file that $file should be compacted into, if $destination == 'default' the filename will be a concatenation of js filenames or a md5 hash
+ * @return void
+ */	
+	public function bottomScript($file, $destination = 'default') {
+		$this->script('_bottomScripts', $file, $destination);
 	}
 
 /**
