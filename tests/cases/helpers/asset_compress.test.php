@@ -198,4 +198,17 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		Configure::write('debug', 2);
 	}
 
+/**
+ * test configuration
+ *
+ * @return void
+ */
+	function testConfig() {
+		$result = $this->Helper->config('Css.stripComments');
+		$this->assertTrue($result, 'Reading is busted');
+
+		$this->Helper->config('Css.stripComments', false);
+		$result = $this->Helper->config('Css.stripComments');
+		$this->assertFalse($result, 'writing is busted');
+	}
 }

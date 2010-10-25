@@ -98,6 +98,30 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
+ * Modify the runtime configuration of the helper.
+ * Used as a get/set for the ini file values.
+ *
+ * 
+ * @param string $name The dot separated config value to change ie. Css.searchPaths
+ * @param mixed $value The value to set the config to.
+ * @return void
+ */
+	public function config($name, $value = null) {
+		list($section, $key) = explode('.', $name);
+		if ($value === null) {
+			if ($key) {
+				return $this->_iniFile[$section][$key];
+			}
+			return $this->_iniFile[$section];
+		}
+		if ($key) {
+			$this->_iniFile[$section][$key] = $value;
+		} else {
+			$this->_iniFile[$section] = $value;
+		}
+	}
+
+/**
  * Set options, merge with existing options.
  *
  * @return void
