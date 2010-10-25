@@ -226,7 +226,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => 'http://cdn.example.com/asset_compress/js_files/get/default.js?file[]=jquery'
+				'src' => 'http://cdn.example.com/asset_compress/js_files/get/default.js'
 			))
 		);
 		$this->assertTags($result, $expected);

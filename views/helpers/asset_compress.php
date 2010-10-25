@@ -281,7 +281,7 @@ class AssetCompressHelper extends AppHelper {
 		));
 
 		list($base, $query) = explode('?', $url);
-		if (file_exists(WWW_ROOT . $base)) {
+		if (!empty($baseUrl) || file_exists(WWW_ROOT . $base)) {
 			$url = $base;
 		}
 		if ($method == '_scripts') {
