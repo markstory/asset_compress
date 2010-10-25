@@ -16,6 +16,15 @@ class AssetCompressShell extends Shell {
 	public $uses = array('AssetCompress.JsFile', 'AssetCompress.CssFile');
 
 /**
+ * Builds all the files defined in the build file.
+ *
+ * @return void
+ */
+	public function build() {
+		
+	}
+
+/**
  * Clears the build directories for both CSS and JS
  *
  * @return void
