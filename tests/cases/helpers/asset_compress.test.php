@@ -207,8 +207,28 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$result = $this->Helper->config('Css.stripComments');
 		$this->assertTrue($result, 'Reading is busted');
 
+		$this->assertNull($this->Helper->config('Garbage.pail'));
+
 		$this->Helper->config('Css.stripComments', false);
 		$result = $this->Helper->config('Css.stripComments');
 		$this->assertFalse($result, 'writing is busted');
+	}
+
+/**
+ * test that a baseurl configuration works well.
+ *
+ * @return void
+ */
+	function testBaseUrl() {
+		$this->Helper->config('General.baseUrl', 'http://cdn.example.com');
+		$this->Helper->script('jquery');
+		$result = $this->Helper->includeJs();
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => 'http://cdn.example.com/asset_compress/js_files/get/default.js?file[]=jquery'
+			))
+		);
+		$this->assertTags($result, $expected);
 	}
 }

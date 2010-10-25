@@ -100,25 +100,20 @@ class AssetCompressHelper extends AppHelper {
 /**
  * Modify the runtime configuration of the helper.
  * Used as a get/set for the ini file values.
- *
  * 
  * @param string $name The dot separated config value to change ie. Css.searchPaths
  * @param mixed $value The value to set the config to.
- * @return void
+ * @return mixed Either the value being read or null.  Null also is returned when reading things that don't exist.
  */
 	public function config($name, $value = null) {
+		if (strpos($name, '.') === false) {
+			return null;
+		}
 		list($section, $key) = explode('.', $name);
 		if ($value === null) {
-			if ($key) {
-				return $this->_iniFile[$section][$key];
-			}
-			return $this->_iniFile[$section];
+			return isset($this->_iniFile[$section][$key]) ? $this->_iniFile[$section][$key] : null;
 		}
-		if ($key) {
-			$this->_iniFile[$section][$key] = $value;
-		} else {
-			$this->_iniFile[$section] = $value;
-		}
+		$this->_iniFile[$section][$key] = $value;
 	}
 
 /**
@@ -278,6 +273,8 @@ class AssetCompressHelper extends AppHelper {
 			}
 		}
 
+		$baseUrl = $this->config('General.baseUrl');
+
 		$url = Router::url(array_merge(
 			$url,
 			array($destination, '?' => $fileString, 'base' => false)
@@ -288,9 +285,9 @@ class AssetCompressHelper extends AppHelper {
 			$url = $base;
 		}
 		if ($method == '_scripts') {
-			return $this->Html->script($url);
+			return $this->Html->script($baseUrl . $url);
 		} else {
-			return $this->Html->css($url);
+			return $this->Html->css($baseUrl . $url);
 		}
 	}
 
