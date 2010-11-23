@@ -59,7 +59,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 			'link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/default.css?file[]=base&amp;file[]=reset'
+				'href' => '/asset_compress/css_files/get/base_reset.css?file[]=base&amp;file[]=reset'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -78,13 +78,39 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$expected = array(
 			'script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries&amp;file[]=thing'
+				'src' => '/asset_compress/js_files/get/libraries_thing.js?file[]=libraries&amp;file[]=thing'
 			),
 			'/script'
 		);
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * test that magic slug builds work.
+ *
+ * @return void
+ */
+	function testScriptMagicSlugs() {
+		$this->Helper->script('libraries', ':slug-default');
+		$this->Helper->script('thing', ':slug-default');
+		$this->Helper->script('jquery.js', ':slug-jquery');
+		$this->Helper->script('jquery-ui.js', ':slug-jquery');
+
+		$result = $this->Helper->includeAssets();
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/libraries_thing.js?file[]=libraries&amp;file[]=thing'
+			)),
+			'/script',
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/js_files/get/jquery_js_jquery_ui_js.js?file[]=jquery.js&amp;file[]=jquery-ui.js'
+			)),
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
 
 /**
  * test generating two script files.
@@ -221,7 +247,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  */
 	function testBaseUrl() {
 		$this->Helper->config('General.baseUrl', 'http://cdn.example.com');
-		$this->Helper->script('jquery');
+		$this->Helper->script('jquery', 'default');
 		$result = $this->Helper->includeJs();
 		$expected = array(
 			array('script' => array(
