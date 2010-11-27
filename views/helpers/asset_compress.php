@@ -122,7 +122,7 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function options($options) {
-		$this->options = Set::merge($options);
+		$this->options = Set::merge($this->options, $options);
 	}
 
 /**
