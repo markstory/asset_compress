@@ -15,13 +15,15 @@ class AssetCompressShell extends Shell {
  */
 	public $uses = array('AssetCompress.JsFile', 'AssetCompress.CssFile');
 
+	public $tasks = array('AssetBuild');
 /**
  * Builds all the files defined in the build file.
  *
  * @return void
  */
 	public function build() {
-		
+		$viewpaths = App::path('views');
+		$this->AssetBuild->build($viewpaths);
 	}
 
 /**
