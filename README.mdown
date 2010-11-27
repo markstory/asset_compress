@@ -33,6 +33,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * Inflection of file names for javascript and css was removed.  This affects both the helper, and the directives supported by each file type.
 * Auto inclusion of all build files in the `afterRender()` callback was removed.  You now need to manually call `includeAssets()`.
+* The default build file is now a magic-hash.  Magic-hash build files, use the md5() of their components as the build filename.  This allows you to easily create build files without worrying about keeping them unique across your application.
 
 ** Other changes **
 
