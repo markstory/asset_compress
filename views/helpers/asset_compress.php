@@ -242,8 +242,8 @@ class AssetCompressHelper extends AppHelper {
 				continue;
 			}
 			$build = $destination;
-			if (strpos($destination, ':slug') === 0) {
-				$build = Inflector::slug(implode('_', $this->{$property}[$destination]));
+			if (strpos($destination, ':hash') === 0) {
+				$build = md5(implode('_', $this->{$property}[$destination]));
 			}
 			$output[] = $this->_generateAsset(
 				$property, $build, $this->{$property}[$destination], $this->options[$urlKey]
@@ -317,7 +317,7 @@ class AssetCompressHelper extends AppHelper {
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
  */
-	public function script($file, $destination = ':slug-default') {
+	public function script($file, $destination = ':hash-default') {
 		if (empty($this->_scripts[$destination])) {
 			$this->_scripts[$destination] = array();
 		}
@@ -332,7 +332,7 @@ class AssetCompressHelper extends AppHelper {
  * @param string $destination Name of file that $file should be compacted into.
  * @return void
  */
-	public function css($file, $destination = ':slug-default') {
+	public function css($file, $destination = ':hash-default') {
 		if (empty($this->_css[$destination])) {
 			$this->_css[$destination] = array();
 		}

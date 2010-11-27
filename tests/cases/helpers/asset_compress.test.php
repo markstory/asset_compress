@@ -53,13 +53,15 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	function testCssOrderPreserving() {
 		$this->Helper->css('base');
 		$this->Helper->css('reset');
-		
+
+		$hash = md5('base_reset');
+
 		$result = $this->Helper->includeAssets();
 		$expected = array(
 			'link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/base_reset.css?file[]=base&amp;file[]=reset'
+				'href' => '/asset_compress/css_files/get/' . $hash . '.css?file[]=base&amp;file[]=reset'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -74,11 +76,13 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->Helper->script('libraries');
 		$this->Helper->script('thing');
 
+		$hash = md5('libraries_thing');
+
 		$result = $this->Helper->includeAssets();
 		$expected = array(
 			'script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/libraries_thing.js?file[]=libraries&amp;file[]=thing'
+				'src' => '/asset_compress/js_files/get/' . $hash . '.js?file[]=libraries&amp;file[]=thing'
 			),
 			'/script'
 		);
@@ -91,21 +95,24 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testScriptMagicSlugs() {
-		$this->Helper->script('libraries', ':slug-default');
-		$this->Helper->script('thing', ':slug-default');
-		$this->Helper->script('jquery.js', ':slug-jquery');
-		$this->Helper->script('jquery-ui.js', ':slug-jquery');
+		$this->Helper->script('libraries', ':hash-default');
+		$this->Helper->script('thing', ':hash-default');
+		$this->Helper->script('jquery.js', ':hash-jquery');
+		$this->Helper->script('jquery-ui.js', ':hash-jquery');
+
+		$hash1 = md5('libraries_thing');
+		$hash2 = md5('jquery.js_jquery-ui.js');
 
 		$result = $this->Helper->includeAssets();
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/libraries_thing.js?file[]=libraries&amp;file[]=thing'
+				'src' => '/asset_compress/js_files/get/' . $hash1 . '.js?file[]=libraries&amp;file[]=thing'
 			)),
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/jquery_js_jquery_ui_js.js?file[]=jquery.js&amp;file[]=jquery-ui.js'
+				'src' => '/asset_compress/js_files/get/' . $hash2 . '.js?file[]=jquery.js&amp;file[]=jquery-ui.js'
 			)),
 			'/script'
 		);
