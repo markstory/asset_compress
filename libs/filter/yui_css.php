@@ -13,7 +13,7 @@ class YuiCssFilter implements AssetFilterInterface {
 	public function filter($input) {
 		$output = '';
 		$JAR_PATH = $this->_find(App::path('vendors'), 'yuicompressor' . DS . 'yuicompressor.jar');
-		$cmd = 'java -jar"' . $JAR_PATH . 'yuicompressor' . DS . 'yuicompressor.jar" --type css';
+		$cmd = 'java -jar "' . $JAR_PATH . 'yuicompressor' . DS . 'yuicompressor.jar" --type css';
 
 		$descriptor_spec = array(
 			0 => array('pipe', 'r'),
