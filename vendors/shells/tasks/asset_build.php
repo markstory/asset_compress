@@ -162,6 +162,9 @@ class AssetBuildTask extends Shell {
 		if (!empty($this->_buildFiles['css'])) {
 			$Css = new CssFile();
 			foreach ($this->_buildFiles['css'] as $target => $contents) {
+				if (strpos($target, ':hash') === 0) {
+					$target = md5(implode('_', $contents));
+				}
 				$this->out('Saving CSS file for ' . $target);
 				$compress = $Css->process($contents);
 				$Css->cache($target . '.css', $compress);
@@ -170,6 +173,9 @@ class AssetBuildTask extends Shell {
 		if (!empty($this->_buildFiles['script'])) {
 			$Js = new JsFile();
 			foreach ($this->_buildFiles['script'] as $target => $contents) {
+				if (strpos($target, ':hash') === 0) {
+					$target = md5(implode('_', $contents));
+				}
 				$this->out('Saving Javascript file for ' . $target);
 				$compress = $Js->process($contents);
 				$Js->cache($target . '.js', $compress);
