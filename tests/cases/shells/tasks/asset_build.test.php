@@ -62,14 +62,13 @@ class AssetBuildTest extends CakeTestCase {
 		$expected = array(
 			'css' => array(
 				'single' => array('one_file'),
-				'' => array('no_build')
+				':hash-default' => array('no_build')
 			),
 			'script' => array(
 				'single' => array('one_file'),
-				'' => array('no_build')
+				':hash-default' => array('no_build')
 			)
 		);
-		debug($result);
 		$this->assertEqual($expected, $result);
 	}
 }

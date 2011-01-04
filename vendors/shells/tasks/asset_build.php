@@ -89,7 +89,7 @@ class AssetBuildTask extends Shell {
 			$args = array_slice($call, 3);
 
 			$files = array();
-			$build = '';
+			$build = ':hash-default';
 
 			foreach ($args as $arg) {
 				if (
