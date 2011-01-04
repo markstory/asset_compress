@@ -62,7 +62,7 @@ class AssetBuildTask extends Shell {
 				}
 
 				// end of function stop capturing
-				if ($capturing && $token == ')') {
+				if ($capturing && $token == ';') {
 					$capturing = false;
 					$calls[] = $call;
 				}
@@ -88,26 +88,7 @@ class AssetBuildTask extends Shell {
 	
 			$args = array_slice($call, 3);
 
-			$files = array();
-			$build = ':hash-default';
-
-			foreach ($args as $arg) {
-				if (
-					$arg[0] == T_ARRAY ||
-					$arg[0] == T_WHITESPACE ||
-					$arg[0] == ',' ||
-					$arg[0] == '(' ||
-					$arg[0] == ')'
-				) {
-					continue;
-				}
-				// array checks here.
-
-				$files[] = trim($arg[1], '\'"');
-			}
-			if (count($files) == 2) {
-				$build = array_pop($files);
-			}
+			list($files, $build) = $this->_parseArgs($args);
 		
 			if (!isset($fileMap[$method][$build])) {
 				$fileMap[$method][$build] = array();
@@ -116,6 +97,60 @@ class AssetBuildTask extends Shell {
 		}
 		$this->_buildFiles = $fileMap;
 		return $this->_buildFiles;
+	}
+
+/**
+ * parses the arguments for a function call.
+ *
+ * @return array ($files, $buildFile)
+ */
+	function _parseArgs($tokens) {
+		$files = array();
+		$build = ':hash-default';
+		$wasArray = false;
+
+		while (true) {
+			if (empty($tokens)) {
+				break;
+			}
+			$token = array_shift($tokens);
+			if ($token[0] == T_ARRAY) {
+				$wasArray = true;
+				$files = $this->_parseArray($tokens);
+			}
+			if ($token[0] == T_CONSTANT_ENCAPSED_STRING && $wasArray) {
+				$build = trim($token[1], '"\'');
+			} elseif ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
+				$files[] = trim($token[1], '"\'');
+			}
+		}
+		if (!$wasArray && count($files) == 2) {
+			$build = array_pop($files);
+		}
+		return array($files, $build);
+	}
+
+/**
+ * Parses an array argument
+ *
+ * @return array Array of array members
+ */
+	function _parseArray(&$tokens) {
+		$files = array();
+		while (true) {
+			if (empty($tokens)) {
+				break;
+			}
+			$token = array_shift($tokens);
+			if ($token[0] == T_CONSTANT_ENCAPSED_STRING) {
+				$files[] = trim($token[1], '"\'');
+			}
+			// end of array
+			if ($token[0] == ')') {
+				break;
+			}
+		}
+		return $files;
 	}
 
 /**

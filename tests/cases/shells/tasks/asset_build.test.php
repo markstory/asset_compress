@@ -71,4 +71,39 @@ class AssetBuildTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $result);
 	}
+	
+	function testParsingMultipleFile() {
+		$files = array($this->testFilePath . 'multiple.ctp');
+		$this->Task->setFiles($files);
+		$this->Task->_scanFiles();
+		$result = $this->Task->_parse();
+		$expected = array(
+			'css' => array(
+				'multi' => array('one_file', 'two_file', 'three_file'),
+			),
+			'script' => array(
+				'multi' => array('one_file', 'two_file', 'three_file'),
+			)
+		);
+		$this->assertEqual($expected, $result);
+	}
+
+	function testParsingArrayFile() {
+		$files = array($this->testFilePath . 'array.ctp');
+		$this->Task->setFiles($files);
+		$this->Task->_scanFiles();
+		$result = $this->Task->_parse();
+
+		$expected = array(
+			'css' => array(
+				':hash-default' => array('no', 'build'),
+				'array_file' => array('has', 'a_build')
+			),
+			'script' => array(
+				':hash-default' => array('no', 'build'),
+				'multi_file' => array('one_file', 'two_file')
+			)
+		);
+		$this->assertEqual($expected, $result);
+	}
 }
