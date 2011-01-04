@@ -108,6 +108,7 @@ class AssetCompressShell extends Shell {
 		$this->out('Usage: cake asset_compress <command>');
 		$this->hr();
 		$this->out("clear - Clears all existing build files.");
+		$this->out("build - Builds compressed files.");
 		$this->out();
 	}
 }
