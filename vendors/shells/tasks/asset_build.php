@@ -11,14 +11,23 @@ class AssetBuildTask extends Shell {
 	public $helperTokens = array(
 		'$assetCompress', 'AssetCompress'
 	);
-	
+
 	function build($paths) {
 		$this->_collectFiles($paths);
 		$this->_scanFiles();
 		$this->_parse();
 		$this->_buildFiles();
 	}
-	
+
+	public function setFiles($files) {
+		$this->_files = $files;
+	}
+
+/**
+ * Collects the files to scan and generate build files for.
+ *
+ * @param array $paths 
+ */
 	protected function _collectFiles($paths) {
 		foreach ($paths as $path) {
 			$Folder = new Folder($path);
@@ -33,7 +42,7 @@ class AssetBuildTask extends Shell {
  *
  * @return void
  */
-	protected function _scanFiles() {
+	function _scanFiles() {
 		$calls = array();
 		foreach ($this->_files as $file) {
 			$this->out('Scanning ' . $file . '...');
@@ -49,9 +58,6 @@ class AssetBuildTask extends Shell {
 					$call = array();
 				}
 				if ($capturing) {
-					if (!is_array($token) && $token != ')') {
-						continue;
-					}
 					$call[] = $token;
 				}
 
@@ -63,6 +69,7 @@ class AssetBuildTask extends Shell {
 			}
 		}
 		$this->_tokens = $calls;
+		return $this->_tokens;
 	}
 
 /**
@@ -70,7 +77,7 @@ class AssetBuildTask extends Shell {
  *
  * @return void
  */
-	protected function _parse() {
+	function _parse() {
 		$fileMap = array();
 
 		foreach ($this->_tokens as $call) {
@@ -78,20 +85,44 @@ class AssetBuildTask extends Shell {
 			if (!in_array($method, array('css', 'script'))) {
 				continue;
 			}
+	
 			$args = array_slice($call, 3);
-			$files = array();
-			$build = false;
 
-			$filename = trim($args[0][1], '\'"');
-			$build = trim($args[2][1], '\'"');
+			$files = array();
+			$build = '';
+
+			foreach ($args as $arg) {
+				if (
+					$arg[0] == T_ARRAY ||
+					$arg[0] == T_WHITESPACE ||
+					$arg[0] == ',' ||
+					$arg[0] == '(' ||
+					$arg[0] == ')'
+				) {
+					continue;
+				}
+				// array checks here.
+
+				$files[] = trim($arg[1], '\'"');
+			}
+			if (count($files) == 2) {
+				$build = array_pop($files);
+			}
+		
 			if (!isset($fileMap[$method][$build])) {
 				$fileMap[$method][$build] = array();
 			}
-			$fileMap[$method][$build][] = $filename;
+			$fileMap[$method][$build] = array_merge($fileMap[$method][$build], $files);
 		}
 		$this->_buildFiles = $fileMap;
+		return $this->_buildFiles;
 	}
-	
+
+/**
+ * Generate the build files for css and scripts.
+ *
+ * @return void
+ */
 	protected function _buildFiles() {
 		if (!empty($this->_buildFiles['css'])) {
 			$Css = new CssFile();
