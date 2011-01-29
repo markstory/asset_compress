@@ -1,12 +1,28 @@
 <?php
 /**
- * Asset Compress base controller.  Directly extends Controller to fix issues
- * with authentication issues and component callbacks in the AppController causing
- * CSS and JS files to not correctly be created.
+ * Asset Compress base controller. Stubs out some of the controller processes so 
+ * components in AppController don't interfere with the generation of asset files.
  *
  * @package asset_compress
  * @author Mark Story
  */
-class AssetCompressAppController extends Controller {
+class AssetCompressAppController extends AppController {
 	public $components = false;
+
+/**
+ * Stub off the startupProcess so components don't mess around with asset compression
+ *
+ * @return void
+ */
+	public function startupProcess() { 
+		$this->beforeFilter();
+	}
+
+/**
+ * Stub off the shutDown so components don't mess around with asset compression
+ *
+ * @return void
+ */
+	public function shutdownProcess() { }
+
 }
