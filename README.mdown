@@ -4,7 +4,11 @@ Asset Compress is CakePHP plugin for helping reduce the number of requests your 
 
 ## Installing
 
-Clone or download the plugin into one of your plugin paths. From there read the [wiki](http://wiki.github.com/markstory/asset_compress/) for more information.
+Clone or download the plugin into one of your plugin paths. From there read the [wiki](http://github.com/markstory/asset_compress/wiki) for more information.
+
+## Documentation 
+
+Documentation for AssetCompress is available on the [github wiki pages](http://github.com/markstory/asset_compress/wiki)
 
 ## Issues
 
@@ -34,7 +38,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * Inflection of file names for javascript and css was removed.  This affects both the helper, and the directives supported by each file type.
 * Auto inclusion of all build files in the `afterRender()` callback was removed.  You now need to manually call `includeAssets()`.
-* The default build file is now a magic-hash.  Magic-hash build files, use the md5() of their components as the build filename.  This allows you to easily create build files without worrying about keeping them unique across your application.
+* The default build file is now a magic-hash.  Magic-hash build files, use the `md5()` of their components as the build filename.  This allows you to easily create build files without worrying about keeping them unique across your application.
 
 ** Other changes **
 
