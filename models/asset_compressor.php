@@ -225,7 +225,8 @@ abstract class AssetCompressor {
 		foreach ($this->settings['filters'] as $filter) {
 			$className = $filter . 'Filter';
 
-			App::import('Lib', 'asset_compress/' . $filter);
+			list($plugin, $className) = pluginSplit($className, true);
+			App::import('Lib', $plugin . 'asset_compress/' . $filter);
 			if (!class_exists($className)) {
 				App::import('Lib', 'AssetCompress.filter/' . $filter);
 				if (!class_exists($className)) {
