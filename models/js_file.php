@@ -42,34 +42,6 @@ class JsFile extends AssetCompressor {
 	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
 
 /**
- * Scan each of the $searchPaths for the named object / filename
- *
- * @return string Full path to the $object
- **/
-	protected function _findFile($object, $path = null) {
-		$filename = $object;
-		if (substr($filename, -3) != '.js') {
-			$filename .= '.js';
-		}
-		if ($path !== null) {
-			return $path . $filename;
-		}
-		if (empty($this->_fileLists)) {
-			$this->_readDirs();
-		}
-		foreach ($this->_fileLists as $path => $files) {
-			foreach ($files as $file) {
-				if ($filename == $file) {
-					return $path . $file;
-				}
-				if (strpos($filename, '/') !== false && file_exists($path . str_replace('/', DS, $filename))) {
-					return $path . $filename;
-				}
-			}
-		}
-		throw new Exception('Could not locate file for ' . $object);
-	}
-/**
  * Preprocess a specific file and do any nesteds inclusions that are required.
  *
  * @param string $filename Name of the file to load and preprocess

@@ -255,7 +255,29 @@ abstract class AssetCompressor {
  *
  * @return string The path to $object's file.
  **/
-	abstract protected function _findFile($object);
+	protected function _findFile($object, $path = null) {
+		$filename = $object;
+		if (substr($filename, -4) != ".{$this->_extension}") {
+			$filename .= ".{$this->_extension}";
+		}
+		if ($path !== null) {
+			return $path . $filename;
+		}
+		if (empty($this->_fileLists)) {
+			$this->_readDirs();
+		}
+		foreach ($this->_fileLists as $path => $files) {
+			foreach ($files as $file) {
+				if ($filename == $file) {
+					return $path . $file;
+				}
+				if (strpos($filename, '/') !== false && file_exists($path . str_replace('/', DS, $filename))) {
+					return $path . $filename;
+				}
+			}
+		}
+		throw new Exception('Could not locate file for ' . $object);
+	}
 
 /**
  * Preprocess the file as needed
