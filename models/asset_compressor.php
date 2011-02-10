@@ -22,7 +22,7 @@ abstract class AssetCompressor {
  * An array of settings, these values are merged with the ones defined in the ini file.
  * 
  * - `searchPaths` - Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
- * - `stripComments` - Remove inline comments?
+ * - `stripComments` - Remove inline comments? Deprecated, use filters for this.
  * - `cacheFilePath` - File path cached files should be saved to.
  * - `cacheFiles` - Should cache files be made.
  * - `filters` - Attached filters, contains only the string names of the filters.
@@ -51,13 +51,6 @@ abstract class AssetCompressor {
  * @var array
  */
 	protected $_filterObjects = array();
-
-/**
- * Flag for keeping track comment block status.
- *
- * @var boolean
- **/
-	protected $_inCommentBlock = false;
 
 /**
  * Contains a hashmap of path -> filescans
@@ -129,7 +122,7 @@ abstract class AssetCompressor {
 		$out = '';
 		foreach ($objects as $object) {
 			$fileName = $this->_findFile($object);
-			$this->_preprocess($fileName);
+			$this->_processedOutput .= $this->_applyProcessors($fileName, $this->_preprocess($fileName) . "\n");
 		}
 		$this->_applyFilters();
 		$out = trim($this->_processedOutput);
@@ -186,6 +179,13 @@ abstract class AssetCompressor {
 			return;
 		}
 		$this->_processedOutput .= $line;
+	}
+
+/**
+ * @todo Docblock here.
+ */
+	protected function _applyProcessors($fileName, $contents) {
+		return $contents;
 	}
 
 /**
@@ -285,7 +285,13 @@ abstract class AssetCompressor {
  * @param string $filename name of file to process
  * @return string The processed file contents
  **/
-	abstract protected function _preprocess($filename);
+	protected function _preprocess($filename) {
+		if (isset($this->_loaded[$filename])) {
+			return '';
+		}
+		$this->_loaded[$filename] = true;
+		return file_get_contents($filename);
+	}
 
 /**
  * get the header line for a cached file.

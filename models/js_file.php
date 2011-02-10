@@ -30,16 +30,11 @@ class JsFile extends AssetCompressor {
 	protected $_extension = 'js';
 
 /**
- * pattern for finding dependancies.
+ * Tracks file processing.
  *
- * matches:
- *
- * - //= require "foo"
- * - //= require <foo>
- *
- * @var string
- **/
-	public $requirePattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]/';
+ * @var array
+ */
+	protected $_files = array();
 
 /**
  * Preprocess a specific file and do any nesteds inclusions that are required.
@@ -48,54 +43,32 @@ class JsFile extends AssetCompressor {
  * @return string The Fully processed file, or "\n" if in a recursive call
  **/
 	protected function _preprocess($filename) {
-		if (isset($this->_loaded[$filename])) {
-			return '';
-		}
-		$this->_loaded[$filename] = true;
-		$fileHandle = fopen($filename, 'r');
-		while (!feof($fileHandle)) {
-			$line = fgets($fileHandle);
-			if (preg_match($this->requirePattern, $line, $requiredObject)) {
-				if ($requiredObject[1] == '"') {
-					$filename = $this->_findFile($requiredObject[2], dirname($filename) . DS);
-				} else {
-					$filename = $this->_findFile($requiredObject[2]);
-				}
-				$this->_record($this->_preprocess($filename));
+		if (is_array($filename)) {
+			$file = array_pop($this->_files);
+			if ($filename[1] == '"') {
+				$filename = $this->_findFile($filename[2], dirname($file) . DS);
 			} else {
-				$this->_record($line);
+				$filename = $this->_findFile($filename[2]);
 			}
+			if ($return = $this->_preprocess($filename)) {
+				return $return . "\n";
+			}
+			return $return;
 		}
-		$this->_record("\n");
-		return '';
+		$this->_files[] = $filename;
+		$pattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]\n+/m';
+		return preg_replace_callback($pattern, array($this, '_preprocess'), parent::_preprocess($filename));
 	}
-/**
- * Remove // Comments in a line.
- *
- * @return string code line with no comments
- **/
-	protected function _stripComments($line) {
-		$inlineComment = '#^\s*//.*$#s';
-		$blockCommentLine = '#^\s*/\*+.*\*+/#s';
-		$blockCommentStart = '#^\s*/\*+(?!!).*#s';
-		$blockCommentEnd = '#^.*\*+/.*#s';
 
-		if ($this->_inCommentBlock) {
-			if (preg_match($blockCommentEnd, $line)) {
-				$this->_inCommentBlock = false;
-			}
-			return '';
+/**
+ * For BC compatibility.
+ *
+ * @return void
+ */
+	protected function _applyFilters() {
+		if ($this->settings['stripComments']) {
+			array_unshift($this->settings['filters'], 'JsStripComments');
 		}
-		if (preg_match($inlineComment, $line)) {
-			return '';
-		}
-		if (preg_match($blockCommentLine, $line)) {
-			return '';
-		}
-		if (preg_match($blockCommentStart, $line)) {
-			$this->_inCommentBlock = true;
-			return '';
-		}
-		return $line;
+		return parent::_applyFilters();
 	}
 }
