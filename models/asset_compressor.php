@@ -257,7 +257,7 @@ abstract class AssetCompressor {
  **/
 	protected function _findFile($object, $path = null) {
 		$filename = $object;
-		if (substr($filename, -4) != ".{$this->_extension}") {
+		if (substr($filename, -(strlen($this->_extension) + 1)) != ".{$this->_extension}") {
 			$filename .= ".{$this->_extension}";
 		}
 		if ($path !== null) {
