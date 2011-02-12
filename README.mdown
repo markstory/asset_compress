@@ -29,6 +29,9 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Igor Fomin
 * Rachman Chavik
 * Sumit Madan
+* Florian Krämer
+* Frank De Graaf (Phally)
+* Alan Bount
 
 ### Changelog
 
@@ -46,7 +49,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * `AssetCompressHelper::includeJs()` and `AssetCompressHelper::includeCss()` were added.  These methods function similar to `includeAssets()`.  Each allows you to only include some of the build files.
 * Assets that do not exist now return 404 errors.
 * Two basic filters have been added.  `JsMin` and `CssMin` are now built-in filters.  Both require you to put their libraries in `app/vendors`.
-* Filters for YUI Compressor have been added, both a CSS and Javascript filter have been added.  They require you to put yuicompressor in your app's vendors directories.
+* Filters for YUI Compressor have been added. Both a CSS and Javascript filter have been added.  They require you to put yuicompressor in your app's vendors directories.
 * The asset_compress shell can now generate build files.  This allows you to integrate asset generation into your deployment/build scripts.
 
 
