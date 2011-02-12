@@ -205,7 +205,7 @@ abstract class AssetCompressor {
 		if (empty($this->settings['filters'])) {
 			return;
 		}
-		$this->_loadFilters();
+		$this->_loadExtensions();
 		if (empty($this->_filterObjects)) {
 			return;
 		}
@@ -217,27 +217,30 @@ abstract class AssetCompressor {
 	}
 
 /**
- * Loads the filters defined in $filters from the app/libs dir.
+ * Loads extensions defined in $filters or $processors from the app/libs dir.
  *
  * @return void
  */
-	protected function _loadFilters() {
-		foreach ($this->settings['filters'] as $filter) {
-			$className = $filter . 'Filter';
-
+	protected function _loadExtensions($type = 'filters') {
+		$singular = Inflector::singularize($type);
+		$suffix = Inflector::camelize($singular);
+		foreach ($this->settings[$type] as $extension) {
+			$className = $extension . $suffix;
 			list($plugin, $className) = pluginSplit($className, true);
-			App::import('Lib', $plugin . 'asset_compress/' . $filter);
+			App::import('Lib', $plugin . 'asset_compress/' . $extension);
 			if (!class_exists($className)) {
-				App::import('Lib', 'AssetCompress.filter/' . $filter);
+				App::import('Lib', 'AssetCompress.' . $singular . '/' . $extension);
 				if (!class_exists($className)) {
-					throw new Exception(sprintf('Cannot not load %s filter.', $filter));
+					throw new Exception(sprintf('Cannot not load %s.', $className));
 				}
 			}
-			$filterObj = new $className();
-			if (!$filterObj instanceof AssetFilterInterface) {
-				throw new Exception('Cannot use filters that do not implenment AssetFilterInterface');
+			$extensionObj = new $className();
+			$interface = 'Asset' . $suffix . 'Interface';
+			if (!is_a($extensionObj, $interface)) {
+				throw new Exception('Cannot use ' . $type . ' that do not implement ' . $interface);
 			}
-			$this->_filterObjects[] = $filterObj;
+			$property = '_' . $singular . 'Objects';
+			array_push($this->$property, $extensionObj);
 		}
 	}
 
