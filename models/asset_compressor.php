@@ -46,6 +46,13 @@ abstract class AssetCompressor {
 	protected $_timestampFilename = 'asset_compress_build_time';
 
 /**
+ * Processor objects that will be run
+ *
+ * @var array
+ */
+	protected $_processorObjects = array();
+
+/**
  * Filter objects that will be run
  *
  * @var array
@@ -182,9 +189,21 @@ abstract class AssetCompressor {
 	}
 
 /**
- * @todo Docblock here.
+ * Applies the pre-processors to the contents of a file.
+ *
+ * @param string $fileName The name for a file.
+ * @param string $contents The contents of a file.
+ * @return string The processed contents of the input.
  */
 	protected function _applyProcessors($fileName, $contents) {
+		if (!empty($this->settings['processors'])) {
+			$this->_loadExtensions('processors');
+			if (!empty($this->_processorObjects)) {
+				foreach ($this->_processorObjects as $processor) {
+					$contents = $processor->process($fileName, $contents);
+				}
+			}
+		}
 		return $contents;
 	}
 
@@ -219,6 +238,7 @@ abstract class AssetCompressor {
 /**
  * Loads extensions defined in $filters or $processors from the app/libs dir.
  *
+ * @param string $type The type of extension to load.
  * @return void
  */
 	protected function _loadExtensions($type = 'filters') {

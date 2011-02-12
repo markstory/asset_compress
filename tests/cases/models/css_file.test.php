@@ -1,5 +1,19 @@
 <?php
 App::import('Model', 'AssetCompress.CssFile');
+App::import('Model', 'AssetCompress.AssetFilterInterface');
+App::import('Model', 'AssetCompress.AssetProcessorInterface');
+
+class TestProcessor implements AssetProcessorInterface {
+	public function process($fileName, $content) {
+		return "/* Begin of file */\n" . $content;
+	}
+}
+
+class WrongInterfaceProcessor implements AssetFilterInterface {
+	public function filter($content) {
+		return "/* Begin of file */\n" . $content;
+	}
+}
 
 class CssFileTestCase extends CakeTestCase {
 /**
@@ -205,4 +219,91 @@ TEXT;
 		$this->assertTrue($this->CssFile->validExtension($filename));
 	}
 
+/**
+ * test pre-processing
+ *
+ * @return void
+ **/
+	function testPreProcessor() {
+		$this->CssFile->settings['stripComments'] = false;
+		$this->CssFile->settings['processors'] = array('Test');
+		$this->CssFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests/test_files/css/',
+		);
+		$result = $this->CssFile->process('has_import');
+		$expected = <<<TEXT
+/* Begin of file */
+* {
+	margin:0;
+	padding:0;
+}
+#nav {
+	width:100%;
+}
+body {
+	color:#f00;
+	background:#000;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * test pre-processing with filter
+ *
+ * @return void
+ **/
+	function testPreProcessorWithFilter() {
+		$this->CssFile->settings['stripComments'] = false;
+		$this->CssFile->settings['filters'] = array('CssStripComments');
+		$this->CssFile->settings['processors'] = array('Test');
+		$this->CssFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests/test_files/css/',
+		);
+		$result = $this->CssFile->process('has_import');
+		$expected = <<<TEXT
+* {
+	margin:0;
+	padding:0;
+}
+#nav {
+	width:100%;
+}
+body {
+	color:#f00;
+	background:#000;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test invalid pre-processor
+ *
+ * @return void
+ **/
+	function testInvalidPreProcessors() {
+		$this->CssFile->settings['stripComments'] = false;
+		$this->CssFile->settings['processors'] = array('InvalidTest');
+		$this->CssFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests/test_files/css/',
+		);
+
+		try {
+			$this->CssFile->process('has_import');
+		} catch (Exception $e) {
+			$message = $e->getMessage();
+		}
+
+		$this->assertEqual($message, 'Cannot not load InvalidTestProcessor.');
+
+		$this->CssFile->settings['processors'] = array('WrongInterface');
+
+		try {
+			$this->CssFile->process('has_import');
+		} catch (Exception $e) {
+			$message = $e->getMessage();
+		}
+
+		$this->assertEqual($message, 'Cannot use processors that do not implement AssetProcessorInterface');
+	}
 }
