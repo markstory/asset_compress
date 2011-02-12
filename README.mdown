@@ -30,7 +30,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Rachman Chavik
 * Sumit Madan
 * Florian Krämer
-* Frank De Graaf (Phally)
+* Frank de Graaf (Phally)
 * Alan Bount
 
 ### Changelog
