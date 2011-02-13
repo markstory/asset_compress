@@ -176,19 +176,6 @@ abstract class AssetCompressor {
 	}
 
 /**
- * Records a line to the buffer.  Strips comments if that has been enabled.
- *
- * @return void
- **/
-	protected function _record($line) {
-		if ($this->settings['stripComments']) {
-			$this->_processedOutput .= $this->_stripComments($line);
-			return;
-		}
-		$this->_processedOutput .= $line;
-	}
-
-/**
  * Applies the pre-processors to the contents of a file.
  *
  * @param string $fileName The name for a file.
