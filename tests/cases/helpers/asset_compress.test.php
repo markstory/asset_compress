@@ -58,15 +58,19 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 
 		$result = $this->Helper->includeAssets(false);
 		$expected = array(
-			'link' => array(
-				'type' => 'text/css',
-				'rel' => 'stylesheet',
-				'href' => 'preg:/.*css\/one\.css/'
+			array(
+				'link' => array(
+					'type' => 'text/css',
+					'rel' => 'stylesheet',
+					'href' => 'preg:/.*css\/one\.css/'
+				)
 			),
-			'link' => array(
-				'type' => 'text/css',
-				'rel' => 'stylesheet',
-				'href' => 'preg:/.*css\/two\.css/'
+			array(
+				'link' => array(
+					'type' => 'text/css',
+					'rel' => 'stylesheet',
+					'href' => 'preg:/.*css\/two\.css/'
+				)
 			),
 			array(
 				'script' => array(
