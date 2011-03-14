@@ -146,6 +146,7 @@ TEXT;
  * @return void
  */
 	function testSettingThemeWithAlternatePaths() {
+		$restore = App::path('views');
 		$alternatePath = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS;
 		App::build(array(
 			'views' => array($alternatePath)
@@ -164,7 +165,7 @@ TEXT;
 		);
 		$this->assertEqual($this->CssFile->settings['searchPaths'], $expected);
 		
-		App::build();
+		App::build(array('views' => $restore));
 	}
 
 /**
