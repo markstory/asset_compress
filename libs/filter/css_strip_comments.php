@@ -14,4 +14,3 @@ class CssStripCommentsFilter implements AssetFilterInterface {
 		return preg_replace('#^\h*/\*(?!!)(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/\n#sm', '', $content);
 	}
 }
-?>

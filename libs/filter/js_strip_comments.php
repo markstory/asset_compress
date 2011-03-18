@@ -19,4 +19,3 @@ class JsStripCommentsFilter implements AssetFilterInterface {
 		return preg_replace($patterns, '', $content);
 	}
 }
-?>
