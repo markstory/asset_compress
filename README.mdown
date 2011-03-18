@@ -35,6 +35,14 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ### Changelog
 
+#### 0.4
+
+** Other Changes **
+
+* Asset processors added.  You can now define a set of processors that can be used to pre-process content in your asset files before they are concatenated and sent to filters.  An example usage of this is converting assets written with DSL's like CoffeeScript or LESS CSS into their compiled versions. Thanks to Frank de Graaf for doing the work for this.
+* CSS and JS comment stripping was moved into filter classes, it is still controlled by the old settings, which are now deprecated.
+
+
 #### 0.3
 
 ** Backwards incompatible changes**
