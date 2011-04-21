@@ -1,6 +1,6 @@
 <?php
 App::import('Model', 'AssetCompress.AssetFilterInterface');
-App::import('Vendor', 'JsMin', array('file' => 'JSMin/JSMin.php'));
+App::import('Vendor', 'JsMin', array('file' => 'JSMin/jsmin.php'));
 
 /**
  * JsMin filter.
