@@ -4,7 +4,7 @@ App::import('Model', 'AssetCompress.AssetFilterInterface');
 /**
  * Css Strip Comments filter.
  *
- * Stripts comments from CSS input.
+ * Strips comments from CSS input.
  *
  * @package asset_compress
  * @author Mark Story
