@@ -46,6 +46,51 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that setting $compress = false echos original scripts
+ *
+ * @return void
+ */
+	function testNoCompression() {
+		$this->Helper->css('one', 'lib');
+		$this->Helper->css('two');
+		$this->Helper->script('one');
+		$this->Helper->script('dir/two');
+
+		$result = $this->Helper->includeAssets(false);
+		$expected = array(
+			array(
+				'link' => array(
+					'type' => 'text/css',
+					'rel' => 'stylesheet',
+					'href' => 'preg:/.*css\/one\.css/'
+				)
+			),
+			array(
+				'link' => array(
+					'type' => 'text/css',
+					'rel' => 'stylesheet',
+					'href' => 'preg:/.*css\/two\.css/'
+				)
+			),
+			array(
+				'script' => array(
+					'type' => 'text/javascript',
+					'src' => 'preg:/.*js\/one\.js/'
+				)
+			),
+			'/script',
+			array(
+				'script' => array(
+					'type' => 'text/javascript',
+					'src' => 'preg:/.*js\/dir\/two\.js/'
+				)
+			),
+			'/script'
+		);
+		$this->assertTags($result, $expected, true);
+	}
+
+/**
  * test css addition
  *
  * @return void
