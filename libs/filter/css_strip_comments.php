@@ -11,6 +11,6 @@ App::import('Model', 'AssetCompress.AssetFilterInterface');
  */
 class CssStripCommentsFilter implements AssetFilterInterface {
 	public function filter($content) {
-		return preg_replace('#^\h*/\*(?!!)(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/\n#sm', '', $content);
+		return preg_replace('#^\h*/\*(?!!)(?:.(?!/)|[^\*](?=/)|(?<!\*)/)*\*/\v*#sm', '', $content);
 	}
 }
