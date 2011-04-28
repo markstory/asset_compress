@@ -22,7 +22,7 @@ abstract class AssetCompressor {
  * An array of settings, these values are merged with the ones defined in the ini file.
  * 
  * - `searchPaths` - Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
- * - `stripComments` - Remove inline comments?
+ * - `stripComments` - Remove inline comments? Deprecated, use filters for this.
  * - `cacheFilePath` - File path cached files should be saved to.
  * - `cacheFiles` - Should cache files be made.
  * - `filters` - Attached filters, contains only the string names of the filters.
@@ -46,18 +46,18 @@ abstract class AssetCompressor {
 	protected $_timestampFilename = 'asset_compress_build_time';
 
 /**
+ * Processor objects that will be run
+ *
+ * @var array
+ */
+	protected $_processorObjects = array();
+
+/**
  * Filter objects that will be run
  *
  * @var array
  */
 	protected $_filterObjects = array();
-
-/**
- * Flag for keeping track comment block status.
- *
- * @var boolean
- **/
-	protected $_inCommentBlock = false;
 
 /**
  * Contains a hashmap of path -> filescans
@@ -129,7 +129,7 @@ abstract class AssetCompressor {
 		$out = '';
 		foreach ($objects as $object) {
 			$fileName = $this->_findFile($object);
-			$this->_preprocess($fileName);
+			$this->_processedOutput .= $this->_applyProcessors($fileName, $this->_preprocess($fileName) . "\n");
 		}
 		$this->_applyFilters();
 		$out = trim($this->_processedOutput);
@@ -176,16 +176,22 @@ abstract class AssetCompressor {
 	}
 
 /**
- * Records a line to the buffer.  Strips comments if that has been enabled.
+ * Applies the pre-processors to the contents of a file.
  *
- * @return void
- **/
-	protected function _record($line) {
-		if ($this->settings['stripComments']) {
-			$this->_processedOutput .= $this->_stripComments($line);
-			return;
+ * @param string $fileName The name for a file.
+ * @param string $contents The contents of a file.
+ * @return string The processed contents of the input.
+ */
+	protected function _applyProcessors($fileName, $contents) {
+		if (!empty($this->settings['processors'])) {
+			$this->_loadExtensions('processors');
+			if (!empty($this->_processorObjects)) {
+				foreach ($this->_processorObjects as $processor) {
+					$contents = $processor->process($fileName, $contents);
+				}
+			}
 		}
-		$this->_processedOutput .= $line;
+		return $contents;
 	}
 
 /**
@@ -205,7 +211,7 @@ abstract class AssetCompressor {
 		if (empty($this->settings['filters'])) {
 			return;
 		}
-		$this->_loadFilters();
+		$this->_loadExtensions();
 		if (empty($this->_filterObjects)) {
 			return;
 		}
@@ -217,27 +223,31 @@ abstract class AssetCompressor {
 	}
 
 /**
- * Loads the filters defined in $filters from the app/libs dir.
+ * Loads extensions defined in $filters or $processors from the app/libs dir.
  *
+ * @param string $type The type of extension to load.
  * @return void
  */
-	protected function _loadFilters() {
-		foreach ($this->settings['filters'] as $filter) {
-			$className = $filter . 'Filter';
-
+	protected function _loadExtensions($type = 'filters') {
+		$singular = Inflector::singularize($type);
+		$suffix = Inflector::camelize($singular);
+		foreach ($this->settings[$type] as $extension) {
+			$className = $extension . $suffix;
 			list($plugin, $className) = pluginSplit($className, true);
-			App::import('Lib', $plugin . 'asset_compress/' . $filter);
+			App::import('Lib', $plugin . 'asset_compress/' . $extension);
 			if (!class_exists($className)) {
-				App::import('Lib', 'AssetCompress.filter/' . $filter);
+				App::import('Lib', 'AssetCompress.' . $singular . '/' . $extension);
 				if (!class_exists($className)) {
-					throw new Exception(sprintf('Cannot not load %s filter.', $filter));
+					throw new Exception(sprintf('Cannot not load %s.', $className));
 				}
 			}
-			$filterObj = new $className();
-			if (!$filterObj instanceof AssetFilterInterface) {
-				throw new Exception('Cannot use filters that do not implenment AssetFilterInterface');
+			$extensionObj = new $className();
+			$interface = 'Asset' . $suffix . 'Interface';
+			if (!is_a($extensionObj, $interface)) {
+				throw new Exception('Cannot use ' . $type . ' that do not implement ' . $interface);
 			}
-			$this->_filterObjects[] = $filterObj;
+			$property = '_' . $singular . 'Objects';
+			array_push($this->$property, $extensionObj);
 		}
 	}
 
@@ -255,7 +265,29 @@ abstract class AssetCompressor {
  *
  * @return string The path to $object's file.
  **/
-	abstract protected function _findFile($object);
+	protected function _findFile($object, $path = null) {
+		$filename = $object;
+		if ($this->getFileExtension($filename) != $this->_extension) {
+			$filename .= ".{$this->_extension}";
+		}
+		if ($path !== null) {
+			return $path . $filename;
+		}
+		if (empty($this->_fileLists)) {
+			$this->_readDirs();
+		}
+		foreach ($this->_fileLists as $path => $files) {
+			foreach ($files as $file) {
+				if ($filename == $file) {
+					return $path . $file;
+				}
+				if (strpos($filename, '/') !== false && file_exists($path . str_replace('/', DS, $filename))) {
+					return $path . $filename;
+				}
+			}
+		}
+		throw new Exception('Could not locate file for ' . $object);
+	}
 
 /**
  * Preprocess the file as needed
@@ -263,7 +295,13 @@ abstract class AssetCompressor {
  * @param string $filename name of file to process
  * @return string The processed file contents
  **/
-	abstract protected function _preprocess($filename);
+	protected function _preprocess($filename) {
+		if (isset($this->_loaded[$filename])) {
+			return '';
+		}
+		$this->_loaded[$filename] = true;
+		return file_get_contents($filename);
+	}
 
 /**
  * get the header line for a cached file.

@@ -169,12 +169,19 @@ class AssetCompressHelper extends AppHelper {
  *
  * Calling this method will clear the asset caches.
  *
- * @param boolean $inline Whether you want the files inline or added to scripts_for_layout
+ * Setting `$compress` to `false` will a list of all of your assets, uncompressed.
+ *
+ * @param boolean $compress Whether or not to compress
  * @return string Empty string or string containing asset link tags.
  */
-	public function includeAssets($inline = true) {
-		$css = $this->includeCss();
-		$js = $this->includeJs();
+	public function includeAssets($compress = true) {
+		if ($compress) {
+			$css = $this->includeCss();
+			$js = $this->includeJs();
+		} else {
+			$css = $this->_classicInclude('_css');
+			$js = $this->_classicInclude('_scripts');
+		}		
 		return $css . "\n" . $js;
 	}
 
@@ -251,6 +258,21 @@ class AssetCompressHelper extends AppHelper {
 			unset($this->{$property}[$build]);
 		}
 		return implode("\n", $output);
+	}
+
+/**
+ * Includes css and js the original way, without compression
+ *
+ * @param string $property The property to use
+ * @return string A string of asset tags
+ */
+	protected function _classicInclude($property) {
+		$out = array();
+		foreach ($this->{$property} as $files) {
+			$method = $property == '_scripts' ? 'script' : 'css';
+			$out = array_merge($out, array_map(array($this->Html, $method), $files));
+		}
+		return implode("\n", $out);
 	}
 
 /**
