@@ -1,4 +1,6 @@
 <?php
+App::import('Core', 'Folder');
+
 /**
  * Resource compressor base class for File compacting models.
  *
