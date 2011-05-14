@@ -1,6 +1,5 @@
 <?php
-App::import('Core', 'Folder');
-App::import('Model', 'AssetCompress.AssetScanner');
+App::import('Libs', 'AssetCompress.AssetScanner');
 
 /**
  * Resource compressor base class for File compacting models.
