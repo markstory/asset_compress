@@ -100,4 +100,17 @@ class AssetConfig {
 		return array();
 	}
 
+/**
+ * Get the list of files that match the given build file.
+ *
+ * @param string $target The build file with extension.
+ * @return array An array of files for the chosen build.
+ */
+	public function files($target) {
+		$ext = substr($target, strrpos($target, '.') + 1);
+		if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
+			return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
+		}
+		return array();
+	}
 }

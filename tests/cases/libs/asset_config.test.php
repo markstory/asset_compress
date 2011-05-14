@@ -23,4 +23,17 @@ class AssetConfigTest extends CakeTestCase {
 
 		$this->assertEqual(array(), $config->filters('nothing'));
 	}
+
+	function testFiles() {
+		$config = new AssetConfig($this->testConfig);
+		$result = $config->files('libs.js');
+		$expected = array('jquery.js', 'mootools.js', 'class.js');
+		$this->assertEqual($expected, $result);
+
+		$result = $config->files('foo.bar.js');
+		$expected = array('test.js');
+		$this->assertEqual($expected, $result);
+
+		$this->assertEqual(array(), $config->files('nothing here'));
+	}
 }
