@@ -1,5 +1,6 @@
 <?php
 App::import('Core', 'Folder');
+App::import('Model', 'AssetCompress.AssetScanner');
 
 /**
  * Resource compressor base class for File compacting models.
@@ -62,13 +63,6 @@ abstract class AssetCompressor {
 	protected $_filterObjects = array();
 
 /**
- * Contains a hashmap of path -> filescans
- *
- * @var array
- **/
-	protected $_fileLists;
-
-/**
  * An array of already loaded + processed files, used to prevent double inclusion and infinite loops.
  *
  * @var array
@@ -82,13 +76,14 @@ abstract class AssetCompressor {
  **/
 	protected $_processedOutput = '';
 
+	protected $_Scanner = null;
+
 /**
  * constructor for the model
  *
  * @return void
  **/
 	public function __construct($iniFile = null) {
-		$this->_Folder = new Folder(APP);
 		if (empty($iniFile) || is_array($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
@@ -125,6 +120,7 @@ abstract class AssetCompressor {
  * @return string String of Joined together files.
  **/
 	public function process($objects) {
+		$this->_Scanner = new AssetScanner($this->settings['searchPaths']);
 		if (!is_array($objects)) {
 			$objects = (array)$objects;
 		}
@@ -137,22 +133,6 @@ abstract class AssetCompressor {
 		$out = trim($this->_processedOutput);
 		$this->reset();
 		return $out;
-	}
-
-/**
- * Read all the $searchPaths and cache the files inside of each.
- *
- * @return void
- **/
-	protected function _readDirs() {
-		foreach ($this->settings['searchPaths'] as $i => $path) {
-			$this->settings['searchPaths'][$i] = $this->_replacePathConstants($path);
-		}
-		foreach ($this->settings['searchPaths'] as $path) {
-			$this->_Folder->cd($path);
-			list($dirs, $files) = $this->_Folder->read();
-			$this->_fileLists[$path] = $files;
-		}
 	}
 
 /**
@@ -268,34 +248,14 @@ abstract class AssetCompressor {
  * @return string The path to $object's file.
  **/
 	protected function _findFile($object, $path = null) {
-		$filenames = array($object);
 		if ($this->getFileExtension($object) != $this->_extension) {
-			$filenames[] = "{$object}.{$this->_extension}";
+			$object = "{$object}.{$this->_extension}";
 		}
-		if ($path !== null) {
-			foreach ($filenames as $filename) {
-				if (file_exists($path . str_replace('/', DS, $filename))) {
-					return $path . $filename;
-				}
-			}
-			return $path . end($filenames);
+		$filename = $this->_Scanner->find($object);
+		if (!$filename) {
+			throw new Exception('Could not locate file for ' . $object);
 		}
-		if (empty($this->_fileLists)) {
-			$this->_readDirs();
-		}
-		foreach ($this->_fileLists as $path => $files) {
-			foreach ($files as $file) {
-				if (in_array($file, $filenames)) {
-					return $path . $file;
-				}
-				foreach ($filenames as $filename) {
-					if (strpos($filename, '/') !== false && file_exists($path . str_replace('/', DS, $filename))) {
-						return $path . $filename;
-					}
-				}
-			}
-		}
-		throw new Exception('Could not locate file for ' . $object);
+		return $filename;
 	}
 
 /**
