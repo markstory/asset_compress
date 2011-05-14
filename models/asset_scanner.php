@@ -1,6 +1,8 @@
 <?php
 /**
- * Scan a set of paths for files with the correct criteria.
+ * Used for dynamic build files where a set of searchPaths
+ * are declared in the config file.  This class allows you search through
+ * those searchPaths and locate assets.
  *
  * @package asset_compress
  */
@@ -15,19 +17,18 @@ class AssetScanner {
 
 	public function __construct(array $paths) {
 		$this->_paths = $paths;
-		$this->_normalizePaths();
 		$this->_expandPaths();
+		$this->_normalizePaths();
 	}
 
 /**
- * Ensure all paths end in a DS.
+ * Ensure all paths end in a DS and expand any APP/WEBROOT constants
  *
  * @return void
  */
 	protected function _normalizePaths() {
 		foreach ($this->_paths as &$path) {
 			$path = rtrim($path, DS) . DS;
-			$path = $this->_replacePathConstants($path);
 		}
 	}
 
@@ -44,15 +45,15 @@ class AssetScanner {
 	}
 
 /**
- * Takes any configured path that ends in * and expands that to be all 
- * directories within it.
+ * Expands constants and glob() patterns in the searchPaths.
  *
  * @return void
  */
 	protected function _expandPaths() {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
-			if (substr($path, -1) == '*') {
+			$path = $this->_replacePathConstants($path);
+			if (preg_match('/[*.\[\]]/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);
 			} else {
@@ -69,7 +70,8 @@ class AssetScanner {
  * @return array Array of subdirectories.
  */
 	protected function _generateTree($path) {
-		return array();
+		$paths = glob($path);
+		return (array) $paths;
 	}
 
 /**
