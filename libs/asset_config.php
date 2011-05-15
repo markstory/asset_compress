@@ -123,22 +123,30 @@ class AssetConfig {
 	}
 
 /**
- * Get filters for an extension/build file
+ * Get/set filters for an extension/build file
  *
  * @param string $ext Name of an extension
  * @param string $target A build target. If provided the target's filters (if any) will also be 
  *     returned.
+ * @param array $filters Filters to replace either the global or per target filters.
  * @return array Filters for that extension.
  **/
-	public function filters($ext, $target = null) {
-		if (isset($this->_data[$ext][self::FILTERS])) {
-			$filters = (array)$this->_data[$ext][self::FILTERS];
-			if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
-				$filters = array_merge($filters, (array)$this->_data[$ext][self::TARGETS][$target][self::FILTERS]);
+	public function filters($ext, $target = null, $filters = null) {
+		if ($filters === null) {
+			if (isset($this->_data[$ext][self::FILTERS])) {
+				$filters = (array)$this->_data[$ext][self::FILTERS];
+				if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
+					$filters = array_merge($filters, (array)$this->_data[$ext][self::TARGETS][$target][self::FILTERS]);
+				}
+				return array_unique($filters);
 			}
-			return array_unique($filters);
+			return array();
 		}
-		return array();
+		if ($target === null) {
+			$this->_data[$ext][self::FILTERS] = $filters;
+		} else {
+			$this->_data[$ext][self::TARGETS][$target][self::FILTERS] = $filters;
+		}
 	}
 
 /**
@@ -156,15 +164,19 @@ class AssetConfig {
 	}
 
 /**
- * Fetch paths for an extension.
+ * Get/set paths for an extension. Setting paths will replace
+ * all existing paths. Its only intended for testing.
  *
  * @param string $ext Extension to get paths for.
  * @return array An array of paths to search for assets on.
  */
-	public function paths($ext) {
-		if (!empty($this->_data[$ext]['paths'])) {
-			return (array) $this->_data[$ext]['paths'];
+	public function paths($ext, $paths = null) {
+		if ($paths === null) {
+			if (!empty($this->_data[$ext]['paths'])) {
+				return (array) $this->_data[$ext]['paths'];
+			}
+			return array();
 		}
-		return array();
+		$this->_data[$ext]['paths'] = $paths;
 	}
 }

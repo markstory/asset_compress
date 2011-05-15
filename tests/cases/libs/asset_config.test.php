@@ -25,6 +25,17 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertEqual(array(), $config->filters('nothing'));
 	}
 
+	function testSettingFilters() {
+		$config = new AssetConfig($this->testConfig);
+		$config->filters('js', null, array('uglify'));
+		$this->assertEqual(array('uglify'), $config->filters('js'));
+		$this->assertEqual(array('uglify'), $config->filters('js', 'libs.js'));
+
+		$config->filters('js', 'libs.js', array('sprockets'));
+		$this->assertEqual(array('uglify'), $config->filters('js'));
+		$this->assertEqual(array('uglify', 'sprockets'), $config->filters('js', 'libs.js'));
+	}
+
 	function testFiles() {
 		$config = new AssetConfig($this->testConfig);
 		$result = $config->files('libs.js');
@@ -45,4 +56,11 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertEqual(array(WWW_ROOT . 'css' . DS), $result);
 		$this->assertEqual(array(), $config->paths('nothing'));
 	}
+
+	function testPaths() {
+		$config = new AssetConfig($this->testConfig);
+		$config->paths('js', array('/path/to/files'));
+		$this->assertEqual(array('/path/to/files'), $config->paths('js'));
+	}
+
 }
