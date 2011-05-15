@@ -27,7 +27,7 @@ class AssetFilterCollection {
 			list($plugin, $className) = pluginSplit($className, true);
 			App::import('Lib', $plugin . 'asset_compress/filter/' . $className);
 			if (!class_exists($className)) {
-				App::import('Lib', 'AssetCompress.filters/' . $className);
+				App::import('Lib', 'AssetCompress.filter/' . $className);
 				if (!class_exists($className)) {
 					throw new Exception(sprintf('Cannot not load filter "%s".', $className));
 				}
