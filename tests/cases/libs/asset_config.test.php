@@ -37,4 +37,12 @@ class AssetConfigTest extends CakeTestCase {
 
 		$this->assertEqual(array(), $config->files('nothing here'));
 	}
+
+	function testPathConstantReplacement() {
+		$config = new AssetConfig($this->testConfig);
+
+		$result = $config->paths('css');
+		$this->assertEqual(array(WWW_ROOT . 'css' . DS), $result);
+		$this->assertEqual(array(), $config->paths('nothing'));
+	}
 }

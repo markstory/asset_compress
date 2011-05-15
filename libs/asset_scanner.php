@@ -33,18 +33,6 @@ class AssetScanner {
 	}
 
 /**
- * Replaces the file path constants used in Config files.
- * Will replace APP and WEBROOT
- *
- * @param string $path Path to replace constants on
- * @return string constants replaced
- */
-	protected function _replacePathConstants($path) {
-		$constantMap = array('APP/' => APP, 'WEBROOT/' => WWW_ROOT);
-		return str_replace(array_keys($constantMap), array_values($constantMap), $path);
-	}
-
-/**
  * Expands constants and glob() patterns in the searchPaths.
  *
  * @return void
@@ -52,7 +40,6 @@ class AssetScanner {
 	protected function _expandPaths() {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
-			$path = $this->_replacePathConstants($path);
 			if (preg_match('/[*.\[\]]/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);

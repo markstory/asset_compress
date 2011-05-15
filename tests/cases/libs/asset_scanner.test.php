@@ -22,20 +22,6 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertFalse($this->Scanner->find('does not exist'));
 	}
 
-	function testConstantExpansion() {
-		$paths = array(
-			'WEBROOT/js',
-			'APP/plugins/foo/webroot/'
-		);
-		$scanner = new AssetScanner($paths);
-		$result = $scanner->paths();
-		$expected = array(
-			WWW_ROOT . 'js' . DS,
-			APP . 'plugins' . DS . 'foo' . DS . 'webroot' . DS,
-		);
-		$this->assertEqual($expected, $result);
-	}
-
 	function testNormalizePaths() {
 		$paths = array(
 			$this->_testFiles . 'js',

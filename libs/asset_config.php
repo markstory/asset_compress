@@ -12,6 +12,16 @@ class AssetConfig {
 
 	protected $_data = array();
 
+/**
+ * A hash of constants that can be expanded when reading ini files.
+ *
+ * @var array
+ */
+	public $constantMap = array(
+		'APP/' => APP, 
+		'WEBROOT/' => WWW_ROOT
+	);
+
 	const FILTERS = 'filters';
 	const TARGETS = 'targets';
 
@@ -49,10 +59,9 @@ class AssetConfig {
  */
 	protected function _parseConfig() {
 		foreach ($this->_config as $section => $values) {
-
-			// extension section
 			if (strpos($section, '_') === false) {
-				$this->_data[$section] = $values;
+				// extension section
+				$this->_data[$section] = $this->_parseExtensionDef($values);
 			} else {
 				list($extension, $key) = explode('_', $section, 2);
 				// global filters for the extension
@@ -70,6 +79,35 @@ class AssetConfig {
 	}
 
 /**
+ * Parses paths in an extension definintion
+ *
+ * @param array $data Array of extension information.
+ * @return array Array of build extension information with paths replaced.
+ */
+	protected function _parseExtensionDef($target) {
+		$paths = array();
+		if (!empty($target['paths'])) {
+			$paths = array_map(array($this, '_replacePathConstants'), (array) $target['paths']);
+		}
+		$target['paths'] = $paths;
+		if (!empty($target['cachePath'])) {
+			$target['cachePath'] = $this->_replacePathConstants($target['cachePath']);
+		}
+		return $target;
+	}
+
+/**
+ * Replaces the file path constants used in Config files.
+ * Will replace APP and WEBROOT
+ *
+ * @param string $path Path to replace constants on
+ * @return string constants replaced
+ */
+	protected function _replacePathConstants($path) {
+		return str_replace(array_keys($this->constantMap), array_values($this->constantMap), $path);
+	}
+
+/**
  * Simple read accessor to parsed data.
  *
  * @param string $name
@@ -77,6 +115,9 @@ class AssetConfig {
 	public function __get($name) {
 		if (isset($this->_data[$name])) {
 			return $this->_data[$name];
+		}
+		if (isset($this->_data['General'][$name])) {
+			return $this->_data['General'][$name];
 		}
 		return null;
 	}
@@ -110,6 +151,19 @@ class AssetConfig {
 		$ext = substr($target, strrpos($target, '.') + 1);
 		if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
 			return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
+		}
+		return array();
+	}
+
+/**
+ * Fetch paths for an extension.
+ *
+ * @param string $ext Extension to get paths for.
+ * @return array An array of paths to search for assets on.
+ */
+	public function paths($ext) {
+		if (!empty($this->_data[$ext]['paths'])) {
+			return (array) $this->_data[$ext]['paths'];
 		}
 		return array();
 	}
