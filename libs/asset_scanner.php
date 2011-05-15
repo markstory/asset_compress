@@ -57,8 +57,8 @@ class AssetScanner {
  * @return array Array of subdirectories.
  */
 	protected function _generateTree($path) {
-		$paths = glob($path);
-		return (array) $paths;
+		$paths = glob($path, GLOB_ONLYDIR);
+		return $paths;
 	}
 
 /**

@@ -130,7 +130,7 @@ class AssetConfig {
  *     returned.
  * @param array $filters Filters to replace either the global or per target filters.
  * @return array Filters for that extension.
- **/
+ */
 	public function filters($ext, $target = null, $filters = null) {
 		if ($filters === null) {
 			if (isset($this->_data[$ext][self::FILTERS])) {
@@ -156,11 +156,21 @@ class AssetConfig {
  * @return array An array of files for the chosen build.
  */
 	public function files($target) {
-		$ext = substr($target, strrpos($target, '.') + 1);
+		$ext = $this->getExt($target);
 		if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
 			return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
 		}
 		return array();
+	}
+
+/**
+ * Get the extension for a filename.
+ *
+ * @param string $file
+ * @return string
+ */
+	public function getExt($file) {
+		return substr($file, strrpos($file, '.') + 1);
 	}
 
 /**
@@ -178,5 +188,16 @@ class AssetConfig {
 			return array();
 		}
 		$this->_data[$ext]['paths'] = $paths;
+	}
+
+/**
+ * Create a new build target.
+ *
+ * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
+ * @param array $files Files to combine the build file from.
+ */
+	public function addTarget($target, array $files) {
+		$ext = $this->getExt($target);
+		$this->_data[$ext][self::TARGETS][$target]['files'] = $files;
 	}
 }

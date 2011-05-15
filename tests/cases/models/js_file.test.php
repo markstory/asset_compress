@@ -1,6 +1,7 @@
 <?php
 
 App::import('Model', 'AssetCompress.JsFile');
+App::import('Libs', 'AssetCompress.AssetConfig');
 
 if (!class_exists('JsMin')) {
 	class JsMin {
@@ -16,9 +17,13 @@ class JsFileTestCase extends CakeTestCase {
  *
  * @return void
  **/
-	function startTest() {
+	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$config = new AssetConfig($testFile);
+		$config->paths('js', array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . '*'
+		));
 		$this->JsFile = new JsFile($testFile);
 	}
 /**

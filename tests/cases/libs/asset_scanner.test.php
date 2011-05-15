@@ -36,11 +36,16 @@ class AssetScannerTest extends CakeTestCase {
 
 	function testExpandGlob() {
 		$paths = array(
+			$this->_testFiles . 'js' . DS ,
 			$this->_testFiles . 'js' . DS . '*'
 		);
 		$scanner = new AssetScanner($paths);
 
 		$result = $scanner->find('base_class.js');
+		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
+		$this->assertEqual($expected, $result);
+
+		$result = $scanner->find('classes/base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
 	}
