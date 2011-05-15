@@ -1,10 +1,9 @@
 <?php
-
 /**
  * Parses the ini files AssetCompress uses into arrays that
  * other objects can use.
  *
- * @pacakge asset_compress
+ * @package asset_compress
  */
 class AssetConfig {
 
@@ -196,8 +195,11 @@ class AssetConfig {
  * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
  * @param array $files Files to combine the build file from.
  */
-	public function addTarget($target, array $files) {
+	public function addTarget($target, array $files, $filters = array()) {
 		$ext = $this->getExt($target);
-		$this->_data[$ext][self::TARGETS][$target]['files'] = $files;
+		$this->_data[$ext][self::TARGETS][$target] = array(
+			'files' => $files,
+			'filters' => $filters
+		);
 	}
 }

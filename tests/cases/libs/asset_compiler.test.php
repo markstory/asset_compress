@@ -22,6 +22,7 @@ class AssetCompilerTest extends CakeTestCase {
 	}
 
 	function testConcatenationJavascript() {
+		$this->config->filters('js', null, array());
 		$this->config->addTarget('template.js', array('classes/base_class.js', 'classes/template.js'));
 		$result = $this->Compiler->generate('template.js');
 		$expected = <<<TEXT
@@ -36,6 +37,7 @@ TEXT;
 	}
 
 	function testConcatenationCss() {
+		$this->config->filters('css', null, array());
 		$this->config->addTarget('all.css', array('reset/reset.css', 'nav.css'));
 		$result = $this->Compiler->generate('all.css');
 		$expected = <<<TEXT
@@ -49,4 +51,6 @@ TEXT;
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+
+
 }
