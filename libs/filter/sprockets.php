@@ -11,6 +11,8 @@ class Sprockets extends AssetFilter {
 
 	protected $_Scanner;
 	protected $_pattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]\n+/m';
+	protected $_loaded = array();
+	protected $_currentFile = '';
 
 	public function settings($settings) {
 		parent::settings($settings);
@@ -24,16 +26,16 @@ class Sprockets extends AssetFilter {
  * @param string $content
  */
 	public function input($filename, $content) {
-		$this->_files[] = $filename;
+		$this->_currentFile = $filename;
 		return preg_replace_callback(
 			$this->_pattern,
-			array($this, '_replace'), 
+			array($this, '_replace'),
 			$content
 		);
 	}
 
 	protected function _replace($matches) {
-		$file = array_pop($this->_files);
+		$file = $this->_currentFile;
 		if ($matches[1] == '"') {
 			// Same directory include
 			$file = $this->_findFile($matches[2], dirname($file) . DS);
@@ -41,6 +43,13 @@ class Sprockets extends AssetFilter {
 			// scan all paths
 			$file = $this->_findFile($matches[2]);
 		}
+
+		// prevent double inclusion
+		if (isset($this->_loaded[$file])) {
+			return "";
+		}
+		$this->_loaded[$file] = true;
+
 		$content = file_get_contents($file);
 		if ($return = $this->input($file, $content)) {
 			return $return . "\n";
