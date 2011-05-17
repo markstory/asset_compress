@@ -4,16 +4,41 @@ App::import('Lib', 'AssetCompress.AssetScanner');
 
 /**
  * Implements directive replacement similar to sprockets <http://getsprockets.org>
+ * Does not implement the //= provides syntax.
  *
  * @package asset_compress
  */
 class Sprockets extends AssetFilter {
 
 	protected $_Scanner;
+
+/**
+ * Regex pattern for finding //= require <file> and //= require "file" style inclusions
+ *
+ * @var stgin
+ */
 	protected $_pattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>]\n+/m';
+
+/**
+ * A list of unique files already processed.
+ *
+ * @var array
+ */
 	protected $_loaded = array();
+
+/**
+ * The current file being processed, used for "" file inclusion.
+ *
+ * @var string
+ */
 	protected $_currentFile = '';
 
+/**
+ * Configure paths for Sprockets
+ *
+ * @param array $settings.
+ * @return void
+ */
 	public function settings($settings) {
 		parent::settings($settings);
 		$this->_Scanner = new AssetScanner($settings['paths']);
@@ -34,6 +59,11 @@ class Sprockets extends AssetFilter {
 		);
 	}
 
+/**
+ * Performs the replacements and inlines dependencies.
+ *
+ * @param array $matches
+ */
 	protected function _replace($matches) {
 		$file = $this->_currentFile;
 		if ($matches[1] == '"') {
@@ -57,6 +87,14 @@ class Sprockets extends AssetFilter {
 		return '';
 	}
 
+/**
+ * Locates sibling files, or uses AssetScanner to locate <> style dependencies.
+ *
+ * @param string $file The basename of the file needing to be found.
+ * @param string $path The path for same directory includes.
+ * @return string Path to file.
+ * @throws Exception when files can't be located.
+ */
 	protected function _findFile($file, $path = null) {
 		if (substr($file, -2) != 'js') {
 			$file .= '.js';
@@ -68,6 +106,6 @@ class Sprockets extends AssetFilter {
 		if ($file) {
 			return $file;
 		}
-		throw new Exception('Could not locate ' . $file);
+		throw new Exception('Sprockets - Could not locate ' . $file);
 	}
 }
