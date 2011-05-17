@@ -190,6 +190,22 @@ class AssetConfig {
 	}
 
 /**
+ * Accessor for getting the cachePath for a given extension.
+ *
+ * @param string $ext Extension to get paths for.
+ * @param string $path The path to cache files using $ext to.
+ */
+	public function cachePath($ext, $path = null) {
+		if ($path === null) {
+			if (isset($this->_data[$ext]['cachePath'])) {
+				return $this->_data[$ext]['cachePath'];
+			}
+			return '';
+		}
+		$this->_data[$ext]['cachePath'] = $path;
+	}
+
+/**
  * Create a new build target.
  *
  * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
