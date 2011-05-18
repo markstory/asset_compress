@@ -149,17 +149,20 @@ class AssetConfig {
 	}
 
 /**
- * Get the list of files that match the given build file.
+ * Get/set the list of files that match the given build file.
  *
  * @param string $target The build file with extension.
  * @return array An array of files for the chosen build.
  */
-	public function files($target) {
+	public function files($target, $files = null) {
 		$ext = $this->getExt($target);
-		if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
-			return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
+		if ($files === null) {
+			if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
+				return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
+			}
+			return array();
 		}
-		return array();
+		$this->_data[$ext][self::TARGETS][$target]['files'] = $files;
 	}
 
 /**
@@ -186,7 +189,7 @@ class AssetConfig {
 			}
 			return array();
 		}
-		$this->_data[$ext]['paths'] = $paths;
+		$this->_data[$ext]['paths'] = array_map(array($this, '_replacePathConstants'), $paths);
 	}
 
 /**
@@ -202,7 +205,7 @@ class AssetConfig {
 			}
 			return '';
 		}
-		$this->_data[$ext]['cachePath'] = $path;
+		$this->_data[$ext]['cachePath'] = $this->_replacePathConstants($path);
 	}
 
 /**
