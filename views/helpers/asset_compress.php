@@ -311,9 +311,10 @@ class AssetCompressHelper extends AppHelper {
 			$url = $base;
 		}
 		if ($method == '_scripts') {
-			return $this->Html->script($baseUrl . $url);
+			return $this->Html->script($baseUrl . $url, $options);
 		} else {
-			return $this->Html->css($baseUrl . $url);
+			if(strpos($url, 'handheld')!== false) $options['media'] = 'handheld';
+			return $this->Html->css($baseUrl . $url, 'stylesheet', $options);
 		}
 	}
 
