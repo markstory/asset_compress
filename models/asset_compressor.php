@@ -1,4 +1,7 @@
 <?php
+App::import('Core', 'Folder');
+App::import('Model', 'AssetCompress.AssetScanner');
+
 /**
  * Resource compressor base class for File compacting models.
  *
@@ -20,13 +23,13 @@ abstract class AssetCompressor {
 
 /**
  * An array of settings, these values are merged with the ones defined in the ini file.
- * 
+ *
  * - `searchPaths` - Array of DS terminated Paths to load files from. Dirs will not be recursively scanned.
  * - `stripComments` - Remove inline comments? Deprecated, use filters for this.
  * - `cacheFilePath` - File path cached files should be saved to.
  * - `cacheFiles` - Should cache files be made.
  * - `filters` - Attached filters, contains only the string names of the filters.
- * 
+ *
  * @var array
  */
 	public $settings = array(
@@ -60,13 +63,6 @@ abstract class AssetCompressor {
 	protected $_filterObjects = array();
 
 /**
- * Contains a hashmap of path -> filescans
- *
- * @var array
- **/
-	protected $_fileLists;
-
-/**
  * An array of already loaded + processed files, used to prevent double inclusion and infinite loops.
  *
  * @var array
@@ -80,13 +76,14 @@ abstract class AssetCompressor {
  **/
 	protected $_processedOutput = '';
 
+	protected $_Scanner = null;
+
 /**
  * constructor for the model
  *
  * @return void
  **/
 	public function __construct($iniFile = null) {
-		$this->_Folder = new Folder(APP);
 		if (empty($iniFile) || is_array($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
@@ -123,6 +120,7 @@ abstract class AssetCompressor {
  * @return string String of Joined together files.
  **/
 	public function process($objects) {
+		$this->_Scanner = new AssetScanner($this->settings['searchPaths']);
 		if (!is_array($objects)) {
 			$objects = (array)$objects;
 		}
@@ -138,26 +136,10 @@ abstract class AssetCompressor {
 	}
 
 /**
- * Read all the $searchPaths and cache the files inside of each.
- *
- * @return void
- **/
-	protected function _readDirs() {
-		foreach ($this->settings['searchPaths'] as $i => $path) {
-			$this->settings['searchPaths'][$i] = $this->_replacePathConstants($path);
-		}
-		foreach ($this->settings['searchPaths'] as $path) {
-			$this->_Folder->cd($path);
-			list($dirs, $files) = $this->_Folder->read();
-			$this->_fileLists[$path] = $files;
-		}
-	}
-
-/**
  * Replaces the file path constants used in Config files.
  * Will replace APP and WEBROOT
  *
- * @param string $path Path to replace constants on 
+ * @param string $path Path to replace constants on
  * @return string constants replaced
  */
 	protected function _replacePathConstants($path) {
@@ -200,7 +182,7 @@ abstract class AssetCompressor {
  * Filters are defined in the config file as a class to run.  This class must implement the
  * `AssetFilterInterface` in the plugin.  Each filter will be run in the order defined in
  * the configuration file.
- * 
+ *
  * The method should return the results of its application as a string.
  * If you use more than one filter, make sure they don't clobber each other :)
  *
@@ -266,27 +248,14 @@ abstract class AssetCompressor {
  * @return string The path to $object's file.
  **/
 	protected function _findFile($object, $path = null) {
-		$filename = $object;
-		if ($this->getFileExtension($filename) != $this->_extension) {
-			$filename .= ".{$this->_extension}";
+		if ($this->getFileExtension($object) != $this->_extension) {
+			$object = "{$object}.{$this->_extension}";
 		}
-		if ($path !== null) {
-			return $path . $filename;
+		$filename = $this->_Scanner->find($object);
+		if (!$filename) {
+			throw new Exception('Could not locate file for ' . $object);
 		}
-		if (empty($this->_fileLists)) {
-			$this->_readDirs();
-		}
-		foreach ($this->_fileLists as $path => $files) {
-			foreach ($files as $file) {
-				if ($filename == $file) {
-					return $path . $file;
-				}
-				if (strpos($filename, '/') !== false && file_exists($path . str_replace('/', DS, $filename))) {
-					return $path . $filename;
-				}
-			}
-		}
-		throw new Exception('Could not locate file for ' . $object);
+		return $filename;
 	}
 
 /**
@@ -391,7 +360,7 @@ abstract class AssetCompressor {
 
 /**
  * Appends a timestamp after the last extension in a file name or simply appends
- * the timestamp if there is no extension.  Does not use the current time. This 
+ * the timestamp if there is no extension.  Does not use the current time. This
  * would allow for DOS attacks by randomly hitting timestamp filenames and forcing the
  * server to build additional files. Instead a secondary
  * file is used for getting the timestamp.  To clear this file use the console.
