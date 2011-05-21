@@ -310,6 +310,7 @@ class AssetCompressHelper extends AppHelper {
 		if (!empty($baseUrl) || file_exists(WWW_ROOT . $base)) {
 			$url = $base;
 		}
+		$options = array();
 		if ($method == '_scripts') {
 			return $this->Html->script($baseUrl . $url, $options);
 		} else {
