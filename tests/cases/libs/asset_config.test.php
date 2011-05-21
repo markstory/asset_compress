@@ -79,4 +79,18 @@ class AssetConfigTest extends CakeTestCase {
 		$this->config->cachePath('js', 'WEBROOT/css_build');
 		$this->assertEqual(WWW_ROOT . 'css_build', $this->config->cachePath('js'));
 	}
+
+	function testFilterConfig() {
+		$this->config->filterConfig('js', 'sprockets', array('some' => 'value'));
+		$this->assertEqual(array('some' => 'value'), $this->config->filterConfig('js', 'sprockets'));
+	}
+
+	function testFilterConfigException() {
+		try {
+			$this->config->filterConfig('js', 'boooga', array());
+			$this->assertTrue(false, 'No exception');
+		} catch (Exception $e) {
+			$this->assertTrue(true, 'Got exception');
+		}
+	}
 }

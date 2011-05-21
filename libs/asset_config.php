@@ -61,18 +61,16 @@ class AssetConfig {
 			if (strpos($section, '_') === false) {
 				// extension section
 				$this->_data[$section] = $this->_parseExtensionDef($values);
+				if (!empty($this->_data[$section][self::FILTERS])) {
+					$this->_data[$section][self::FILTERS] = array_combine(
+						$this->_data[$section][self::FILTERS],
+						array_fill(0, count($this->_data[$section][self::FILTERS]), array())
+					);
+				}
 			} else {
 				list($extension, $key) = explode('_', $section, 2);
-				// global filters for the extension
-				if ($key === self::FILTERS) {
-					if (empty($values[self::FILTERS])) {
-						throw new Exception(sprintf('No filters key in the "%s_filters" section.', $extension));
-					}
-					$this->_data[$extension][self::FILTERS] = $values[self::FILTERS];
-				} else {
-					// must be a build target.
-					$this->_data[$extension][self::TARGETS][$key] = $values;
-				}
+				// must be a build target.
+				$this->_data[$extension][self::TARGETS][$key] = $values;
 			}
 		}
 	}
@@ -135,17 +133,44 @@ class AssetConfig {
 			if (isset($this->_data[$ext][self::FILTERS])) {
 				$filters = (array)$this->_data[$ext][self::FILTERS];
 				if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
-					$filters = array_merge($filters, (array)$this->_data[$ext][self::TARGETS][$target][self::FILTERS]);
+					$buildFilters = $this->_data[$ext][self::TARGETS][$target][self::FILTERS];
+					foreach ((array)$buildFilters as $f) {
+						$filters[$f] = array();
+					}
 				}
-				return array_unique($filters);
+				return array_unique(array_keys($filters));
 			}
 			return array();
 		}
 		if ($target === null) {
-			$this->_data[$ext][self::FILTERS] = $filters;
+			$this->_data[$ext][self::FILTERS] = array_combine(
+				$filters,
+				array_fill(0, count($filters), array())
+			);
 		} else {
 			$this->_data[$ext][self::TARGETS][$target][self::FILTERS] = $filters;
 		}
+	}
+
+/**
+ * Get/Set filter Settings.
+ *
+ * @param string $ext Extension the filter is for.
+ * @param string $filter The filter name
+ * @param array $settings The settings to set, leave null to get
+ * @return mixed.
+ */
+	public function filterConfig($ext, $filter, $settings = null) {
+		if ($settings === null) {
+			if (isset($this->_data[$ext][self::FILTERS][$filter])) {
+				return $this->_data[$ext][self::FILTERS][$filter];
+			}
+			return array();
+		}
+		if (!isset($this->_data[$ext][self::FILTERS][$filter])) {
+			throw new Exception($filter . ' filter is not configured for the ' . $ext . ' extension.');
+		}
+		$this->_data[$ext][self::FILTERS][$filter] = $settings;
 	}
 
 /**
