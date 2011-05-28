@@ -22,6 +22,7 @@ class AssetConfig {
 	);
 
 	const FILTERS = 'filters';
+	const FILTER_PREFIX = 'filter_';
 	const TARGETS = 'targets';
 
 /**
@@ -62,11 +63,16 @@ class AssetConfig {
 				// extension section
 				$this->_data[$section] = $this->_parseExtensionDef($values);
 				if (!empty($this->_data[$section][self::FILTERS])) {
-					$this->_data[$section][self::FILTERS] = array_combine(
-						$this->_data[$section][self::FILTERS],
-						array_fill(0, count($this->_data[$section][self::FILTERS]), array())
-					);
+					foreach ($this->_data[$section][self::FILTERS] as $filter) {
+						if (empty($this->_data[self::FILTERS][$filter])) {
+							$this->_data[self::FILTERS][$filter] = array();
+						}
+					}
 				}
+			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
+				// filter section.
+				$name = str_replace(self::FILTER_PREFIX, '', $section);
+				$this->_data[self::FILTERS][$name] = $values;
 			} else {
 				list($extension, $key) = explode('_', $section, 2);
 				// must be a build target.
@@ -130,23 +136,23 @@ class AssetConfig {
  */
 	public function filters($ext, $target = null, $filters = null) {
 		if ($filters === null) {
-			if (isset($this->_data[$ext][self::FILTERS])) {
-				$filters = (array)$this->_data[$ext][self::FILTERS];
-				if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
-					$buildFilters = $this->_data[$ext][self::TARGETS][$target][self::FILTERS];
-					foreach ((array)$buildFilters as $f) {
-						$filters[$f] = array();
-					}
-				}
-				return array_unique(array_keys($filters));
+			if (!isset($this->_data[$ext][self::FILTERS])) {
+				return array();
 			}
-			return array();
+			$filters = (array)$this->_data[$ext][self::FILTERS];
+			if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
+				$buildFilters = $this->_data[$ext][self::TARGETS][$target][self::FILTERS];
+				$filters = array_merge($filters, $buildFilters);
+			}
+			return array_unique($filters);
 		}
 		if ($target === null) {
-			$this->_data[$ext][self::FILTERS] = array_combine(
-				$filters,
-				array_fill(0, count($filters), array())
-			);
+			$this->_data[$ext][self::FILTERS] = $filters;
+			foreach ($filters as $f) {
+				if (empty($this->_data[self::FILTERS][$f])) {
+					$this->_data[self::FILTERS][$f] = array();
+				}
+			}
 		} else {
 			$this->_data[$ext][self::TARGETS][$target][self::FILTERS] = $filters;
 		}
@@ -155,22 +161,18 @@ class AssetConfig {
 /**
  * Get/Set filter Settings.
  *
- * @param string $ext Extension the filter is for.
  * @param string $filter The filter name
  * @param array $settings The settings to set, leave null to get
  * @return mixed.
  */
-	public function filterConfig($ext, $filter, $settings = null) {
+	public function filterConfig($filter, $settings = null) {
 		if ($settings === null) {
-			if (isset($this->_data[$ext][self::FILTERS][$filter])) {
-				return $this->_data[$ext][self::FILTERS][$filter];
+			if (isset($this->_data[self::FILTERS][$filter])) {
+				return $this->_data[self::FILTERS][$filter];
 			}
 			return array();
 		}
-		if (!isset($this->_data[$ext][self::FILTERS][$filter])) {
-			throw new Exception($filter . ' filter is not configured for the ' . $ext . ' extension.');
-		}
-		$this->_data[$ext][self::FILTERS][$filter] = $settings;
+		$this->_data[self::FILTERS][$filter] = $settings;
 	}
 
 /**

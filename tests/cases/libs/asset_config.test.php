@@ -18,10 +18,10 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testFilters() {
 		$result = $this->config->filters('js');
-		$this->assertEqual(array('sprockets', 'yuicompressor'), $result);
+		$this->assertEqual(array('sprockets', 'jsyuicompressor'), $result);
 
 		$result = $this->config->filters('js', 'libs.js');
-		$this->assertEqual(array('sprockets', 'yuicompressor', 'uglify'), $result);
+		$this->assertEqual(array('sprockets', 'jsyuicompressor', 'uglify'), $result);
 
 		$this->assertEqual(array(), $this->config->filters('nothing'));
 	}
@@ -81,16 +81,15 @@ class AssetConfigTest extends CakeTestCase {
 	}
 
 	function testFilterConfig() {
-		$this->config->filterConfig('js', 'sprockets', array('some' => 'value'));
-		$this->assertEqual(array('some' => 'value'), $this->config->filterConfig('js', 'sprockets'));
+		$result = $this->config->filterConfig('uglify');
+		$expected = array('path' => '/path/to/uglify-js');
+		$this->assertEqual($result, $expected);
+
+
+		$this->config->filterConfig('sprockets', array('some' => 'value'));
+		$this->assertEqual(array('some' => 'value'), $this->config->filterConfig('sprockets'));
+
+		$this->assertEqual(array(), $this->config->filterConfig('imaginary'));
 	}
 
-	function testFilterConfigException() {
-		try {
-			$this->config->filterConfig('js', 'boooga', array());
-			$this->assertTrue(false, 'No exception');
-		} catch (Exception $e) {
-			$this->assertTrue(true, 'Got exception');
-		}
-	}
 }
