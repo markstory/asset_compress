@@ -11,6 +11,7 @@ class AssetFilterCollectionTest extends CakeTestCase {
 		);
 		$Filters = new AssetFilterCollection($filters, $settings, array());
 		$this->assertTrue($Filters->has('AssetFilter'));
+		$this->assertFalse($Filters->has('Boogers'));
 	}
 
 	function testFilterSettings() {

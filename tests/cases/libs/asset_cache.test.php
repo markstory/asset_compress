@@ -8,7 +8,7 @@ class AssetCacheTest extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 		
-		$this->config = new AssetConfig($this->testConfig);
+		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->config->cachePath('js', TMP);
 		$this->cache = new AssetCache($this->config);
 	}
