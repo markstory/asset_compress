@@ -29,6 +29,9 @@ class AssetCompiler {
 
 		$output = '';
 		$files = $this->_Config->files($build);
+		if (empty($files)) {
+			throw new RuntimeException(sprintf('No files found for build file "%s"', $build));
+		}
 		foreach ($files as $file) {
 			$file = $this->_findFile($file);
 			$content = file_get_contents($file);

@@ -11,7 +11,7 @@ class AssetsController extends AssetCompressAppController {
 	public $viewPath = 'generic';
 
 	public function beforeFilter() {
-	
+
 	}
 
 /**
@@ -20,6 +20,10 @@ class AssetsController extends AssetCompressAppController {
  * build file already defined.
  */
 	public function get($build) {
+		if (isset($this->params['url']['ext'])) {
+			$build .= '.' . $this->params['url']['ext'];
+		}
+
 		$Config = AssetConfig::buildFromIniFile();
 		// dynamic build file
 		if (Configure::read('debug') > 0 && $Config->files($build) === array()) {
@@ -39,6 +43,9 @@ class AssetsController extends AssetCompressAppController {
 			}
 		} catch (Exception $e) {
 			$this->log($e->getMessage());
+			$this->header('HTTP/1.1 404 Not Found');
+			$this->autoRender = false;
+			return;
 		}
 
 		$this->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));
