@@ -7,11 +7,11 @@ class AssetConfigTest extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
-		$this->config = new AssetConfig($this->testConfig);
+		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 	}
 
-	function testReadIniFile() {
-		$config = new AssetConfig($this->testConfig);
+	function testBuildFromIniFile() {
+		$config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->assertTrue($config->js['timestamp']);
 		$this->assertTrue($config->debug);
 	}

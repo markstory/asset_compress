@@ -7,8 +7,6 @@
  */
 class AssetConfig {
 
-	protected $_config = array();
-
 	protected $_data = array();
 
 /**
@@ -26,57 +24,82 @@ class AssetConfig {
 	const TARGETS = 'targets';
 
 /**
+ * Constructor, set some initial data for a AssetConfig object. 
+ *
+ * @param array $data
+ */
+	public function __construct(array $data = array()) {
+		$this->_data = $data;
+	}
+
+/**
  * Constructor
  *
  * @param string $iniFile File path for the ini file to parse.
  */
-	public function __construct($iniFile = null) {
+	public static function buildFromIniFile($iniFile = null) {
 		if (empty($iniFile) || is_array($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
 		if (!file_exists($iniFile)) {
 			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
 		}
-		$this->_readConfig($iniFile);
-		$this->_parseConfig();
+		$contents = self::_readConfig($iniFile);
+		return self::_parseConfig($contents);
 	}
 
 /**
  *
  * @param string $filename Name of the inifile to parse
  */
-	protected function _readConfig($filename) {
+	protected static function _readConfig($filename) {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
 			throw new RuntimeException('No configuration file found.');
 		}
-		$this->_config = parse_ini_file($filename, true);
+		return parse_ini_file($filename, true);
 	}
 
 /**
  * Transforms the config data into a more structured form
  *
- * @return void
+ * @param array $contents Contents to build a config object from.
+ * @return AssetConfig
  */
-	protected function _parseConfig() {
-		foreach ($this->_config as $section => $values) {
+	protected static function _parseConfig($config) {
+		$AssetConfig = new AssetConfig();
+		foreach ($config as $section => $values) {
 			if (strpos($section, '_') === false) {
 				// extension section
-				$this->_data[$section] = $this->_parseExtensionDef($values);
-				if (!empty($this->_data[$section][self::FILTERS])) {
-					foreach ($this->_data[$section][self::FILTERS] as $filter) {
-						if (empty($this->_data[self::FILTERS][$filter])) {
-							$this->_data[self::FILTERS][$filter] = array();
-						}
-					}
-				}
+				$AssetConfig->addExtension($section, $values);
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
-				$this->_data[self::FILTERS][$name] = $values;
+				$AssetConfig->filterConfig($name, $values);
 			} else {
 				list($extension, $key) = explode('_', $section, 2);
 				// must be a build target.
-				$this->_data[$extension][self::TARGETS][$key] = $values;
+				$files = isset($values['files']) ? $values['files'] : array();
+				$filters = isset($values['filters']) ? $values['filters'] : array();
+				$AssetConfig->addTarget($key, $files, $filters);
+			}
+		}
+		return $AssetConfig;
+	}
+
+/**
+ * Add/Replace an extension configuration.
+ *
+ * @param string $ext Extension name
+ * @param array $config Configuration for the extension
+ * @return void
+ */
+	public function addExtension($ext, array $config) {
+		$this->_data[$ext] = $this->_parseExtensionDef($config);
+		if (!empty($this->_data[$ext][self::FILTERS])) {
+			foreach ($this->_data[$ext][self::FILTERS] as $filter) {
+				if (empty($this->_data[self::FILTERS][$filter])) {
+					$this->_data[self::FILTERS][$filter] = array();
+				}
 			}
 		}
 	}
