@@ -190,10 +190,16 @@ class AssetConfig {
  */
 	public function filterConfig($filter, $settings = null) {
 		if ($settings === null) {
-			if (isset($this->_data[self::FILTERS][$filter])) {
-				return $this->_data[self::FILTERS][$filter];
+			if (is_string($filter)) {
+				return isset($this->_data[self::FILTERS][$filter]) ? $this->_data[self::FILTERS][$filter] : array();
 			}
-			return array();
+			if (is_array($filter)) {
+				$result = array();
+				foreach ($filter as $f) {
+					$result[$f] = $this->filterConfig($f);
+				}
+				return $result;
+			}
 		}
 		$this->_data[self::FILTERS][$filter] = $settings;
 	}
