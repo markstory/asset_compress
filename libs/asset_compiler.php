@@ -35,7 +35,9 @@ class AssetCompiler {
 			$content = $this->filters->input($file, $content);
 			$output .= $content;
 		}
-		$content = $this->filters->output($build, $content);
+		if (!$this->_Config->debug) {
+			$content = $this->filters->output($build, $content);
+		}
 		return trim($output);
 	}
 
