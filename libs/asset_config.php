@@ -274,7 +274,7 @@ class AssetConfig {
  */
 	public function cachingOn($target) {
 		$ext = $this->getExt($target);
-		if (!$this->writeCache && $this->cachePath($ext)) {
+		if ($this->writeCache && $this->cachePath($ext)) {
 			return true;
 		}
 		return false;
