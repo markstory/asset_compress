@@ -9,13 +9,25 @@ class AssetFilterCollectionTest extends CakeTestCase {
 		$settings = array(
 			'paths' => array()
 		);
-		$Filters = new AssetFilterCollection($filters, $settings);
+		$Filters = new AssetFilterCollection($filters, $settings, array());
 		$this->assertTrue($Filters->has('AssetFilter'));
+	}
+
+	function testFilterSettings() {
+		$filters = array('TestFilterOne', 'TestFilterTwo');
+		$settings = array(
+			'TestFilterOne' => array(
+				'key' => 'value'
+			)
+		);
+		$Filters = new AssetFilterCollection($filters, array(), $settings);
+		$result = $Filters->get('TestFilterOne');
+		$this->assertEqual(array('key' => 'value'), $result->settings);
 	}
 
 	function testInputOrder() {
 		$filters = array('TestFilterOne', 'TestFilterTwo');
-		$Filters = new AssetFilterCollection($filters, array());
+		$Filters = new AssetFilterCollection($filters, array(), array());
 
 		$result = $Filters->input('test.js', 'test content');
 		$expected = <<<TEXT
@@ -28,7 +40,7 @@ TEXT;
 
 	function testOutput() {
 		$filters = array('TestFilterOne', 'TestFilterTwo');
-		$Filters = new AssetFilterCollection($filters, array());
+		$Filters = new AssetFilterCollection($filters, array(), array());
 
 		$result = $Filters->output('test.js', 'test content');
 		$expected = <<<TEXT
@@ -41,6 +53,9 @@ TEXT;
 }
 
 class TestFilterOne extends AssetFilter {
+	public function settings($settings) {
+		$this->settings = $settings;
+	}
 	public function input($filename, $contents) {
 		return "FilterOne::input()\n" . $contents;
 	}

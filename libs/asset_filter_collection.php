@@ -17,12 +17,12 @@ class AssetFilterCollection {
  * @param array $filters An array of filters as keys, with their settings as the values.
  * @param array $config An array of global settings for all filters. Contains 'paths'
  */
-	function __construct(array $filters, array $config) {
+	function __construct(array $filters, array $config, array $filterSettings) {
 		$this->_config = $config;
-		$this->_buildFilters($filters);	
+		$this->_buildFilters($filters, $filterSettings);
 	}
 
-	protected function _buildFilters($filters) {
+	protected function _buildFilters($filters, $settings) {
 		foreach ($filters as $className) {
 			list($plugin, $className) = pluginSplit($className, true);
 			App::import('Lib', $plugin . 'asset_compress/filter/' . $className);
@@ -32,9 +32,10 @@ class AssetFilterCollection {
 					throw new Exception(sprintf('Cannot not load filter "%s".', $className));
 				}
 			}
+			$config = array_merge($this->_config, isset($settings[$className]) ? $settings[$className] : array());
 			$filter = new $className();
 			$this->addFilter($filter);
-			$filter->settings($this->_config);
+			$filter->settings($config);
 		}
 	}
 
@@ -47,13 +48,36 @@ class AssetFilterCollection {
 		$this->_filters[] = $filter;
 	}
 
+/**
+ * Check to see if the Collection contains a filter with
+ * a specific classname.
+ *
+ * @param string $name The classname you want to check.
+ * @return boolean.
+ */
 	public function has($name) {
+		try { 
+			$this->get($name);
+			return true;
+		} catch (RuntimeException $e) {
+			return false;
+		}
+	}
+
+/**
+ * Get a filter with a specific classname
+ *
+ * @param string $name The name of the class you want.
+ * @return AssetFilterInterface An asset filter.
+ * @throws RuntimeException
+ */
+	public function get($name) {
 		foreach ($this->_filters as $filter) {
 			if ($filter instanceof $name) {
-				return true;
+				return $filter;
 			}
 		}
-		return false;
+		throw new RuntimeException('Could not fetch filter ' . $name);
 	}
 
 /**

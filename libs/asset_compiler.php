@@ -60,7 +60,8 @@ class AssetCompiler {
 			'target' => $target
 		);
 		$filters = $this->_Config->filters($ext, $target);
-		return new AssetFilterCollection($filters, $config);
+		$filterSettings = $this->_Config->filterConfig($filters);
+		return new AssetFilterCollection($filters, $config, $filterSettings);
 	}
 
 /**
