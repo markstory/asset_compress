@@ -1,6 +1,6 @@
 <?php
-App::import('Model', 'AssetCompress.AssetFilterInterface');
-App::import('Vendor', 'JsMin', array('file' => 'JSMin/JSMin.php'));
+App::import('Lib', 'AssetCompress.AssetFilterInterface');
+App::import('Vendor', 'jsmin', array('file' => 'jsmin/jsmin.php'));
 
 /**
  * JsMin filter.
@@ -9,16 +9,16 @@ App::import('Vendor', 'JsMin', array('file' => 'JSMin/JSMin.php'));
  * vendors directories.  You can get it from http://github.com/rgrove/jsmin-php/
  *
  * @package asset_compress
- * @author Mark Story
  */
-class JsMinFilter implements AssetFilterInterface {
+class JsMinFilter extends AssetFilter {
 /**
  * Apply JsMin to $content.
  *
+ * @param string $filename
  * @param string $content Content to filter.
  * @return string
  */
-	public function filter($content) {
+	public function output($filename, $content) {
 		return JsMin::minify($content);
 	}
 }
