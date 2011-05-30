@@ -1,4 +1,5 @@
 <?php
+App::import('Lib', 'AssetCompress.AssetConfig');
 /**
  * AssetCompress Helper.
  *
@@ -14,11 +15,12 @@
  * with the shell provided in the plugin.
  *
  * @package asset_compress.helpers
- * @author Mark Story
  */
 class AssetCompressHelper extends AppHelper {
 
 	public $helpers = array('Html');
+
+	protected $_Config;
 
 /**
  * Options for the helper
@@ -31,33 +33,22 @@ class AssetCompressHelper extends AppHelper {
  */
 	public $options = array(
 		'autoIncludePath' => 'views',
-		'cssCompressUrl' => array(
+		'buildUrl' => array(
 			'plugin' => 'asset_compress',
-			'controller' => 'css_files',
-			'action' => 'get',
-			'ext' => 'css'
+			'controller' => 'assets',
+			'action' => 'get'
 		),
-		'jsCompressUrl' => array(
-			'plugin' => 'asset_compress',
-			'controller' => 'js_files',
-			'action' => 'get',
-			'ext' => 'js'
-		)
 	);
 
 /**
- * Scripts to be included keyed by final filename.
+ * A list of build files added during the helper runtime.
  *
  * @var array
  */
-	protected $_scripts = array();
-
-/**
- * CSS files to be included keyed by final filename.
- *
- * @var array
- */
-	protected $_css = array();
+	protected $_runtime = array(
+		'js' => array(),
+		'css' => array()
+	);
 
 /**
  * Disable autoInclusion of view js files.
@@ -67,34 +58,12 @@ class AssetCompressHelper extends AppHelper {
 	public $autoInclude = true;
 
 /**
- * parsed ini file values.
- *
- * @var array
- */
-	protected $_iniFile;
-
-/**
- * Contains the build timestamp from the file.
- *
- * @var string
- */
-	protected $_buildTimestamp;
-
-/**
  * Constructor - finds and parses the ini file the plugin uses.
  *
  * @return void
  */
 	public function __construct($options = array()) {
-		if (!empty($options['iniFile'])) {
-			$iniFile = $options['iniFile'];
-		} else {
-			$iniFile = CONFIGS . 'asset_compress.ini';
-		}
-		if (!file_exists($iniFile)) {
-			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
-		}
-		$this->_iniFile = parse_ini_file($iniFile, true);
+		$this->_Config = AssetConfig::buildFromIniFile();
 	}
 
 /**
@@ -105,15 +74,11 @@ class AssetCompressHelper extends AppHelper {
  * @param mixed $value The value to set the config to.
  * @return mixed Either the value being read or null.  Null also is returned when reading things that don't exist.
  */
-	public function config($name, $value = null) {
-		if (strpos($name, '.') === false) {
-			return null;
+	public function config($config = null) {
+		if ($config === null) {
+			return $this->_Config;
 		}
-		list($section, $key) = explode('.', $name);
-		if ($value === null) {
-			return isset($this->_iniFile[$section][$key]) ? $this->_iniFile[$section][$key] : null;
-		}
-		$this->_iniFile[$section][$key] = $value;
+		return $this->_Config;
 	}
 
 /**
@@ -205,7 +170,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeCss() {
 		$files = func_get_args();
-		return $this->_genericInclude($files, '_css', 'cssCompressUrl');
+		return $this->_genericInclude($files, 'css');
 	}
 
 /**
@@ -228,34 +193,33 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function includeJs() {
 		$files = func_get_args();
-		return $this->_genericInclude($files, '_scripts', 'jsCompressUrl');
+		return $this->_genericInclude($files, 'js');
 	}
 
 /**
  * The generic version of includeCss and includeJs
  *
  * @param array $files Array of destination/build files to include
- * @param string $property The property to use
- * @param string $urlKey The key that contains the url for the build files.
+ * @param string $ext The extension builds must have.
  * @return string A string containing asset tags.
  */
-	protected function _genericInclude($files, $property, $urlKey) {
+	protected function _genericInclude($files, $ext) {
 		if (count($files) == 0) {
-			$files = array_keys($this->{$property});
+			$files = array_keys($this->_runtime[$ext]);
+		}
+		foreach ($files as &$file) {
+			$file = $this->_addExt($file, '.' . $ext);
 		}
 		$output = array();
-		foreach ($files as $destination) {
-			if (empty($this->{$property}[$destination])) {
+		foreach ($files as $build) {
+			if (empty($this->_runtime[$ext][$build])) {
 				continue;
 			}
-			$build = $destination;
-			if (strpos($destination, ':hash') === 0) {
-				$build = md5(implode('_', $this->{$property}[$destination]));
+			if ($ext == 'js') {
+				$output[] = $this->script($build);
+			} elseif ($ext == 'css') {
+				$output[] = $this->css($build);
 			}
-			$output[] = $this->_generateAsset(
-				$property, $build, $this->{$property}[$destination], $this->options[$urlKey]
-			);
-			unset($this->{$property}[$build]);
 		}
 		return implode("\n", $output);
 	}
@@ -317,47 +281,130 @@ class AssetCompressHelper extends AppHelper {
 		}
 	}
 
-/**
- * Adds the build timestamp to a filename
- *
- * @return void
- */
-	protected function _timestampFile($name) {
-		if (empty($this->_buildTimestamp) && file_exists(TMP . 'asset_compress_build_time')) {
-			$this->_buildTimestamp = '.' . file_get_contents(TMP . 'asset_compress_build_time');
-		} elseif (empty($this->_buildTimestamp)) {
-			$this->_buildTimestamp = '.' . time();
+	protected function _addExt($file, $ext) {
+		if (substr($file, strlen($ext) * -1) !== $ext) {
+			$file .= $ext;
 		}
-		return $name . $this->_buildTimestamp;
+		return $file;
+	}
+/**
+ * Create a CSS file. Will generate script tags
+ * for either the dynamic build controller, or the generated file if it exists.
+ *
+ * To create build files without configuration use addCss()
+ *
+ * @param string $file A build target to include.
+ * @param array $options An array of options for the stylesheet tag.
+ * @return A stylesheet tag
+ */
+	public function css($file, $options = array()) {
+		$file = $this->_addExt($file, '.css');
+		if (!$this->_Config->files($file)) {
+			throw new RuntimeException('Cannot create a stylesheet tag for a build that does not exist.');
+		}
+		if ($this->useDynamicBuild($file)) {
+			$route = $this->_getRoute($file);
+		} else {
+			$route = '';
+		}
+		return $this->Html->css($route, null, $options);
 	}
 
 /**
- * Include a Javascript file.  All files with the same `$destination` will be compressed into one file.
- * Compression/concatenation will only occur if debug == 0.
+ * Create a script tag for a script asset. Will generate script tags
+ * for either the dynamic build controller, or the generated file if it exists.
  *
- * @param mixed $file Either a string filename or an array of filenames to include.
- * @param string $destination Name of file that $file should be compacted into.
- * @return void
+ * To create build files without configuration use addScript()
+ *
+ * @param string $file A build target to include.
+ * @param array $options An array of options for the script tag.
+ * @return A script tag
  */
-	public function script($file, $destination = ':hash-default') {
-		if (empty($this->_scripts[$destination])) {
-			$this->_scripts[$destination] = array();
+	public function script($file, $options = array()) {
+		$file = $this->_addExt($file, '.js');
+		if (!$this->_Config->files($file)) {
+			throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
 		}
-		$this->_scripts[$destination] = array_merge($this->_scripts[$destination], (array)$file);
+		if ($this->useDynamicBuild($file)) {
+			$route = $this->_getRoute($file);
+		} else {
+			$route = '';
+		}
+		return $this->Html->script($route, $options);
 	}
 
 /**
- * Include a CSS file.  All files with the same `$destination` will be compressed into one file.
- * Compression/concatenation will only occur if debug == 0.
+ * Check if a built asset exists for the target.
+ */
+	public function useDynamicBuild($file) {
+		if (!$this->_Config->cachingOn($file)) {
+			return true;
+		}
+		// TODO implement me..
+	}
+
+/**
+ * Get the dynamic build path for an asset.
+ */
+	protected function _getRoute($file) {
+		$url = $this->options['buildUrl'];
+	
+		//escape out of prefixes.
+		$prefixes = Router::prefixes();
+		foreach ($prefixes as $prefix) {
+			if (!array_key_exists($prefix, $url)) {
+				$url[$prefix] = false;
+			}
+		}
+		$params = array(
+			$file,
+			'base' => false
+		);
+		$ext = $this->_Config->getExt($file);
+		if (isset($this->_runtime[$ext][$file])) {
+			if (strpos($file, ':hash') === 0) {
+				$buildFiles = $this->_Config->files($file);
+				$params[0] = md5(implode('_', $buildFiles)) . '.' . $ext;
+			}
+			$components = $this->_Config->files($file);
+			$params['?'] = array('file' => $components);
+		}
+
+		$url = Router::url(array_merge($url, $params));
+		return $url;
+	}
+
+/**
+ * Add a script file to a build target, this lets you define build
+ * targets without configuring them in the ini file.
  *
- * @param mixed $file Either a string filename or an array of filenames to include.
- * @param string $destination Name of file that $file should be compacted into.
+ * @param mixed $files Either a string or an array of files to append into the build target.
+ * @param string $target The name of the build target, defaults to a hash of the filenames
  * @return void
  */
-	public function css($file, $destination = ':hash-default') {
-		if (empty($this->_css[$destination])) {
-			$this->_css[$destination] = array();
+	public function addScript($files, $target = ':hash-default.js') {
+		if (substr($target, -3) !== '.js') {
+			$target .= '.js';
 		}
-		$this->_css[$destination] = array_merge($this->_css[$destination], (array)$file);
+		$this->_runtime['js'][$target] = true;
+		$defined = $this->_Config->files($target);
+		$this->_Config->files($target, array_merge($defined, (array)$files));
+	}
+
+/**
+ * Add a stylesheet file to a build target, this lets you define build
+ * targets without configuring them in the ini file.
+ *
+ * @param mixed $files Either a string or an array of files to append into the build target.
+ * @param string $target The name of the build target, defaults to a hash of the filenames
+ * @return void
+ */
+	public function addCss($files, $target = ':hash-default.css') {
+		if (substr($target, -4) !== '.css') {
+			$target .= '.css';
+		}
+		$this->_runtime['css'][$target] = true;
+		$defined = $this->_Config->files($target);
+		$this->_Config->files($target, array_merge($defined, (array)$files));
 	}
 }
