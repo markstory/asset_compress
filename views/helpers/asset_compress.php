@@ -318,7 +318,7 @@ class AssetCompressHelper extends AppHelper {
 		if ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
-			$route = '';
+			$route = $this->_locateBuild($file);
 		}
 		
 		$baseUrl = $this->_Config->get('css.baseUrl');
@@ -351,7 +351,7 @@ class AssetCompressHelper extends AppHelper {
 		if ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
-			$route = '';
+			$route = $this->_locateBuild($file);
 		}
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl) {
@@ -361,13 +361,30 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Check if a built asset exists for the target.
+ * Check if caching is on. If caching is off, then dynamic builds
+ * (pointing at the controller) will be generated.
+ *
+ * If caching is on for this extension, the helper will try to locate build
+ * files using the cachePath. If no cache file exists a dynamic build will be done.
  */
 	public function useDynamicBuild($file) {
 		if (!$this->_Config->cachingOn($file)) {
 			return true;
 		}
-		// TODO implement me..
+		if ($this->_locateBuild($file)) {
+			return false;
+		}
+		return true;
+	}
+
+/**
+ * Locates a build file and returns the url path to it.
+ *
+ * @param string $build Filename of the build to locate.
+ * @return string The url path to the built asset.
+ */
+	protected function _locateBuild($build) {
+	
 	}
 
 /**
