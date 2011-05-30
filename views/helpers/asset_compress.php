@@ -128,30 +128,22 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Includes css + js assets.  If debug = 0 check the config settings and either look for a premade cache
- * file or use requestAction.  When file caching is enabled the first requestAction will create the cache
- * file used for all subsequent requests.
+ * Used to include runtime defined build files.  To include build files defined in your
+ * ini file use script() or css().
  *
  * Calling this method will clear the asset caches.
  *
- * Setting `$compress` to `false` will a list of all of your assets, uncompressed.
- *
- * @param boolean $compress Whether or not to compress
  * @return string Empty string or string containing asset link tags.
  */
-	public function includeAssets($compress = true) {
-		if ($compress) {
-			$css = $this->includeCss();
-			$js = $this->includeJs();
-		} else {
-			$css = $this->_classicInclude('_css');
-			$js = $this->_classicInclude('_scripts');
-		}		
+	public function includeAssets() {
+		$css = $this->includeCss();
+		$js = $this->includeJs();
 		return $css . "\n" . $js;
 	}
 
 /**
- * Include the CSS files 
+ * Include the CSS files that were defined at runtime with
+ * the helper.
  *
  * ### Usage
  *
@@ -169,22 +161,23 @@ class AssetCompressHelper extends AppHelper {
  * @return string A string containing the link tags
  */
 	public function includeCss() {
-		$files = func_get_args();
-		return $this->_genericInclude($files, 'css');
+		$args = func_get_args();
+		return $this->_genericInclude($args, 'css');
 	}
 
 /**
- * Include the Javascript files 
+ * Include the Javascript files that were defined at runtime with
+ * the helper.
  *
  * ### Usage
  *
- * #### Include one destination file:
+ * #### Include one runtime destination file:
  * `$assetCompress->includeJs('default');`
  *
- * #### Include multiple files:
+ * #### Include multiple runtime files:
  * `$assetCompress->includeJs('default', 'reset', 'themed');`
  *
- * #### Include all the files:
+ * #### Include all the runtime files:
  * `$assetCompress->includeJs();`
  *
  * @param string $name Name of the destination file to include.  You can pass any number of strings in to
@@ -192,8 +185,8 @@ class AssetCompressHelper extends AppHelper {
  * @return string A string containing the script tags.
  */
 	public function includeJs() {
-		$files = func_get_args();
-		return $this->_genericInclude($files, 'js');
+		$args = func_get_args();
+		return $this->_genericInclude($args, 'js');
 	}
 
 /**
@@ -204,7 +197,13 @@ class AssetCompressHelper extends AppHelper {
  * @return string A string containing asset tags.
  */
 	protected function _genericInclude($files, $ext) {
-		if (count($files) == 0) {
+		$numArgs = count($files);
+		$options = array();
+		if (isset($files[$numArgs]) && is_array($files[$numArgs])) {
+			$options = array_pop($files);
+			$numArgs -= 1;
+		}
+		if ($numArgs == 0) {
 			$files = array_keys($this->_runtime[$ext]);
 		}
 		foreach ($files as &$file) {
@@ -216,10 +215,11 @@ class AssetCompressHelper extends AppHelper {
 				continue;
 			}
 			if ($ext == 'js') {
-				$output[] = $this->script($build);
+				$output[] = $this->script($build, $options);
 			} elseif ($ext == 'css') {
-				$output[] = $this->css($build);
+				$output[] = $this->css($build, $options);
 			}
+			unset($this->_runtime[$ext][$build]);
 		}
 		return implode("\n", $output);
 	}
@@ -281,17 +281,30 @@ class AssetCompressHelper extends AppHelper {
 		}
 	}
 
+/**
+ * Adds an extension if the file doesn't already end with it.
+ *
+ * @param string $file Filename
+ * @param string $ext Extension with .
+ * @return string
+ */
 	protected function _addExt($file, $ext) {
 		if (substr($file, strlen($ext) * -1) !== $ext) {
 			$file .= $ext;
 		}
 		return $file;
 	}
+
 /**
  * Create a CSS file. Will generate script tags
  * for either the dynamic build controller, or the generated file if it exists.
  *
  * To create build files without configuration use addCss()
+ *
+ * Options:
+ *
+ * - All options supported by HtmlHelper::css() are supported.
+ * - `raw` - Set to true to get one link element for each file in the build.
  *
  * @param string $file A build target to include.
  * @param array $options An array of options for the stylesheet tag.
@@ -307,6 +320,11 @@ class AssetCompressHelper extends AppHelper {
 		} else {
 			$route = '';
 		}
+		
+		$baseUrl = $this->_Config->get('css.baseUrl');
+		if ($baseUrl) {
+			$route = $baseUrl . $route;
+		}
 		return $this->Html->css($route, null, $options);
 	}
 
@@ -315,6 +333,11 @@ class AssetCompressHelper extends AppHelper {
  * for either the dynamic build controller, or the generated file if it exists.
  *
  * To create build files without configuration use addScript()
+ *
+ * Options:
+ *
+ * - All options supported by HtmlHelper::css() are supported.
+ * - `raw` - Set to true to get one script element for each file in the build.
  *
  * @param string $file A build target to include.
  * @param array $options An array of options for the script tag.
@@ -329,6 +352,10 @@ class AssetCompressHelper extends AppHelper {
 			$route = $this->_getRoute($file);
 		} else {
 			$route = '';
+		}
+		$baseUrl = $this->_Config->get('js.baseUrl');
+		if ($baseUrl) {
+			$route = $baseUrl . $route;
 		}
 		return $this->Html->script($route, $options);
 	}

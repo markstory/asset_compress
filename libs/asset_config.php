@@ -149,6 +149,25 @@ class AssetConfig {
 	}
 
 /**
+ * Set values into the config object
+ *
+ * @param string $path The path to set.
+ * @param string $value The value to set.
+ */
+	public function set($path, $value) {
+		$this->_data = Set::insert($this->_data, $path, $value);
+	}
+
+/**
+ * Get values from the config data.
+ *
+ * @param string $path The path you want.
+ */
+	public function get($path) {
+		return Set::classicExtract($this->_data, $path);
+	}
+
+/**
  * Get/set filters for an extension/build file
  *
  * @param string $ext Name of an extension
