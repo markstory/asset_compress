@@ -384,7 +384,21 @@ class AssetCompressHelper extends AppHelper {
  * @return string The url path to the built asset.
  */
 	protected function _locateBuild($build) {
-	
+		$ext = $this->_Config->getExt($build);
+		$path = $this->_Config->cachePath($ext);
+		if (!$path) {
+			return false;
+		}
+		if (file_exists($path . $build)) {
+			return str_replace(WWW_ROOT, $this->base, $path . $build);
+		}
+		$name = substr($build, 0, strlen($build) - (strlen($ext) + 1));
+		$pattern = $path . $name . '.v[0-9]*.' . $ext;
+		$matching = glob($pattern);
+		if (empty($matching)) {
+			return false;
+		}
+		return $matching[0];
 	}
 
 /**

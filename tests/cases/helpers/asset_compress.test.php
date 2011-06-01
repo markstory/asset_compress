@@ -267,18 +267,38 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, '');
 	}
 
+	function testLinkingBuiltFiles() {
+		$config = $this->Helper->config();
+		$config->set('General.writeCache', true);
+		$config->cachePath('js', TMP);
+		$config->files('asset_test.js', array('one.js'));
+
+		touch(TMP . 'asset_test.js');
+
+		$this->assertTrue($config->cachingOn('asset_test.js'));
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
+		unlink(TMP . 'asset_test.js');
+	}
+
 /**
  * test timestamping assets.
  *
  * @return void
  */
 	function testTimestampping() {
-		Configure::write('debug', 1);
-		$this->Helper->script('libraries', 'default');
-		$result = $this->Helper->includeAssets();
-		$this->assertPattern('/default\.\d+\.js/', $result);
+		$config = $this->Helper->config();
+		$config->set('General.writeCache', true);
+		$config->set('js.timestamp', true);
+		$config->cachePath('js', TMP);
+		$config->files('asset_test.js', array('one.js'));
 
-		Configure::write('debug', 2);
+		$filename = TMP . 'asset_test.v' . time() . '.js';
+		touch($filename);
+
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, $filename) !== false);
+		unlink($filename);
 	}
 
 /**
