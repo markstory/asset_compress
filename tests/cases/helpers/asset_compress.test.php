@@ -54,14 +54,12 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testNoCompression() {
-		$this->skipIf(true, 'Not done');
-		return;
 		$this->Helper->addCss('one', 'lib');
 		$this->Helper->addCss('two');
 		$this->Helper->addScript('one');
 		$this->Helper->addScript('dir/two');
 
-		$result = $this->Helper->includeAssets(false);
+		$result = $this->Helper->includeAssets(true);
 		$expected = array(
 			array(
 				'link' => array(

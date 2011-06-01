@@ -135,9 +135,14 @@ class AssetCompressHelper extends AppHelper {
  *
  * @return string Empty string or string containing asset link tags.
  */
-	public function includeAssets() {
-		$css = $this->includeCss();
-		$js = $this->includeJs();
+	public function includeAssets($raw = null) {
+		if ($raw !== null) {
+			$css = $this->includeCss(array('raw' => true));
+			$js = $this->includeJs(array('raw' => true));
+		} else {
+			$css = $this->includeCss();
+			$js = $this->includeJs();
+		}
 		return $css . "\n" . $js;
 	}
 
@@ -197,13 +202,13 @@ class AssetCompressHelper extends AppHelper {
  * @return string A string containing asset tags.
  */
 	protected function _genericInclude($files, $ext) {
-		$numArgs = count($files);
+		$numArgs = count($files) - 1;
 		$options = array();
 		if (isset($files[$numArgs]) && is_array($files[$numArgs])) {
 			$options = array_pop($files);
 			$numArgs -= 1;
 		}
-		if ($numArgs == 0) {
+		if ($numArgs <= 0) {
 			$files = array_keys($this->_runtime[$ext]);
 		}
 		foreach ($files as &$file) {
@@ -222,63 +227,6 @@ class AssetCompressHelper extends AppHelper {
 			unset($this->_runtime[$ext][$build]);
 		}
 		return implode("\n", $output);
-	}
-
-/**
- * Includes css and js the original way, without compression
- *
- * @param string $property The property to use
- * @return string A string of asset tags
- */
-	protected function _classicInclude($property) {
-		$out = array();
-		foreach ($this->{$property} as $files) {
-			$method = $property == '_scripts' ? 'script' : 'css';
-			$out = array_merge($out, array_map(array($this->Html, $method), $files));
-		}
-		return implode("\n", $out);
-	}
-
-/**
- * Generates the asset tag of the chosen $method
- *
- * @param string $method Method name to call on HtmlHelper
- * @param string $destination The destination file to be generated.
- * @param array $url Array of url keys for making the asset location.
- * @return string Asset tag.
- */
-	protected function _generateAsset($method, $destination, $files, $url) {
-		$fileString = 'file[]=' . implode('&amp;file[]=', $files);
-		$iniKey = $method == '_scripts' ? 'Javascript' : 'Css';
-
-		if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
-			$destination = $this->_timestampFile($destination);
-		}
-
-		//escape out of prefixes.
-		$prefixes = Router::prefixes();
-		foreach ($prefixes as $prefix) {
-			if (!array_key_exists($prefix, $url)) {
-				$url[$prefix] = false;
-			}
-		}
-
-		$baseUrl = $this->config('General.baseUrl');
-
-		$url = Router::url(array_merge(
-			$url,
-			array($destination, '?' => $fileString, 'base' => false)
-		));
-
-		list($base, $query) = explode('?', $url);
-		if (!empty($baseUrl) || file_exists(WWW_ROOT . $base)) {
-			$url = $base;
-		}
-		if ($method == '_scripts') {
-			return $this->Html->script($baseUrl . $url);
-		} else {
-			return $this->Html->css($baseUrl . $url);
-		}
 	}
 
 /**
@@ -312,15 +260,23 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function css($file, $options = array()) {
 		$file = $this->_addExt($file, '.css');
-		if (!$this->_Config->files($file)) {
+		$buildFiles = $this->_Config->files($file);
+		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a stylesheet tag for a build that does not exist.');
+		}
+		if (!empty($options['raw'])) {
+			$output = '';
+			unset($options['raw']);
+			foreach ($buildFiles as $part) {
+				$output .= $this->Html->css($part, null, $options);
+			}
+			return $output;
 		}
 		if ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
 			$route = $this->_locateBuild($file);
 		}
-		
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -345,9 +301,19 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function script($file, $options = array()) {
 		$file = $this->_addExt($file, '.js');
-		if (!$this->_Config->files($file)) {
+		$buildFiles = $this->_Config->files($file);
+		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
 		}
+		if (!empty($options['raw'])) {
+			$output = '';
+			unset($options['raw']);
+			foreach ($buildFiles as $part) {
+				$output .= $this->Html->script($part, $options);
+			}
+			return $output;
+		}
+
 		if ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
