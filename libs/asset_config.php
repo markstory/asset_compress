@@ -300,6 +300,19 @@ class AssetConfig {
 	}
 
 /**
+ * Get the build targets for an extension.
+ *
+ * @param string $ext The extension you want targets for.
+ * @return array An array of build targets for the extension.
+ */
+	public function targets($ext) {
+		if (empty($this->_data[$ext][self::TARGETS])) {
+			return array();
+		}
+		return array_keys($this->_data[$ext][self::TARGETS]);
+	}
+
+/**
  * Create a new build target.
  *
  * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
