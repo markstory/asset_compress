@@ -1,21 +1,32 @@
 <?php
+App::import('Lib', 'AssetCompress.AssetConfig');
+App::import('Lib', 'AssetCompress.AssetCompiler');
+App::import('Lib', 'AssetCompress.AssetCache');
+
 /**
  * Asset Compress Shell
  *
  * Assists in clearing and creating the build files this plugin makes.
  *
  * @package AssetCompress
- * @author Mark Story
  */
 class AssetCompressShell extends Shell {
-/**
- * models used
- *
- * @var array
- */
-	public $uses = array('AssetCompress.JsFile', 'AssetCompress.CssFile');
 
 	public $tasks = array('AssetBuild');
+
+/**
+ * Create the configuration object used in other classes.
+ *
+ */
+	public function startup() {
+		parent::startup();
+		$config = null;
+		if (isset($this->params['config'])) {
+			$config = $this->params['config'];
+		}
+		$this->_Config = AssetConfig::buildFromIniFile($config);
+	}
+
 /**
  * Builds all the files defined in the build file.
  *
@@ -34,65 +45,54 @@ class AssetCompressShell extends Shell {
 	public function clear() {
 		$this->out('Clearing Javascript build files:');
 		$this->hr();
-		$this->_clearJs();
+		$this->_clearBuilds('js');
 
 		$this->out('');
 		$this->out('Clearing CSS build files:');
 		$this->hr();
-		$this->_clearCss();
+		$this->_clearBuilds('css');
 		
-		$this->out('');
-		$this->out('Updating build timestamp file:');
-		$this->hr();
-		$this->JsFile->clearBuildTimestamp();
-		$this->JsFile->createBuildTimestamp();
 		$this->out('Complete');
 	}
 
 /**
- * clear the js files.
+ * clear the builds for a specific extension.
  *
  * @return void
  */
-	protected function _clearJs() {
-		if (!$this->JsFile->cachingOn()) {
-			$this->out('Caching not enabled for Javascript files, skipping.');
+	protected function _clearBuilds($ext) {
+		$targets = $this->_Config->targets($ext);
+		if (empty($targets)) {
+			$this->err('No ' . $ext . ' build files defined, skipping');
+			return;
 		}
-		$path = $this->JsFile->cacheDir();
-		$this->_clearDirectory($path);
-	}
-
-/**
- * clear the css files.
- *
- * @return void
- */
-	protected function _clearCss() {
-		if (!$this->CssFile->cachingOn()) {
-			$this->out('Caching not enabled for CSS files, skipping.');
+		if (!$this->_Config->cachingOn($targets[0])) {
+			$this->err('Caching not enabled for ' . $ext . ' files, skipping.');
+			return;
 		}
-		$path = $this->CssFile->cacheDir();
-		$this->_clearDirectory($path);
-	}
-
-/**
- * Clears a directory of cached files with the correct header.
- *
- * @return void
- */
-	protected function _clearDirectory($path) {
+		$path = $this->_Config->cachePath($ext);
+		if (!file_exists($path)) {
+			$this->err('Build directory ' . $path . ' for ' . $ext . ' does not exist.');
+			return;
+		}
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
-			if(in_array($file->getFilename(), array('.', '..'))) {
+			$name = $file->getFilename();
+			if (in_array($name, array('.', '..'))) {
 				continue;
 			}
-			$fileInfo = new SplFileObject($file->getPathname());
-			$line = $fileInfo->fgets();
-			if (preg_match('#^/\* asset_compress \d+ \*/$#', $line)) {
-				$pathName = $fileInfo->getPathname();
-				unset($fileInfo);
-				$this->out('Deleting ' . $pathName);
-				unlink($pathName);
+			// no timestamp
+			if (in_array($name, $targets)) {
+				$this->out('Deleting ' . $path . $name);
+				unlink($path . $name);
+				continue;
+			}
+			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
+				list($base, $v, $ext) = explode('.', $name, 3);
+				if (in_array($base . '.' . $ext, $targets)) {
+					$this->out('Deleting ' . $path . $name);
+					continue;
+				}
 			}
 		}
 	}
