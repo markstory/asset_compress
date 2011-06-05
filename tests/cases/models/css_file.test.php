@@ -63,6 +63,20 @@ body {
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test css files with other extensions (such as .less or .scss)
+ *
+ * @return void
+ **/
+	function testOtherExtensions() {
+		$this->CssFile->settings['searchPaths'] = array(
+			$this->_pluginPath . 'tests/test_files/css/',
+		);
+		$expected = "#other-extension { color: #faf; }";
+		$output = $this->CssFile->process('other.ext');
+		$this->assertEqual($output, $expected);
+	}
 /**
  * test removal of comment blocks.
  *
@@ -164,7 +178,7 @@ TEXT;
 			'WEBROOT/something/else/'
 		);
 		$this->assertEqual($this->CssFile->settings['searchPaths'], $expected);
-		
+
 		App::build(array('views' => $restore));
 	}
 

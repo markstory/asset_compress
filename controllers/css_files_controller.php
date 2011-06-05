@@ -15,6 +15,7 @@ class CssFilesController extends AssetCompressAppController {
  * @return void
  **/
 	public function beforeFilter() {
+	  parent::beforeFilter();
 		if ($this->view === 'Theme' && !empty($this->theme)) {
 			$this->CssFile->addTheme($this->theme);
 		}

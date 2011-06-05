@@ -25,4 +25,10 @@ class AssetCompressAppController extends AppController {
  */
 	public function shutdownProcess() { }
 
+  function beforeFilter(){
+    if(isset($this->Auth)){
+      $this->Auth->allow('get');
+    }
+  }
+  
 }

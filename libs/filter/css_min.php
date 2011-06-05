@@ -1,6 +1,6 @@
 <?php
 App::import('Model', 'AssetCompress.AssetFilterInterface');
-App::import('Vendor', 'CssMin', array('file' => 'CssMin/CssMin.php'));
+App::import('Vendor', 'CssMin', array('file' => 'cssmin/CssMin.php'));
 
 /**
  * CssMin filter.
