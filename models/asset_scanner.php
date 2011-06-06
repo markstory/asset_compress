@@ -53,7 +53,7 @@ class AssetScanner {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
 			$path = $this->_replacePathConstants($path);
-			if (preg_match('^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*\r?$', $path)) {
+			if (preg_match('/^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);
 			} else {
