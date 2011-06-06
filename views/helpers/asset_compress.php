@@ -287,7 +287,7 @@ class AssetCompressHelper extends AppHelper {
 		$fileString = 'file[]=' . implode('&amp;file[]=', $files);
 		$iniKey = $method == '_scripts' ? 'Javascript' : 'Css';
 
-		if (!empty($this->_iniFile[$iniKey]['timestamp']) && Configure::read('debug') < 2) {
+		if (!empty($this->_iniFile[$iniKey]['timestamp'])) {
 			$destination = $this->_timestampFile($destination);
 		}
 
