@@ -1,7 +1,7 @@
 <?php
 
-$this->AssetCompress->script('one_file', 'single');
-$this->AssetCompress->script('no_build');
+$this->AssetCompress->addScript('one_file', 'single');
+$this->AssetCompress->addScript('no_build');
 
-$this->AssetCompress->css('no_build');
-$this->AssetCompress->css('one_file', 'single');
+$this->AssetCompress->addCss('no_build');
+$this->AssetCompress->addCss('one_file', 'single');
