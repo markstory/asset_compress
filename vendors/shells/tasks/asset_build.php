@@ -1,18 +1,37 @@
 <?php
+App::import('Lib', 'AssetCompress.AssetConfig');
+App::import('Lib', 'AssetCompress.AssetCache');
+App::import('Lib', 'AssetCompress.AssetCompiler');
+
 App::import('Core', 'Folder');
-App::import('Model', 'AssetCompress.JsFile');
-App::import('Model', 'AssetCompress.CssFile');
 
 class AssetBuildTask extends Shell {
 	
+	protected $_Config;
 	protected $_files = array();
 	protected $_tokens = array();
 	
 	public $helperTokens = array(
 		'$assetCompress', 'AssetCompress'
 	);
+	protected $_methods = array('addCss', 'addScript');
 
-	function build($paths) {
+	public function setConfig(AssetConfig $Config) {
+		$this->_Config = $Config;
+	}
+
+	public function buildIni() {
+		$targets = $this->_Config->targets('js');
+		foreach ($targets as $t) {
+			$this->_buildTarget($t);
+		}
+		$targets = $this->_Config->targets('css');
+		foreach ($targets as $t) {
+			$this->_buildTarget($t);
+		}
+	}
+
+	function buildDynamic($paths) {
 		$this->_collectFiles($paths);
 		$this->_scanFiles();
 		$this->_parse();
@@ -82,7 +101,7 @@ class AssetBuildTask extends Shell {
 
 		foreach ($this->_tokens as $call) {
 			$method = $call[2][1];
-			if (!in_array($method, array('css', 'script'))) {
+			if (!in_array($method, $this->_methods)) {
 				continue;
 			}
 	
@@ -159,27 +178,35 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildFiles() {
-		if (!empty($this->_buildFiles['css'])) {
-			$Css = new CssFile();
-			foreach ($this->_buildFiles['css'] as $target => $contents) {
+		if (!empty($this->_buildFiles['addCss'])) {
+			foreach ($this->_buildFiles['addCss'] as $target => $contents) {
 				if (strpos($target, ':hash') === 0) {
 					$target = md5(implode('_', $contents));
 				}
-				$this->out('Saving CSS file for ' . $target);
-				$compress = $Css->process($contents);
-				$Css->cache($target . '.css', $compress);
+				$this->_Config->files($target, $contents);
+				$this->_buildTarget($target);
 			}
 		}
-		if (!empty($this->_buildFiles['script'])) {
-			$Js = new JsFile();
-			foreach ($this->_buildFiles['script'] as $target => $contents) {
+		if (!empty($this->_buildFiles['addScript'])) {
+			foreach ($this->_buildFiles['addScript'] as $target => $contents) {
 				if (strpos($target, ':hash') === 0) {
 					$target = md5(implode('_', $contents));
 				}
-				$this->out('Saving Javascript file for ' . $target);
-				$compress = $Js->process($contents);
-				$Js->cache($target . '.js', $compress);
+				$this->_Config->files($target, $contents);
+				$this->_buildTarget($target);
 			}
+		}
+	}
+
+	protected function _buildTarget($build) {
+		$this->out('Saving file for ' . $build);
+		$Compiler = new AssetCompiler($this->_Config);
+		$Cacher = new AssetCache($this->_Config);
+		try {
+			$contents = $Compiler->generate($build);
+			$Cacher->write($build, $contents);
+		} catch (Exception $e) {
+			$this->err('Error: ' . $e->getMessage());
 		}
 	}
 }

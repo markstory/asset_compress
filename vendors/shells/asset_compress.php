@@ -33,8 +33,19 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
+		$this->build_ini();
+		$this->build_dynamic();
+	}
+
+	public function build_ini() {
+		$this->AssetBuild->setConfig($this->_Config);
+		$this->AssetBuild->buildIni();
+	}
+
+	public function build_dynamic() {
+		$this->AssetBuild->setConfig($this->_Config);
 		$viewpaths = App::path('views');
-		$this->AssetBuild->build($viewpaths);
+		$this->AssetBuild->buildDynamic($viewpaths);
 	}
 
 /**
@@ -83,14 +94,14 @@ class AssetCompressShell extends Shell {
 			}
 			// no timestamp
 			if (in_array($name, $targets)) {
-				$this->out('Deleting ' . $path . $name);
+				$this->out(' - Deleting ' . $path . $name);
 				unlink($path . $name);
 				continue;
 			}
 			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
 				list($base, $v, $ext) = explode('.', $name, 3);
 				if (in_array($base . '.' . $ext, $targets)) {
-					$this->out('Deleting ' . $path . $name);
+					$this->out(' - Deleting ' . $path . $name);
 					continue;
 				}
 			}
@@ -105,10 +116,17 @@ class AssetCompressShell extends Shell {
 	public function help() {
 		$this->out('Asset Compress Shell');
 		$this->hr();
-		$this->out('Usage: cake asset_compress <command>');
-		$this->hr();
+		$this->out();
+		$this->out('Usage: cake asset_compress <command> <options> <args>');
+		$this->out();
+		$this->out('Commands:');
 		$this->out("clear - Clears all existing build files.");
-		$this->out("build - Builds compressed files.");
+		$this->out("build - Builds all compressed files.");
+		$this->out("build_ini - Build compressed files defined in the ini file.");
+		$this->out("build_dynamic - Build compressed files defined in view files.");
+		$this->out();
+		$this->out('Options:');
+		$this->out("config - Choose the config file to use.  Defaults to app/config/asset_compress.ini.");
 		$this->out();
 	}
 }
