@@ -49,4 +49,13 @@ class AssetScannerTest extends CakeTestCase {
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
 	}
+	
+	function testFindOtherExtension() {
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths);
+		$result = $scanner->find('other.less');
+		$expected = $this->_testFiles . 'css' . DS . 'other.less';
+	}
 }

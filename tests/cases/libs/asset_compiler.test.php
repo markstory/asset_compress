@@ -52,5 +52,19 @@ TEXT;
 		$this->assertEqual($result, $expected);
 	}
 
+	function testCombiningWithOtherExtensions() {
+		$this->config->filters('css', null, array());
+		$this->config->addTarget('all.css', array('other.less', 'nav.css'));
+		$result = $this->Compiler->generate('all.css');
+		$expected = <<<TEXT
+#footer
+	color: blue;
+@import url("reset/reset.css");
+#nav {
+	width:100%;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
 
 }
