@@ -407,7 +407,7 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function addScript($files, $target = ':hash-default.js') {
-		$file = $this->_addExt($file, '.js');
+		$target = $this->_addExt($target, '.js');
 		$this->_runtime['js'][$target] = true;
 		$defined = $this->_Config->files($target);
 		$this->_Config->files($target, array_merge($defined, (array)$files));
@@ -422,7 +422,7 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function addCss($files, $target = ':hash-default.css') {
-		$file = $this->_addExt($file, '.css');
+		$target = $this->_addExt($target, '.css');
 		$this->_runtime['css'][$target] = true;
 		$defined = $this->_Config->files($target);
 		$this->_Config->files($target, array_merge($defined, (array)$files));
