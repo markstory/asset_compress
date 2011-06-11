@@ -11,15 +11,36 @@ class AssetBuildTask extends Shell {
 	protected $_files = array();
 	protected $_tokens = array();
 	
+/**
+ * Array of tokens that indicate a helper call.
+ *
+ * @var array
+ */
 	public $helperTokens = array(
 		'$assetCompress', 'AssetCompress'
 	);
+
+/**
+ * Array of helper methods to look for.
+ *
+ * @var array
+ */
 	protected $_methods = array('addCss', 'addScript');
 
+/**
+ * Set the Configuration object that will be used.
+ *
+ * @return void
+ */
 	public function setConfig(AssetConfig $Config) {
 		$this->_Config = $Config;
 	}
 
+/**
+ * Build all the files declared in the Configuration object.
+ *
+ * @return void
+ */
 	public function buildIni() {
 		$targets = $this->_Config->targets('js');
 		foreach ($targets as $t) {
@@ -31,6 +52,12 @@ class AssetBuildTask extends Shell {
 		}
 	}
 
+/**
+ * Generate dynamically declared build targets in a set of paths.
+ * 
+ * @param array $paths Array of paths to scan for dynamic builds
+ * @return void
+ */
 	function buildDynamic($paths) {
 		$this->_collectFiles($paths);
 		$this->_scanFiles();
@@ -38,6 +65,12 @@ class AssetBuildTask extends Shell {
 		$this->_buildFiles();
 	}
 
+/**
+ * Accessor for testing, sets files.
+ *
+ * @param array $files Array of files to scan
+ * @return void
+ */
 	public function setFiles($files) {
 		$this->_files = $files;
 	}
@@ -178,26 +211,28 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildFiles() {
-		if (!empty($this->_buildFiles['addCss'])) {
-			foreach ($this->_buildFiles['addCss'] as $target => $contents) {
-				if (strpos($target, ':hash') === 0) {
-					$target = md5(implode('_', $contents));
-				}
-				$this->_Config->files($target, $contents);
-				$this->_buildTarget($target);
+		foreach ($this->_methods as $method) {
+			if (empty($this->_buildFiles[$method])) {
+				continue;
 			}
-		}
-		if (!empty($this->_buildFiles['addScript'])) {
-			foreach ($this->_buildFiles['addScript'] as $target => $contents) {
+			foreach ($this->_buildFiles[$method] as $target => $contents) {
 				if (strpos($target, ':hash') === 0) {
 					$target = md5(implode('_', $contents));
 				}
+				$ext = $method == 'addScript'  ? '.js' : '.css';
+				$target = $this->_addExt($target, $ext);
 				$this->_Config->files($target, $contents);
 				$this->_buildTarget($target);
 			}
 		}
 	}
 
+/**
+ * Generate and save the cached file for a build target.
+ *
+ * @param string $build The build to generate.
+ * @return void
+ */
 	protected function _buildTarget($build) {
 		$this->out('Saving file for ' . $build);
 		$Compiler = new AssetCompiler($this->_Config);
@@ -208,5 +243,20 @@ class AssetBuildTask extends Shell {
 		} catch (Exception $e) {
 			$this->err('Error: ' . $e->getMessage());
 		}
+	}
+
+	
+/**
+ * Adds an extension if the file doesn't already end with it.
+ *
+ * @param string $file Filename
+ * @param string $ext Extension with .
+ * @return string
+ */
+	protected function _addExt($file, $ext) {
+		if (substr($file, strlen($ext) * -1) !== $ext) {
+			$file .= $ext;
+		}
+		return $file;
 	}
 }
