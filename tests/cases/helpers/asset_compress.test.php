@@ -302,6 +302,35 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		unlink(TMP . 'asset_test.js');
 	}
 
+
+/**
+ * Test that generated elements can have attributes added.
+ *
+ */
+	function testAttributesOnElements() {
+		$result = $this->Helper->script('libs.js', array('defer' => true));
+
+		$expected = array(
+			array('script' => array(
+				'defer' => 'defer',
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/libs.js'
+			))
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Helper->css('all.css', array('test' => 'value'));
+		$expected = array(
+			'link' => array(
+				'type' => 'text/css',
+				'test' => 'value',
+				'rel' => 'stylesheet',
+				'href' => '/asset_compress/assets/get/all.css'
+			)
+		);
+		$this->assertTags($result, $expected);
+	}
+
 /**
  * test timestamping assets.
  *

@@ -78,7 +78,7 @@ class AssetCompressHelper extends AppHelper {
 		if ($config === null) {
 			return $this->_Config;
 		}
-		return $this->_Config;
+		$this->_Config = $config;
 	}
 
 /**
