@@ -355,8 +355,12 @@ class AssetCompressHelper extends AppHelper {
 		if (!$path) {
 			return false;
 		}
+		$hash = $this->_getHashName($build, $ext);
+		if ($hash) {
+			$build = $hash;
+		}
 		if (file_exists($path . $build)) {
-			return str_replace(WWW_ROOT, $this->base, $path . $build);
+			return str_replace(WWW_ROOT, $this->webroot, $path . $build);
 		}
 		$name = substr($build, 0, strlen($build) - (strlen($ext) + 1));
 		$pattern = $path . $name . '.v[0-9]*.' . $ext;
@@ -386,16 +390,31 @@ class AssetCompressHelper extends AppHelper {
 		);
 		$ext = $this->_Config->getExt($file);
 		if (isset($this->_runtime[$ext][$file])) {
-			if (strpos($file, ':hash') === 0) {
-				$buildFiles = $this->_Config->files($file);
-				$params[0] = md5(implode('_', $buildFiles)) . '.' . $ext;
-			}
+			$hash = $this->_getHashName($file, $ext);
 			$components = $this->_Config->files($file);
+			if ($hash) {
+				$params[0] = $hash;
+			}
 			$params['?'] = array('file' => $components);
 		}
 
 		$url = Router::url(array_merge($url, $params));
 		return $url;
+	}
+
+/**
+ * Check if a build file is a magic hash and get the hash name for it.
+ *
+ * @param string $build The name of the build to check.
+ * @param string $ext The extension
+ * @return mixed Either false or the string name of the hash.
+ */
+	protected function _getHashName($build, $ext) {
+		if (strpos($build, ':hash') === 0) {
+			$buildFiles = $this->_Config->files($build);
+			return md5(implode('_', $buildFiles)) . '.' . $ext;
+		}
+		return false;
 	}
 
 /**

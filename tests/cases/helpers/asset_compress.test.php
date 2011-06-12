@@ -168,6 +168,26 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test that build files with magic hash names, are linked in properly.
+ *
+ */
+	function testMagicHashBuildFileUse() {
+		$config = $this->Helper->config();
+		$config->set('General.writeCache', true);
+		$config->cachePath('js', TMP);
+
+		$this->Helper->addScript('libraries', ':hash-default');
+		$this->Helper->addScript('thing', ':hash-default');
+
+		$hash = md5('libraries_thing');
+		touch(TMP . $hash . '.js');
+
+		$result = $this->Helper->includeAssets();
+		$this->assertTrue(strpos($result, $hash) !== false);
+		$this->assertFalse(strpos($result, '?file'), 'Querystring found, built asset not used.');
+	}
+
+/**
  * test generating two script files.
  *
  * @return void
@@ -265,6 +285,9 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, '');
 	}
 
+/**
+ * Test that build files are correctly linked in when they exist on cachePath.
+ */
 	function testLinkingBuiltFiles() {
 		$config = $this->Helper->config();
 		$config->set('General.writeCache', true);
