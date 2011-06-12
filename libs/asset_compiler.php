@@ -38,8 +38,8 @@ class AssetCompiler {
 			$content = $this->filters->input($file, $content);
 			$output .= $content;
 		}
-		if (!$this->_Config->debug) {
-			$content = $this->filters->output($build, $content);
+		if ($this->_Config->get('General.debug') == false) {
+			$output = $this->filters->output($build, $output);
 		}
 		return trim($output);
 	}
