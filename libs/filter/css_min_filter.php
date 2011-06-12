@@ -1,6 +1,5 @@
 <?php
 App::import('Lib', 'AssetCompress.AssetFilterInterface');
-App::import('Vendor', 'cssmin', array('file' => 'cssmin/CssMin.php'));
 
 /**
  * CssMin filter.
@@ -12,6 +11,15 @@ App::import('Vendor', 'cssmin', array('file' => 'cssmin/CssMin.php'));
  */
 class CssMinFilter extends AssetFilter {
 /**
+ * Where CssMin can be found.
+ *
+ * @var array
+ */
+	protected $_settings = array(
+		'path' => 'cssmin/CssMin.php'
+	);
+
+/**
  * Apply CssMin to $content.
  *
  * @param string $filename target filename
@@ -19,6 +27,7 @@ class CssMinFilter extends AssetFilter {
  * @return string
  */
 	public function output($filename, $content) {
+		App::import('Vendor', 'cssmin', array('file' => $this->_settings['path']));
 		return CssMin::minify($content);
 	}
 }
