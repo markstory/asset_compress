@@ -56,7 +56,7 @@ class AssetFilter implements AssetFilterInterface {
  * @param array $settings Array of settings.
  */
 	public function settings($settings) {
-		$this->_settings = $settings;
+		$this->_settings = array_merge($this->_settings, $settings);
 	}
 
 /**
@@ -86,13 +86,14 @@ class AssetFilter implements AssetFilterInterface {
  * @param string $content The content to run through the command.
  * @return The result of the command.
  */
-	protected function _runCmd($cmd, $content) {
+	protected function _runCmd($cmd, $content, $environment = null) {
 		$output = '';
 		$descriptor_spec = array(
 			0 => array('pipe', 'r'),
-			1 => array('pipe', 'w')
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w')
 		);
-		$process = proc_open($cmd, $descriptor_spec, $pipes);
+		$process = proc_open($cmd, $descriptor_spec, $pipes, null, $environment);
 
 		if (is_resource($process)) {
 			fwrite($pipes[0], $content);
@@ -100,7 +101,13 @@ class AssetFilter implements AssetFilterInterface {
 
 			$output = stream_get_contents($pipes[1]);
 			fclose($pipes[1]);
+
+			$error = stream_get_contents($pipes[2]);
+			fclose($pipes[2]);
 			proc_close($process);
+		}
+		if ($error) {
+			return '!Error:' . $error;
 		}
 		return $output;
 	}
