@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.filter/YuiBase.php');
+App::import('Lib', 'AssetCompress.AssetFilter');
 
 /**
  * A YUI Compressor adapter for compressing Javascript.
@@ -8,12 +8,28 @@ App::import('Lib', 'AssetCompress.filter/YuiBase.php');
  *
  * @package asset_compress.libs.filter
  */
-class YuiJs extends YuiBase {
+class YuiJs extends AssetFilter {
 
+/**
+ * Settings for YuiCompressor based filters.
+ *
+ * @var array
+ */
+	protected $_settings = array(
+		'path' => 'yuicompressor/yuicompressor.jar'
+	);
+
+/**
+ * Run $input through YuiCompressor
+ *
+ * @param string $filename Filename being generated.
+ * @param string $input Contents of file
+ * @return Compressed file
+ */
 	public function output($filename, $input) {
 		$jar = $this->_findExecutable(App::path('vendors'), $this->_settings['path']);
 		$cmd = 'java -jar "' . $jar . '" --type js';
-		return $this->_run($cmd, $input);
+		return $this->_runCmd($cmd, $input);
 	}
 
 }
