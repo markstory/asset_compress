@@ -1,11 +1,18 @@
 <?php
 App::import('Lib', 'AssetCompress.AssetFilterInterface');
 
+/**
+ * Pre-processing filter that adds support for LESS.css files.
+ *
+ * Requires nodejs and lesscss to be installed.
+ *
+ * @see http://lesscss.org/
+ */
 class LessCss extends AssetFilter {
 
 	protected $_settings = array(
 		'ext' => '.less',
-		'path' => '/usr/local/bin/node',
+		'node' => '/usr/local/bin/node',
 		'node_path' => '/usr/local/lib/node_modules'
 	);
 
@@ -23,7 +30,7 @@ class LessCss extends AssetFilter {
 		$tmpfile = tempnam(sys_get_temp_dir(), 'asset_compress_less');
 		$this->_generateScript($tmpfile, $input);
 
-		$bin = $this->_settings['path'] . ' ' . $tmpfile;
+		$bin = $this->_settings['node'] . ' ' . $tmpfile;
 		$env = array('NODE_PATH' => $this->_settings['node_path']);
 		$return = $this->_runCmd($bin, '', $env);
 		unlink($tmpfile);
