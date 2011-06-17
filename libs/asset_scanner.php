@@ -40,15 +40,13 @@ class AssetScanner {
 	protected function _expandPaths() {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
-			$path = $this->_replacePathConstants($path);
-			if (preg_match('/^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/', $path)) {
+			if (preg_match('/[*.\[\]]/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);
 			} else {
 				$expanded[] = $path;
 			}
 		}
-		
 		$this->_paths = $expanded;
 	}
 
