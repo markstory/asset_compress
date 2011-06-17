@@ -1,5 +1,5 @@
 <?php
-App::import('Model', 'AssetCompress.AssetFilterInterface');
+App::import('Lib', 'AssetCompress.AssetFilter');
 
 /**
  * A YUI Compressor adapter for compressing Javascript.
@@ -8,37 +8,28 @@ App::import('Model', 'AssetCompress.AssetFilterInterface');
  *
  * @package asset_compress.libs.filter
  */
-class YuiJsFilter implements AssetFilterInterface {
+class YuiJs extends AssetFilter {
 
-	public function filter($input) {
-		$output = '';
-		$JAR_PATH = $this->_find(App::path('vendors'), 'yuicompressor' . DS . 'yuicompressor.jar');
-		$cmd = 'java -jar "' . $JAR_PATH . 'yuicompressor' . DS . 'yuicompressor.jar" --type js';
+/**
+ * Settings for YuiCompressor based filters.
+ *
+ * @var array
+ */
+	protected $_settings = array(
+		'path' => 'yuicompressor/yuicompressor.jar'
+	);
 
-		$descriptor_spec = array(
-			0 => array('pipe', 'r'),
-			1 => array('pipe', 'w')
-		);
-		$process = proc_open($cmd, $descriptor_spec, $pipes);
-
-		if (is_resource($process)) {
-			fwrite($pipes[0], $input);
-			fclose($pipes[0]);
-
-			$output = stream_get_contents($pipes[1]);
-			fclose($pipes[1]);
-			proc_close($process);
-		}
-		return $output;
+/**
+ * Run $input through YuiCompressor
+ *
+ * @param string $filename Filename being generated.
+ * @param string $input Contents of file
+ * @return Compressed file
+ */
+	public function output($filename, $input) {
+		$jar = $this->_findExecutable(App::path('vendors'), $this->_settings['path']);
+		$cmd = 'java -jar "' . $jar . '" --type js';
+		return $this->_runCmd($cmd, $input);
 	}
 
-	protected function _find($search, $file) {
-		foreach ($search as $path) {
-			$path = rtrim($path, DS);
-			if (file_exists($path . DS . $file)) {
-				return $path . DS;
-			}
-		}
-		return null;
-	} 
 }

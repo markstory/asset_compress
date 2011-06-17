@@ -1,9 +1,10 @@
 <?php
 
-App::import('Model', 'AssetCompress.AssetScanner');
+App::import('Libs', 'AssetCompress.AssetScanner');
 
 class AssetScannerTest extends CakeTestCase {
-	function startTest() {
+
+	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'tests' . DS . 'test_files' . DS;
 		$paths = array(
@@ -21,20 +22,6 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertFalse($this->Scanner->find('does not exist'));
 	}
 
-	function testConstantExpansion() {
-		$paths = array(
-			'WEBROOT/js',
-			'APP/plugins/foo/webroot/'
-		);
-		$scanner = new AssetScanner($paths);
-		$result = $scanner->paths();
-		$expected = array(
-			WWW_ROOT . 'js' . DS,
-			APP . 'plugins' . DS . 'foo' . DS . 'webroot' . DS,
-		);
-		$this->assertEqual($expected, $result);
-	}
-
 	function testNormalizePaths() {
 		$paths = array(
 			$this->_testFiles . 'js',
@@ -49,6 +36,7 @@ class AssetScannerTest extends CakeTestCase {
 
 	function testExpandGlob() {
 		$paths = array(
+			$this->_testFiles . 'js' . DS ,
 			$this->_testFiles . 'js' . DS . '*'
 		);
 		$scanner = new AssetScanner($paths);
@@ -56,5 +44,18 @@ class AssetScannerTest extends CakeTestCase {
 		$result = $scanner->find('base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
+
+		$result = $scanner->find('classes/base_class.js');
+		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
+		$this->assertEqual($expected, $result);
+	}
+	
+	function testFindOtherExtension() {
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths);
+		$result = $scanner->find('other.less');
+		$expected = $this->_testFiles . 'css' . DS . 'other.less';
 	}
 }

@@ -1,6 +1,16 @@
 # Asset Compress
 
-Asset Compress is CakePHP plugin for helping reduce the number of requests your application requires for Javascript and CSS files.  It comes with a handy set of pre-processing features.
+Asset Compress is CakePHP plugin for helping reduce the number of requests, and optimizing the remaining reqests your application makes for Javascript and CSS files.
+
+### Features
+
+* Development mode builder that rebuilds assets on each request.
+* Command line build tool to compile static assets for deployment.
+* Built-in support for LESScss and CoffeeScript, as well as several
+  minifiers.
+* Powerful and flexible filter system allowing you to add your own
+  minifiers/pre-processors.
+* Simple configuration file.
 
 ## Installing
 
@@ -20,7 +30,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ## Copyright
 
-2010 Mark Story (http://mark-story.com)
+2010-2011 Mark Story (http://mark-story.com)
 
 ### Authors
 
@@ -37,21 +47,34 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 #### 0.4
 
-** Other Changes **
+*Backwards Incompatible Changes*
 
-* Asset processors added.  You can now define a set of processors that can be used to pre-process content in your asset files before they are concatenated and sent to filters.  An example usage of this is converting assets written with DSL's like CoffeeScript or LESS CSS into their compiled versions. Thanks to Frank de Graaf for doing the work for this.
-* CSS and JS comment stripping was moved into filter classes, it is still controlled by the old settings, which are now deprecated.
+* Internals of the plugin re-factored and re-architected to be simpler.
+* New configuration file format.
+* Helper method changes, creating builds on the fly now works
+  differently.
+* Comment stripping features removed, you should use one of the built-in
+  minifier integrations to accomplish this.
+* Sprockets features and InlineImport feature extracted into filters.
+* Helper methods changed.
+
+*Other changes*
+
+* CoffeeScript, and LESS css support added.
+* Can add any additional attributes to generated link or stylesheet
+  tags.
+
 
 
 #### 0.3
 
-** Backwards incompatible changes**
+*Backwards incompatible changes*
 
 * Inflection of file names for javascript and css was removed.  This affects both the helper, and the directives supported by each file type.
 * Auto inclusion of all build files in the `afterRender()` callback was removed.  You now need to manually call `includeAssets()`.
 * The default build file is now a magic-hash.  Magic-hash build files, use the `md5()` of their components as the build filename.  This allows you to easily create build files without worrying about keeping them unique across your application.
 
-** Other changes **
+*Other changes*
 
 * `AssetCompressHelper::includeAssets()` takes an array of build files you wish to output in that call.  This lets you place some build files at the top of the document, and others at the bottom.
 * `AssetCompressHelper::includeJs()` and `AssetCompressHelper::includeCss()` were added.  These methods function similar to `includeAssets()`.  Each allows you to only include some of the build files.
