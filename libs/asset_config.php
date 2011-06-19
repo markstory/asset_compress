@@ -134,21 +134,6 @@ class AssetConfig {
 	}
 
 /**
- * Simple read accessor to parsed data.
- *
- * @param string $name
- */
-	public function __get($name) {
-		if (isset($this->_data[$name])) {
-			return $this->_data[$name];
-		}
-		if (isset($this->_data['General'][$name])) {
-			return $this->_data['General'][$name];
-		}
-		return null;
-	}
-
-/**
  * Set values into the config object
  *
  * @param string $path The path to set.

@@ -12,8 +12,8 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
-		$this->assertTrue($config->js['timestamp']);
-		$this->assertTrue($config->debug);
+		$this->assertTrue($config->get('js.timestamp'));
+		$this->assertTrue($config->get('General.debug'));
 	}
 
 	function testFilters() {

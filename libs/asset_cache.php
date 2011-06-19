@@ -25,8 +25,7 @@ class AssetCache {
 		if (!is_writable($path)) {
 			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path); 
 		}
-		$extConfig = $this->_Config->{$ext};
-		if (!empty($extConfig['timestamp'])) {
+		if ($this->_Config->get($ext . '.timestamp') == true) {
 			$filename = $this->_timestampFilename($filename);
 		}
 		return file_put_contents($path . $filename, $content);

@@ -22,7 +22,7 @@ class AssetCacheTest extends CakeTestCase {
 	}
 
 	function testWriteTimestamp() {
-		$this->assertTrue($this->config->js['timestamp']);
+		$this->assertTrue($this->config->get('js.timestamp'));
 
 		$now = time();
 		$this->cache->write('test.js', 'Some content');
