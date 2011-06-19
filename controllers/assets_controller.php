@@ -9,9 +9,10 @@ class AssetsController extends AssetCompressAppController {
 	public $uses = array();
 	public $layout = 'script';
 	public $viewPath = 'generic';
+	public $_Config;
 
 	public function beforeFilter() {
-
+		$this->configFile = CONFIGS . 'asset_compress.ini';
 	}
 
 /**
@@ -24,7 +25,7 @@ class AssetsController extends AssetCompressAppController {
 			$build .= '.' . $this->params['url']['ext'];
 		}
 
-		$Config = AssetConfig::buildFromIniFile();
+		$Config = $this->_getConfig();
 		// dynamic build file
 		if (Configure::read('debug') > 0 && $Config->files($build) === array()) {
 			$files = array();
@@ -63,6 +64,16 @@ class AssetsController extends AssetCompressAppController {
 			case 'css':
 				return 'text/css';
 		}
+	}
+
+/**
+ * Config setter, used for testing the controller.
+ */
+	protected function _getConfig() {
+		if (empty($this->_Config)) {
+			$this->_Config = AssetConfig::buildFromIniFile();
+		}
+		return $this->_Config;
 	}
 
 }

@@ -26,26 +26,31 @@ class AssetConfig {
 /**
  * Constructor, set some initial data for a AssetConfig object. 
  *
- * @param array $data
+ * @param array $data Initial data set for the object.
+ * @param array $additionalConstants  Additional constants that will be translated 
+ *    when parsing paths.
  */
-	public function __construct(array $data = array()) {
+	public function __construct(array $data = array(), array $additionalConstants = array()) {
 		$this->_data = $data;
+		$this->constantMap = array_merge($this->constantMap, $additionalConstants);
 	}
 
 /**
  * Constructor
  *
  * @param string $iniFile File path for the ini file to parse.
+ * @param array $additionalConstants  Additional constants that will be translated 
+ *    when parsing paths.
  */
-	public static function buildFromIniFile($iniFile = null) {
-		if (empty($iniFile) || is_array($iniFile)) {
+	public static function buildFromIniFile($iniFile = null, $constants = array()){
+		if (empty($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
 		if (!file_exists($iniFile)) {
-			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
+			throw new RuntimeException('Could not locate configuration file. :' . $iniFile);
 		}
 		$contents = self::_readConfig($iniFile);
-		return self::_parseConfig($contents);
+		return self::_parseConfig($contents, $constants);
 	}
 
 /**
@@ -65,8 +70,8 @@ class AssetConfig {
  * @param array $contents Contents to build a config object from.
  * @return AssetConfig
  */
-	protected static function _parseConfig($config) {
-		$AssetConfig = new AssetConfig();
+	protected static function _parseConfig($config, $constants) {
+		$AssetConfig = new AssetConfig(array(), $constants);
 		foreach ($config as $section => $values) {
 			if (strpos($section, '_') === false) {
 				// extension section
@@ -278,7 +283,7 @@ class AssetConfig {
  */
 	public function cachingOn($target) {
 		$ext = $this->getExt($target);
-		if ($this->writeCache && $this->cachePath($ext)) {
+		if ($this->get('General.writeCache') && $this->cachePath($ext)) {
 			return true;
 		}
 		return false;
