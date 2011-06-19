@@ -63,7 +63,9 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function __construct($options = array()) {
-		$this->_Config = AssetConfig::buildFromIniFile();
+		if (empty($options['noconfig'])) {
+			$this->_Config = AssetConfig::buildFromIniFile();
+		}
 	}
 
 /**

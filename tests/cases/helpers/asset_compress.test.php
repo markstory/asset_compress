@@ -13,7 +13,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
-		$this->Helper = new AssetCompressHelper();
+		$this->Helper = new AssetCompressHelper(array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
 		$this->Helper->config($Config);
 		$this->Helper->Html = new HtmlHelper();
