@@ -46,9 +46,6 @@ class AssetConfig {
 		if (empty($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
-		if (!file_exists($iniFile)) {
-			throw new RuntimeException('Could not locate configuration file. :' . $iniFile);
-		}
 		$contents = self::_readConfig($iniFile);
 		return self::_parseConfig($contents, $constants);
 	}
@@ -59,7 +56,7 @@ class AssetConfig {
  */
 	protected static function _readConfig($filename) {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
-			throw new RuntimeException('No configuration file found.');
+			throw new RuntimeException(sprintf('Configuration file "%s" was not found.', $filename));
 		}
 		return parse_ini_file($filename, true);
 	}
@@ -139,13 +136,26 @@ class AssetConfig {
 	}
 
 /**
- * Set values into the config object
+ * Set values into the config object, You can't modify targets, or filters
+ * with this.  Use the appropriate methods for those settings.
  *
  * @param string $path The path to set.
  * @param string $value The value to set.
  */
 	public function set($path, $value) {
-		$this->_data = Set::insert($this->_data, $path, $value);
+		$parts = explode('.', $path);
+		$stack =& $this->_data;
+		while (!empty($parts)) {
+			$key = array_shift($parts);
+			if (empty($stack[$key]) && !empty($parts)) {
+				$stack[$key] = array();
+			}
+			if (!empty($parts)) {
+				$stack =& $stack[$key];
+			} else {
+				$stack[$key] = $value;
+			}
+		}
 	}
 
 /**
@@ -154,7 +164,17 @@ class AssetConfig {
  * @param string $path The path you want.
  */
 	public function get($path) {
-		return Set::classicExtract($this->_data, $path);
+		$parts = explode('.', $path);
+		$stack =& $this->_data;
+		while (!empty($parts)) {
+			$key = array_shift($parts);
+			$moreKeys = !empty($parts);
+			if (isset($stack[$key]) && $moreKeys) {
+				$stack =& $stack[$key];
+			} elseif (!$moreKeys) {
+				return isset($stack[$key]) ? $stack[$key] : null;
+			}
+		}
 	}
 
 /**

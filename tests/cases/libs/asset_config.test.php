@@ -16,6 +16,15 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertTrue($config->get('General.debug'));
 	}
 
+	function testExceptionOnBogusFile() {
+		try {
+			$config = AssetConfig::buildFromIniFile('/bogus');
+			$this->assertFalse(true, 'Exception not thrown.');
+		} catch (Exception $e) {
+			$this->assertEqual('Configuration file "/bogus" was not found.', $e->getMessage());
+		}
+	}
+
 	function testFilters() {
 		$result = $this->config->filters('js');
 		$this->assertEqual(array('sprockets', 'jsyuicompressor'), $result);
@@ -112,5 +121,21 @@ class AssetConfigTest extends CakeTestCase {
 		$expected = array('libs.js', 'foo.bar.js');
 		$result = $this->config->targets('js');
 		$this->assertEqual($expected, $result);
+	}
+
+	function testGet() {
+		$result = $this->config->get('General.debug');
+		$this->assertTrue($result);
+
+		$result = $this->config->get('js.cachePath');
+		$this->assertEqual(WWW_ROOT . 'cache_js', $result);
+
+		$this->assertNull($this->config->get('Bogus.poop'));
+	}
+
+	function testSet() {
+		$this->assertNull($this->config->get('Bogus.poop'));
+		$this->config->set('Bogus.poop', 'smelly');
+		$this->assertEqual('smelly', $this->config->get('Bogus.poop'));
 	}
 }
