@@ -14,6 +14,7 @@ class AssetCacheTest extends CakeTestCase {
 	}
 
 	function testWrite() {
+		$this->config->set('js.timestamp', false);
 		$result = $this->cache->write('test.js', 'Some content');
 		$this->assertTrue($result);
 		$contents = file_get_contents(TMP . 'test.js');
