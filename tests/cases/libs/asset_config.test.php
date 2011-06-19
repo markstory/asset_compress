@@ -138,4 +138,13 @@ class AssetConfigTest extends CakeTestCase {
 		$this->config->set('Bogus.poop', 'smelly');
 		$this->assertEqual('smelly', $this->config->get('Bogus.poop'));
 	}
+	
+	function testSetLimit() {
+		try {
+			$this->config->set('only.two.allowed', 'smelly');
+			$this->assertFalse(true, 'No exception');
+		} catch (RuntimeException $e) {
+			$this->assertTrue(true, 'Exception was raised.');
+		}
+	}
 }

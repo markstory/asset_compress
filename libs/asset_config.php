@@ -144,6 +144,9 @@ class AssetConfig {
  */
 	public function set($path, $value) {
 		$parts = explode('.', $path);
+		if (count($parts) > 2) {
+			throw new RuntimeException('Only depth of two can be written to.');
+		}
 		$stack =& $this->_data;
 		while (!empty($parts)) {
 			$key = array_shift($parts);
