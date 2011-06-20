@@ -87,29 +87,15 @@ class AssetFilter implements AssetFilterInterface {
  * @return The result of the command.
  */
 	protected function _runCmd($cmd, $content, $environment = null) {
-		$output = '';
-		$descriptor_spec = array(
-			0 => array('pipe', 'r'),
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w')
-		);
-		$process = proc_open($cmd, $descriptor_spec, $pipes, null, $environment);
-
-		if (is_resource($process)) {
-			fwrite($pipes[0], $content);
-			fclose($pipes[0]);
-
-			$output = stream_get_contents($pipes[1]);
-			fclose($pipes[1]);
-
-			$error = stream_get_contents($pipes[2]);
-			fclose($pipes[2]);
-			proc_close($process);
+		App::import('Lib', 'AssetCompress.AssetProcess');
+		$Process = new AssetProcess();
+		$Process->environment($environment)
+			->command($cmd)
+			->run($content);
+		if ($Process->error()) {
+			throw new RuntimeException($Process->error());
 		}
-		if ($error) {
-			return '!Error:' . $error;
-		}
-		return $output;
+		return $Process->output();
 	}
 
 /**
