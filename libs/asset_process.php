@@ -5,7 +5,7 @@
  */
 class AssetProcess {
 
-	protected $_env = array();
+	protected $_env = null;
 	protected $_command = '';
 	protected $_error;
 	protected $_output;
@@ -40,7 +40,8 @@ class AssetProcess {
 		$process = proc_open(
 			$this->_command,
 			$descriptor_spec,
-			$pipes, null,
+			$pipes, 
+			null,
 			$this->_env
 		);
 		if (is_resource($process)) {
