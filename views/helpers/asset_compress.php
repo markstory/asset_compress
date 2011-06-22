@@ -370,7 +370,9 @@ class AssetCompressHelper extends AppHelper {
 		if (empty($matching)) {
 			return false;
 		}
-		return $matching[0];
+		
+		//Remove the webroot from the path, so that it is a true URL
+		return DS.str_replace(WWW_ROOT, '', $matching[0]);
 	}
 
 /**
