@@ -89,9 +89,9 @@ class AssetFilter implements AssetFilterInterface {
 	protected function _runCmd($cmd, $content, $environment = null) {
 		App::import('Lib', 'AssetCompress.AssetProcess');
 		$Process = new AssetProcess();
-		$Process->environment($environment)
-			->command($cmd)
-			->run($content);
+		$Process->environment($environment);
+		$Process->command($cmd)->run($content);
+
 		if ($Process->error()) {
 			throw new RuntimeException($Process->error());
 		}
