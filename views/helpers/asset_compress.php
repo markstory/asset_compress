@@ -280,7 +280,7 @@ class AssetCompressHelper extends AppHelper {
 			$path = $this->_Config->cachePath('css');
 			$path = DS . str_replace(WWW_ROOT, '', $path);
 			$name = substr($file, 0, strlen($file) - (4));
-			$route = $path . DS . $name . '.v' . $ts . '.css';
+			$route = $path . $name . '.v' . $ts . '.css';
 		}
 		else {
 			if ($this->useDynamicBuild($file)) {
@@ -332,7 +332,7 @@ class AssetCompressHelper extends AppHelper {
 			$path = $this->_Config->cachePath('js');
 			$path = DS . str_replace(WWW_ROOT, '', $path);
 			$name = substr($file, 0, strlen($file) - (3));
-			$route = $path . DS . $name . '.v' . $ts . '.js';
+			$route = $path . $name . '.v' . $ts . '.js';
 		}
 		else {
 			if ($this->useDynamicBuild($file)) {
