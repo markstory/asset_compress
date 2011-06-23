@@ -186,6 +186,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$result = $this->Helper->includeAssets();
 		$this->assertTrue(strpos($result, $hash) !== false);
 		$this->assertFalse(strpos($result, '?file'), 'Querystring found, built asset not used.');
+		unlink(touch(TMP . $hash . '.js'));
 	}
 
 /**
