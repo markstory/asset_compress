@@ -9,6 +9,7 @@ class AssetCompilerTest extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
+		AssetConfig::clearAllApcKeys();
 		$this->config = AssetConfig::buildFromIniFile($testFile);
 		$this->config->paths('js', array(
 			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
