@@ -19,13 +19,12 @@ class AssetConfig {
 		'WEBROOT/' => WWW_ROOT
 	);
 
-	public static $hasApc = false;	//Is the apc module enabled
-	
 	const FILTERS = 'filters';
 	const FILTER_PREFIX = 'filter_';
 	const TARGETS = 'targets';
-	const APC_CONFIG_KEY = 'cakephp_asset_config_parsed';
-	const APC_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
+	const CACHE_ASSET_CONFIG_KEY = 'cakephp_asset_config_parsed';
+	const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
+	const CACHE_CONFIG = 'asset_compress';
 	const BUILD_TS_FILE = 'asset_compress_build_time';
 
 /**
@@ -52,9 +51,8 @@ class AssetConfig {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
 		
-		self::$hasApc = extension_loaded('apc');
-		//If APC mod is enabled AND the ini is in apc, means that user had General.useApc in their ini.
-		if ( self::$hasApc && ($parsedConfig = apc_fetch(self::APC_CONFIG_KEY)) ) {
+		//If the AssetConfig is in cache, means that user had General.useCaching in their ini.	
+		if ( $parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY,self::CACHE_CONFIG) ) {	
 			return $parsedConfig;
 		}					
 		
@@ -63,41 +61,35 @@ class AssetConfig {
 	}
 	
 /**
- * Clear the build timestamp file and the associated APC entry
+ * Clear the build timestamp file and the associated cache entry
  */	
 	public static function clearBuildTimeStamp() {
 		@unlink( TMP . self::BUILD_TS_FILE);
 		@touch( TMP . self::BUILD_TS_FILE);
 
-		self::clearApcBuildTime();
+		self::clearCachedBuildTime();
 	}
 		
 /**
- * Clear the APC key for the build timestamp
+ * Clear the cached key for the build timestamp
  */	
-	public static function clearApcBuildTime() {
-		if (extension_loaded('apc')) {
-			apc_delete(self::APC_BUILD_TIME_KEY);
-		}
+	public static function clearCachedBuildTime() {
+		Cache::delete(self::CACHE_BUILD_TIME_KEY,self::CACHE_CONFIG);
 	}
 	
 /**
- * Clear the stored config object from APC 
+ * Clear the stored config object from cache 
  */	
-	public static function clearApcAssetConfig() {
-		if (extension_loaded('apc')) {
-			apc_delete(self::APC_CONFIG_KEY);
-		}
+	public static function clearCachedAssetConfig() {
+		Cache::delete(self::CACHE_ASSET_CONFIG_KEY,self::CACHE_CONFIG);
 	}
 	
 /**
- * Clear all the APC keys associated with AssetConfig
+ * Clear all the cached keys associated with AssetConfig
  */	
-	public static function clearAllApcKeys(){
-		if (extension_loaded('apc')) {
-			apc_delete(self::APC_BUILD_TIME_KEY);
-			apc_delete(self::APC_CONFIG_KEY);
-		}
+	public static function clearAllCachedKeys(){
+		self::clearCachedBuildTime();
+		self::clearCachedAssetConfig();		
 	}
 
 /**
@@ -135,9 +127,9 @@ class AssetConfig {
 				$AssetConfig->addTarget($key, $files, $filters);
 			}
 		}
-				
-		if (self::$hasApc && @!empty($config['General']['useApc'])) {
-			apc_store(self::APC_CONFIG_KEY, $AssetConfig);
+
+		if (@!empty($config['General']['useCaching'])) {
+			Cache::write(self::CACHE_ASSET_CONFIG_KEY,$AssetConfig,self::CACHE_CONFIG);
 		}
 		return $AssetConfig;
 	}
@@ -235,8 +227,8 @@ class AssetConfig {
 	}
 
 /**
- * Get the value of the timestamp from the asset compress timestamp build file or from APC
- * if useApc is enabled in the asset_compress.ini
+ * Get the value of the timestamp from the asset compress timestamp build file or from cache
+ * if useCaching is enabled in the asset_compress.ini
  * 
  * @return mixed FALSE if useTsFile is not set to true in the INI.
  * @throws RuntimeException if useTsFile is true and it cant read the TS from the file 
@@ -246,23 +238,24 @@ class AssetConfig {
 		if( empty($useTs) ) return FALSE;
 		
 		$theTs = FALSE;
-		if ( !self::$hasApc || !$this->get('General.useApc') || !($theTs = apc_fetch(self::APC_BUILD_TIME_KEY)) ) {			
-			$theTs = file_get_contents( TMP . self::BUILD_TS_FILE);		
+		if ( !$this->get('General.useCaching') ) {					
+			$theTs = file_get_contents( TMP . self::BUILD_TS_FILE);
+		}
+		elseif (!($theTs = Cache::read(self::CACHE_BUILD_TIME_KEY,self::CACHE_CONFIG))){
+			//Cache miss, read from file and write
+			$theTs = file_get_contents( TMP . self::BUILD_TS_FILE);
+			Cache::write(self::CACHE_BUILD_TIME_KEY,$theTs,self::CACHE_CONFIG);
 		}
 		
 		if(empty($theTs)) {
 			throw new RuntimeException(sprintf('build time file "%s" was empty. You must run the build target in the shell to create the file.', TMP . self::BUILD_TS_FILE));
 		}
-		
-		if ( self::$hasApc && $this->get('General.useApc') ) {
-			apc_store(self::APC_BUILD_TIME_KEY,$theTs);
-		}
-		
+				
 		return $theTs;
 	}
 	
 /**
- * Write the timestamp to the TS file and APC if its enabled
+ * Write the timestamp to the TS file and cache if its enabled
  * 
  * @throws RuntimeException if it cant write to timestamp file
  */	
@@ -275,8 +268,9 @@ class AssetConfig {
 			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TS_FILE));
 		}
 		
-		if(self::$hasApc && $this->get('General.useApc')) apc_store(self::APC_BUILD_TIME_KEY,$timeStamp);
+		if( $this->get('General.useCaching')) Cache::write(self::CACHE_BUILD_TIME_KEY,$timeStamp,self::CACHE_CONFIG);
 	}
+	
 /**
  * Get/set filters for an extension/build file
  *

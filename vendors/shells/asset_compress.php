@@ -25,7 +25,7 @@ class AssetCompressShell extends Shell {
 			$config = $this->params['config'];
 		}
 						
-		AssetConfig::clearAllApcKeys();
+		AssetConfig::clearAllCachedKeys();
 		
 		$this->_Config = AssetConfig::buildFromIniFile($config);
 	}
@@ -76,14 +76,14 @@ class AssetCompressShell extends Shell {
 	}
 
 /**
- * Clears out all the APC keys associated with asset_compress.
+ * Clears out all the cache keys associated with asset_compress.
  * 
  * Note: method really does nothing here cuz keys are cleared in startup.
- * This method exists for times when you just want to clear the APC keys
+ * This method exists for times when you just want to clear the cache keys
  * associated with asset_compress
  */	
-	public function clear_apc() {
-		$this->out('Clearing all APC keys:');
+	public function clear_cache() {
+		$this->out('Clearing all cache keys:');
 		$this->hr();		
 	}
 	

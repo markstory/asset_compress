@@ -21,7 +21,7 @@ class AssetsControllerTest extends CakeTestCase {
 		$map = array(
 			'TEST_FILES/' => $this->_pluginPath . 'tests' . DS . 'test_files' . DS
 		);
-		AssetConfig::clearAllApcKeys();
+		AssetConfig::clearAllCachedKeys();
 		
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
