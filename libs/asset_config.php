@@ -128,7 +128,7 @@ class AssetConfig {
 			}
 		}
 
-		if (@!empty($config['General']['useCaching'])) {
+		if (!empty($config['General']['useCaching'])) {
 			Cache::write(self::CACHE_ASSET_CONFIG_KEY,$AssetConfig,self::CACHE_CONFIG);
 		}
 		return $AssetConfig;
