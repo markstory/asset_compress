@@ -24,7 +24,7 @@ class AssetCompressShell extends Shell {
 		if (isset($this->params['config'])) {
 			$config = $this->params['config'];
 		}
-						
+
 		AssetConfig::clearAllCachedKeys();
 		
 		$this->_Config = AssetConfig::buildFromIniFile($config);
@@ -36,7 +36,7 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
-		$this->_Config->writeTsFileValue(time());
+		$this->_Config->writeTimestampFile(time());
 		$this->build_ini();
 		$this->build_dynamic();
 	}
@@ -58,10 +58,10 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function clear() {
-		$useTs = $this->_Config->get('General.useTsFile');		
-		if (!empty($useTs)) {
+		
+		if ($this->_Config->get('General.timestampFile')) {
 			$this->clear_build_ts();
-		}		
+		}
 		
 		$this->out('Clearing Javascript build files:');
 		$this->hr();
@@ -71,7 +71,7 @@ class AssetCompressShell extends Shell {
 		$this->out('Clearing CSS build files:');
 		$this->hr();
 		$this->_clearBuilds('css');
-		
+
 		$this->out('Complete');
 	}
 
@@ -84,7 +84,7 @@ class AssetCompressShell extends Shell {
  */	
 	public function clear_cache() {
 		$this->out('Clearing all cache keys:');
-		$this->hr();		
+		$this->hr();
 	}
 	
 /**
@@ -98,6 +98,7 @@ class AssetCompressShell extends Shell {
 		$this->hr();
 		AssetConfig::clearBuildTimeStamp();
 	}
+
 /**
  * clear the builds for a specific extension.
  *

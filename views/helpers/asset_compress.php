@@ -275,14 +275,13 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 		
-		if ( $this->_Config->get('css.timestamp') && ($ts = $this->_Config->getUseTsFileValue()) ) {			
-			//If useTsFile is being used, don't spend time looking on the local filesystem
+		if ($this->_Config->get('css.timestamp') && $this->_Config->get('General.timestampFile')) {
+			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('css');
 			$path = DS . str_replace(WWW_ROOT, '', $path);
 			$name = substr($file, 0, strlen($file) - (4));
 			$route = $path . $name . '.v' . $ts . '.css';
-		}
-		else {
+		} else {
 			if ($this->useDynamicBuild($file)) {
 				$route = $this->_getRoute($file);
 			} else {			
@@ -327,14 +326,14 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		if ( $this->_Config->get('js.timestamp') && ($ts = $this->_Config->getUseTsFileValue()) ) {
-			//If useTsFile is being used, don't spend time looking on the local filesystem
+		if ($this->_Config->get('js.timestamp') && $this->_Config->get('General.timestampFile')) {
+			//If a timestampFile is being used, don't spend time looking on the local filesystem.
+			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('js');
 			$path = DS . str_replace(WWW_ROOT, '', $path);
 			$name = substr($file, 0, strlen($file) - (3));
 			$route = $path . $name . '.v' . $ts . '.js';
-		}
-		else {
+		} else {
 			if ($this->useDynamicBuild($file)) {
 				$route = $this->_getRoute($file);
 			} else {
