@@ -95,7 +95,6 @@ class AssetConfigTest extends CakeTestCase {
 		$expected = array('path' => '/path/to/uglify-js');
 		$this->assertEqual($result, $expected);
 
-
 		$this->config->filterConfig('sprockets', array('some' => 'value'));
 		$this->assertEqual(array('some' => 'value'), $this->config->filterConfig('sprockets'));
 

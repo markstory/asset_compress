@@ -25,7 +25,7 @@ class AssetConfig {
 	const CACHE_ASSET_CONFIG_KEY = 'cakephp_asset_config_parsed';
 	const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
 	const CACHE_CONFIG = 'asset_compress';
-	const BUILD_TS_FILE = 'asset_compress_build_time';
+	const BUILD_TIME_FILE = 'asset_compress_build_time';
 
 /**
  * Constructor, set some initial data for a AssetConfig object. 
@@ -51,10 +51,10 @@ class AssetConfig {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
 		
-		//If the AssetConfig is in cache, means that user had General.useCaching in their ini.	
-		if ( $parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY,self::CACHE_CONFIG) ) {	
+		// If the AssetConfig is in cache, means that user had General.useCaching in their ini.
+		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
 			return $parsedConfig;
-		}					
+		}
 		
 		$contents = self::_readConfig($iniFile);
 		return self::_parseConfig($contents, $constants);
@@ -64,37 +64,42 @@ class AssetConfig {
  * Clear the build timestamp file and the associated cache entry
  */	
 	public static function clearBuildTimeStamp() {
-		@unlink( TMP . self::BUILD_TS_FILE);
-		@touch( TMP . self::BUILD_TS_FILE);
-
+		unlink(TMP . self::BUILD_TIME_FILE);
+		touch(TMP . self::BUILD_TIME_FILE);
 		self::clearCachedBuildTime();
 	}
-		
+
 /**
  * Clear the cached key for the build timestamp
- */	
+ *
+ * @return void
+ */
 	public static function clearCachedBuildTime() {
-		Cache::delete(self::CACHE_BUILD_TIME_KEY,self::CACHE_CONFIG);
-	}
-	
-/**
- * Clear the stored config object from cache 
- */	
-	public static function clearCachedAssetConfig() {
-		Cache::delete(self::CACHE_ASSET_CONFIG_KEY,self::CACHE_CONFIG);
-	}
-	
-/**
- * Clear all the cached keys associated with AssetConfig
- */	
-	public static function clearAllCachedKeys(){
-		self::clearCachedBuildTime();
-		self::clearCachedAssetConfig();		
+		Cache::delete(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
 	}
 
 /**
+ * Clear the stored config object from cache 
+ *
+ * @return void
+ */
+	public static function clearCachedAssetConfig() {
+		Cache::delete(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG);
+	}
+
+/**
+ * Clear all the cached keys associated with AssetConfig
+ */
+	public static function clearAllCachedKeys(){
+		self::clearCachedBuildTime();
+		self::clearCachedAssetConfig();
+	}
+
+/**
+ * Read the configuration file from disk
  *
  * @param string $filename Name of the inifile to parse
+ * @return array Inifile contents
  */
 	protected static function _readConfig($filename) {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
@@ -128,8 +133,8 @@ class AssetConfig {
 			}
 		}
 
-		if (!empty($config['General']['useCaching'])) {
-			Cache::write(self::CACHE_ASSET_CONFIG_KEY,$AssetConfig,self::CACHE_CONFIG);
+		if (!empty($config['General']['cacheConfig'])) {
+			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
 		}
 		return $AssetConfig;
 	}
@@ -239,16 +244,16 @@ class AssetConfig {
 		
 		$theTs = FALSE;
 		if ( !$this->get('General.useCaching') ) {					
-			$theTs = file_get_contents( TMP . self::BUILD_TS_FILE);
+			$theTs = file_get_contents( TMP . self::BUILD_TIME_FILE);
 		}
 		elseif (!($theTs = Cache::read(self::CACHE_BUILD_TIME_KEY,self::CACHE_CONFIG))){
 			//Cache miss, read from file and write
-			$theTs = file_get_contents( TMP . self::BUILD_TS_FILE);
+			$theTs = file_get_contents( TMP . self::BUILD_TIME_FILE);
 			Cache::write(self::CACHE_BUILD_TIME_KEY,$theTs,self::CACHE_CONFIG);
 		}
 		
 		if(empty($theTs)) {
-			throw new RuntimeException(sprintf('build time file "%s" was empty. You must run the build target in the shell to create the file.', TMP . self::BUILD_TS_FILE));
+			throw new RuntimeException(sprintf('build time file "%s" was empty. You must run the build target in the shell to create the file.', TMP . self::BUILD_TIME_FILE));
 		}
 				
 		return $theTs;
@@ -263,9 +268,9 @@ class AssetConfig {
 		$useTs = $this->get('General.useTsFile');
 		if( empty($useTs) ) return;
 		
-		$ret = file_put_contents( TMP . self::BUILD_TS_FILE, $timeStamp);
+		$ret = file_put_contents( TMP . self::BUILD_TIME_FILE, $timeStamp);
 		if(empty($ret)) {
-			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TS_FILE));
+			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TIME_FILE));
 		}
 		
 		if( $this->get('General.useCaching')) Cache::write(self::CACHE_BUILD_TIME_KEY,$timeStamp,self::CACHE_CONFIG);
