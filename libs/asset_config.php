@@ -65,7 +65,6 @@ class AssetConfig {
  */
 	public static function clearBuildTimeStamp() {
 		unlink(TMP . self::BUILD_TIME_FILE);
-		touch(TMP . self::BUILD_TIME_FILE);
 		self::clearCachedBuildTime();
 	}
 
@@ -259,7 +258,7 @@ class AssetConfig {
 		}
 		return $time;
 	}
-	
+
 /**
  * Write the timestamp to the TS file and cache if its enabled
  * 
@@ -280,7 +279,7 @@ class AssetConfig {
 			Cache::write(self::CACHE_BUILD_TIME_KEY, $timeStamp, self::CACHE_CONFIG);
 		}
 	}
-	
+
 /**
  * Get/set filters for an extension/build file
  *
