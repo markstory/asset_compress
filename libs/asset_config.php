@@ -438,4 +438,15 @@ class AssetConfig {
 			'filters' => $filters
 		);
 	}
+
+/**
+ * Get the list of extensions this config object supports.
+ *
+ * @return array Extension list.
+ */
+	public function extensions() {
+		$exts = array_flip(array_keys($this->_data));
+		unset($exts[self::FILTERS], $exts['General']);
+		return array_keys($exts);
+	}
 }

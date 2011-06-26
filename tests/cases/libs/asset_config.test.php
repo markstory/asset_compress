@@ -195,4 +195,8 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertEqual($time, $result);
 	}
 
+	function testExtensions() {
+		$result = $this->config->extensions();
+		$this->assertEqual(array('js', 'css'), $result);
+	}
 }

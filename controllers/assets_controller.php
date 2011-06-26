@@ -21,11 +21,15 @@ class AssetsController extends AssetCompressAppController {
  * build file already defined.
  */
 	public function get($build) {
-		if (isset($this->params['url']['ext'])) {
+		$Config = $this->_getConfig();
+
+		if (
+			isset($this->params['url']['ext']) &&
+			in_array($this->params['url']['ext'], $Config->extensions())
+		) {
 			$build .= '.' . $this->params['url']['ext'];
 		}
 
-		$Config = $this->_getConfig();
 		// dynamic build file
 		if (Configure::read('debug') > 0 && $Config->files($build) === array()) {
 			$files = array();
