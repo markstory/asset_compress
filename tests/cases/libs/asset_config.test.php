@@ -4,6 +4,11 @@ App::import('Libs', 'AssetCompress.AssetConfig');
 class AssetConfigTest extends CakeTestCase {
 
 	function setUp() {
+		Cache::drop(AssetConfig::CACHE_CONFIG);
+		Cache::config(AssetConfig::CACHE_CONFIG, array(
+			'engine' => 'File'
+		));
+
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
@@ -156,4 +161,38 @@ class AssetConfigTest extends CakeTestCase {
 		$this->config->cachePath('js', '/some/path');
 		$this->assertTrue($this->config->cachingOn('libs.js'));
 	}
+
+	function testReadTimestampFileWhenDisabled() {
+		$this->assertFalse($this->config->readTimestampFile());
+	}
+
+	function testReadTimestampFileUsingFiles() {
+		$this->config->set('General.cacheConfig', false);
+		$this->config->set('General.timestampFile', true);
+
+		$time = time();
+		$this->config->writeTimestampFile($time);
+		$result = $this->config->readTimestampFile();
+
+		$this->assertTrue(is_numeric($result));
+		$this->assertEqual($time, $result);
+		$this->assertFalse(Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG));
+	}
+
+	function testReadTimestampFileUsingCache() {
+		$this->config->set('General.cacheConfig', true);
+		$this->config->set('General.timestampFile', true);
+
+		$time = time();
+		$this->config->writeTimestampFile($time);
+
+		// delete the file so we know we hit the cache.
+		unlink(TMP . AssetConfig::BUILD_TIME_FILE);
+
+		$result = $this->config->readTimestampFile();
+
+		$this->assertTrue(is_numeric($result));
+		$this->assertEqual($time, $result);
+	}
+
 }
