@@ -246,7 +246,7 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Create a CSS file. Will generate script tags
+ * Create a CSS file. Will generate link tags
  * for either the dynamic build controller, or the generated file if it exists.
  *
  * To create build files without configuration use addCss()
@@ -274,11 +274,22 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-		if ($this->useDynamicBuild($file)) {
-			$route = $this->_getRoute($file);
-		} else {
-			$route = $this->_locateBuild($file);
+		
+		if ( $this->_Config->get('css.timestamp') && ($ts = $this->_Config->getUseTsFileValue()) ) {			
+			//If useTsFile is being used, don't spend time looking on the local filesystem
+			$path = $this->_Config->cachePath('css');
+			$path = DS . str_replace(WWW_ROOT, '', $path);
+			$name = substr($file, 0, strlen($file) - (4));
+			$route = $path . $name . '.v' . $ts . '.css';
 		}
+		else {
+			if ($this->useDynamicBuild($file)) {
+				$route = $this->_getRoute($file);
+			} else {			
+				$route = $this->_locateBuild($file);
+			}
+		}
+		
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -316,11 +327,21 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		if ($this->useDynamicBuild($file)) {
-			$route = $this->_getRoute($file);
-		} else {
-			$route = $this->_locateBuild($file);
+		if ( $this->_Config->get('js.timestamp') && ($ts = $this->_Config->getUseTsFileValue()) ) {
+			//If useTsFile is being used, don't spend time looking on the local filesystem
+			$path = $this->_Config->cachePath('js');
+			$path = DS . str_replace(WWW_ROOT, '', $path);
+			$name = substr($file, 0, strlen($file) - (3));
+			$route = $path . $name . '.v' . $ts . '.js';
 		}
+		else {
+			if ($this->useDynamicBuild($file)) {
+				$route = $this->_getRoute($file);
+			} else {
+				$route = $this->_locateBuild($file);
+			}
+		}
+		
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;

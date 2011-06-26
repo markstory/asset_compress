@@ -13,6 +13,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
+		AssetConfig::clearAllCachedKeys();
 		$this->Helper = new AssetCompressHelper(array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
 		$this->Helper->config($Config);
@@ -185,6 +186,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$result = $this->Helper->includeAssets();
 		$this->assertTrue(strpos($result, $hash) !== false);
 		$this->assertFalse(strpos($result, '?file'), 'Querystring found, built asset not used.');
+		unlink(TMP . $hash . '.js');
 	}
 
 /**

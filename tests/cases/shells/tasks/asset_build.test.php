@@ -40,6 +40,7 @@ class AssetBuildTest extends CakeTestCase {
 		$this->testFilePath = $this->_pluginPath . 'tests/test_files/views/';
 
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->Task->setConfig($this->config);
 	}

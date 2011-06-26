@@ -35,6 +35,10 @@ class AssetCache {
 		$pos = strrpos($file, '.');
 		$name = substr($file, 0, $pos);
 		$ext = substr($file, $pos);
+		
+		$tsFileVal = $this->_Config->getUseTsFileValue();
+		if(!empty($tsFileVal)) return $name . '.v' . $tsFileVal . $ext;
+		
 		return $name . '.v' . time() . $ext;
 	}
 }

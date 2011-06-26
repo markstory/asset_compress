@@ -7,6 +7,7 @@ class AssetConfigTest extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
+		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 	}
 
