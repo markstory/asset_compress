@@ -156,4 +156,9 @@ class AssetConfigTest extends CakeTestCase {
 		$this->config->cachePath('js', '/some/path');
 		$this->assertTrue($this->config->cachingOn('libs.js'));
 	}
+
+	function testExtensions() {
+		$result = $this->config->extensions();
+		$this->assertEqual(array('js', 'css'), $result);
+	}
 }
