@@ -64,7 +64,7 @@ class AssetConfig {
  * Clear the build timestamp file and the associated cache entry
  */
 	public static function clearBuildTimeStamp() {
-		unlink(TMP . self::BUILD_TIME_FILE);
+		@unlink(TMP . self::BUILD_TIME_FILE);
 		self::clearCachedBuildTime();
 	}
 
@@ -267,7 +267,7 @@ class AssetConfig {
  */	
 	public function writeTimestampFile($timeStamp) {
 		if (!$this->get('General.timestampFile')) {
-			return;
+			return false;
 		}
 
 		$ret = file_put_contents(TMP . self::BUILD_TIME_FILE, $timeStamp);
@@ -278,6 +278,7 @@ class AssetConfig {
 		if ($this->get('General.cacheConfig')) {
 			Cache::write(self::CACHE_BUILD_TIME_KEY, $timeStamp, self::CACHE_CONFIG);
 		}
+		return true;
 	}
 
 /**

@@ -36,7 +36,9 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
-		$this->_Config->writeTimestampFile(time());
+		if ($this->_Config->writeTimestampFile(time())) {
+			$this->out('Generated timestamp file.');
+		}
 		$this->build_ini();
 		$this->build_dynamic();
 	}
@@ -58,7 +60,6 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function clear() {
-		
 		if ($this->_Config->get('General.timestampFile')) {
 			$this->clear_build_ts();
 		}
@@ -94,8 +95,8 @@ class AssetCompressShell extends Shell {
  * build timestamp file is only created when build() is run from this shell
  */	
 	public function clear_build_ts() {
-		$this->out('Clearing build time stamp:');
-		$this->hr();
+		$this->out('Clearing build timestamp.');
+		$this->out();
 		AssetConfig::clearBuildTimeStamp();
 	}
 
@@ -108,10 +109,6 @@ class AssetCompressShell extends Shell {
 		$targets = $this->_Config->targets($ext);
 		if (empty($targets)) {
 			$this->err('No ' . $ext . ' build files defined, skipping');
-			return;
-		}
-		if (!$this->_Config->cachingOn($targets[0])) {
-			$this->err('Caching not enabled for ' . $ext . ' files, skipping.');
 			return;
 		}
 		$path = $this->_Config->cachePath($ext);
