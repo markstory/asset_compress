@@ -5,6 +5,8 @@ App::import('Lib', 'AssetCompress.AssetFilter');
  * A Google Closure compressor adapter for compressing Javascript.
  * This filter assumes you have Java installed on your system and that its accessible
  * via the PATH. It also assumes that the compiler.jar file is located in "vendors/closure" directory.
+ * 
+ * You can get closure here at http://code.google.com/closure/compiler/
  *
  * @package asset_compress.libs.filter
  */
