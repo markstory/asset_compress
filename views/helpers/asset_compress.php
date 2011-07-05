@@ -18,7 +18,7 @@
  */
 class AssetCompressHelper extends AppHelper {
 
-	public $helpers = array('Html');
+	public $helpers = array('BakingPlate.HtmlPlus');
 
 /**
  * Options for the helper
@@ -157,7 +157,7 @@ class AssetCompressHelper extends AppHelper {
 		foreach ($files as $file) {
 			$includeFile = JS . $this->options['autoIncludePath'] . DS . $file;
 			if (file_exists($includeFile)) {
-				$this->Html->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
+				$this->HtmlPlus->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
 			}
 		}
 	}
@@ -270,7 +270,7 @@ class AssetCompressHelper extends AppHelper {
 		$out = array();
 		foreach ($this->{$property} as $files) {
 			$method = $property == '_scripts' ? 'script' : 'css';
-			$out = array_merge($out, array_map(array($this->Html, $method), $files));
+			$out = array_merge($out, array_map(array($this->HtmlPlus, $method), $files));
 		}
 		return implode("\n", $out);
 	}
@@ -312,10 +312,10 @@ class AssetCompressHelper extends AppHelper {
 		}
 		$options = array();
 		if ($method == '_scripts') {
-			return $this->Html->script($baseUrl . $url, $options);
+			return $this->HtmlPlus->script($baseUrl . $url, $options);
 		} else {
 			if(strpos($url, 'handheld')!== false) $options['media'] = 'handheld';
-			return $this->Html->css($baseUrl . $url, 'stylesheet', $options);
+			return $this->HtmlPlus->css($baseUrl . $url, 'stylesheet', $options);
 		}
 	}
 
