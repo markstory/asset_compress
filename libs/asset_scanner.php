@@ -40,8 +40,14 @@ class AssetScanner {
 	protected function _expandPaths() {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
-			// might need to change this regex but this is not issue presently
+			/*
+			 * might need to change this regex but this is not issue presently
+			 * looking at tests with JHREGEX Vs Original
+			 *  2 tests fail in each but testFind & testExpandGlob fail with original
+			 *  whereas with JHREGEX testExpandGlob fails twice (testFind passes) - windows not yet looked at *nix
+			 */
 			#JHREGEX /^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/
+			#ORIGINAL /[*.\[\]]/
 			if (preg_match('/^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);
