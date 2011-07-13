@@ -7,6 +7,19 @@ App::import('Lib', 'AssetCompress.AssetFilterInterface');
  * @see http://leafo.net/lessphp/
  */
 class LessPhp extends AssetFilter {
+	
+	/*
+	
+	setting these in the ini file did not work for me I had to change these to my paths to even get close
+	less does work from comment line but not using this filter node outputs an error
+	
+	*/
+
+	protected $_settings = array(
+		'ext' => '.less',
+		'path' => 'lessphp/lessc',
+		'file' => 'lessphp/lessc.inc.php'
+	);
     
     /**
     * Supported extensions for this processor.
@@ -14,6 +27,11 @@ class LessPhp extends AssetFilter {
     * @var array
     */
     protected $_extensions = array('.less', '.less.css');
+    
+    public function settings($settings) {
+	print_r($settings);
+	parent::settings($settings);
+    }
 
 /**
  * Apply all the input filters in sequence to the file and content.
@@ -23,15 +41,16 @@ class LessPhp extends AssetFilter {
  * @return string The content with all input filters applied.
  */
 	public function input($file, $content) {
-	    $path = 'lessphp/lessc';
-	    $options = array('file' => 'lessphp/lessc.inc.php');
+	    $ext = $this->_settings['ext'];
+	    $path = $this->_settings['path'];
+	    $options = array('file' => $this->_settings['file']);
 	    App::import('Vendor', $path, $options);
-	    foreach ($this->_extensions as $extension) {
-		if (strtolower(substr($file, -strlen($extension))) == $extension) {
+	    #foreach ($exts as $extension) {
+		if (strtolower(substr($file, -strlen($ext))) == $ext) {
 		    $lessc = new lessc();
 		    return $lessc->parse($content);
 		}
-	    }
+	    #}
 	    return $content;
 	}
 }
