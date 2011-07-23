@@ -27,7 +27,7 @@ class CoffeeScript extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
-		$cmd = $this->_settings['node'] . ' ' . $this->_settings['path'] . ' -c -p -s ';
+		$cmd = $this->_settings['node'] . ' ' . $this->_settings['coffee'] . ' -c -p -s ';
 		$env = array('NODE_PATH' => $this->_settings['node_path']);
 		return $this->_runCmd($cmd, $input, $env);
 	}

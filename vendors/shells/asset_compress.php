@@ -24,6 +24,9 @@ class AssetCompressShell extends Shell {
 		if (isset($this->params['config'])) {
 			$config = $this->params['config'];
 		}
+
+		AssetConfig::clearAllCachedKeys();
+		
 		$this->_Config = AssetConfig::buildFromIniFile($config);
 	}
 
@@ -33,6 +36,9 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
+		if ($this->_Config->writeTimestampFile(time())) {
+			$this->out('Generated timestamp file.');
+		}
 		$this->build_ini();
 		$this->build_dynamic();
 	}
@@ -54,6 +60,10 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function clear() {
+		if ($this->_Config->get('General.timestampFile')) {
+			$this->clear_build_ts();
+		}
+		
 		$this->out('Clearing Javascript build files:');
 		$this->hr();
 		$this->_clearBuilds('js');
@@ -62,8 +72,32 @@ class AssetCompressShell extends Shell {
 		$this->out('Clearing CSS build files:');
 		$this->hr();
 		$this->_clearBuilds('css');
-		
+
 		$this->out('Complete');
+	}
+
+/**
+ * Clears out all the cache keys associated with asset_compress.
+ * 
+ * Note: method really does nothing here cuz keys are cleared in startup.
+ * This method exists for times when you just want to clear the cache keys
+ * associated with asset_compress
+ */	
+	public function clear_cache() {
+		$this->out('Clearing all cache keys:');
+		$this->hr();
+	}
+	
+/**
+ * Clears the build timestamp. Try to clear it out even if they do not have ts file enabled in
+ * the INI.
+ * 
+ * build timestamp file is only created when build() is run from this shell
+ */	
+	public function clear_build_ts() {
+		$this->out('Clearing build timestamp.');
+		$this->out();
+		AssetConfig::clearBuildTimeStamp();
 	}
 
 /**
@@ -75,10 +109,6 @@ class AssetCompressShell extends Shell {
 		$targets = $this->_Config->targets($ext);
 		if (empty($targets)) {
 			$this->err('No ' . $ext . ' build files defined, skipping');
-			return;
-		}
-		if (!$this->_Config->cachingOn($targets[0])) {
-			$this->err('Caching not enabled for ' . $ext . ' files, skipping.');
 			return;
 		}
 		$path = $this->_Config->cachePath($ext);

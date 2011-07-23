@@ -22,39 +22,87 @@ class AssetConfig {
 	const FILTERS = 'filters';
 	const FILTER_PREFIX = 'filter_';
 	const TARGETS = 'targets';
+	const CACHE_ASSET_CONFIG_KEY = 'cakephp_asset_config_parsed';
+	const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
+	const CACHE_CONFIG = 'asset_compress';
+	const BUILD_TIME_FILE = 'asset_compress_build_time';
 
 /**
  * Constructor, set some initial data for a AssetConfig object. 
  *
- * @param array $data
+ * @param array $data Initial data set for the object.
+ * @param array $additionalConstants  Additional constants that will be translated 
+ *    when parsing paths.
  */
-	public function __construct(array $data = array()) {
+	public function __construct(array $data = array(), array $additionalConstants = array()) {
 		$this->_data = $data;
+		$this->constantMap = array_merge($this->constantMap, $additionalConstants);
 	}
 
 /**
  * Constructor
  *
  * @param string $iniFile File path for the ini file to parse.
+ * @param array $additionalConstants  Additional constants that will be translated 
+ *    when parsing paths.
  */
-	public static function buildFromIniFile($iniFile = null) {
-		if (empty($iniFile) || is_array($iniFile)) {
+	public static function buildFromIniFile($iniFile = null, $constants = array()){
+		if (empty($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
-		if (!file_exists($iniFile)) {
-			$iniFile = App::pluginPath('AssetCompress') . 'config' . DS . 'config.ini';
+		
+		// If the AssetConfig is in cache, means that user had General.cacheConfig in their ini.
+		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
+			return $parsedConfig;
 		}
+		
 		$contents = self::_readConfig($iniFile);
-		return self::_parseConfig($contents);
+		return self::_parseConfig($contents, $constants);
 	}
 
 /**
+ * Clear the build timestamp file and the associated cache entry
+ */
+	public static function clearBuildTimeStamp() {
+		@unlink(TMP . self::BUILD_TIME_FILE);
+		self::clearCachedBuildTime();
+	}
+
+/**
+ * Clear the cached key for the build timestamp
+ *
+ * @return void
+ */
+	public static function clearCachedBuildTime() {
+		Cache::delete(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
+	}
+
+/**
+ * Clear the stored config object from cache 
+ *
+ * @return void
+ */
+	public static function clearCachedAssetConfig() {
+		Cache::delete(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG);
+	}
+
+/**
+ * Clear all the cached keys associated with AssetConfig
+ */
+	public static function clearAllCachedKeys(){
+		self::clearCachedBuildTime();
+		self::clearCachedAssetConfig();
+	}
+
+/**
+ * Read the configuration file from disk
  *
  * @param string $filename Name of the inifile to parse
+ * @return array Inifile contents
  */
 	protected static function _readConfig($filename) {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
-			throw new RuntimeException('No configuration file found.');
+			throw new RuntimeException(sprintf('Configuration file "%s" was not found.', $filename));
 		}
 		return parse_ini_file($filename, true);
 	}
@@ -65,8 +113,8 @@ class AssetConfig {
  * @param array $contents Contents to build a config object from.
  * @return AssetConfig
  */
-	protected static function _parseConfig($config) {
-		$AssetConfig = new AssetConfig();
+	protected static function _parseConfig($config, $constants) {
+		$AssetConfig = new AssetConfig(array(), $constants);
 		foreach ($config as $section => $values) {
 			if (strpos($section, '_') === false) {
 				// extension section
@@ -82,6 +130,10 @@ class AssetConfig {
 				$filters = isset($values['filters']) ? $values['filters'] : array();
 				$AssetConfig->addTarget($key, $files, $filters);
 			}
+		}
+
+		if (!empty($config['General']['cacheConfig'])) {
+			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
 		}
 		return $AssetConfig;
 	}
@@ -134,28 +186,29 @@ class AssetConfig {
 	}
 
 /**
- * Simple read accessor to parsed data.
- *
- * @param string $name
- */
-	public function __get($name) {
-		if (isset($this->_data[$name])) {
-			return $this->_data[$name];
-		}
-		if (isset($this->_data['General'][$name])) {
-			return $this->_data['General'][$name];
-		}
-		return null;
-	}
-
-/**
- * Set values into the config object
+ * Set values into the config object, You can't modify targets, or filters
+ * with this.  Use the appropriate methods for those settings.
  *
  * @param string $path The path to set.
  * @param string $value The value to set.
  */
 	public function set($path, $value) {
-		$this->_data = Set::insert($this->_data, $path, $value);
+		$parts = explode('.', $path);
+		if (count($parts) > 2) {
+			throw new RuntimeException('Only depth of two can be written to.');
+		}
+		$stack =& $this->_data;
+		while (!empty($parts)) {
+			$key = array_shift($parts);
+			if (empty($stack[$key]) && !empty($parts)) {
+				$stack[$key] = array();
+			}
+			if (!empty($parts)) {
+				$stack =& $stack[$key];
+			} else {
+				$stack[$key] = $value;
+			}
+		}
 	}
 
 /**
@@ -164,7 +217,68 @@ class AssetConfig {
  * @param string $path The path you want.
  */
 	public function get($path) {
-		return Set::classicExtract($this->_data, $path);
+		$parts = explode('.', $path);
+		$stack =& $this->_data;
+		while (!empty($parts)) {
+			$key = array_shift($parts);
+			$moreKeys = !empty($parts);
+			if (isset($stack[$key]) && $moreKeys) {
+				$stack =& $stack[$key];
+			} elseif (!$moreKeys) {
+				return isset($stack[$key]) ? $stack[$key] : null;
+			}
+		}
+	}
+
+/**
+ * Get the value of the timestamp from the asset compress timestamp build file or its cached value
+ * 
+ * @return mixed false if useTsFile is not set to true in the INI.
+ * @throws RuntimeException if useTsFile is true and it cant read the TS from the file 
+ */
+	public function readTimestampFile() {
+		if (!$this->get('General.timestampFile')) {
+			return false;
+		}
+
+		$time = false;
+		$cachedConfig = $this->get('General.cacheConfig');
+		if ($cachedConfig) {
+			$time =  Cache::read(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
+		}
+		if (empty($time)) {
+			$time = file_get_contents(TMP . self::BUILD_TIME_FILE);
+			if ($cachedConfig) {
+				Cache::write(self::CACHE_BUILD_TIME_KEY, $time, self::CACHE_CONFIG);
+			}
+		}
+		if (empty($time)) {
+			$message = sprintf('Build time file "%s" was empty. You must run the build shell to create the file.', TMP . self::BUILD_TIME_FILE);
+			throw new RuntimeException($message);
+		}
+		return $time;
+	}
+
+/**
+ * Write the timestamp to the TS file and cache if its enabled
+ * 
+ * @param int $timeStamp The timestamp to save.
+ * @throws RuntimeException if it cant write to timestamp file
+ */	
+	public function writeTimestampFile($timeStamp) {
+		if (!$this->get('General.timestampFile')) {
+			return false;
+		}
+
+		$ret = file_put_contents(TMP . self::BUILD_TIME_FILE, $timeStamp);
+		if (empty($ret)) {
+			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TIME_FILE));
+		}
+
+		if ($this->get('General.cacheConfig')) {
+			Cache::write(self::CACHE_BUILD_TIME_KEY, $timeStamp, self::CACHE_CONFIG);
+		}
+		return true;
 	}
 
 /**
@@ -293,7 +407,7 @@ class AssetConfig {
  */
 	public function cachingOn($target) {
 		$ext = $this->getExt($target);
-		if ($this->writeCache && $this->cachePath($ext)) {
+		if ($this->get('General.writeCache') && $this->cachePath($ext)) {
 			return true;
 		}
 		return false;
@@ -324,5 +438,16 @@ class AssetConfig {
 			'files' => $files,
 			'filters' => $filters
 		);
+	}
+
+/**
+ * Get the list of extensions this config object supports.
+ *
+ * @return array Extension list.
+ */
+	public function extensions() {
+		$exts = array_flip(array_keys($this->_data));
+		unset($exts[self::FILTERS], $exts['General']);
+		return array_keys($exts);
 	}
 }

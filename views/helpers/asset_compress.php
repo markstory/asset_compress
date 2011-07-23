@@ -63,7 +63,9 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function __construct($options = array()) {
-		$this->_Config = AssetConfig::buildFromIniFile();
+		if (empty($options['noconfig'])) {
+			$this->_Config = AssetConfig::buildFromIniFile();
+		}
 	}
 
 /**
@@ -244,7 +246,7 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Create a CSS file. Will generate script tags
+ * Create a CSS file. Will generate link tags
  * for either the dynamic build controller, or the generated file if it exists.
  *
  * To create build files without configuration use addCss()
@@ -272,11 +274,21 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-		if ($this->useDynamicBuild($file)) {
-			$route = $this->_getRoute($file);
+		
+		if ($this->_Config->get('css.timestamp') && $this->_Config->get('General.timestampFile')) {
+			$ts = $this->_Config->readTimestampFile();
+			$path = $this->_Config->cachePath('css');
+			$path = DS . str_replace(WWW_ROOT, '', $path);
+			$name = substr($file, 0, strlen($file) - (4));
+			$route = $path . $name . '.v' . $ts . '.css';
 		} else {
-			$route = $this->_locateBuild($file);
+			if ($this->useDynamicBuild($file)) {
+				$route = $this->_getRoute($file);
+			} else {			
+				$route = $this->_locateBuild($file);
+			}
 		}
+		
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -314,11 +326,21 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		if ($this->useDynamicBuild($file)) {
-			$route = $this->_getRoute($file);
+		if ($this->_Config->get('js.timestamp') && $this->_Config->get('General.timestampFile')) {
+			//If a timestampFile is being used, don't spend time looking on the local filesystem.
+			$ts = $this->_Config->readTimestampFile();
+			$path = $this->_Config->cachePath('js');
+			$path = DS . str_replace(WWW_ROOT, '', $path);
+			$name = substr($file, 0, strlen($file) - (3));
+			$route = $path . $name . '.v' . $ts . '.js';
 		} else {
-			$route = $this->_locateBuild($file);
+			if ($this->useDynamicBuild($file)) {
+				$route = $this->_getRoute($file);
+			} else {
+				$route = $this->_locateBuild($file);
+			}
 		}
+		
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -368,7 +390,7 @@ class AssetCompressHelper extends AppHelper {
 		if (empty($matching)) {
 			return false;
 		}
-		return $matching[0];
+		return DS . str_replace(WWW_ROOT, '', $matching[0]);
 	}
 
 /**

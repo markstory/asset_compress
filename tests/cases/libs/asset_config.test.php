@@ -4,16 +4,31 @@ App::import('Libs', 'AssetCompress.AssetConfig');
 class AssetConfigTest extends CakeTestCase {
 
 	function setUp() {
+		Cache::drop(AssetConfig::CACHE_CONFIG);
+		Cache::config(AssetConfig::CACHE_CONFIG, array(
+			'engine' => 'File'
+		));
+
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
+		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 	}
 
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
-		$this->assertTrue($config->js['timestamp']);
-		$this->assertTrue($config->debug);
+		$this->assertTrue($config->get('js.timestamp'));
+		$this->assertTrue($config->get('General.debug'));
+	}
+
+	function testExceptionOnBogusFile() {
+		try {
+			$config = AssetConfig::buildFromIniFile('/bogus');
+			$this->assertFalse(true, 'Exception not thrown.');
+		} catch (Exception $e) {
+			$this->assertEqual('Configuration file "/bogus" was not found.', $e->getMessage());
+		}
 	}
 
 	function testFilters() {
@@ -56,8 +71,10 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testPathConstantReplacement() {
 		$result = $this->config->paths('css');
-		$this->assertEqual(array(WWW_ROOT . 'css' . DS), $result);
+		$this->assertEqual(array(WWW_ROOT . 'css/'), $result);
+		debug(array(array(WWW_ROOT . 'css/'), $result));
 		$this->assertEqual(array(), $this->config->paths('nothing'));
+		debug(array(array(), $this->config->paths('nothing')));
 	}
 
 	function testPaths() {
@@ -85,7 +102,6 @@ class AssetConfigTest extends CakeTestCase {
 		$expected = array('path' => '/path/to/uglify-js');
 		$this->assertEqual($result, $expected);
 
-
 		$this->config->filterConfig('sprockets', array('some' => 'value'));
 		$this->assertEqual(array('some' => 'value'), $this->config->filterConfig('sprockets'));
 
@@ -112,5 +128,77 @@ class AssetConfigTest extends CakeTestCase {
 		$expected = array('libs.js', 'foo.bar.js');
 		$result = $this->config->targets('js');
 		$this->assertEqual($expected, $result);
+	}
+
+	function testGet() {
+		$result = $this->config->get('General.debug');
+		$this->assertTrue($result);
+
+		$result = $this->config->get('js.cachePath');
+		$this->assertEqual(WWW_ROOT . 'cache_js', $result);
+
+		$this->assertNull($this->config->get('Bogus.poop'));
+	}
+
+	function testSet() {
+		$this->assertNull($this->config->get('Bogus.poop'));
+		$this->config->set('Bogus.poop', 'smelly');
+		$this->assertEqual('smelly', $this->config->get('Bogus.poop'));
+	}
+	
+	function testSetLimit() {
+		try {
+			$this->config->set('only.two.allowed', 'smelly');
+			$this->assertFalse(true, 'No exception');
+		} catch (RuntimeException $e) {
+			$this->assertTrue(true, 'Exception was raised.');
+		}
+	}
+
+	function testCachingOn() {
+		$this->config->set('General.writeCache', false);
+		$this->assertFalse($this->config->cachingOn('libs.js'));
+
+		$this->config->set('General.writeCache', true);
+		$this->config->cachePath('js', '/some/path');
+		$this->assertTrue($this->config->cachingOn('libs.js'));
+	}
+
+	function testReadTimestampFileWhenDisabled() {
+		$this->assertFalse($this->config->readTimestampFile());
+	}
+
+	function testReadTimestampFileUsingFiles() {
+		$this->config->set('General.cacheConfig', false);
+		$this->config->set('General.timestampFile', true);
+
+		$time = time();
+		$this->config->writeTimestampFile($time);
+		$result = $this->config->readTimestampFile();
+
+		$this->assertTrue(is_numeric($result));
+		$this->assertEqual($time, $result);
+		$this->assertFalse(Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG));
+	}
+
+	function testReadTimestampFileUsingCache() {
+		$this->config->set('General.cacheConfig', true);
+		$this->config->set('General.timestampFile', true);
+
+		$time = time();
+		$this->config->writeTimestampFile($time);
+
+		// delete the file so we know we hit the cache.
+		unlink(TMP . AssetConfig::BUILD_TIME_FILE);
+
+		$result = $this->config->readTimestampFile();
+
+		$this->assertTrue(is_numeric($result));
+		$this->assertEqual($time, $result);
+	}
+
+	function testExtensions() {
+		$result = $this->config->extensions();
+		$this->assertEqual(array('js', 'css'), $result);
 	}
 }
