@@ -41,6 +41,7 @@ class AssetScanner {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
 			// might need to change this regex but this is not issue presently
+			#ORIGINAL /[*.\[\]]/
 			#JHREGEX /^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/
 			if (preg_match('/^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/', $path)) {
 				$tree = $this->_generateTree($path);
