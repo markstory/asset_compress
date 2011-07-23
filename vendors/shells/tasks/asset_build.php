@@ -1,24 +1,76 @@
 <?php
+App::import('Lib', 'AssetCompress.AssetConfig');
+App::import('Lib', 'AssetCompress.AssetCache');
+App::import('Lib', 'AssetCompress.AssetCompiler');
+
 App::import('Core', 'Folder');
-App::import('Model', 'AssetCompress.JsFile');
-App::import('Model', 'AssetCompress.CssFile');
 
 class AssetBuildTask extends Shell {
 	
+	protected $_Config;
 	protected $_files = array();
 	protected $_tokens = array();
 	
+/**
+ * Array of tokens that indicate a helper call.
+ *
+ * @var array
+ */
 	public $helperTokens = array(
 		'$assetCompress', 'AssetCompress'
 	);
 
-	function build($paths) {
+/**
+ * Array of helper methods to look for.
+ *
+ * @var array
+ */
+	protected $_methods = array('addCss', 'addScript');
+
+/**
+ * Set the Configuration object that will be used.
+ *
+ * @return void
+ */
+	public function setConfig(AssetConfig $Config) {
+		$this->_Config = $Config;
+	}
+
+/**
+ * Build all the files declared in the Configuration object.
+ *
+ * @return void
+ */
+	public function buildIni() {
+		$targets = $this->_Config->targets('js');
+		foreach ($targets as $t) {
+			$this->_buildTarget($t);
+		}
+		$targets = $this->_Config->targets('css');
+		foreach ($targets as $t) {
+			$this->_buildTarget($t);
+		}
+	}
+
+/**
+ * Generate dynamically declared build targets in a set of paths.
+ * 
+ * @param array $paths Array of paths to scan for dynamic builds
+ * @return void
+ */
+	function buildDynamic($paths) {
 		$this->_collectFiles($paths);
 		$this->_scanFiles();
 		$this->_parse();
 		$this->_buildFiles();
 	}
 
+/**
+ * Accessor for testing, sets files.
+ *
+ * @param array $files Array of files to scan
+ * @return void
+ */
 	public function setFiles($files) {
 		$this->_files = $files;
 	}
@@ -82,7 +134,7 @@ class AssetBuildTask extends Shell {
 
 		foreach ($this->_tokens as $call) {
 			$method = $call[2][1];
-			if (!in_array($method, array('css', 'script'))) {
+			if (!in_array($method, $this->_methods)) {
 				continue;
 			}
 	
@@ -159,27 +211,52 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildFiles() {
-		if (!empty($this->_buildFiles['css'])) {
-			$Css = new CssFile();
-			foreach ($this->_buildFiles['css'] as $target => $contents) {
+		foreach ($this->_methods as $method) {
+			if (empty($this->_buildFiles[$method])) {
+				continue;
+			}
+			foreach ($this->_buildFiles[$method] as $target => $contents) {
 				if (strpos($target, ':hash') === 0) {
 					$target = md5(implode('_', $contents));
 				}
-				$this->out('Saving CSS file for ' . $target);
-				$compress = $Css->process($contents);
-				$Css->cache($target . '.css', $compress);
+				$ext = $method == 'addScript'  ? '.js' : '.css';
+				$target = $this->_addExt($target, $ext);
+				$this->_Config->files($target, $contents);
+				$this->_buildTarget($target);
 			}
 		}
-		if (!empty($this->_buildFiles['script'])) {
-			$Js = new JsFile();
-			foreach ($this->_buildFiles['script'] as $target => $contents) {
-				if (strpos($target, ':hash') === 0) {
-					$target = md5(implode('_', $contents));
-				}
-				$this->out('Saving Javascript file for ' . $target);
-				$compress = $Js->process($contents);
-				$Js->cache($target . '.js', $compress);
-			}
+	}
+
+/**
+ * Generate and save the cached file for a build target.
+ *
+ * @param string $build The build to generate.
+ * @return void
+ */
+	protected function _buildTarget($build) {
+		$this->out('Saving file for ' . $build);
+		$Compiler = new AssetCompiler($this->_Config);
+		$Cacher = new AssetCache($this->_Config);
+		try {
+			$contents = $Compiler->generate($build);
+			$Cacher->write($build, $contents);
+		} catch (Exception $e) {
+			$this->err('Error: ' . $e->getMessage());
 		}
+	}
+
+	
+/**
+ * Adds an extension if the file doesn't already end with it.
+ *
+ * @param string $file Filename
+ * @param string $ext Extension with .
+ * @return string
+ */
+	protected function _addExt($file, $ext) {
+		if (substr($file, strlen($ext) * -1) !== $ext) {
+			$file .= $ext;
+		}
+		return $file;
 	}
 }

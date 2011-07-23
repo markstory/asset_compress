@@ -35,9 +35,14 @@ class AssetBuildTest extends CakeTestCase {
 		$this->Task =& new MockAssetBuildTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
-		
+
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testFilePath = $this->_pluginPath . 'tests/test_files/views/';
+
+		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		AssetConfig::clearAllCachedKeys();
+		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
+		$this->Task->setConfig($this->config);
 	}
 
 	function tearDown() {
@@ -51,7 +56,7 @@ class AssetBuildTest extends CakeTestCase {
 		$result = $this->Task->_scanFiles();
 
 		$this->assertEqual(4, count($result));
-		$this->assertEqual('script', $result[0][2][1]);
+		$this->assertEqual('addScript', $result[0][2][1]);
 	}
 	
 	function testParsingSimpleFile() {
@@ -60,11 +65,11 @@ class AssetBuildTest extends CakeTestCase {
 		$this->Task->_scanFiles();
 		$result = $this->Task->_parse();
 		$expected = array(
-			'css' => array(
+			'addCss' => array(
 				'single' => array('one_file'),
 				':hash-default' => array('no_build')
 			),
-			'script' => array(
+			'addScript' => array(
 				'single' => array('one_file'),
 				':hash-default' => array('no_build')
 			)
@@ -78,10 +83,10 @@ class AssetBuildTest extends CakeTestCase {
 		$this->Task->_scanFiles();
 		$result = $this->Task->_parse();
 		$expected = array(
-			'css' => array(
+			'addCss' => array(
 				'multi' => array('one_file', 'two_file', 'three_file'),
 			),
-			'script' => array(
+			'addScript' => array(
 				'multi' => array('one_file', 'two_file', 'three_file'),
 			)
 		);
@@ -95,11 +100,11 @@ class AssetBuildTest extends CakeTestCase {
 		$result = $this->Task->_parse();
 
 		$expected = array(
-			'css' => array(
+			'addCss' => array(
 				':hash-default' => array('no', 'build'),
 				'array_file' => array('has', 'a_build')
 			),
-			'script' => array(
+			'addScript' => array(
 				':hash-default' => array('no', 'build'),
 				'multi_file' => array('one_file', 'two_file')
 			)

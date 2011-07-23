@@ -33,18 +33,6 @@ class AssetScanner {
 	}
 
 /**
- * Replaces the file path constants used in Config files.
- * Will replace APP and WEBROOT
- *
- * @param string $path Path to replace constants on
- * @return string constants replaced
- */
-	protected function _replacePathConstants($path) {
-		$constantMap = array('APP/' => APP, 'WEBROOT/' => WWW_ROOT);
-		return str_replace(array_keys($constantMap), array_values($constantMap), $path);
-	}
-
-/**
  * Expands constants and glob() patterns in the searchPaths.
  *
  * @return void
@@ -52,7 +40,8 @@ class AssetScanner {
 	protected function _expandPaths() {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
-			$path = $this->_replacePathConstants($path);
+			// might need to change this regex but this is not issue presently
+			#JHREGEX /^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/
 			if (preg_match('/^(\d{2}:)?[-\w.+]*\/[-\w.+]+:[\*\.a-zA-Z0-9]*$/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);
@@ -60,7 +49,6 @@ class AssetScanner {
 				$expanded[] = $path;
 			}
 		}
-		
 		$this->_paths = $expanded;
 	}
 
@@ -71,8 +59,8 @@ class AssetScanner {
  * @return array Array of subdirectories.
  */
 	protected function _generateTree($path) {
-		$paths = glob($path);
-		return (array) $paths;
+		$paths = glob($path, GLOB_ONLYDIR);
+		return $paths;
 	}
 
 /**

@@ -13,8 +13,12 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
-		$this->Helper = new AssetCompressHelper(array('iniFile' => $testFile));
+		AssetConfig::clearAllCachedKeys();
+		$this->Helper = new AssetCompressHelper(array('noconfig' => true));
+		$Config = AssetConfig::buildFromIniFile($testFile);
+		$this->Helper->config($Config);
 		$this->Helper->Html = new HtmlHelper();
+
 		Router::reload();
 		Configure::write('debug', 2);
 	}
@@ -40,7 +44,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		));
 		$this->Helper->Html->webroot = '/some/dir/';
 
-		$this->Helper->script('one.js');
+		$this->Helper->addScript('one.js');
 		$result = $this->Helper->includeAssets();
 		$this->assertPattern('#"/some/dir/asset_compress#', $result, 'double dir set %s');
 	}
@@ -51,12 +55,12 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testNoCompression() {
-		$this->Helper->css('one', 'lib');
-		$this->Helper->css('two');
-		$this->Helper->script('one');
-		$this->Helper->script('dir/two');
+		$this->Helper->addCss('one', 'lib');
+		$this->Helper->addCss('two');
+		$this->Helper->addScript('one');
+		$this->Helper->addScript('dir/two');
 
-		$result = $this->Helper->includeAssets(false);
+		$result = $this->Helper->includeAssets(true);
 		$expected = array(
 			array(
 				'link' => array(
@@ -96,8 +100,8 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testCssOrderPreserving() {
-		$this->Helper->css('base');
-		$this->Helper->css('reset');
+		$this->Helper->addCss('base');
+		$this->Helper->addCss('reset');
 
 		$hash = md5('base_reset');
 
@@ -106,7 +110,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 			'link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/' . $hash . '.css?file[]=base&amp;file[]=reset'
+				'href' => '/asset_compress/assets/get/' . $hash . '.css?file%5B0%5D=base&file%5B1%5D=reset'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -118,8 +122,8 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testScriptOrderPreserving() {
-		$this->Helper->script('libraries');
-		$this->Helper->script('thing');
+		$this->Helper->addScript('libraries');
+		$this->Helper->addScript('thing');
 
 		$hash = md5('libraries_thing');
 
@@ -127,7 +131,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$expected = array(
 			'script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/' . $hash . '.js?file[]=libraries&amp;file[]=thing'
+				'src' => '/asset_compress/assets/get/' . $hash . '.js?file%5B0%5D=libraries&file%5B1%5D=thing'
 			),
 			'/script'
 		);
@@ -140,10 +144,10 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testScriptMagicSlugs() {
-		$this->Helper->script('libraries', ':hash-default');
-		$this->Helper->script('thing', ':hash-default');
-		$this->Helper->script('jquery.js', ':hash-jquery');
-		$this->Helper->script('jquery-ui.js', ':hash-jquery');
+		$this->Helper->addScript('libraries', ':hash-default');
+		$this->Helper->addScript('thing', ':hash-default');
+		$this->Helper->addScript('jquery.js', ':hash-jquery');
+		$this->Helper->addScript('jquery-ui.js', ':hash-jquery');
 
 		$hash1 = md5('libraries_thing');
 		$hash2 = md5('jquery.js_jquery-ui.js');
@@ -152,16 +156,37 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/' . $hash1 . '.js?file[]=libraries&amp;file[]=thing'
+				'src' => '/asset_compress/assets/get/' . $hash1 . '.js?file%5B0%5D=libraries&file%5B1%5D=thing'
 			)),
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/' . $hash2 . '.js?file[]=jquery.js&amp;file[]=jquery-ui.js'
+				'src' => '/asset_compress/assets/get/' . $hash2 . '.js?file%5B0%5D=jquery.js&file%5B1%5D=jquery-ui.js'
 			)),
 			'/script'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that build files with magic hash names, are linked in properly.
+ *
+ */
+	function testMagicHashBuildFileUse() {
+		$config = $this->Helper->config();
+		$config->set('General.writeCache', true);
+		$config->cachePath('js', TMP);
+
+		$this->Helper->addScript('libraries', ':hash-default');
+		$this->Helper->addScript('thing', ':hash-default');
+
+		$hash = md5('libraries_thing');
+		touch(TMP . $hash . '.js');
+
+		$result = $this->Helper->includeAssets();
+		$this->assertTrue(strpos($result, $hash) !== false);
+		$this->assertFalse(strpos($result, '?file'), 'Querystring found, built asset not used.');
+		unlink(TMP . $hash . '.js');
 	}
 
 /**
@@ -170,19 +195,19 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testMultipleScriptFiles() {
-		$this->Helper->script('libraries', 'default');
-		$this->Helper->script('thing', 'second');
+		$this->Helper->addScript('libraries', 'default');
+		$this->Helper->addScript('thing', 'second');
 
 		$result = $this->Helper->includeAssets();
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries'
+				'src' => '/asset_compress/assets/get/default.js?file%5B0%5D=libraries'
 			)),
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/second.js?file[]=thing'
+				'src' => '/asset_compress/assets/get/second.js?file%5B0%5D=thing'
 			)),
 			'/script'
 		);
@@ -195,20 +220,20 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testIncludeJsMultipleDestination() {
-		$this->Helper->script('libraries', 'default');
-		$this->Helper->script('thing', 'second');
-		$this->Helper->script('other', 'third');
+		$this->Helper->addScript('libraries', 'default');
+		$this->Helper->addScript('thing', 'second');
+		$this->Helper->addScript('other', 'third');
 
 		$result = $this->Helper->includeJs('second', 'default');
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/second.js?file[]=thing'
+				'src' => '/asset_compress/assets/get/second.js?file%5B0%5D=thing'
 			)),
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/js_files/get/default.js?file[]=libraries'
+				'src' => '/asset_compress/assets/get/default.js?file%5B0%5D=libraries'
 			)),
 			'/script'
 		);
@@ -221,21 +246,21 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testIncludeCssMultipleDestination() {
-		$this->Helper->css('libraries', 'default');
-		$this->Helper->css('thing', 'second');
-		$this->Helper->css('other', 'third');
+		$this->Helper->addCss('libraries', 'default');
+		$this->Helper->addCss('thing', 'second');
+		$this->Helper->addCss('other', 'third');
 
 		$result = $this->Helper->includeCss('second', 'default');
 		$expected = array(
 			array('link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/second.css?file[]=thing'
+				'href' => '/asset_compress/assets/get/second.css?file%5B0%5D=thing'
 			)),
 			array('link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/default.css?file[]=libraries'
+				'href' => '/asset_compress/assets/get/default.css?file%5B0%5D=libraries'
 			)),
 		);
 		$this->assertTags($result, $expected);
@@ -247,13 +272,13 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testIncludingFilesRemovesFromQueue() {
-		$this->Helper->css('libraries', 'default');
+		$this->Helper->addCss('libraries', 'default');
 		$result = $this->Helper->includeCss('default');
 		$expected = array(
 			'link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/css_files/get/default.css?file[]=libraries'
+				'href' => '/asset_compress/assets/get/default.css?file%5B0%5D=libraries'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -263,33 +288,69 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test that build files are correctly linked in when they exist on cachePath.
+ */
+	function testLinkingBuiltFiles() {
+		$config = $this->Helper->config();
+		$config->set('General.writeCache', true);
+		$config->cachePath('js', TMP);
+		$config->files('asset_test.js', array('one.js'));
+
+		touch(TMP . 'asset_test.js');
+
+		$this->assertTrue($config->cachingOn('asset_test.js'));
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
+		unlink(TMP . 'asset_test.js');
+	}
+
+
+/**
+ * Test that generated elements can have attributes added.
+ *
+ */
+	function testAttributesOnElements() {
+		$result = $this->Helper->script('libs.js', array('defer' => true));
+
+		$expected = array(
+			array('script' => array(
+				'defer' => 'defer',
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/libs.js'
+			))
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Helper->css('all.css', array('test' => 'value'));
+		$expected = array(
+			'link' => array(
+				'type' => 'text/css',
+				'test' => 'value',
+				'rel' => 'stylesheet',
+				'href' => '/asset_compress/assets/get/all.css'
+			)
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test timestamping assets.
  *
  * @return void
  */
 	function testTimestampping() {
-		Configure::write('debug', 1);
-		$this->Helper->script('libraries', 'default');
-		$result = $this->Helper->includeAssets();
-		$this->assertPattern('/default\.\d+\.js/', $result);
+		$config = $this->Helper->config();
+		$config->set('General.writeCache', true);
+		$config->set('js.timestamp', true);
+		$config->cachePath('js', TMP);
+		$config->files('asset_test.js', array('one.js'));
 
-		Configure::write('debug', 2);
-	}
+		$filename = TMP . 'asset_test.v' . time() . '.js';
+		touch($filename);
 
-/**
- * test configuration
- *
- * @return void
- */
-	function testConfig() {
-		$result = $this->Helper->config('Css.stripComments');
-		$this->assertTrue($result, 'Reading is busted');
-
-		$this->assertNull($this->Helper->config('Garbage.pail'));
-
-		$this->Helper->config('Css.stripComments', false);
-		$result = $this->Helper->config('Css.stripComments');
-		$this->assertFalse($result, 'writing is busted');
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, $filename) !== false);
+		unlink($filename);
 	}
 
 /**
@@ -298,13 +359,13 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testBaseUrl() {
-		$this->Helper->config('General.baseUrl', 'http://cdn.example.com');
-		$this->Helper->script('jquery', 'default');
-		$result = $this->Helper->includeJs();
+		$config = $this->Helper->config();
+		$config->set('js.baseUrl', 'http://cdn.example.com');
+		$result = $this->Helper->script('libs.js');
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => 'http://cdn.example.com/asset_compress/js_files/get/default.js'
+				'src' => 'http://cdn.example.com/asset_compress/assets/get/libs.js'
 			))
 		);
 		$this->assertTags($result, $expected);
