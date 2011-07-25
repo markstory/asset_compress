@@ -18,7 +18,7 @@ App::import('Lib', 'AssetCompress.AssetConfig');
  */
 class AssetCompressHelper extends AppHelper {
 
-	public $helpers = array('BakingPlate.HtmlPlus');
+	public $helpers = array('Html');
 
 	protected $_Config;
 
@@ -124,7 +124,7 @@ class AssetCompressHelper extends AppHelper {
 		foreach ($files as $file) {
 			$includeFile = JS . $this->options['autoIncludePath'] . DS . $file;
 			if (file_exists($includeFile)) {
-				$this->HtmlPlus->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
+				$this->Html->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
 			}
 		}
 	}
