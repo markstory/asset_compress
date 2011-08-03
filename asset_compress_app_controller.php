@@ -8,6 +8,7 @@
  */
 class AssetCompressAppController extends AppController {
 	public $components = false;
+	public $helpers = false;
 
 /**
  * Stub off the startupProcess so components don't mess around with asset compression
