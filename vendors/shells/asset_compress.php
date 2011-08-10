@@ -132,6 +132,7 @@ class AssetCompressShell extends Shell {
 				list($base, $v, $ext) = explode('.', $name, 3);
 				if (in_array($base . '.' . $ext, $targets)) {
 					$this->out(' - Deleting ' . $path . $name);
+					unlink($path . $name);
 					continue;
 				}
 			}
