@@ -29,7 +29,6 @@ class LessPhp extends AssetFilter {
     protected $_extensions = array('.less', '.less.css');
     
     public function settings($settings) {
-	print_r($settings);
 	parent::settings($settings);
     }
 
