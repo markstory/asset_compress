@@ -182,7 +182,7 @@ class AssetConfig {
  * @return string constants replaced
  */
 	protected function _replacePathConstants($path) {
-		return str_replace(array_keys($this->constantMap), array_values($this->constantMap), $path);
+		return strtr($path, $this->constantMap);
 	}
 
 /**
