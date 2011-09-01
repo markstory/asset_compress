@@ -34,9 +34,24 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
+	function testExpandStarStar() {
+		$paths = array(
+			$this->_testFiles . 'js' . DS . '**',
+		);
+		$scanner = new AssetScanner($paths);
+
+		$result = $scanner->find('base_class.js');
+		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
+		$this->assertEqual($expected, $result);
+
+		$result = $scanner->find('another_class.js');
+		$expected = $this->_testFiles . 'js' . DS . 'secondary' . DS . 'another_class.js';
+		$this->assertEqual($expected, $result);
+	}
+
 	function testExpandGlob() {
 		$paths = array(
-			$this->_testFiles . 'js' . DS ,
+			$this->_testFiles . 'js' . DS,
 			$this->_testFiles . 'js' . DS . '*'
 		);
 		$scanner = new AssetScanner($paths);
@@ -49,6 +64,7 @@ class AssetScannerTest extends CakeTestCase {
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
 	}
+
 	
 	function testFindOtherExtension() {
 		$paths = array(
