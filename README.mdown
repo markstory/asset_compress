@@ -55,13 +55,16 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 *Backwards Incompatible Changes*
 
-- Ini file flag General.debug was removed.  Instead
+* Ini file flag General.debug was removed.  Instead
   Configure::read('debug') is used.  This means one less configuration
   option to manage.  Use debug = 1 to test output filters.
 
 *Other changes*
 
-- Coming soon
+* Ini file naming for build files made simpler. Instead of having to
+  prefix sections with the extension you can omit the prefix.  The
+  extension will be read off of the build file name.
+
 
 #### 0.4
 

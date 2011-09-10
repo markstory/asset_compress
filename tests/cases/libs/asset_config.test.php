@@ -122,8 +122,12 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testTargets() {
 		$this->assertEqual(array(), $this->config->targets('fake'));
-		$expected = array('libs.js', 'foo.bar.js');
+		$expected = array('libs.js', 'foo.bar.js', 'new_file.js');
 		$result = $this->config->targets('js');
+		$this->assertEqual($expected, $result);
+
+		$expected = array('all.css', 'pink.css');
+		$result = $this->config->targets('css');
 		$this->assertEqual($expected, $result);
 	}
 

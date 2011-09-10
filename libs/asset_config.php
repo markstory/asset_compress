@@ -7,7 +7,22 @@
  */
 class AssetConfig {
 
+/**
+ * Parsed configuration data.
+ *
+ * @var array
+ */
 	protected $_data = array();
+
+/**
+ * Names of normal extensions that Assetcompress could
+ * handle.
+ *
+ * @var array
+ */
+	protected static $_extensionTypes = array(
+		'js', 'css', 'png', 'gif', 'jpeg'
+	);
 
 /**
  * A hash of constants that can be expanded when reading ini files.
@@ -26,6 +41,7 @@ class AssetConfig {
 	const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
 	const CACHE_CONFIG = 'asset_compress';
 	const BUILD_TIME_FILE = 'asset_compress_build_time';
+	const GENERAL = 'general';
 
 /**
  * Constructor, set some initial data for a AssetConfig object. 
@@ -116,15 +132,25 @@ class AssetConfig {
 	protected static function _parseConfig($config, $constants) {
 		$AssetConfig = new AssetConfig(array(), $constants);
 		foreach ($config as $section => $values) {
-			if (strpos($section, '_') === false) {
+			if (in_array($section, self::$_extensionTypes)) {
 				// extension section
 				$AssetConfig->addExtension($section, $values);
+			} elseif (strtolower($section) === self::GENERAL) {
+				$config['General'] = $values;
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
 				$AssetConfig->filterConfig($name, $values);
 			} else {
-				list($extension, $key) = explode('_', $section, 2);
+				$lastDot = strrpos($section, '.') + 1;
+				$extension = substr($section, $lastDot);
+				$key = $section;
+
+				// Is there a prefix? Chop it off.
+				if (strpos($section, $extension . '_') !== false) {
+					$key = substr($key, strlen($extension) + 1);
+				}
+
 				// must be a build target.
 				$files = isset($values['files']) ? $values['files'] : array();
 				$filters = isset($values['filters']) ? $values['filters'] : array();
