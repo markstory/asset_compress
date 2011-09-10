@@ -51,6 +51,16 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ### Changelog
 
+#### 0.5
+
+*Backwards Incompatible Changes*
+
+- Coming soon
+
+*Other changes*
+
+- Coming soon
+
 #### 0.4
 
 *Backwards Incompatible Changes*
