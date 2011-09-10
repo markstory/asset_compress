@@ -6,14 +6,6 @@ App::import('Lib', 'AssetCompress.AssetConfig');
  * Handle inclusion assets using the AssetCompress features for concatenating and
  * compressing asset files.
  *
- * You add files to be compressed using `script` and `css`.  All files added to a key name
- * will be processed and joined before being served.  When in debug = 2, no files are cached.
- *
- * If debug = 0, the processed file will be cached to disk.  You can also use the routes
- * and config file to create static 'built' files. These built files must have unique names, or
- * as they are made they will overwrite each other.  You can clear built files
- * with the shell provided in the plugin.
- *
  * @package asset_compress.helpers
  */
 class AssetCompressHelper extends AppHelper {

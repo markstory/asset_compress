@@ -19,7 +19,6 @@ class AssetConfigTest extends CakeTestCase {
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->assertTrue($config->get('js.timestamp'));
-		$this->assertTrue($config->get('General.debug'));
 	}
 
 	function testExceptionOnBogusFile() {
@@ -129,9 +128,6 @@ class AssetConfigTest extends CakeTestCase {
 	}
 
 	function testGet() {
-		$result = $this->config->get('General.debug');
-		$this->assertTrue($result);
-
 		$result = $this->config->get('js.cachePath');
 		$this->assertEqual(WWW_ROOT . 'cache_js', $result);
 

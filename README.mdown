@@ -55,7 +55,9 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 *Backwards Incompatible Changes*
 
-- Coming soon
+- Ini file flag General.debug was removed.  Instead
+  Configure::read('debug') is used.  This means one less configuration
+  option to manage.  Use debug = 1 to test output filters.
 
 *Other changes*
 
