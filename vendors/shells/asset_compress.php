@@ -118,23 +118,19 @@ class AssetCompressShell extends Shell {
 		}
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
-			$name = $file->getFilename();
+			$name = $base = $file->getFilename();
 			if (in_array($name, array('.', '..'))) {
 				continue;
 			}
-			// no timestamp
-			if (in_array($name, $targets)) {
+			// timestampped files.
+			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
+				list($base, $v, $ext) = explode('.', $name, 3);
+				$base = $base . '.' . $ext;
+			}
+			if (in_array($base, $targets)) {
 				$this->out(' - Deleting ' . $path . $name);
 				unlink($path . $name);
 				continue;
-			}
-			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
-				list($base, $v, $ext) = explode('.', $name, 3);
-				if (in_array($base . '.' . $ext, $targets)) {
-					$this->out(' - Deleting ' . $path . $name);
-					unlink($path . $name);
-					continue;
-				}
 			}
 		}
 	}
