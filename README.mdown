@@ -42,6 +42,12 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Florian Krämer
 * Frank de Graaf (Phally)
 * Alan Bount
+* Abbas Ali
+* Jeremy Harris
+* rynop
+* evilbloodydemon
+* Cauan Cabral
+
 
 ### Changelog
 
