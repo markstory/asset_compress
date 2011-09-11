@@ -330,7 +330,7 @@ class AssetCompressHelper extends AppHelper {
 			//If a timestampFile is being used, don't spend time looking on the local filesystem.
 			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('js');
-			$path = DS . str_replace(WWW_ROOT, '', $path);
+			$path = '/' . str_replace(WWW_ROOT, '', $path);
 			$name = substr($file, 0, strlen($file) - (3));
 			$route = $path . $name . '.v' . $ts . '.js';
 		} else {
