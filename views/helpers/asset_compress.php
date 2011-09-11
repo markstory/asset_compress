@@ -278,7 +278,7 @@ class AssetCompressHelper extends AppHelper {
 		if ($this->_Config->get('css.timestamp') && $this->_Config->get('General.timestampFile')) {
 			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('css');
-			$path = DS . str_replace(WWW_ROOT, '', $path);
+			$path = '/' . str_replace(WWW_ROOT, '', $path);
 			$name = substr($file, 0, strlen($file) - (4));
 			$route = $path . $name . '.v' . $ts . '.css';
 		} else {
