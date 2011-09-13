@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetConfig');
+App::import('Lib', array('AssetCompress.AssetConfig', 'AssetCompress.AssetScanner'));
 /**
  * AssetCompress Helper.
  *
@@ -25,6 +25,8 @@ class AssetCompressHelper extends AppHelper {
 /**
  * Options for the helper
  *
+ * - `autoInclude` - Disable auto inclusion of view js files.
+ * - `autoIncludeTarget` - Specifies in which target it should be automatically included.
  * - `autoIncludePath` - Path inside of webroot/js that contains autoloaded view js.
  * - `jsCompressUrl` - Url to use for getting compressed js files.
  * - `cssCompressUrl` - Url to use for getting compressed css files.
@@ -32,6 +34,8 @@ class AssetCompressHelper extends AppHelper {
  * @var array
  */
 	public $options = array(
+		'autoInclude' => true,
+		'autoIncludeTarget' => ':hash-default.js',
 		'autoIncludePath' => 'views',
 		'buildUrl' => array(
 			'plugin' => 'asset_compress',
@@ -113,18 +117,20 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	protected function _includeViewJs() {
-		if (!$this->autoInclude) {
+		if (!$this->options['autoInclude']) {
 			return;
 		}
 		$files = array(
-			$this->params['controller'] . '.js',
-			$this->params['controller'] . DS . $this->params['action'] . '.js'
+			$this->params['controller'],
+			$this->params['controller'] . DS . $this->params['action']
 		);
+		$paths = $this->_Config->paths('js');
+		$scanner = new AssetScanner($paths);
 
 		foreach ($files as $file) {
-			$includeFile = JS . $this->options['autoIncludePath'] . DS . $file;
-			if (file_exists($includeFile)) {
-				$this->Html->script($this->options['autoIncludePath'] . '/' . $file, array('inline' => false));
+			$includeFile = $this->options['autoIncludePath'] . DS . $file . '.js';
+			if ($scanner->find($includeFile) !== false) {
+				$this->addScript($this->options['autoIncludePath'] . '/' . $file, $this->options['autoIncludeTarget']);
 			}
 		}
 	}
