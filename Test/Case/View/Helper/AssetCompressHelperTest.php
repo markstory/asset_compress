@@ -1,9 +1,10 @@
 <?php
 
 App::import('Helper', array('AssetCompress.AssetCompress', 'Html', 'Javascript'));
+App::uses('View', 'View');
 
 
-class AssetCompressHelperTestCase extends CakeTestCase {
+class AssetCompressHelperTest extends CakeTestCase {
 /**
  * start a test
  *
@@ -11,13 +12,18 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  **/
 	function startTest() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
-		$this->Helper = new AssetCompressHelper(array('noconfig' => true));
+		$controller = null;
+		$request = new CakeRequest(null, false);
+		$request->webroot = '';
+		$view = new View($controller);
+		$view->request = $request;
+		$this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
 		$this->Helper->config($Config);
-		$this->Helper->Html = new HtmlHelper();
+		$this->Helper->Html = new HtmlHelper($view);
 
 		Router::reload();
 		Configure::write('debug', 2);

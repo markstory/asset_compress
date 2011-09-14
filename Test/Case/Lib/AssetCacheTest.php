@@ -6,7 +6,7 @@ class AssetCacheTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->config->cachePath('js', TMP);
@@ -23,7 +23,7 @@ class AssetCacheTest extends CakeTestCase {
 	}
 
 	function testWriteTimestamp() {
-		$this->assertTrue($this->config->get('js.timestamp'));
+		$this->assertTrue($this->config->get('js.timestamp') === '1');
 
 		$now = time();
 		$this->cache->write('test.js', 'Some content');

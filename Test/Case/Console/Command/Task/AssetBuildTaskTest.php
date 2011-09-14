@@ -1,45 +1,27 @@
 <?php
 
-App::import('Shell', 'Shell', false);
+App::uses('ShellDispatcher', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
+App::uses('Shell', 'Console');
+App::uses('AssetBuildTask', 'AssetCompress.Console/Command/Task');
 
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	define('DISABLE_AUTO_DISPATCH', true);
-}
-
-if (!class_exists('ShellDispatcher')) {
-	ob_start();
-	$argv = false;
-	require CAKE . 'console' .  DS . 'cake.php';
-	ob_end_clean();
-}
-
-
-$pluginPath = App::pluginPath('AssetCompress');
-require_once $pluginPath . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'asset_build.php';
-
-Mock::generatePartial(
-	'ShellDispatcher', 'TestAssetBuildTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-
-Mock::generatePartial(
-	'AssetBuildTask', 'MockAssetBuildTask',
-	array('in', 'hr', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
-);
-
-class AssetBuildTest extends CakeTestCase {
+class AssetBuildTaskTest extends CakeTestCase {
 
 	function setUp() {
 		parent::setUp();
-		$this->Dispatcher =& new TestAssetBuildTaskMockShellDispatcher();
-		$this->Task =& new MockAssetBuildTask($this->Dispatcher);
-		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->Dispatch->shellPaths = App::path('shells');
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Task = $this->getMock('AssetBuildTask',
+			array('in', 'err', 'createFile', '_stop', 'clear'),
+			array($out, $out, $in)
+		);
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testFilePath = $this->_pluginPath . 'tests/test_files/views/';
+		$this->testFilePath = $this->_pluginPath . 'Test/test_files/views/';
 
-		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->Task->setConfig($this->config);
@@ -47,7 +29,7 @@ class AssetBuildTest extends CakeTestCase {
 
 	function tearDown() {
 		parent::tearDown();
-		unset($this->Dispatcher, $this->Task);
+		unset($this->Task);
 	}
 
 	function testScanningSimpleFile() {

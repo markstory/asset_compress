@@ -1,23 +1,23 @@
 <?php
 
-App::import('Libs', 'AssetCompress.AssetCompiler');
-App::import('Libs', 'AssetCompress.AssetConfig');
+App::import('Lib', 'AssetCompress.AssetCompiler');
+App::import('Lib', 'AssetCompress.AssetConfig');
 
 class AssetCompilerTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($testFile);
 		$this->config->paths('js', array(
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . '*'
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'js' . DS,
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'js' . DS . '*'
 		));
 		$this->config->paths('css', array(
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS,
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS . '*'
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS,
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '*'
 		));
 		$this->Compiler = new AssetCompiler($this->config);
 	}

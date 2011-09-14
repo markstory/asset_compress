@@ -28,7 +28,7 @@ class AssetCache {
 		if ($this->_Config->get($ext . '.timestamp') == true) {
 			$filename = $this->_timestampFilename($filename);
 		}
-		return file_put_contents($path . $filename, $content);
+		return file_put_contents($path . $filename, $content) !== false;
 	}
 
 	protected function _timestampFilename($file) {

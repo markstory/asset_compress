@@ -1,12 +1,12 @@
 <?php
 
-App::import('Libs', 'AssetCompress.AssetScanner');
+App::import('Lib', 'AssetCompress.AssetScanner');
 
 class AssetScannerTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->_testFiles = $this->_pluginPath . 'tests' . DS . 'test_files' . DS;
+		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$paths = array(
 			$this->_testFiles . 'js' . DS,
 			$this->_testFiles . 'js' . DS . 'classes' . DS

@@ -12,7 +12,7 @@ class AssetsController extends AssetCompressAppController {
 	public $_Config;
 
 	public function beforeFilter() {
-		$this->configFile = CONFIGS . 'asset_compress.ini';
+		$this->configFile = APP . 'Config' . DS . 'asset_compress.ini';
 	}
 
 /**
@@ -48,26 +48,14 @@ class AssetsController extends AssetCompressAppController {
 			}
 		} catch (Exception $e) {
 			$this->log($e->getMessage());
-			$this->header('HTTP/1.1 404 Not Found');
+			$this->response->statusCode(404);
 			$this->autoRender = false;
 			return;
 		}
 
-		$this->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));
+		$this->response->type($Config->getExt($build));
 		$this->set('contents', $contents);
 		$this->render('contents');
-	}
-
-/**
- * Helper method for getting ext -> mime type mappings.
- */
-	protected function _getContentType($ext) {
-		switch ($ext) {
-			case 'js':
-				return 'text/javascript';
-			case 'css':
-				return 'text/css';
-		}
 	}
 
 /**
