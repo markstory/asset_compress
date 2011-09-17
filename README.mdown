@@ -42,8 +42,21 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Florian Krämer
 * Frank de Graaf (Phally)
 * Alan Bount
+* Abbas Ali
+* Jeremy Harris
+* rynop
+* evilbloodydemon
+* Cauan Cabral
+* Renan Gonçalves
+
 
 ### Changelog
+
+#### 0.5
+
+*Other changes*
+
+* Controller/view javascript files are now combined into minified asset automatically now.
 
 #### 0.4
 
