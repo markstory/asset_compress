@@ -3,7 +3,7 @@ App::import('Lib', 'AssetCompress.AssetConfig');
 App::import('Lib', 'AssetCompress.AssetCache');
 App::import('Lib', 'AssetCompress.AssetCompiler');
 
-App::import('Core', 'Folder');
+App::uses('Folder', 'Utility');
 
 class AssetBuildTask extends Shell {
 	

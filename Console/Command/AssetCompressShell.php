@@ -12,7 +12,7 @@ App::import('Lib', 'AssetCompress.AssetCache');
  */
 class AssetCompressShell extends Shell {
 
-	public $tasks = array('AssetBuild');
+	public $tasks = array('AssetCompress.AssetBuild');
 
 /**
  * Create the configuration object used in other classes.
@@ -140,24 +140,26 @@ class AssetCompressShell extends Shell {
 	}
 
 /**
- * help
+ * get the option parser.
  *
  * @return void
  */
-	public function help() {
-		$this->out('Asset Compress Shell');
-		$this->hr();
-		$this->out();
-		$this->out('Usage: cake asset_compress <command> <options> <args>');
-		$this->out();
-		$this->out('Commands:');
-		$this->out("clear - Clears all existing build files.");
-		$this->out("build - Builds all compressed files.");
-		$this->out("build_ini - Build compressed files defined in the ini file.");
-		$this->out("build_dynamic - Build compressed files defined in view files.");
-		$this->out();
-		$this->out('Options:');
-		$this->out("config - Choose the config file to use.  Defaults to app/config/asset_compress.ini.");
-		$this->out();
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+			'Asset Compress Shell'
+		)->addSubcommand('clear', array(
+			'help' => 'Clears all existing build files.'
+		))->addSubcommand('build', array(
+			'help' => 'Builds all compressed files.'
+		))->addSubcommand('build_ini', array(
+			'help' => 'Build compressed files defined in the ini file.'
+		))->addSubcommand('build_dynamic', array(
+			'help' => 'Build compressed files defined in view files.'
+		))->addOption('config', array(
+			'help' => 'Choose the config file to use.',
+			'short' => 'c',
+			'default' => APP . 'Config' . DS . 'asset_compress.ini'
+		));
 	}
 }

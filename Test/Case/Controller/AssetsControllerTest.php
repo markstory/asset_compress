@@ -33,7 +33,7 @@ class AssetsControllerTest extends CakeTestCase {
 	}
 
 	function testDynamicBuildFile() {
-		$this->Controller->request->params['url']['file'] = array('library_file.js', 'lots_of_comments.js');
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 
 		$this->Controller->get('dynamic.js');
 		$this->assertEqual('text/javascript', $this->Controller->response->type());
@@ -47,7 +47,7 @@ class AssetsControllerTest extends CakeTestCase {
 	 */
 	function testDynamicBuildFileDebugOff() {
 		Configure::write('debug', 0);
-		$this->Controller->request->params['url']['file'] = array('library_file.js', 'lots_of_comments.js');
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 
 		$this->Controller->get('dynamic.js');
 		$this->assertEqual(404, $this->Controller->response->statusCode());
