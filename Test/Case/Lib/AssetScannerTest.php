@@ -1,12 +1,12 @@
 <?php
 
-App::import('Libs', 'AssetCompress.AssetScanner');
+App::uses('AssetScanner', 'AssetCompress.Lib');
 
 class AssetScannerTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->_testFiles = $this->_pluginPath . 'tests' . DS . 'test_files' . DS;
+		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$paths = array(
 			$this->_testFiles . 'js' . DS,
 			$this->_testFiles . 'js' . DS . 'classes' . DS
@@ -60,7 +60,7 @@ class AssetScannerTest extends CakeTestCase {
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
 
-		$result = $scanner->find('classes/base_class.js');
+		$result = $scanner->find('classes' . DS . 'base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
 	}

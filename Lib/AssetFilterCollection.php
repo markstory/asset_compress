@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetFilterInterface');
+App::uses('AssetFilter', 'AssetCompress.Lib');
 /**
  * A collection for creating and interacting with filter sets.
  *
