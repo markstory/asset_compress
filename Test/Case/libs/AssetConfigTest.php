@@ -1,5 +1,6 @@
 <?php
-App::import('Libs', 'AssetCompress.AssetConfig');
+
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetConfigTest extends CakeTestCase {
 
@@ -10,7 +11,7 @@ class AssetConfigTest extends CakeTestCase {
 		));
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
@@ -18,8 +19,8 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
-		$this->assertTrue($config->get('js.timestamp'));
-		$this->assertTrue($config->get('General.debug'));
+		$this->assertEqual('1', $config->get('js.timestamp'));
+		$this->assertEqual('1', $config->get('General.debug'));
 	}
 
 	function testExceptionOnBogusFile() {
@@ -77,7 +78,7 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testPaths() {
 		$this->config->paths('js', array('/path/to/files', 'WEBROOT/js'));
-		$this->assertEqual(array('/path/to/files', WWW_ROOT . 'js'), $this->config->paths('js'));
+		$this->assertEqual(array(DS . 'path' . DS . 'to' . DS . 'files', WWW_ROOT . 'js'), $this->config->paths('js'));
 	}
 
 	function testAddTarget() {
@@ -130,7 +131,7 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testGet() {
 		$result = $this->config->get('General.debug');
-		$this->assertTrue($result);
+		$this->assertEqual('1', $result);
 
 		$result = $this->config->get('js.cachePath');
 		$this->assertEqual(WWW_ROOT . 'cache_js', $result);
