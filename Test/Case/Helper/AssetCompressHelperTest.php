@@ -1,9 +1,13 @@
 <?php
 
-App::import('Helper', array('AssetCompress.AssetCompress', 'Html', 'Javascript'));
+App::uses('ObjectCollection', 'Utility');
+App::uses('AssetConfig', 'AssetCompress.Lib');
+App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('AppHelper', 'View/Helper');
 
 
-class AssetCompressHelperTestCase extends CakeTestCase {
+class AssetCompressHelperTest extends CakeTestCase {
 /**
  * start a test
  *
@@ -11,13 +15,19 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  **/
 	function startTest() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
-		$this->Helper = new AssetCompressHelper(array('noconfig' => true));
+
+		$controller = null;
+		$View = $this->getMock('View', array(), array(&$controller));
+		$View->request = new CakeRequest(null, false);
+
+		$this->Helper = new AssetCompressHelper($View, array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
 		$this->Helper->config($Config);
-		$this->Helper->Html = new HtmlHelper();
+
+		$this->Helper->Html = new HtmlHelper($View);
 
 		Router::reload();
 		Configure::write('debug', 2);
@@ -347,8 +357,8 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 
 		$filename = TMP . 'asset_test.v' . time() . '.js';
 		touch($filename);
-
 		$result = $this->Helper->script('asset_test.js');
+
 		$this->assertTrue(strpos($result, $filename) !== false);
 		unlink($filename);
 	}
