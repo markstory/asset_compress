@@ -1,11 +1,11 @@
 <?php
-App::import('Lib', 'AssetCompress.filter/Sprockets');
+App::uses('Sprockets', 'AssetCompress.Filter');
 
 class SprocketsTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->_jsDir = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS;
+		$this->_jsDir = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'js' . DS;
 
 		$this->filter = new Sprockets();
 		$settings = array(
