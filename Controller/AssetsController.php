@@ -12,7 +12,7 @@ class AssetsController extends AssetCompressAppController {
 	public $_Config;
 
 	public function beforeFilter() {
-		$this->configFile = CONFIGS . 'asset_compress.ini';
+		$this->configFile = APP . 'Config' . DS . 'asset_compress.ini';
 	}
 
 /**

@@ -48,7 +48,7 @@ class AssetConfig {
  */
 	public static function buildFromIniFile($iniFile = null, $constants = array()){
 		if (empty($iniFile)) {
-			$iniFile = CONFIGS . 'asset_compress.ini';
+			$iniFile = APP . 'Config' . DS . 'asset_compress.ini';
 		}
 		
 		// If the AssetConfig is in cache, means that user had General.cacheConfig in their ini.
