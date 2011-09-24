@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetFilter');
+App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * A YUI Compressor adapter for compressing Javascript.

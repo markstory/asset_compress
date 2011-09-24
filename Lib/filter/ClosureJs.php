@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetFilter');
+App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * A Google Closure compressor adapter for compressing Javascript.

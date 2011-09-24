@@ -1,6 +1,7 @@
 <?php
 
-App::import('Controller', 'AssetCompress.Assets');
+App::uses('AssetCompressAppController', 'AssetCompress.Controller');
+App::uses('AssetsController', 'AssetCompress.Controller');
 
 class TestAssetsController extends AssetsController {
 	public function render() {

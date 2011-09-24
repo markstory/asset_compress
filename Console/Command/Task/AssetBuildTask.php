@@ -1,9 +1,9 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetConfig');
-App::import('Lib', 'AssetCompress.AssetCache');
-App::import('Lib', 'AssetCompress.AssetCompiler');
+App::uses('AssetConfig', 'AssetCompress.Lib');
+App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('AssetCompiler', 'AssetCompress.Lib');
 
-App::import('Core', 'Folder');
+App::uses('Folder', 'Utility');
 
 class AssetBuildTask extends Shell {
 	

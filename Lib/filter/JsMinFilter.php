@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetFilterInterface');
+App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * JsMin filter.

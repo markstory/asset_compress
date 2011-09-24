@@ -1,6 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetScanner');
-App::import('Lib', 'AssetCompress.AssetFilterCollection');
+App::uses('AssetScanner', 'AssetCompress.Lib');
+App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 
 /**
  * Compiles a set of assets together, and applies filters.

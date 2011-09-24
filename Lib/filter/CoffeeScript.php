@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetFilterInterface');
+App::uses('AssetFilter', 'AssetCompress.Lib');
 /**
  * Pre-processing filter that adds support for CoffeeScript files.
  *

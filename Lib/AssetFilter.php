@@ -33,6 +33,7 @@ interface AssetFilterInterface {
 	public function settings($settings);
 }
 
+App::uses('AssetProcess', 'AssetCompress.Lib');
 
 /**
  * A simple base class you can build filters on top of 
@@ -87,7 +88,6 @@ class AssetFilter implements AssetFilterInterface {
  * @return The result of the command.
  */
 	protected function _runCmd($cmd, $content, $environment = null) {
-		App::import('Lib', 'AssetCompress.AssetProcess');
 		$Process = new AssetProcess();
 		$Process->environment($environment);
 		$Process->command($cmd)->run($content);
