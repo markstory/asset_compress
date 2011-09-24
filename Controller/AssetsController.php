@@ -24,17 +24,17 @@ class AssetsController extends AssetCompressAppController {
 		$Config = $this->_getConfig();
 
 		if (
-			isset($this->params['url']['ext']) &&
-			in_array($this->params['url']['ext'], $Config->extensions())
+			isset($this->request->params['url']['ext']) &&
+			in_array($this->request->params['url']['ext'], $Config->extensions())
 		) {
-			$build .= '.' . $this->params['url']['ext'];
+			$build .= '.' . $this->request->params['url']['ext'];
 		}
 
 		// dynamic build file
 		if (Configure::read('debug') > 0 && $Config->files($build) === array()) {
 			$files = array();
-			if (isset($this->params['url']['file'])) {
-				$files = $this->params['url']['file'];
+			if (isset($this->request->params['url']['file'])) {
+				$files = $this->request->params['url']['file'];
 			}
 			$Config->files($build, $files);
 		}
@@ -48,12 +48,12 @@ class AssetsController extends AssetCompressAppController {
 			}
 		} catch (Exception $e) {
 			$this->log($e->getMessage());
-			$this->header('HTTP/1.1 404 Not Found');
+			$this->response->header('HTTP/1.1 404 Not Found');
 			$this->autoRender = false;
 			return;
 		}
 
-		$this->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));
+		$this->response->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));
 		$this->set('contents', $contents);
 		$this->render('contents');
 	}
