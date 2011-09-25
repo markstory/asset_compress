@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . DS . 'AssetcompressGroupTestCase.php';
 
-class AllDebugKitTest extends AssetcompressGroupTestCase {
+class AllAssetCompressTest extends AssetcompressGroupTestCase {
 /**
  *
  *
