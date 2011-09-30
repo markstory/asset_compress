@@ -67,6 +67,10 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
   extension will be read off of the build file name. Instead of
   `js_library.js` you can just use `library.js` as the build name.
 * Controller/view javascript files are now combined into minified asset automatically now.
+* When using the shell, asset targets that are still fresh will be
+  skipped on subsequent builds.  A target is fresh if the build file's
+  mtime is later than all of the files that go into the target. This
+  behavior can be ignored using the `-force` option.
 
 #### 0.4
 
