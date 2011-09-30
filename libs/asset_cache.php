@@ -1,4 +1,6 @@
 <?php
+App::import('Lib', 'AssetCompress.AssetScanner');
+
 /**
  * Writes compiled assets to the filesystem
  * with optional timestamps.
@@ -29,6 +31,40 @@ class AssetCache {
 			$filename = $this->_timestampFilename($filename);
 		}
 		return file_put_contents($path . $filename, $content);
+	}
+
+/**
+ * Check to see if a cached build file is 'fresh'.
+ * Fresh cached files have timestamps newer than all of the component
+ * files.
+ *
+ * @param string $target The target file being built.
+ * @return boolean
+ */
+	public function isFresh($target)
+	{
+		$ext = $this->_Config->getExt($target);
+		$files = $this->_Config->files($target);
+		$buildFile = $this->_Config->cachePath($ext) . $target;
+
+		if ($this->_Config->get($ext . '.timestamp') == true) {
+			$buildFile = $this->_timestampFilename($buildFile);
+		}
+
+		if (!file_exists($buildFile)) {
+			return false;
+		}
+		$buildTime = filemtime($buildFile);
+		$Scanner = new AssetScanner($this->_Config->paths($ext));
+
+		foreach ($files as $file) {
+			$path = $Scanner->find($file);
+			$time = filemtime($path);
+			if ($time >= $buildTime) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	protected function _timestampFilename($file) {

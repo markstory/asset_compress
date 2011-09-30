@@ -6,10 +6,11 @@ class AssetCacheTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'integration.ini';
 
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->config->cachePath('js', TMP);
+		$this->config->set('js.timestamp', true);
 		$this->cache = new AssetCache($this->config);
 	}
 
@@ -43,4 +44,26 @@ class AssetCacheTest extends CakeTestCase {
 		$contents = file_get_contents(TMP . 'test.v' . $time . '.js');
 		$this->assertEqual('Timestamp file.', $contents);
 	}
+
+	function testIsFreshNoBuild(){
+		$this->assertFalse($this->cache->isFresh('libs.js'));
+	}
+
+	function testIsFreshSuccess() {
+		touch(TMP . '/libs.js');
+
+		$this->assertTrue($this->cache->isFresh('libs.js'));
+		unlink(TMP . '/libs.js');
+	}
+
+	function testIsFreshFailure() {
+		// touch the build and component file.
+		// this triggers stale smells.
+		touch(TMP . '/libs.js');
+		touch($this->_pluginPath . 'tests/test_files/js/classes/base_class.js');
+
+		$this->assertFalse($this->cache->isFresh('libs.js'));
+		unlink(TMP . '/libs.js');
+	}
+	
 }
