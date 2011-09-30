@@ -154,6 +154,7 @@ class AssetCompressShell extends Shell {
 		$this->out();
 		$this->out('Options:');
 		$this->out("config - Choose the config file to use.  Defaults to app/config/asset_compress.ini.");
+		$this->out("force  - Force assets to rebuild. Ignores timestamp rules.");
 		$this->out();
 	}
 }

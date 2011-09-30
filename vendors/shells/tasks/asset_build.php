@@ -236,7 +236,7 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildTarget($build) {
-		if ($this->Cacher->isFresh($build)) {
+		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
 			$this->out('Skip building ' . $build . ' existing file is still fresh.');
 			return;
 		}
