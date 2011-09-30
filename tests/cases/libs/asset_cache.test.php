@@ -50,20 +50,11 @@ class AssetCacheTest extends CakeTestCase {
 	}
 
 	function testIsFreshSuccess() {
+		$this->config->set('js.timestamp', false);
 		touch(TMP . '/libs.js');
 
 		$this->assertTrue($this->cache->isFresh('libs.js'));
 		unlink(TMP . '/libs.js');
 	}
 
-	function testIsFreshFailure() {
-		// touch the build and component file.
-		// this triggers stale smells.
-		touch(TMP . '/libs.js');
-		touch($this->_pluginPath . 'tests/test_files/js/classes/base_class.js');
-
-		$this->assertFalse($this->cache->isFresh('libs.js'));
-		unlink(TMP . '/libs.js');
-	}
-	
 }

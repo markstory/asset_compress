@@ -34,6 +34,8 @@ class AssetBuildTask extends Shell {
  */
 	public function setConfig(AssetConfig $Config) {
 		$this->_Config = $Config;
+		$this->Compiler = new AssetCompiler($this->_Config);
+		$this->Cacher = new AssetCache($this->_Config);
 	}
 
 /**
@@ -234,12 +236,14 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildTarget($build) {
-		$this->out('Saving file for ' . $build);
-		$Compiler = new AssetCompiler($this->_Config);
-		$Cacher = new AssetCache($this->_Config);
+		if ($this->Cacher->isFresh($build)) {
+			$this->out('Skip building ' . $build . ' existing file is still fresh.');
+			return;
+		}
 		try {
-			$contents = $Compiler->generate($build);
-			$Cacher->write($build, $contents);
+			$this->out('Saving file for ' . $build);
+			$contents = $this->Compiler->generate($build);
+			$this->Cacher->write($build, $contents);
 		} catch (Exception $e) {
 			$this->err('Error: ' . $e->getMessage());
 		}
