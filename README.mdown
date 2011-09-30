@@ -64,7 +64,8 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * Ini file naming for build files made simpler. Instead of having to
   prefix sections with the extension you can omit the prefix.  The
-  extension will be read off of the build file name.
+  extension will be read off of the build file name. Instead of
+  `js_library.js` you can just use `library.js` as the build name.
 * Controller/view javascript files are now combined into minified asset automatically now.
 
 #### 0.4
