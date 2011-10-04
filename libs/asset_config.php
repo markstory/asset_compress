@@ -136,7 +136,7 @@ class AssetConfig {
 				// extension section
 				$AssetConfig->addExtension($section, $values);
 			} elseif (strtolower($section) === self::GENERAL) {
-				$config['General'] = $values;
+				$AssetConfig->set('General', $values);
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
