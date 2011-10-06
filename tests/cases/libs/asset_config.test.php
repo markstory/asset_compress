@@ -19,7 +19,7 @@ class AssetConfigTest extends CakeTestCase {
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->assertTrue($config->get('js.timestamp'));
-		$this->assertTrue($config->get('General.writeCache'));
+		$this->assertTrue($config->general('writeCache'));
 	}
 
 	function testExceptionOnBogusFile() {
@@ -155,10 +155,10 @@ class AssetConfigTest extends CakeTestCase {
 	}
 
 	function testCachingOn() {
-		$this->config->set('General.writeCache', false);
+		$this->config->general('writeCache', false);
 		$this->assertFalse($this->config->cachingOn('libs.js'));
 
-		$this->config->set('General.writeCache', true);
+		$this->config->general('writeCache', true);
 		$this->config->cachePath('js', '/some/path');
 		$this->assertTrue($this->config->cachingOn('libs.js'));
 	}
@@ -168,8 +168,8 @@ class AssetConfigTest extends CakeTestCase {
 	}
 
 	function testReadTimestampFileUsingFiles() {
-		$this->config->set('General.cacheConfig', false);
-		$this->config->set('General.timestampFile', true);
+		$this->config->general('cacheConfig', false);
+		$this->config->general('timestampFile', true);
 
 		$time = time();
 		$this->config->writeTimestampFile($time);
@@ -181,8 +181,8 @@ class AssetConfigTest extends CakeTestCase {
 	}
 
 	function testReadTimestampFileUsingCache() {
-		$this->config->set('General.cacheConfig', true);
-		$this->config->set('General.timestampFile', true);
+		$this->config->general('cacheConfig', true);
+		$this->config->general('timestampFile', true);
 
 		$time = time();
 		$this->config->writeTimestampFile($time);
@@ -200,4 +200,14 @@ class AssetConfigTest extends CakeTestCase {
 		$result = $this->config->extensions();
 		$this->assertEqual(array('js', 'css'), $result);
 	}
+
+	function testGeneral() {
+		$this->config->set('general.cacheConfig', true);
+		$result = $this->config->general('cacheConfig');
+		$this->assertTrue($result);
+
+		$result = $this->config->general('non-existant');
+		$this->assertNull($result);
+	}
+
 }

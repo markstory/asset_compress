@@ -174,7 +174,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  */
 	function testMagicHashBuildFileUse() {
 		$config = $this->Helper->config();
-		$config->set('General.writeCache', true);
+		$config->general('writeCache', true);
 		$config->cachePath('js', TMP);
 
 		$this->Helper->addScript('libraries', ':hash-default');
@@ -292,7 +292,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  */
 	function testLinkingBuiltFiles() {
 		$config = $this->Helper->config();
-		$config->set('General.writeCache', true);
+		$config->general('writeCache', true);
 		$config->cachePath('js', TMP);
 		$config->files('asset_test.js', array('one.js'));
 
@@ -340,7 +340,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  */
 	function testTimestampping() {
 		$config = $this->Helper->config();
-		$config->set('General.writeCache', true);
+		$config->general('writeCache', true);
 		$config->set('js.timestamp', true);
 		$config->cachePath('js', TMP);
 		$config->files('asset_test.js', array('one.js'));

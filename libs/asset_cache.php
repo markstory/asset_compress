@@ -73,7 +73,7 @@ class AssetCache {
 		$ext = substr($file, $pos);
 		$time = time();
 
-		if ($this->_Config->get('General.timestampFile')) {
+		if ($this->_Config->general('timestampFile')) {
 			$time = $this->_Config->readTimestampFile();
 		}
 		return $name . '.v' . $time . $ext;

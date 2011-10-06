@@ -60,7 +60,7 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function clear() {
-		if ($this->_Config->get('General.timestampFile')) {
+		if ($this->_Config->general('timestampFile')) {
 			$this->clear_build_ts();
 		}
 		

@@ -36,7 +36,7 @@ class AssetCacheTest extends CakeTestCase {
 
 
 	function testWriteTimestampUsingTimestampFile() {
-		$this->config->set('General.timestampFile', true);
+		$this->config->general('timestampFile', true);
 		$time = 1235;
 		$this->config->writeTimestampFile($time);
 

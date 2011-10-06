@@ -267,7 +267,7 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 		
-		if ($this->_Config->get('css.timestamp') && $this->_Config->get('General.timestampFile')) {
+		if ($this->_Config->get('css.timestamp') && $this->_Config->general('timestampFile')) {
 			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('css');
 			$path = '/' . str_replace(WWW_ROOT, '', $path);
@@ -318,7 +318,7 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		if ($this->_Config->get('js.timestamp') && $this->_Config->get('General.timestampFile')) {
+		if ($this->_Config->get('js.timestamp') && $this->_Config->general('timestampFile')) {
 			//If a timestampFile is being used, don't spend time looking on the local filesystem.
 			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('js');

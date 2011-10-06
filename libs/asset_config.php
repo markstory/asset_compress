@@ -136,7 +136,7 @@ class AssetConfig {
 				// extension section
 				$AssetConfig->addExtension($section, $values);
 			} elseif (strtolower($section) === self::GENERAL) {
-				$AssetConfig->set('General', $values);
+				$AssetConfig->set(self::GENERAL, $values);
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
@@ -158,7 +158,7 @@ class AssetConfig {
 			}
 		}
 
-		if (!empty($config['General']['cacheConfig'])) {
+		if ($AssetConfig->general('cacheConfig')) {
 			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
 		}
 		return $AssetConfig;
@@ -263,12 +263,12 @@ class AssetConfig {
  * @throws RuntimeException if useTsFile is true and it cant read the TS from the file 
  */
 	public function readTimestampFile() {
-		if (!$this->get('General.timestampFile')) {
+		if (!$this->general('timestampFile')) {
 			return false;
 		}
 
 		$time = false;
-		$cachedConfig = $this->get('General.cacheConfig');
+		$cachedConfig = $this->general('cacheConfig');
 		if ($cachedConfig) {
 			$time =  Cache::read(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
 		}
@@ -292,7 +292,7 @@ class AssetConfig {
  * @throws RuntimeException if it cant write to timestamp file
  */	
 	public function writeTimestampFile($timeStamp) {
-		if (!$this->get('General.timestampFile')) {
+		if (!$this->general('timestampFile')) {
 			return false;
 		}
 
@@ -301,7 +301,7 @@ class AssetConfig {
 			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TIME_FILE));
 		}
 
-		if ($this->get('General.cacheConfig')) {
+		if ($this->general('cacheConfig')) {
 			Cache::write(self::CACHE_BUILD_TIME_KEY, $timeStamp, self::CACHE_CONFIG);
 		}
 		return true;
@@ -424,6 +424,22 @@ class AssetConfig {
 	}
 
 /**
+ * Get / set values from the General section.  This is preferred
+ * to using get()/set() as you don't run the risk of making a 
+ * mistake in General's casing.
+ *
+ * @param string $key The key to read/write
+ * @param mixed $value The value to set.
+ * @return mixed Null when writing.  Either a value or null when reading.
+ */
+	public function general($key, $value = null) {
+		if ($value === null) {
+			return isset($this->_data[self::GENERAL][$key]) ? $this->_data[self::GENERAL][$key] : null;
+		}
+		$this->_data[self::GENERAL][$key] = $value;
+	}
+
+/**
  * Check to see if caching is on for an extension.
  * Caching is controlled by General.writeCache and the matching 
  * extension having a cachePath.
@@ -433,7 +449,7 @@ class AssetConfig {
  */
 	public function cachingOn($target) {
 		$ext = $this->getExt($target);
-		if ($this->get('General.writeCache') && $this->cachePath($ext)) {
+		if ($this->general('writeCache') && $this->cachePath($ext)) {
 			return true;
 		}
 		return false;
@@ -473,7 +489,8 @@ class AssetConfig {
  */
 	public function extensions() {
 		$exts = array_flip(array_keys($this->_data));
-		unset($exts[self::FILTERS], $exts['General']);
+		unset($exts[self::FILTERS], $exts[self::GENERAL]);
 		return array_keys($exts);
 	}
+
 }
