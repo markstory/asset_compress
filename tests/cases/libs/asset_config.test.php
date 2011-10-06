@@ -210,4 +210,19 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertNull($result);
 	}
 
+/**
+ * Test that the default paths work.
+ * 
+ */
+	function testDefaultConventions() {
+		$ini = dirname($this->testConfig) . DS . 'bare.ini';
+		$config = AssetConfig::buildFromIniFile($ini);
+
+		$result = $config->paths('js');
+		$this->assertEqual(array(WWW_ROOT . 'js/**'), $result);
+
+		$result = $config->paths('css');
+		$this->assertEqual(array(WWW_ROOT . 'css/**'), $result);
+	}
+
 }

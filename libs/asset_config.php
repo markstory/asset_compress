@@ -15,6 +15,21 @@ class AssetConfig {
 	protected $_data = array();
 
 /**
+ * Defaults and conventions for configuration.
+ * These defaults are used unless a key is redefined.
+ *
+ * @var array
+ */
+	protected static $_defaults = array(
+		'js' => array(
+			'paths' => array('WEBROOT/js/**')
+		),
+		'css' => array(
+			'paths' => array('WEBROOT/css/**')
+		),
+	);
+
+/**
  * Names of normal extensions that Assetcompress could
  * handle.
  *
@@ -130,17 +145,24 @@ class AssetConfig {
  * @return AssetConfig
  */
 	protected static function _parseConfig($config, $constants) {
-		$AssetConfig = new AssetConfig(array(), $constants);
+		$AssetConfig = new AssetConfig(self::$_defaults, $constants);
 		foreach ($config as $section => $values) {
 			if (in_array($section, self::$_extensionTypes)) {
-				// extension section
+				// extension section, merge in the defaults.
+				$defaults = $AssetConfig->get($section);
+				if ($defaults) {
+					$values = array_merge($defaults, $values);
+				}
 				$AssetConfig->addExtension($section, $values);
+
 			} elseif (strtolower($section) === self::GENERAL) {
 				$AssetConfig->set(self::GENERAL, $values);
+
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
 				$AssetConfig->filterConfig($name, $values);
+
 			} else {
 				$lastDot = strrpos($section, '.') + 1;
 				$extension = substr($section, $lastDot);
