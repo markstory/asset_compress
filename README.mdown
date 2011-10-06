@@ -71,6 +71,9 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
   skipped on subsequent builds.  A target is fresh if the build file's
   mtime is later than all of the files that go into the target. This
   behavior can be ignored using the `-force` option.
+* If you don't define the `paths[]` keys in your js and css extensions,
+  AssetCompress will recursively include all paths in the standard
+  CakePHP directories.
 
 #### 0.4
 
