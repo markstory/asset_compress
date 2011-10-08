@@ -47,10 +47,7 @@ class AssetsController extends AssetCompressAppController {
 				$Cache->write($build, $contents);
 			}
 		} catch (Exception $e) {
-			$this->log($e->getMessage());
-			$this->response->header('HTTP/1.1 404 Not Found');
-			$this->autoRender = false;
-			return;
+			throw new NotFoundException();
 		}
 
 		$this->response->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));

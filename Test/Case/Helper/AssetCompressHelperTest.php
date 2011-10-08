@@ -1,6 +1,5 @@
 <?php
-
-App::uses('ObjectCollection', 'Utility');
+App::uses('View', 'View');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
 App::uses('HtmlHelper', 'View/Helper');
@@ -310,6 +309,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		$this->assertTrue($config->cachingOn('asset_test.js'));
 		$result = $this->Helper->script('asset_test.js');
+
 		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
 		unlink(TMP . 'asset_test.js');
 	}
