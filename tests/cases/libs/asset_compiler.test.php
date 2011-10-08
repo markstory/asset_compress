@@ -90,4 +90,27 @@ body {
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+
+	function testCombineThemeFileWithNonTheme() {
+		App::build(array(
+			'views' => array($this->_testFiles . 'views' . DS)
+		));
+		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
+		$Config->paths('css', array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS . '**'
+		));
+		$Config->theme('red');
+		$Compiler = new AssetCompiler($Config);
+
+		$result = $Compiler->generate('combined.css');
+		$expected = <<<TEXT
+@import url("reset/reset.css");
+#nav {
+	width:100%;
+}body {
+	color: red !important;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
 }
