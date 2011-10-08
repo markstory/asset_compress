@@ -37,7 +37,7 @@ class AssetBuildTest extends CakeTestCase {
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testFilePath = $this->_pluginPath . 'tests/test_files/views/';
+		$this->testFilePath = $this->_pluginPath . 'tests/test_files/views/parse/';
 
 		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 		AssetConfig::clearAllCachedKeys();
