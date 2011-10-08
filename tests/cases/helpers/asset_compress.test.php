@@ -370,4 +370,32 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
+/**
+ * test auto inclusion of view js files
+ *
+ * @return void
+ */
+	function testAutoInclusion() {
+		$config = $this->Helper->config();
+		$config->paths('js', array(dirname(dirname(dirname(__FILE__))) . DS . 'test_files' . DS . 'js' . DS));
+		
+		$this->Helper->config($config);
+		$this->Helper->params = array(
+			'controller' => 'posts',
+			'action' => 'add'
+		);
+		$this->Helper->afterRender();
+		
+		$hash = md5('views/posts/add');
+		$result = $this->Helper->includeAssets();
+		$expected = array(
+			'script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/' . $hash . '.js?file%5B0%5D=views%2Fposts%2Fadd'
+			),
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
 }
