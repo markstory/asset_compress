@@ -510,6 +510,16 @@ class AssetConfig {
 	}
 
 /**
+ * Set the active theme for building assets.
+ *
+ * @param string $theme The theme name.
+ * @return void
+ */
+	public function setTheme($theme) {
+		$this->_theme = $theme;
+	}
+
+/**
  * Get the list of extensions this config object supports.
  *
  * @return array Extension list.
