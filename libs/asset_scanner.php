@@ -58,6 +58,7 @@ class AssetScanner {
  */
 	protected function _generateTree($path) {
 		$paths = glob($path, GLOB_ONLYDIR);
+		array_unshift($paths, dirname($path));
 		return $paths;
 	}
 

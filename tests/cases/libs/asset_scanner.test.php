@@ -40,6 +40,14 @@ class AssetScannerTest extends CakeTestCase {
 		);
 		$scanner = new AssetScanner($paths);
 
+		$result = $scanner->paths();
+		$expected = array(
+			$this->_testFiles . 'js' . DS,
+			$this->_testFiles . 'js' . DS . 'classes' . DS,
+			$this->_testFiles . 'js' . DS . 'secondary' . DS
+		);
+		$this->assertEqual($expected, $result);
+
 		$result = $scanner->find('base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
