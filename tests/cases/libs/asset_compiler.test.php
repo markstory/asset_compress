@@ -6,6 +6,7 @@ App::import('Libs', 'AssetCompress.AssetConfig');
 class AssetCompilerTest extends CakeTestCase {
 
 	function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = App::pluginPath('AssetCompress') . 'tests' . DS . 'test_files' . DS;
 		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';

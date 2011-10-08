@@ -81,5 +81,22 @@ class AssetScannerTest extends CakeTestCase {
 		$scanner = new AssetScanner($paths);
 		$result = $scanner->find('other.less');
 		$expected = $this->_testFiles . 'css' . DS . 'other.less';
+		$this->assertEqual($expected, $result);
+	}
+
+	function testResolveThemePaths() {
+		App::build(array(
+			'views' => array($this->_testFiles . 'views' . DS)
+		));
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths, 'blue');
+		$result = $scanner->find('t:theme.css');
+		$expected = $this->_testFiles . 'views' . DS . 'themed' . DS . 'blue' . DS . 'webroot' . DS . 'theme.css';
+		$this->assertEqual($expected, $result);
+
+		$result = $scanner->find('theme:theme.css');
+		$this->assertEqual($expected, $result);
 	}
 }
