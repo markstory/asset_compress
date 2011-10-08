@@ -83,6 +83,13 @@ class AssetConfigTest extends CakeTestCase {
 	function testAddTarget() {
 		$this->config->addTarget('testing.js', array('one.js', 'two.js'));
 		$this->assertEqual(array('one.js', 'two.js'), $this->config->files('testing.js'));
+
+		$this->config->addTarget('testing-two.js', array(
+			'files' => array('one.js', 'two.js'),
+			'filters' => array('uglify'),
+			'theme' => true
+		));
+		$this->assertEqual(array('one.js', 'two.js'), $this->config->files('testing-two.js'));
 	}
 
 	function testGetExt() {

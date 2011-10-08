@@ -174,9 +174,7 @@ class AssetConfig {
 				}
 
 				// must be a build target.
-				$files = isset($values['files']) ? $values['files'] : array();
-				$filters = isset($values['filters']) ? $values['filters'] : array();
-				$AssetConfig->addTarget($key, $files, $filters);
+				$AssetConfig->addTarget($key, $values);
 			}
 		}
 
@@ -494,14 +492,21 @@ class AssetConfig {
  * Create a new build target.
  *
  * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
- * @param array $files Files to combine the build file from.
+ * @param array $config Config data for the target.  Should contain files, filters and theme key.
+ * @param array $filters The filters for the build (deprecated)
  */
-	public function addTarget($target, array $files, $filters = array()) {
+	public function addTarget($target, array $config, $filters = array()) {
 		$ext = $this->getExt($target);
-		$this->_data[$ext][self::TARGETS][$target] = array(
-			'files' => $files,
-			'filters' => $filters
-		);
+
+		if (!empty($filters) || !isset($config['files'])) {
+			// old method behavior.
+			$config = array(
+				'files' => $config,
+				'filters' => $filters,
+				'theme' => false
+			);
+		}
+		$this->_data[$ext][self::TARGETS][$target] = $config;
 	}
 
 /**
