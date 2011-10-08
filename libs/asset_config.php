@@ -523,6 +523,17 @@ class AssetConfig {
 	}
 
 /**
+ * Check if a build target is themed.
+ *
+ * @param string $target A build target.
+ * @return boolean
+ */
+	public function isThemed($target) {
+		$ext = $this->getExt($target);
+		return !empty($this->_data[$ext][self::TARGETS][$target]['theme']);
+	}
+
+/**
  * Get the list of extensions this config object supports.
  *
  * @return array Extension list.

@@ -276,7 +276,7 @@ class AssetCompressHelper extends AppHelper {
 		} else {
 			if ($this->useDynamicBuild($file)) {
 				$route = $this->_getRoute($file);
-			} else {			
+			} else {
 				$route = $this->_locateBuild($file);
 			}
 		}
@@ -373,6 +373,10 @@ class AssetCompressHelper extends AppHelper {
 		if ($hash) {
 			$build = $hash;
 		}
+		// Theme builds are prefixed with the theme name.
+		if ($this->_Config->isThemed($build)) {
+			$build = $this->theme . '-' . $build;
+		}
 		if (file_exists($path . $build)) {
 			return str_replace(WWW_ROOT, $this->webroot, $path . $build);
 		}
@@ -410,6 +414,9 @@ class AssetCompressHelper extends AppHelper {
 				$params[0] = $hash;
 			}
 			$params['?'] = array('file' => $components);
+		}
+		if ($this->_Config->isThemed($file)) {
+			$params['?']['theme'] = $this->theme;
 		}
 
 		$url = Router::url(array_merge($url, $params));

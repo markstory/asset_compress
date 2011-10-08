@@ -9,7 +9,8 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  *
  * @return void
  **/
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
@@ -28,7 +29,8 @@ class AssetCompressHelperTestCase extends CakeTestCase {
  *
  * @return void
  **/
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Helper);
 	}
 
@@ -369,5 +371,45 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 			))
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that builds using themes defined in the ini file work
+ * with themes.
+ *
+ * @return void
+ */
+	function testDefinedBuildWithThemeNoBuiltAsset() {
+		$this->Helper->theme = 'blue';
+		$config = $this->Helper->config();
+		$config->addTarget('themed.js', array(
+			'theme' => true,
+			'files' => array('libraries.js')
+		));
+		$result = $this->Helper->script('themed.js');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/themed.js?theme=blue'
+			))
+		);
+		$this->assertTags($result, $expected);
+	}
+
+	function testCompiledBuildWithThemes() {
+		$config = $this->Helper->config();
+		$config->general('writeCache', true);
+		$config->cachePath('js', TMP);
+		$config->addTarget('asset_test.js', array(
+			'files' => array('one.js'),
+			'theme' => true
+		));
+
+		touch(TMP . 'blue-asset_test.js');
+
+		$this->Helper->theme = 'blue';
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, TMP . 'blue-asset_test.js') !== false);
+		unlink(TMP . 'blue-asset_test.js');
 	}
 }
