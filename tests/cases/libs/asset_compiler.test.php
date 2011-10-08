@@ -7,17 +7,20 @@ class AssetCompilerTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$testFile = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->_testFiles = App::pluginPath('AssetCompress') . 'tests' . DS . 'test_files' . DS;
+		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
+
+		$testFile = $this->_testFiles . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($testFile);
 		$this->config->paths('js', array(
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS,
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'js' . DS . '*'
+			$this->_testFiles . 'js' . DS,
+			$this->_testFiles . 'js' . DS . '*',
 		));
 		$this->config->paths('css', array(
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS,
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS . '*'
+			$this->_testFiles . 'css' . DS,
+			$this->_testFiles . 'css' . DS . '*',
 		));
 		$this->Compiler = new AssetCompiler($this->config);
 	}
@@ -68,4 +71,23 @@ TEXT;
 		$this->assertEqual($result, $expected);
 	}
 
+	function testCombineThemeFile() {
+		App::build(array(
+			'views' => array($this->_testFiles . 'views' . DS)
+		));
+		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
+		$Config->paths('css', array(
+			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS . '**'
+		));
+		$Config->theme('blue');
+		$Compiler = new AssetCompiler($Config);
+
+		$result = $Compiler->generate('themed.css');
+		$expected = <<<TEXT
+body {
+	color: blue !important;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
 }

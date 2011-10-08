@@ -24,7 +24,7 @@ class AssetCompiler {
  */
 	public function generate($build) {
 		$ext = $this->_Config->getExt($build);
-		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext));
+		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext), $this->_Config->theme());
 		$this->filters = $this->_makeFilters($ext, $build);
 
 		$output = '';
@@ -47,11 +47,12 @@ class AssetCompiler {
 /**
  * Factory method for AssetScanners
  *
- * @param string $ext The extension you want a scanner for.
+ * @param array $paths The paths the scanner should be reading.
+ * @param string $theme The active theme if there is one
  * @return AssetScanner
  */
-	protected function _makeScanner($paths) {
-		return new AssetScanner($paths);
+	protected function _makeScanner($paths, $theme) {
+		return new AssetScanner($paths, $theme);
 	}
 
 /**

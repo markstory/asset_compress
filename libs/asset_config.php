@@ -512,11 +512,14 @@ class AssetConfig {
 /**
  * Set the active theme for building assets.
  *
- * @param string $theme The theme name.
- * @return void
+ * @param string $theme The theme name to set. Null to get
+ * @return mixed Either null on set, or theme on get
  */
-	public function setTheme($theme) {
-		$this->_theme = $theme;
+	public function theme($theme = null) {
+		if ($theme === null) {
+			return isset($this->_data['theme']) ? $this->_data['theme'] : '';
+		}
+		$this->_data['theme'] = $theme;
 	}
 
 /**
