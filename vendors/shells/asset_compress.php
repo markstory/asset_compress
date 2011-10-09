@@ -2,6 +2,7 @@
 App::import('Lib', 'AssetCompress.AssetConfig');
 App::import('Lib', 'AssetCompress.AssetCompiler');
 App::import('Lib', 'AssetCompress.AssetCache');
+App::import('Core', 'Folder');
 
 /**
  * Asset Compress Shell
@@ -36,6 +37,7 @@ class AssetCompressShell extends Shell {
 		if (in_array($this->command, $this->_timestampTasks) && $this->_Config->writeTimestampFile(time())) {
 			$this->out('Generated timestamp file.');
 		}
+		$this->AssetBuild->setThemes($this->_findThemes());
 	}
 
 /**
@@ -138,6 +140,25 @@ class AssetCompressShell extends Shell {
 				continue;
 			}
 		}
+	}
+
+/**
+ * Find all the themes in an application.
+ * This is used to generate theme asset builds.
+ *
+ * @return array Array of theme names.
+ */
+	protected function _findThemes() {
+		$viewpaths = App::path('views');
+		$themes = array();
+		foreach ($viewpaths as $path) {
+			if (is_dir($path . 'themed')) {
+				$Folder = new Folder($path . 'themed');
+				list($dirs, $files) = $Folder->read();
+				$themes = array_merge($themes, $dirs);
+			}
+		}
+		return $themes;
 	}
 
 /**

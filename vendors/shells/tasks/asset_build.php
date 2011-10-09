@@ -8,6 +8,7 @@ App::import('Core', 'Folder');
 class AssetBuildTask extends Shell {
 	
 	protected $_Config;
+	protected $_themes = array();
 	protected $_files = array();
 	protected $_tokens = array();
 	
@@ -36,6 +37,10 @@ class AssetBuildTask extends Shell {
 		$this->_Config = $Config;
 		$this->Compiler = new AssetCompiler($this->_Config);
 		$this->Cacher = new AssetCache($this->_Config);
+	}
+
+	public function setThemes($themes) {
+		$this->_themes = $themes;
 	}
 
 /**
@@ -240,15 +245,29 @@ class AssetBuildTask extends Shell {
 			$this->out('Skip building ' . $build . ' existing file is still fresh.');
 			return;
 		}
+		if ($this->_Config->isThemed($build)) {
+			foreach ($this->_themes as $theme) {
+				$this->_Config->theme($theme);
+				$this->_generateFile($build, $theme);
+			}
+		} else {
+			$this->_generateFile($build);
+		}
+	}
+
+	protected function _generateFile($build, $theme = null) {
+		$name = $build;
+		if ($theme) {
+			$name = $theme . '-' . $build;
+		}
 		try {
-			$this->out('Saving file for ' . $build);
+			$this->out('Saving file for ' . $name);
 			$contents = $this->Compiler->generate($build);
 			$this->Cacher->write($build, $contents);
 		} catch (Exception $e) {
 			$this->err('Error: ' . $e->getMessage());
 		}
 	}
-
 	
 /**
  * Adds an extension if the file doesn't already end with it.

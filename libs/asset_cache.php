@@ -24,8 +24,13 @@ class AssetCache {
 	public function write($filename, $content) {
 		$ext = $this->_Config->getExt($filename);
 		$path = $this->_Config->cachePath($ext);
+
 		if (!is_writable($path)) {
 			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path); 
+		}
+
+		if ($this->_Config->isThemed($filename)) {
+			$filename = $this->_Config->theme() . '-' . $filename;
 		}
 		if ($this->_Config->get($ext . '.timestamp') == true) {
 			$filename = $this->_timestampFilename($filename);
@@ -45,6 +50,11 @@ class AssetCache {
 	{
 		$ext = $this->_Config->getExt($target);
 		$files = $this->_Config->files($target);
+	
+		if ($this->_Config->isThemed($target)) {
+			$target = $this->_Config->theme() . '-' . $target;
+		}
+
 		$buildFile = $this->_Config->cachePath($ext) . $target;
 
 		if ($this->_Config->get($ext . '.timestamp') == true) {
