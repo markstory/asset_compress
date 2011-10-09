@@ -14,6 +14,10 @@ class AssetCompressShell extends Shell {
 
 	public $tasks = array('AssetBuild');
 
+	public $_timestampTasks = array(
+		'build', 'build_ini', 'build_dynamic'
+	);
+
 /**
  * Create the configuration object used in other classes.
  *
@@ -28,6 +32,10 @@ class AssetCompressShell extends Shell {
 		AssetConfig::clearAllCachedKeys();
 		
 		$this->_Config = AssetConfig::buildFromIniFile($config);
+
+		if (in_array($this->command, $this->_timestampTasks) && $this->_Config->writeTimestampFile(time())) {
+			$this->out('Generated timestamp file.');
+		}
 	}
 
 /**
@@ -36,9 +44,6 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
-		if ($this->_Config->writeTimestampFile(time())) {
-			$this->out('Generated timestamp file.');
-		}
 		$this->build_ini();
 		$this->build_dynamic();
 	}
