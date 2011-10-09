@@ -378,7 +378,7 @@ class AssetCompressHelper extends AppHelper {
 			$build = $this->theme . '-' . $build;
 		}
 		if (file_exists($path . $build)) {
-			return str_replace(WWW_ROOT, $this->webroot, $path . $build);
+			return str_replace(WWW_ROOT, '/', $path . $build);
 		}
 		$name = substr($build, 0, strlen($build) - (strlen($ext) + 1));
 		$pattern = $path . $name . '.v[0-9]*.' . $ext;
