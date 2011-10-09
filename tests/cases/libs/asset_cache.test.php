@@ -6,7 +6,9 @@ class AssetCacheTest extends CakeTestCase {
 
 	function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'integration.ini';
+		$this->_testFiles = App::pluginPath('AssetCompress') . 'tests' . DS . 'test_files' . DS;
+		$this->testConfig = $this->_testFiles . 'config' . DS . 'integration.ini';
+		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->config->cachePath('js', TMP);
@@ -55,6 +57,17 @@ class AssetCacheTest extends CakeTestCase {
 
 		$this->assertTrue($this->cache->isFresh('libs.js'));
 		unlink(TMP . '/libs.js');
+	}
+
+	function testThemeFileSaving() {
+		$this->config = AssetConfig::buildFromIniFile($this->_themeConfig);
+		$this->config->theme('blue');
+		$this->config->cachePath('css', TMP);
+		$this->cache = new AssetCache($this->config);
+
+		$this->cache->write('themed.css', 'theme file.');
+		$contents = file_get_contents(TMP . 'blue-themed.css');
+		$this->assertEqual('theme file.', $contents);
 	}
 
 }
