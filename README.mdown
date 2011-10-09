@@ -74,6 +74,10 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * If you don't define the `paths[]` keys in your js and css extensions,
   AssetCompress will recursively include all paths in the standard
   CakePHP directories.
+* Theme support has been added.  When defining a build you can set
+  `theme = true` in the build definition.  When the shell is run, a
+  build will be created for every theme installed.  Themes support only
+  works for builds defined in the ini file.
 
 #### 0.4
 
