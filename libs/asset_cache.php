@@ -51,7 +51,9 @@ class AssetCache {
 		$ext = $this->_Config->getExt($target);
 		$files = $this->_Config->files($target);
 	
+		$theme = null;
 		if ($this->_Config->isThemed($target)) {
+			$theme = $this->_Config->theme();
 			$target = $this->_Config->theme() . '-' . $target;
 		}
 
@@ -65,7 +67,7 @@ class AssetCache {
 			return false;
 		}
 		$buildTime = filemtime($buildFile);
-		$Scanner = new AssetScanner($this->_Config->paths($ext));
+		$Scanner = new AssetScanner($this->_Config->paths($ext), $theme);
 
 		foreach ($files as $file) {
 			$path = $Scanner->find($file);

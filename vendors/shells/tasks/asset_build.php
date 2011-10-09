@@ -241,10 +241,6 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildTarget($build) {
-		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
-			$this->out('Skip building ' . $build . ' existing file is still fresh.');
-			return;
-		}
 		if ($this->_Config->isThemed($build)) {
 			foreach ($this->_themes as $theme) {
 				$this->_Config->theme($theme);
@@ -259,6 +255,10 @@ class AssetBuildTask extends Shell {
 		$name = $build;
 		if ($theme) {
 			$name = $theme . '-' . $build;
+		}
+		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
+			$this->out('Skip building ' . $name . ' existing file is still fresh.');
+			return;
 		}
 		try {
 			$this->out('Saving file for ' . $name);

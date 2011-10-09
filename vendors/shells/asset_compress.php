@@ -113,6 +113,7 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	protected function _clearBuilds($ext) {
+		$themes = $this->_findThemes();
 		$targets = $this->_Config->targets($ext);
 		if (empty($targets)) {
 			$this->err('No ' . $ext . ' build files defined, skipping');
@@ -133,6 +134,12 @@ class AssetCompressShell extends Shell {
 			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
 				list($base, $v, $ext) = explode('.', $name, 3);
 				$base = $base . '.' . $ext;
+			}
+			// themed files
+			foreach ($themes as $theme) {
+				if (strpos($name, $theme) === 0) {
+					list($themePrefix, $base) = explode('-', $name);
+				}
 			}
 			if (in_array($base, $targets)) {
 				$this->out(' - Deleting ' . $path . $name);
