@@ -276,7 +276,7 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-		
+
 		if ($this->_Config->get('css.timestamp') && $this->_Config->get('General.timestampFile')) {
 			$ts = $this->_Config->readTimestampFile();
 			$path = $this->_Config->cachePath('css');
@@ -286,15 +286,20 @@ class AssetCompressHelper extends AppHelper {
 		} else {
 			if ($this->useDynamicBuild($file)) {
 				$route = $this->_getRoute($file);
-			} else {			
+			} else {
 				$route = $this->_locateBuild($file);
 			}
 		}
-		
+
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
 		}
+
+		if (DS == '\\') {
+			$route = str_replace(DS, '/', $route);
+		}
+
 		return $this->Html->css($route, null, $options);
 	}
 
@@ -342,11 +347,16 @@ class AssetCompressHelper extends AppHelper {
 				$route = $this->_locateBuild($file);
 			}
 		}
-		
+
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
 		}
+
+		if (DS == '\\') {
+			$route = str_replace(DS, '/', $route);
+		}
+
 		return $this->Html->script($route, $options);
 	}
 
@@ -400,7 +410,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	protected function _getRoute($file) {
 		$url = $this->options['buildUrl'];
-	
+
 		//escape out of prefixes.
 		$prefixes = Router::prefixes();
 		foreach ($prefixes as $prefix) {

@@ -12,7 +12,7 @@ App::uses('AssetCache', 'AssetCompress.Lib');
  */
 class AssetCompressShell extends Shell {
 
-	public $tasks = array('AssetBuild');
+	public $tasks = array('AssetCompress.AssetBuild');
 
 /**
  * Create the configuration object used in other classes.

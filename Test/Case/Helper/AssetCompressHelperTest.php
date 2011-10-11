@@ -1,4 +1,5 @@
 <?php
+
 App::uses('View', 'View');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
@@ -310,7 +311,8 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->assertTrue($config->cachingOn('asset_test.js'));
 		$result = $this->Helper->script('asset_test.js');
 
-		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
+		$expectedPath = str_replace(DS, '/', TMP . 'asset_test.js');
+		$this->assertTrue(strpos($result, $expectedPath) !== false);
 		unlink(TMP . 'asset_test.js');
 	}
 
@@ -359,7 +361,8 @@ class AssetCompressHelperTest extends CakeTestCase {
 		touch($filename);
 		$result = $this->Helper->script('asset_test.js');
 
-		$this->assertTrue(strpos($result, $filename) !== false);
+		$expectedPath = str_replace(DS, '/', $filename);
+		$this->assertTrue(strpos($result, $expectedPath) !== false);
 		unlink($filename);
 	}
 

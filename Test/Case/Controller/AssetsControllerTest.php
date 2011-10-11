@@ -35,7 +35,7 @@ class AssetsControllerTest extends CakeTestCase {
 	}
 
 	function testDynamicBuildFile() {
-		$this->Controller->request->params['url']['file'] = array('library_file.js', 'lots_of_comments.js');
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 
 		$this->Controller->response
 			->expects($this->once())->method('header')
