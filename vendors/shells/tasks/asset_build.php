@@ -244,18 +244,15 @@ class AssetBuildTask extends Shell {
 		if ($this->_Config->isThemed($build)) {
 			foreach ($this->_themes as $theme) {
 				$this->_Config->theme($theme);
-				$this->_generateFile($build, $theme);
+				$this->_generateFile($build);
 			}
 		} else {
 			$this->_generateFile($build);
 		}
 	}
 
-	protected function _generateFile($build, $theme = null) {
-		$name = $build;
-		if ($theme) {
-			$name = $theme . '-' . $build;
-		}
+	protected function _generateFile($build) {
+		$name = $this->Cacher->buildFileName($build);
 		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
 			$this->out('Skip building ' . $name . ' existing file is still fresh.');
 			return;

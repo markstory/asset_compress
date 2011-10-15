@@ -1,5 +1,7 @@
 <?php
 App::import('Lib', 'AssetCompress.AssetConfig');
+App::import('Lib', 'AssetCompress.AssetCache');
+
 /**
  * AssetCompress Helper.
  *
@@ -13,6 +15,7 @@ class AssetCompressHelper extends AppHelper {
 	public $helpers = array('Html');
 
 	protected $_Config;
+	protected $_AssetCache;
 
 /**
  * Options for the helper
@@ -56,7 +59,8 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function __construct($options = array()) {
 		if (empty($options['noconfig'])) {
-			$this->_Config = AssetConfig::buildFromIniFile();
+			$config = AssetConfig::buildFromIniFile();
+			$this->config($config);
 		}
 	}
 
@@ -73,6 +77,7 @@ class AssetCompressHelper extends AppHelper {
 			return $this->_Config;
 		}
 		$this->_Config = $config;
+		$this->_AssetCache = new AssetCache($config);
 	}
 
 /**
@@ -373,10 +378,9 @@ class AssetCompressHelper extends AppHelper {
 		if ($hash) {
 			$build = $hash;
 		}
-		// Theme builds are prefixed with the theme name.
-		if ($this->_Config->isThemed($build)) {
-			$build = $this->theme . '-' . $build;
-		}
+		$this->_Config->theme($this->theme);
+
+		$build = $this->_AssetCache->buildFileName($build);
 		if (file_exists($path . $build)) {
 			return str_replace(WWW_ROOT, '/', $path . $build);
 		}
