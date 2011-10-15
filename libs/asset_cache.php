@@ -29,9 +29,8 @@ class AssetCache {
 			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path); 
 		}
 
-		if ($this->_Config->isThemed($filename)) {
-			$filename = $this->_Config->theme() . '-' . $filename;
-		}
+		$filename = $this->buildFileName($filename);
+
 		if ($this->_Config->get($ext . '.timestamp') == true) {
 			$filename = $this->_timestampFilename($filename);
 		}
@@ -51,11 +50,8 @@ class AssetCache {
 		$ext = $this->_Config->getExt($target);
 		$files = $this->_Config->files($target);
 	
-		$theme = null;
-		if ($this->_Config->isThemed($target)) {
-			$theme = $this->_Config->theme();
-			$target = $this->_Config->theme() . '-' . $target;
-		}
+		$theme = $this->_Config->theme();
+		$target = $this->buildFileName($target);
 
 		$buildFile = $this->_Config->cachePath($ext) . $target;
 
@@ -77,6 +73,21 @@ class AssetCache {
 			}
 		}
 		return true;
+	}
+
+/**
+ * Get the final filename for a build.  Resolves
+ * theme prefixes and timestamps.
+ *
+ * @param string $target The build target name.
+ * @return string The build filename to cache on disk.
+ */
+	public function buildFileName($target) {
+		$file = $target;
+		if ($this->_Config->isThemed($target)) {
+			$file = $this->_Config->theme() . '-' . $target;
+		}
+		return $file;
 	}
 
 	protected function _timestampFilename($file) {

@@ -70,4 +70,14 @@ class AssetCacheTest extends CakeTestCase {
 		$this->assertEqual('theme file.', $contents);
 	}
 
+	function testBuildFileNameTheme() {
+		$this->config = AssetConfig::buildFromIniFile($this->_themeConfig);
+		$this->config->theme('blue');
+		$this->config->cachePath('css', TMP);
+		$this->cache = new AssetCache($this->config);
+
+		$result = $this->cache->buildFileName('themed.css');
+		$this->assertEqual('blue-themed.css', $result);
+	}
+
 }
