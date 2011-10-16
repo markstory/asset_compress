@@ -29,6 +29,7 @@ class AssetCompressShell extends Shell {
 		AssetConfig::clearAllCachedKeys();
 		$this->_Config = AssetConfig::buildFromIniFile($config);
 		$this->AssetBuild->setThemes($this->_findThemes());
+		$this->out();
 	}
 
 /**
@@ -37,7 +38,13 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
+		$this->out('Building files defined in the ini file');
+		$this->hr();
 		$this->build_ini();
+
+		$this->out();
+		$this->out('Building files in views');
+		$this->hr();
 		$this->build_dynamic();
 	}
 
