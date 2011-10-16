@@ -81,6 +81,15 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
+ * Accessor for the cache object, useful for testing.
+ *
+ * @return AssetCache
+ */
+	public function cache() {
+		return $this->_AssetCache;
+	}
+
+/**
  * Set options, merge with existing options.
  *
  * @return void
@@ -322,22 +331,12 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-
-		if ($this->_Config->get('js.timestamp') && $this->_Config->general('timestampFile')) {
-			//If a timestampFile is being used, don't spend time looking on the local filesystem.
-			$ts = $this->_Config->readTimestampFile();
-			$path = $this->_Config->cachePath('js');
-			$path = '/' . str_replace(WWW_ROOT, '', $path);
-			$name = substr($file, 0, strlen($file) - (3));
-			$route = $path . $name . '.v' . $ts . '.js';
+		if ($this->useDynamicBuild($file)) {
+			$route = $this->_getRoute($file);
 		} else {
-			if ($this->useDynamicBuild($file)) {
-				$route = $this->_getRoute($file);
-			} else {
-				$route = $this->_locateBuild($file);
-			}
+			$route = $this->_locateBuild($file);
 		}
-		
+
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -384,13 +383,6 @@ class AssetCompressHelper extends AppHelper {
 		if (file_exists($path . $build)) {
 			return str_replace(WWW_ROOT, '/', $path . $build);
 		}
-		$name = substr($build, 0, strlen($build) - (strlen($ext) + 1));
-		$pattern = $path . $name . '.v[0-9]*.' . $ext;
-		$matching = glob($pattern);
-		if (empty($matching)) {
-			return false;
-		}
-		return DS . str_replace(WWW_ROOT, '', $matching[0]);
 	}
 
 /**

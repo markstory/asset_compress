@@ -178,6 +178,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$config = $this->Helper->config();
 		$config->general('writeCache', true);
 		$config->cachePath('js', TMP);
+		$config->set('js.timestamp', false);
 
 		$this->Helper->addScript('libraries', ':hash-default');
 		$this->Helper->addScript('thing', ':hash-default');
@@ -295,6 +296,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	function testLinkingBuiltFiles() {
 		$config = $this->Helper->config();
 		$config->general('writeCache', true);
+		$config->set('js.timestamp', false);
 		$config->cachePath('js', TMP);
 		$config->files('asset_test.js', array('one.js'));
 
@@ -347,7 +349,11 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$config->cachePath('js', TMP);
 		$config->files('asset_test.js', array('one.js'));
 
-		$filename = TMP . 'asset_test.v' . time() . '.js';
+		$time = time();
+		$cache = $this->Helper->cache();
+		$cache->setTimestamp('asset_test.js', $time);
+
+		$filename = TMP . 'asset_test.v' . $time . '.js';
 		touch($filename);
 
 		$result = $this->Helper->script('asset_test.js');
@@ -399,6 +405,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 	function testCompiledBuildWithThemes() {
 		$config = $this->Helper->config();
 		$config->general('writeCache', true);
+		$config->set('js.timestamp', false);
 		$config->cachePath('js', TMP);
 		$config->addTarget('asset_test.js', array(
 			'files' => array('one.js'),
