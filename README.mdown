@@ -11,6 +11,8 @@ Asset Compress is CakePHP plugin for helping reduce the number of requests, and 
 * Powerful and flexible filter system allowing you to add your own
   minifiers/pre-processors.
 * Simple configuration file.
+* Incremental builds that don't recompile assets when they don't need to
+  be.
 
 ## Installing
 
@@ -59,6 +61,12 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Ini file flag General.debug was removed.  Instead
   Configure::read('debug') is used.  This means one less configuration
   option to manage.  Use debug = 1 to test output filters.
+* The timestamp file format has changed. Remember to clear all builds
+  when upgrading.
+* A number of internal API changes have been made. If you are using the
+  internals of AssetCompress you may have to update your code.
+* The `General.timestampFile` config option was removed.  Timestamp
+  files are always used now.
 
 *Other changes*
 
@@ -78,6 +86,8 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
   `theme = true` in the build definition.  When the shell is run, a
   build will be created for every theme installed.  Themes support only
   works for builds defined in the ini file.
+* The timestamp file format has changed and contains timestamps for each
+  build.  This was required as part of the incremental builds feature.
 
 #### 0.4
 
