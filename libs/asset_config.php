@@ -277,57 +277,6 @@ class AssetConfig {
 	}
 
 /**
- * Get the value of the timestamp from the asset compress timestamp build file or its cached value
- * 
- * @return mixed false if useTsFile is not set to true in the INI.
- * @throws RuntimeException if useTsFile is true and it cant read the TS from the file 
- */
-	public function readTimestampFile() {
-		if (!$this->general('timestampFile')) {
-			return false;
-		}
-
-		$time = false;
-		$cachedConfig = $this->general('cacheConfig');
-		if ($cachedConfig) {
-			$time =  Cache::read(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
-		}
-		if (empty($time)) {
-			$time = file_get_contents(TMP . self::BUILD_TIME_FILE);
-			if ($cachedConfig) {
-				Cache::write(self::CACHE_BUILD_TIME_KEY, $time, self::CACHE_CONFIG);
-			}
-		}
-		if (empty($time)) {
-			$message = sprintf('Build time file "%s" was empty. You must run the build shell to create the file.', TMP . self::BUILD_TIME_FILE);
-			throw new RuntimeException($message);
-		}
-		return $time;
-	}
-
-/**
- * Write the timestamp to the TS file and cache if its enabled
- * 
- * @param int $timeStamp The timestamp to save.
- * @throws RuntimeException if it cant write to timestamp file
- */	
-	public function writeTimestampFile($timeStamp) {
-		if (!$this->general('timestampFile')) {
-			return false;
-		}
-
-		$ret = file_put_contents(TMP . self::BUILD_TIME_FILE, $timeStamp);
-		if (empty($ret)) {
-			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TIME_FILE));
-		}
-
-		if ($this->general('cacheConfig')) {
-			Cache::write(self::CACHE_BUILD_TIME_KEY, $timeStamp, self::CACHE_CONFIG);
-		}
-		return true;
-	}
-
-/**
  * Get/set filters for an extension/build file
  *
  * @param string $ext Name of an extension

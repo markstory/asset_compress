@@ -170,38 +170,7 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertTrue($this->config->cachingOn('libs.js'));
 	}
 
-	function testReadTimestampFileWhenDisabled() {
-		$this->assertFalse($this->config->readTimestampFile());
-	}
 
-	function testReadTimestampFileUsingFiles() {
-		$this->config->general('cacheConfig', false);
-		$this->config->general('timestampFile', true);
-
-		$time = time();
-		$this->config->writeTimestampFile($time);
-		$result = $this->config->readTimestampFile();
-
-		$this->assertTrue(is_numeric($result));
-		$this->assertEqual($time, $result);
-		$this->assertFalse(Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG));
-	}
-
-	function testReadTimestampFileUsingCache() {
-		$this->config->general('cacheConfig', true);
-		$this->config->general('timestampFile', true);
-
-		$time = time();
-		$this->config->writeTimestampFile($time);
-
-		// delete the file so we know we hit the cache.
-		unlink(TMP . AssetConfig::BUILD_TIME_FILE);
-
-		$result = $this->config->readTimestampFile();
-
-		$this->assertTrue(is_numeric($result));
-		$this->assertEqual($time, $result);
-	}
 
 	function testExtensions() {
 		$result = $this->config->extensions();
