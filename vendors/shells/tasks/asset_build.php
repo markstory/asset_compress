@@ -257,6 +257,8 @@ class AssetBuildTask extends Shell {
 			$this->out('Skip building ' . $name . ' existing file is still fresh.');
 			return;
 		}
+		$this->Cacher->setTimestamp($build, 0);
+		$name = $this->Cacher->buildFileName($build);
 		try {
 			$this->out('Saving file for ' . $name);
 			$contents = $this->Compiler->generate($build);

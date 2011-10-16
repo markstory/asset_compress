@@ -352,7 +352,8 @@ class AssetCompressHelper extends AppHelper {
  * files using the cachePath. If no cache file exists a dynamic build will be done.
  */
 	public function useDynamicBuild($file) {
-		if (!$this->_Config->cachingOn($file)) {
+		$ext = $this->_Config->getExt($file);
+		if (!$this->_Config->cachePath($ext)) {
 			return true;
 		}
 		if ($this->_locateBuild($file)) {

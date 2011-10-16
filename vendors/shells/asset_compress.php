@@ -15,10 +15,6 @@ class AssetCompressShell extends Shell {
 
 	public $tasks = array('AssetBuild');
 
-	public $_timestampTasks = array(
-		'build', 'build_ini', 'build_dynamic'
-	);
-
 /**
  * Create the configuration object used in other classes.
  *
@@ -31,12 +27,7 @@ class AssetCompressShell extends Shell {
 		}
 
 		AssetConfig::clearAllCachedKeys();
-		
 		$this->_Config = AssetConfig::buildFromIniFile($config);
-
-		if (in_array($this->command, $this->_timestampTasks) && $this->_Config->writeTimestampFile(time())) {
-			$this->out('Generated timestamp file.');
-		}
 		$this->AssetBuild->setThemes($this->_findThemes());
 	}
 
@@ -67,10 +58,8 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function clear() {
-		if ($this->_Config->general('timestampFile')) {
-			$this->clear_build_ts();
-		}
-		
+		$this->clear_build_ts();
+
 		$this->out('Clearing Javascript build files:');
 		$this->hr();
 		$this->_clearBuilds('js');
@@ -86,7 +75,7 @@ class AssetCompressShell extends Shell {
 /**
  * Clears out all the cache keys associated with asset_compress.
  * 
- * Note: method really does nothing here cuz keys are cleared in startup.
+ * Note: method really does nothing here because keys are cleared in startup.
  * This method exists for times when you just want to clear the cache keys
  * associated with asset_compress
  */	
@@ -137,8 +126,8 @@ class AssetCompressShell extends Shell {
 			}
 			// themed files
 			foreach ($themes as $theme) {
-				if (strpos($name, $theme) === 0) {
-					list($themePrefix, $base) = explode('-', $name);
+				if (strpos($base, $theme) === 0) {
+					list($themePrefix, $base) = explode('-', $base);
 				}
 			}
 			if (in_array($base, $targets)) {

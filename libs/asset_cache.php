@@ -84,6 +84,7 @@ class AssetCache {
 		}
 		$data = serialize($data);
 		file_put_contents(TMP . AssetConfig::BUILD_TIME_FILE, $data);
+		chmod(TMP . AssetConfig::BUILD_TIME_FILE, 0777);
 	}
 
 /**
@@ -104,7 +105,7 @@ class AssetCache {
 		}
 		$data = $this->_readTimestamp();
 		$name = $this->buildFileName($build, false);
-		if (isset($data[$name])) {
+		if (!empty($data[$name])) {
 			return $data[$name];
 		}
 		$time = time();
