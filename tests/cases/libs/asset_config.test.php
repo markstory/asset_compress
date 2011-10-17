@@ -10,7 +10,9 @@ class AssetConfigTest extends CakeTestCase {
 		));
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->_testFiles = App::pluginPath('AssetCompress') . 'tests' . DS . 'test_files' . DS;
+		$this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
+		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
@@ -199,6 +201,24 @@ class AssetConfigTest extends CakeTestCase {
 
 		$result = $config->paths('css');
 		$this->assertEqual(array(WWW_ROOT . 'css/**'), $result);
+	}
+
+	function testTheme() {
+		$result = $this->config->theme();
+		$this->assertEqual('', $result);
+
+		$result = $this->config->theme('red');
+		$this->assertEqual('', $result);
+
+		$result = $this->config->theme();
+		$this->assertEqual('red', $result);
+	}
+
+	function testIsThemed() {
+		$this->assertFalse($this->config->isThemed('libs.js'));
+
+		$config = AssetConfig::buildFromIniFile($this->_themeConfig);
+		$this->assertTrue($config->isThemed('themed.css'));
 	}
 
 }
