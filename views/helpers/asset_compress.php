@@ -281,20 +281,12 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 		
-		if ($this->_Config->get('css.timestamp') && $this->_Config->general('timestampFile')) {
-			$ts = $this->_Config->readTimestampFile();
-			$path = $this->_Config->cachePath('css');
-			$path = '/' . str_replace(WWW_ROOT, '', $path);
-			$name = substr($file, 0, strlen($file) - (4));
-			$route = $path . $name . '.v' . $ts . '.css';
+		if ($this->useDynamicBuild($file)) {
+			$route = $this->_getRoute($file);
 		} else {
-			if ($this->useDynamicBuild($file)) {
-				$route = $this->_getRoute($file);
-			} else {
-				$route = $this->_locateBuild($file);
-			}
+			$route = $this->_locateBuild($file);
 		}
-		
+
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
