@@ -28,14 +28,14 @@ class AssetCacheTest extends CakeTestCase {
 	}
 
 	function testWriteTimestamp() {
-		$this->assertEqual('1', $this->config->get('js.timestamp'));
+		$this->assertTrue($this->config->get('js.timestamp'));
 
 		$now = time();
 		$this->cache->setTimestamp('test.js', $now);
 		$this->cache->write('test.js', 'Some content');
 
 		$contents = file_get_contents(TMP . 'test.v' . $now . '.js');
-		$this->assertEqual('Some content', $contents);
+		$this->assertEquals('Some content', $contents);
 		unlink(TMP . 'test.v' . $now . '.js');
 	}
 
