@@ -72,7 +72,8 @@ class AssetCompressShell extends Shell {
 		$this->hr();
 		$this->_clearBuilds('css');
 
-		$this->out('Complete');
+		$this->out();
+		$this->out('<success>Complete</success>');
 	}
 
 /**
@@ -183,27 +184,5 @@ class AssetCompressShell extends Shell {
 				'help' => 'Force assets to rebuild.  Ignores timestamp rules.',
 				'boolean' => true
 			));
-	}
-/**
- * help
- *
- * @return void
- */
-	public function help() {
-		$this->out('Asset Compress Shell');
-		$this->hr();
-		$this->out();
-		$this->out('Usage: cake asset_compress <command> <options> <args>');
-		$this->out();
-		$this->out('Commands:');
-		$this->out("clear - Clears all existing build files.");
-		$this->out("build - Builds all compressed files.");
-		$this->out("build_ini - Build compressed files defined in the ini file.");
-		$this->out("build_dynamic - Build compressed files defined in view files.");
-		$this->out();
-		$this->out('Options:');
-		$this->out("config - Choose the config file to use.  Defaults to app/config/asset_compress.ini.");
-		$this->out("force  - Force assets to rebuild. Ignores timestamp rules.");
-		$this->out();
 	}
 }

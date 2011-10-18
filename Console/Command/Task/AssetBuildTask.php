@@ -104,7 +104,7 @@ class AssetBuildTask extends Shell {
 	function _scanFiles() {
 		$calls = array();
 		foreach ($this->_files as $file) {
-			$this->out('Scanning ' . $file . '...');
+			$this->out('Scanning ' . $file . '...', 1, Shell::VERBOSE);
 
 			$capturing = false;
 		
@@ -254,13 +254,13 @@ class AssetBuildTask extends Shell {
 	protected function _generateFile($build) {
 		$name = $this->Cacher->buildFileName($build);
 		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
-			$this->out('Skip building ' . $name . ' existing file is still fresh.');
+			$this->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 			return;
 		}
 		$this->Cacher->setTimestamp($build, 0);
 		$name = $this->Cacher->buildFileName($build);
 		try {
-			$this->out('Saving file for ' . $name);
+			$this->out('<success>Saving file</success> for ' . $name);
 			$contents = $this->Compiler->generate($build);
 			$this->Cacher->write($build, $contents);
 		} catch (Exception $e) {
