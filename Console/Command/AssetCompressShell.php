@@ -21,13 +21,9 @@ class AssetCompressShell extends Shell {
  */
 	public function startup() {
 		parent::startup();
-		$config = null;
-		if (isset($this->params['config'])) {
-			$config = $this->params['config'];
-		}
 
 		AssetConfig::clearAllCachedKeys();
-		$this->_Config = AssetConfig::buildFromIniFile($config);
+		$this->_Config = AssetConfig::buildFromIniFile($this->params['config']);
 		$this->AssetBuild->setThemes($this->_findThemes());
 		$this->out();
 	}
@@ -164,6 +160,30 @@ class AssetCompressShell extends Shell {
 		return $themes;
 	}
 
+	public function getOptionParser() {
+		return parent::getOptionParser()
+			->description(
+				'AssetCompress shell builds and clears assets',
+				'defined in your asset_compress.ini file, and ',
+				'in your view files.'
+			)->addSubcommand('clear', array(
+				'help' => 'Clears all existing build files.'
+			))->addSubcommand('build', array(
+				'help' => 'Generate all builds defined in the ini and view files.'
+			))->addSubcommand('build_ini', array(
+				'help' => 'Generate only builds defined in the ini file.'
+			))->addSubcommand('build_dynamic', array(
+				'help' => 'Generate only builds defined in view files.'
+			))->addOption('config', array(
+				'short' => 'c',
+				'help' => 'Choose the config file to use.',
+				'default' => APP . 'Config' . DS . 'asset_compress.ini'
+			))->addOption('force', array(
+				'short' => 'f',
+				'help' => 'Force assets to rebuild.  Ignores timestamp rules.',
+				'boolean' => true
+			));
+	}
 /**
  * help
  *
