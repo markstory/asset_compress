@@ -1,4 +1,6 @@
 <?php
+App::uses('AssetProcess', 'AssetCompress.Lib');
+
 /**
  * AssetFilterInterface all filters declared in your config.ini must implement 
  * this interface or exceptions will be thrown.
@@ -87,7 +89,6 @@ class AssetFilter implements AssetFilterInterface {
  * @return The result of the command.
  */
 	protected function _runCmd($cmd, $content, $environment = null) {
-		App::import('Lib', 'AssetCompress.AssetProcess');
 		$Process = new AssetProcess();
 		$Process->environment($environment);
 		$Process->command($cmd)->run($content);
