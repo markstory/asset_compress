@@ -1,18 +1,12 @@
 <?php
 App::import('Lib', 'AssetCompress.AssetConfig');
+App::import('Lib', 'AssetCompress.AssetCache');
+
 /**
  * AssetCompress Helper.
  *
  * Handle inclusion assets using the AssetCompress features for concatenating and
  * compressing asset files.
- *
- * You add files to be compressed using `script` and `css`.  All files added to a key name
- * will be processed and joined before being served.  When in debug = 2, no files are cached.
- *
- * If debug = 0, the processed file will be cached to disk.  You can also use the routes
- * and config file to create static 'built' files. These built files must have unique names, or
- * as they are made they will overwrite each other.  You can clear built files
- * with the shell provided in the plugin.
  *
  * @package asset_compress.helpers
  */
@@ -21,6 +15,7 @@ class AssetCompressHelper extends AppHelper {
 	public $helpers = array('Html');
 
 	protected $_Config;
+	protected $_AssetCache;
 
 /**
  * Options for the helper
@@ -64,7 +59,8 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function __construct(View $View, $settings = array()) {
 		if (empty($settings['noconfig'])) {
-			$this->_Config = AssetConfig::buildFromIniFile();
+			$config = AssetConfig::buildFromIniFile();
+			$this->config($config);
 		}
 		parent::__construct($View, $settings);
 	}
@@ -82,6 +78,16 @@ class AssetCompressHelper extends AppHelper {
 			return $this->_Config;
 		}
 		$this->_Config = $config;
+		$this->_AssetCache = new AssetCache($config);
+	}
+
+/**
+ * Accessor for the cache object, useful for testing.
+ *
+ * @return AssetCache
+ */
+	public function cache() {
+		return $this->_AssetCache;
 	}
 
 /**
@@ -276,20 +282,12 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 		
-		if ($this->_Config->get('css.timestamp') && $this->_Config->get('General.timestampFile')) {
-			$ts = $this->_Config->readTimestampFile();
-			$path = $this->_Config->cachePath('css');
-			$path = '/' . str_replace(WWW_ROOT, '', $path);
-			$name = substr($file, 0, strlen($file) - (4));
-			$route = $path . $name . '.v' . $ts . '.css';
+		if ($this->useDynamicBuild($file)) {
+			$route = $this->_getRoute($file);
 		} else {
-			if ($this->useDynamicBuild($file)) {
-				$route = $this->_getRoute($file);
-			} else {			
-				$route = $this->_locateBuild($file);
-			}
+			$route = $this->_locateBuild($file);
 		}
-		
+
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -326,22 +324,12 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-
-		if ($this->_Config->get('js.timestamp') && $this->_Config->get('General.timestampFile')) {
-			//If a timestampFile is being used, don't spend time looking on the local filesystem.
-			$ts = $this->_Config->readTimestampFile();
-			$path = $this->_Config->cachePath('js');
-			$path = '/' . str_replace(WWW_ROOT, '', $path);
-			$name = substr($file, 0, strlen($file) - (3));
-			$route = $path . $name . '.v' . $ts . '.js';
+		if ($this->useDynamicBuild($file)) {
+			$route = $this->_getRoute($file);
 		} else {
-			if ($this->useDynamicBuild($file)) {
-				$route = $this->_getRoute($file);
-			} else {
-				$route = $this->_locateBuild($file);
-			}
+			$route = $this->_locateBuild($file);
 		}
-		
+
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
@@ -357,7 +345,8 @@ class AssetCompressHelper extends AppHelper {
  * files using the cachePath. If no cache file exists a dynamic build will be done.
  */
 	public function useDynamicBuild($file) {
-		if (!$this->_Config->cachingOn($file)) {
+		$ext = $this->_Config->getExt($file);
+		if (!$this->_Config->cachePath($ext)) {
 			return true;
 		}
 		if ($this->_locateBuild($file)) {
@@ -382,16 +371,12 @@ class AssetCompressHelper extends AppHelper {
 		if ($hash) {
 			$build = $hash;
 		}
+		$this->_Config->theme($this->theme);
+
+		$build = $this->_AssetCache->buildFileName($build);
 		if (file_exists($path . $build)) {
-			return str_replace(WWW_ROOT, $this->webroot, $path . $build);
+			return str_replace(WWW_ROOT, '/', $path . $build);
 		}
-		$name = substr($build, 0, strlen($build) - (strlen($ext) + 1));
-		$pattern = $path . $name . '.v[0-9]*.' . $ext;
-		$matching = glob($pattern);
-		if (empty($matching)) {
-			return false;
-		}
-		return DS . str_replace(WWW_ROOT, '', $matching[0]);
 	}
 
 /**
@@ -419,6 +404,9 @@ class AssetCompressHelper extends AppHelper {
 				$params[0] = $hash;
 			}
 			$params['?'] = array('file' => $components);
+		}
+		if ($this->_Config->isThemed($file)) {
+			$params['?']['theme'] = $this->theme;
 		}
 
 		$url = Router::url(array_merge($url, $params));

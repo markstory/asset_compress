@@ -10,7 +10,8 @@ class AssetCompressHelperTest extends CakeTestCase {
  *
  * @return void
  **/
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
@@ -34,7 +35,8 @@ class AssetCompressHelperTest extends CakeTestCase {
  *
  * @return void
  **/
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Helper);
 	}
 
@@ -180,8 +182,9 @@ class AssetCompressHelperTest extends CakeTestCase {
  */
 	function testMagicHashBuildFileUse() {
 		$config = $this->Helper->config();
-		$config->set('General.writeCache', true);
+		$config->general('writeCache', true);
 		$config->cachePath('js', TMP);
+		$config->set('js.timestamp', false);
 
 		$this->Helper->addScript('libraries', ':hash-default');
 		$this->Helper->addScript('thing', ':hash-default');
@@ -298,7 +301,8 @@ class AssetCompressHelperTest extends CakeTestCase {
  */
 	function testLinkingBuiltFiles() {
 		$config = $this->Helper->config();
-		$config->set('General.writeCache', true);
+		$config->general('writeCache', true);
+		$config->set('js.timestamp', false);
 		$config->cachePath('js', TMP);
 		$config->files('asset_test.js', array('one.js'));
 
@@ -346,12 +350,16 @@ class AssetCompressHelperTest extends CakeTestCase {
  */
 	function testTimestampping() {
 		$config = $this->Helper->config();
-		$config->set('General.writeCache', true);
+		$config->general('writeCache', true);
 		$config->set('js.timestamp', true);
 		$config->cachePath('js', TMP);
 		$config->files('asset_test.js', array('one.js'));
 
-		$filename = TMP . 'asset_test.v' . time() . '.js';
+		$time = time();
+		$cache = $this->Helper->cache();
+		$cache->setTimestamp('asset_test.js', $time);
+
+		$filename = TMP . 'asset_test.v' . $time . '.js';
 		touch($filename);
 
 		$result = $this->Helper->script('asset_test.js');
@@ -375,5 +383,46 @@ class AssetCompressHelperTest extends CakeTestCase {
 			))
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that builds using themes defined in the ini file work
+ * with themes.
+ *
+ * @return void
+ */
+	function testDefinedBuildWithThemeNoBuiltAsset() {
+		$this->Helper->theme = 'blue';
+		$config = $this->Helper->config();
+		$config->addTarget('themed.js', array(
+			'theme' => true,
+			'files' => array('libraries.js')
+		));
+		$result = $this->Helper->script('themed.js');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/themed.js?theme=blue'
+			))
+		);
+		$this->assertTags($result, $expected);
+	}
+
+	function testCompiledBuildWithThemes() {
+		$config = $this->Helper->config();
+		$config->general('writeCache', true);
+		$config->set('js.timestamp', false);
+		$config->cachePath('js', TMP);
+		$config->addTarget('asset_test.js', array(
+			'files' => array('one.js'),
+			'theme' => true
+		));
+
+		touch(TMP . 'blue-asset_test.js');
+
+		$this->Helper->theme = 'blue';
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, TMP . 'blue-asset_test.js') !== false);
+		unlink(TMP . 'blue-asset_test.js');
 	}
 }

@@ -30,6 +30,10 @@ class AssetsController extends AssetCompressAppController {
 			$build .= '.' . $this->request->params['ext'];
 		}
 
+		if (isset($this->params['url']['theme'])) {
+			$Config->theme($this->params['url']['theme']);
+		}
+
 		// dynamic build file
 		if (Configure::read('debug') > 0 && $Config->files($build) === array()) {
 			$files = array();

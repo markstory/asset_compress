@@ -2,6 +2,7 @@
 App::import('Lib', 'AssetCompress.AssetConfig');
 App::import('Lib', 'AssetCompress.AssetCompiler');
 App::import('Lib', 'AssetCompress.AssetCache');
+App::import('Core', 'Folder');
 
 /**
  * Asset Compress Shell
@@ -26,8 +27,9 @@ class AssetCompressShell extends Shell {
 		}
 
 		AssetConfig::clearAllCachedKeys();
-		
 		$this->_Config = AssetConfig::buildFromIniFile($config);
+		$this->AssetBuild->setThemes($this->_findThemes());
+		$this->out();
 	}
 
 /**
@@ -36,10 +38,13 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
-		if ($this->_Config->writeTimestampFile(time())) {
-			$this->out('Generated timestamp file.');
-		}
+		$this->out('Building files defined in the ini file');
+		$this->hr();
 		$this->build_ini();
+
+		$this->out();
+		$this->out('Building files in views');
+		$this->hr();
 		$this->build_dynamic();
 	}
 
@@ -60,10 +65,8 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function clear() {
-		if ($this->_Config->get('General.timestampFile')) {
-			$this->clear_build_ts();
-		}
-		
+		$this->clear_build_ts();
+
 		$this->out('Clearing Javascript build files:');
 		$this->hr();
 		$this->_clearBuilds('js');
@@ -79,7 +82,7 @@ class AssetCompressShell extends Shell {
 /**
  * Clears out all the cache keys associated with asset_compress.
  * 
- * Note: method really does nothing here cuz keys are cleared in startup.
+ * Note: method really does nothing here because keys are cleared in startup.
  * This method exists for times when you just want to clear the cache keys
  * associated with asset_compress
  */	
@@ -106,6 +109,7 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	protected function _clearBuilds($ext) {
+		$themes = $this->_findThemes();
 		$targets = $this->_Config->targets($ext);
 		if (empty($targets)) {
 			$this->err('No ' . $ext . ' build files defined, skipping');
@@ -118,25 +122,46 @@ class AssetCompressShell extends Shell {
 		}
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
-			$name = $file->getFilename();
+			$name = $base = $file->getFilename();
 			if (in_array($name, array('.', '..'))) {
 				continue;
 			}
-			// no timestamp
-			if (in_array($name, $targets)) {
+			// timestampped files.
+			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
+				list($base, $v, $ext) = explode('.', $name, 3);
+				$base = $base . '.' . $ext;
+			}
+			// themed files
+			foreach ($themes as $theme) {
+				if (strpos($base, $theme) === 0) {
+					list($themePrefix, $base) = explode('-', $base);
+				}
+			}
+			if (in_array($base, $targets)) {
 				$this->out(' - Deleting ' . $path . $name);
 				unlink($path . $name);
 				continue;
 			}
-			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
-				list($base, $v, $ext) = explode('.', $name, 3);
-				if (in_array($base . '.' . $ext, $targets)) {
-					$this->out(' - Deleting ' . $path . $name);
-					unlink($path . $name);
-					continue;
-				}
+		}
+	}
+
+/**
+ * Find all the themes in an application.
+ * This is used to generate theme asset builds.
+ *
+ * @return array Array of theme names.
+ */
+	protected function _findThemes() {
+		$viewpaths = App::path('views');
+		$themes = array();
+		foreach ($viewpaths as $path) {
+			if (is_dir($path . 'themed')) {
+				$Folder = new Folder($path . 'themed');
+				list($dirs, $files) = $Folder->read();
+				$themes = array_merge($themes, $dirs);
 			}
 		}
+		return $themes;
 	}
 
 /**
@@ -160,6 +185,10 @@ class AssetCompressShell extends Shell {
 			'help' => 'Choose the config file to use.',
 			'short' => 'c',
 			'default' => APP . 'Config' . DS . 'asset_compress.ini'
+		))->addOption('force', array(
+			'help' => 'Force assets to rebuild. Ignores timestamp rules.',
+			'short' => 'f',
+			'boolean' => true
 		));
 	}
 }

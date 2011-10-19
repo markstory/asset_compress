@@ -10,7 +10,9 @@ class AssetConfigTest extends CakeTestCase {
 		));
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
+		$this->testConfig = $this->_testFiles . 'Config' . DS . 'config.ini';
+		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
@@ -19,7 +21,7 @@ class AssetConfigTest extends CakeTestCase {
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->assertTrue($config->get('js.timestamp') === '1');
-		$this->assertTrue($config->get('General.debug') === '1');
+		$this->assertTrue($config->general('writeCache') === '1');
 	}
 
 	function testExceptionOnBogusFile() {
@@ -83,6 +85,13 @@ class AssetConfigTest extends CakeTestCase {
 	function testAddTarget() {
 		$this->config->addTarget('testing.js', array('one.js', 'two.js'));
 		$this->assertEqual(array('one.js', 'two.js'), $this->config->files('testing.js'));
+
+		$this->config->addTarget('testing-two.js', array(
+			'files' => array('one.js', 'two.js'),
+			'filters' => array('uglify'),
+			'theme' => true
+		));
+		$this->assertEqual(array('one.js', 'two.js'), $this->config->files('testing-two.js'));
 	}
 
 	function testGetExt() {
@@ -123,14 +132,16 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testTargets() {
 		$this->assertEqual(array(), $this->config->targets('fake'));
-		$expected = array('libs.js', 'foo.bar.js');
+		$expected = array('libs.js', 'foo.bar.js', 'new_file.js');
 		$result = $this->config->targets('js');
+		$this->assertEqual($expected, $result);
+
+		$expected = array('all.css', 'pink.css');
+		$result = $this->config->targets('css');
 		$this->assertEqual($expected, $result);
 	}
 
 	function testGet() {
-		$this->assertTrue($this->config->get('General.debug') === '1');
-
 		$result = $this->config->get('js.cachePath');
 		$this->assertEqual(WWW_ROOT . 'cache_js', $result);
 
@@ -153,49 +164,61 @@ class AssetConfigTest extends CakeTestCase {
 	}
 
 	function testCachingOn() {
-		$this->config->set('General.writeCache', false);
+		$this->config->general('writeCache', false);
 		$this->assertFalse($this->config->cachingOn('libs.js'));
 
-		$this->config->set('General.writeCache', true);
+		$this->config->general('writeCache', true);
 		$this->config->cachePath('js', '/some/path');
 		$this->assertTrue($this->config->cachingOn('libs.js'));
 	}
 
-	function testReadTimestampFileWhenDisabled() {
-		$this->assertFalse($this->config->readTimestampFile());
-	}
 
-	function testReadTimestampFileUsingFiles() {
-		$this->config->set('General.cacheConfig', false);
-		$this->config->set('General.timestampFile', true);
-
-		$time = time();
-		$this->config->writeTimestampFile($time);
-		$result = $this->config->readTimestampFile();
-
-		$this->assertTrue(is_numeric($result));
-		$this->assertEqual($time, $result);
-		$this->assertFalse(Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG));
-	}
-
-	function testReadTimestampFileUsingCache() {
-		$this->config->set('General.cacheConfig', true);
-		$this->config->set('General.timestampFile', true);
-
-		$time = time();
-		$this->config->writeTimestampFile($time);
-
-		// delete the file so we know we hit the cache.
-		unlink(TMP . AssetConfig::BUILD_TIME_FILE);
-
-		$result = $this->config->readTimestampFile();
-
-		$this->assertTrue(is_numeric($result));
-		$this->assertEqual($time, $result);
-	}
 
 	function testExtensions() {
 		$result = $this->config->extensions();
 		$this->assertEqual(array('js', 'css'), $result);
 	}
+
+	function testGeneral() {
+		$this->config->set('general.cacheConfig', true);
+		$result = $this->config->general('cacheConfig');
+		$this->assertTrue($result);
+
+		$result = $this->config->general('non-existant');
+		$this->assertNull($result);
+	}
+
+/**
+ * Test that the default paths work.
+ * 
+ */
+	function testDefaultConventions() {
+		$ini = dirname($this->testConfig) . DS . 'bare.ini';
+		$config = AssetConfig::buildFromIniFile($ini);
+
+		$result = $config->paths('js');
+		$this->assertEqual(array(WWW_ROOT . 'js/**'), $result);
+
+		$result = $config->paths('css');
+		$this->assertEqual(array(WWW_ROOT . 'css/**'), $result);
+	}
+
+	function testTheme() {
+		$result = $this->config->theme();
+		$this->assertEqual('', $result);
+
+		$result = $this->config->theme('red');
+		$this->assertEqual('', $result);
+
+		$result = $this->config->theme();
+		$this->assertEqual('red', $result);
+	}
+
+	function testIsThemed() {
+		$this->assertFalse($this->config->isThemed('libs.js'));
+
+		$config = AssetConfig::buildFromIniFile($this->_themeConfig);
+		$this->assertTrue($config->isThemed('themed.css'));
+	}
+
 }

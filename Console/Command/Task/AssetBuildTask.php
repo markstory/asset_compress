@@ -8,6 +8,7 @@ App::uses('Folder', 'Utility');
 class AssetBuildTask extends Shell {
 	
 	protected $_Config;
+	protected $_themes = array();
 	protected $_files = array();
 	protected $_tokens = array();
 	
@@ -34,6 +35,12 @@ class AssetBuildTask extends Shell {
  */
 	public function setConfig(AssetConfig $Config) {
 		$this->_Config = $Config;
+		$this->Compiler = new AssetCompiler($this->_Config);
+		$this->Cacher = new AssetCache($this->_Config);
+	}
+
+	public function setThemes($themes) {
+		$this->_themes = $themes;
 	}
 
 /**
@@ -234,17 +241,32 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildTarget($build) {
-		$this->out('Saving file for ' . $build);
-		$Compiler = new AssetCompiler($this->_Config);
-		$Cacher = new AssetCache($this->_Config);
+		if ($this->_Config->isThemed($build)) {
+			foreach ($this->_themes as $theme) {
+				$this->_Config->theme($theme);
+				$this->_generateFile($build);
+			}
+		} else {
+			$this->_generateFile($build);
+		}
+	}
+
+	protected function _generateFile($build) {
+		$name = $this->Cacher->buildFileName($build);
+		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
+			$this->out('Skip building ' . $name . ' existing file is still fresh.');
+			return;
+		}
+		$this->Cacher->setTimestamp($build, 0);
+		$name = $this->Cacher->buildFileName($build);
 		try {
-			$contents = $Compiler->generate($build);
-			$Cacher->write($build, $contents);
+			$this->out('Saving file for ' . $name);
+			$contents = $this->Compiler->generate($build);
+			$this->Cacher->write($build, $contents);
 		} catch (Exception $e) {
 			$this->err('Error: ' . $e->getMessage());
 		}
 	}
-
 	
 /**
  * Adds an extension if the file doesn't already end with it.

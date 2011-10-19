@@ -11,6 +11,8 @@ Asset Compress is CakePHP plugin for helping reduce the number of requests, and 
 * Powerful and flexible filter system allowing you to add your own
   minifiers/pre-processors.
 * Simple configuration file.
+* Incremental builds that don't recompile assets when they don't need to
+  be.
 
 ## Installing
 
@@ -36,7 +38,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * Mark Story
 * Ben McClure
-* Igor Fomin
+* Igor Fomin (evilbloodydemon)
 * Rachman Chavik
 * Sumit Madan
 * Florian Krämer
@@ -45,11 +47,46 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Abbas Ali
 * Jeremy Harris
 * rynop
-* evilbloodydemon
 * Cauan Cabral
+* Renan Gonçalves
 
 
 ### Changelog
+
+#### 0.5
+
+*Backwards Incompatible Changes*
+
+* Ini file flag General.debug was removed.  Instead
+  Configure::read('debug') is used.  This means one less configuration
+  option to manage.  Use debug = 1 to test output filters.
+* The timestamp file format has changed. Remember to clear all builds
+  when upgrading.
+* A number of internal API changes have been made. If you are using the
+  internals of AssetCompress you may have to update your code.
+* The `General.timestampFile` config option was removed.  Timestamp
+  files are always used now.
+
+*Other changes*
+
+* Ini file naming for build files made simpler. Instead of having to
+  prefix sections with the extension you can omit the prefix.  The
+  extension will be read off of the build file name. Instead of
+  `js_library.js` you can just use `library.js` as the build name.
+* Controller/view javascript files are now combined into minified asset automatically now.
+* When using the shell, asset targets that are still fresh will be
+  skipped on subsequent builds.  A target is fresh if the build file's
+  mtime is later than all of the files that go into the target. This
+  behavior can be ignored using the `-force` option.
+* If you don't define the `paths[]` keys in your js and css extensions,
+  AssetCompress will recursively include all paths in the standard
+  CakePHP directories.
+* Theme support has been added.  When defining a build you can set
+  `theme = true` in the build definition.  When the shell is run, a
+  build will be created for every theme installed.  Themes support only
+  works for builds defined in the ini file.
+* The timestamp file format has changed and contains timestamps for each
+  build.  This was required as part of the incremental builds feature.
 
 #### 0.4
 

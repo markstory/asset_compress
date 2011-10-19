@@ -40,6 +40,14 @@ class AssetScannerTest extends CakeTestCase {
 		);
 		$scanner = new AssetScanner($paths);
 
+		$result = $scanner->paths();
+		$expected = array(
+			$this->_testFiles . 'js' . DS,
+			$this->_testFiles . 'js' . DS . 'classes' . DS,
+			$this->_testFiles . 'js' . DS . 'secondary' . DS
+		);
+		$this->assertEqual($expected, $result);
+
 		$result = $scanner->find('base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEqual($expected, $result);
@@ -73,5 +81,22 @@ class AssetScannerTest extends CakeTestCase {
 		$scanner = new AssetScanner($paths);
 		$result = $scanner->find('other.less');
 		$expected = $this->_testFiles . 'css' . DS . 'other.less';
+		$this->assertEqual($expected, $result);
+	}
+
+	function testResolveThemePaths() {
+		App::build(array(
+			'View' => array($this->_testFiles . 'View' . DS)
+		));
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths, 'blue');
+		$result = $scanner->find('t:theme.css');
+		$expected = $this->_testFiles . 'View' . DS . 'Themed' . DS . 'Blue' . DS . 'webroot' . DS . 'theme.css';
+		$this->assertEqual($expected, $result);
+
+		$result = $scanner->find('theme:theme.css');
+		$this->assertEqual($expected, $result);
 	}
 }

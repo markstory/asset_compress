@@ -7,7 +7,37 @@
  */
 class AssetConfig {
 
+/**
+ * Parsed configuration data.
+ *
+ * @var array
+ */
 	protected $_data = array();
+
+/**
+ * Defaults and conventions for configuration.
+ * These defaults are used unless a key is redefined.
+ *
+ * @var array
+ */
+	protected static $_defaults = array(
+		'js' => array(
+			'paths' => array('WEBROOT/js/**')
+		),
+		'css' => array(
+			'paths' => array('WEBROOT/css/**')
+		),
+	);
+
+/**
+ * Names of normal extensions that Assetcompress could
+ * handle.
+ *
+ * @var array
+ */
+	protected static $_extensionTypes = array(
+		'js', 'css', 'png', 'gif', 'jpeg'
+	);
 
 /**
  * A hash of constants that can be expanded when reading ini files.
@@ -26,6 +56,7 @@ class AssetConfig {
 	const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
 	const CACHE_CONFIG = 'asset_compress';
 	const BUILD_TIME_FILE = 'asset_compress_build_time';
+	const GENERAL = 'general';
 
 /**
  * Constructor, set some initial data for a AssetConfig object. 
@@ -114,25 +145,40 @@ class AssetConfig {
  * @return AssetConfig
  */
 	protected static function _parseConfig($config, $constants) {
-		$AssetConfig = new AssetConfig(array(), $constants);
+		$AssetConfig = new AssetConfig(self::$_defaults, $constants);
 		foreach ($config as $section => $values) {
-			if (strpos($section, '_') === false) {
-				// extension section
+			if (in_array($section, self::$_extensionTypes)) {
+				// extension section, merge in the defaults.
+				$defaults = $AssetConfig->get($section);
+				if ($defaults) {
+					$values = array_merge($defaults, $values);
+				}
 				$AssetConfig->addExtension($section, $values);
+
+			} elseif (strtolower($section) === self::GENERAL) {
+				$AssetConfig->set(self::GENERAL, $values);
+
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
 				$AssetConfig->filterConfig($name, $values);
+
 			} else {
-				list($extension, $key) = explode('_', $section, 2);
+				$lastDot = strrpos($section, '.') + 1;
+				$extension = substr($section, $lastDot);
+				$key = $section;
+
+				// Is there a prefix? Chop it off.
+				if (strpos($section, $extension . '_') !== false) {
+					$key = substr($key, strlen($extension) + 1);
+				}
+
 				// must be a build target.
-				$files = isset($values['files']) ? $values['files'] : array();
-				$filters = isset($values['filters']) ? $values['filters'] : array();
-				$AssetConfig->addTarget($key, $files, $filters);
+				$AssetConfig->addTarget($key, $values);
 			}
 		}
 
-		if (!empty($config['General']['cacheConfig'])) {
+		if ($AssetConfig->general('cacheConfig')) {
 			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
 		}
 		return $AssetConfig;
@@ -228,57 +274,6 @@ class AssetConfig {
 				return isset($stack[$key]) ? $stack[$key] : null;
 			}
 		}
-	}
-
-/**
- * Get the value of the timestamp from the asset compress timestamp build file or its cached value
- * 
- * @return mixed false if useTsFile is not set to true in the INI.
- * @throws RuntimeException if useTsFile is true and it cant read the TS from the file 
- */
-	public function readTimestampFile() {
-		if (!$this->get('General.timestampFile')) {
-			return false;
-		}
-
-		$time = false;
-		$cachedConfig = $this->get('General.cacheConfig');
-		if ($cachedConfig) {
-			$time =  Cache::read(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
-		}
-		if (empty($time)) {
-			$time = file_get_contents(TMP . self::BUILD_TIME_FILE);
-			if ($cachedConfig) {
-				Cache::write(self::CACHE_BUILD_TIME_KEY, $time, self::CACHE_CONFIG);
-			}
-		}
-		if (empty($time)) {
-			$message = sprintf('Build time file "%s" was empty. You must run the build shell to create the file.', TMP . self::BUILD_TIME_FILE);
-			throw new RuntimeException($message);
-		}
-		return $time;
-	}
-
-/**
- * Write the timestamp to the TS file and cache if its enabled
- * 
- * @param int $timeStamp The timestamp to save.
- * @throws RuntimeException if it cant write to timestamp file
- */	
-	public function writeTimestampFile($timeStamp) {
-		if (!$this->get('General.timestampFile')) {
-			return false;
-		}
-
-		$ret = file_put_contents(TMP . self::BUILD_TIME_FILE, $timeStamp);
-		if (empty($ret)) {
-			throw new RuntimeException(sprintf('Could not write timestamp to "%s".',  TMP . self::BUILD_TIME_FILE));
-		}
-
-		if ($this->get('General.cacheConfig')) {
-			Cache::write(self::CACHE_BUILD_TIME_KEY, $timeStamp, self::CACHE_CONFIG);
-		}
-		return true;
 	}
 
 /**
@@ -398,6 +393,22 @@ class AssetConfig {
 	}
 
 /**
+ * Get / set values from the General section.  This is preferred
+ * to using get()/set() as you don't run the risk of making a 
+ * mistake in General's casing.
+ *
+ * @param string $key The key to read/write
+ * @param mixed $value The value to set.
+ * @return mixed Null when writing.  Either a value or null when reading.
+ */
+	public function general($key, $value = null) {
+		if ($value === null) {
+			return isset($this->_data[self::GENERAL][$key]) ? $this->_data[self::GENERAL][$key] : null;
+		}
+		$this->_data[self::GENERAL][$key] = $value;
+	}
+
+/**
  * Check to see if caching is on for an extension.
  * Caching is controlled by General.writeCache and the matching 
  * extension having a cachePath.
@@ -407,7 +418,7 @@ class AssetConfig {
  */
 	public function cachingOn($target) {
 		$ext = $this->getExt($target);
-		if ($this->get('General.writeCache') && $this->cachePath($ext)) {
+		if ($this->general('writeCache') && $this->cachePath($ext)) {
 			return true;
 		}
 		return false;
@@ -430,14 +441,45 @@ class AssetConfig {
  * Create a new build target.
  *
  * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
- * @param array $files Files to combine the build file from.
+ * @param array $config Config data for the target.  Should contain files, filters and theme key.
+ * @param array $filters The filters for the build (deprecated)
  */
-	public function addTarget($target, array $files, $filters = array()) {
+	public function addTarget($target, array $config, $filters = array()) {
 		$ext = $this->getExt($target);
-		$this->_data[$ext][self::TARGETS][$target] = array(
-			'files' => $files,
-			'filters' => $filters
-		);
+
+		if (!empty($filters) || !isset($config['files'])) {
+			// old method behavior.
+			$config = array(
+				'files' => $config,
+				'filters' => $filters,
+				'theme' => false
+			);
+		}
+		$this->_data[$ext][self::TARGETS][$target] = $config;
+	}
+
+/**
+ * Set the active theme for building assets.
+ *
+ * @param string $theme The theme name to set. Null to get
+ * @return mixed Either null on set, or theme on get
+ */
+	public function theme($theme = null) {
+		if ($theme === null) {
+			return isset($this->_data['theme']) ? $this->_data['theme'] : '';
+		}
+		$this->_data['theme'] = $theme;
+	}
+
+/**
+ * Check if a build target is themed.
+ *
+ * @param string $target A build target.
+ * @return boolean
+ */
+	public function isThemed($target) {
+		$ext = $this->getExt($target);
+		return !empty($this->_data[$ext][self::TARGETS][$target]['theme']);
 	}
 
 /**
@@ -447,7 +489,8 @@ class AssetConfig {
  */
 	public function extensions() {
 		$exts = array_flip(array_keys($this->_data));
-		unset($exts[self::FILTERS], $exts['General']);
+		unset($exts[self::FILTERS], $exts[self::GENERAL]);
 		return array_keys($exts);
 	}
+
 }
