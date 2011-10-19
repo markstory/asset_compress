@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Asset Compress base controller. Stubs out some of the controller processes so 
  * components in AppController don't interfere with the generation of asset files.
@@ -11,7 +12,7 @@ class AssetCompressAppController extends AppController {
 	 * Not working in 2.0
 	 *
 	public $components = false;
-	public $helpers = false;
+	public $helpers = array();
 	 *
 	 */
 
@@ -20,7 +21,7 @@ class AssetCompressAppController extends AppController {
  *
  * @return void
  */
-	public function startupProcess() { 
+	public function startupProcess() {
 		$this->beforeFilter();
 	}
 

@@ -228,7 +228,9 @@ class AssetConfig {
  * @return string constants replaced
  */
 	protected function _replacePathConstants($path) {
-		return strtr($path, $this->constantMap);
+        $result = strtr($path, $this->constantMap);
+        $result = str_replace('/', DS, $result);
+        return $result;
 	}
 
 /**

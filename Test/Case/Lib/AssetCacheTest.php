@@ -1,6 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetCache');
-App::import('Lib', 'AssetCompress.AssetConfig');
+App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetCacheTest extends CakeTestCase {
 
@@ -20,7 +20,7 @@ class AssetCacheTest extends CakeTestCase {
 	function testWrite() {
 		$this->config->set('js.timestamp', false);
 		$result = $this->cache->write('test.js', 'Some content');
-		$this->assertTrue($result);
+		$this->assertNotEqual($result, false);
 		$contents = file_get_contents(TMP . 'test.js');
 		$this->assertEqual('Some content', $contents);
 		unlink(TMP . 'test.js');
@@ -34,7 +34,7 @@ class AssetCacheTest extends CakeTestCase {
 		$this->cache->write('test.js', 'Some content');
 
 		$contents = file_get_contents(TMP . 'test.v' . $now . '.js');
-		$this->assertEqual('Some content', $contents);
+		$this->assertEquals('Some content', $contents);
 		unlink(TMP . 'test.v' . $now . '.js');
 	}
 

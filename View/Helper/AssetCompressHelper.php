@@ -1,7 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetConfig');
-App::import('Lib', 'AssetCompress.AssetCache');
-
+App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('AssetConfig', 'AssetCompress.Lib');
 /**
  * AssetCompress Helper.
  *
@@ -281,7 +280,7 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-		
+
 		if ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
@@ -292,6 +291,11 @@ class AssetCompressHelper extends AppHelper {
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
 		}
+
+		if (DS == '\\') {
+			$route = str_replace(DS, '/', $route);
+		}
+
 		return $this->Html->css($route, null, $options);
 	}
 
@@ -334,6 +338,11 @@ class AssetCompressHelper extends AppHelper {
 		if ($baseUrl) {
 			$route = $baseUrl . $route;
 		}
+
+		if (DS == '\\') {
+			$route = str_replace(DS, '/', $route);
+		}
+
 		return $this->Html->script($route, $options);
 	}
 
@@ -384,7 +393,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	protected function _getRoute($file) {
 		$url = $this->options['buildUrl'];
-	
+
 		//escape out of prefixes.
 		$prefixes = Router::prefixes();
 		foreach ($prefixes as $prefix) {

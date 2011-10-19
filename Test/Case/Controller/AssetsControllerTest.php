@@ -1,10 +1,11 @@
 <?php
 
-App::import('Controller', 'AssetCompress.Assets');
+App::uses('AssetCompressAppController', 'AssetCompress.Controller');
+App::uses('AssetsController', 'AssetCompress.Controller');
 
 class TestAssetsController extends AssetsController {
 	public function render() {
-	
+
 	}
 }
 
@@ -19,11 +20,12 @@ class AssetsControllerTest extends CakeTestCase {
 			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS
 		);
 		AssetConfig::clearAllCachedKeys();
-		
+
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
 		$this->Controller = new TestAssetsController(new CakeRequest(null, false), new CakeResponse());
 		$this->Controller->constructClasses();
+		$this->Controller->response = $this->getMock('CakeResponse');
 		$this->Controller->_Config = $config;
 		$this->_debug = Configure::read('debug');
 	}
@@ -33,24 +35,27 @@ class AssetsControllerTest extends CakeTestCase {
 	}
 
 	function testDynamicBuildFile() {
-		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
+		$this->Controller->response
+			->expects($this->once())->method('type')
+			->with($this->equalTo('js'));
 
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->Controller->get('dynamic.js');
-		$this->assertEqual('text/javascript', $this->Controller->response->type());
+
 		$this->assertPattern('/function test/', $this->Controller->viewVars['contents']);
 		$this->assertPattern('/multi line comments/', $this->Controller->viewVars['contents']);
 	}
 
-	/**
-	 * When debug mode is off, dynamic build files should create errors, this is to try and mitigate
-	 * the ability to DOS attack an app, by hammering expensive to generate resources.
-	 */
+/**
+ * When debug mode is off, dynamic build files should create errors, this is to try and mitigate
+ * the ability to DOS attack an app, by hammering expensive to generate resources.
+ *
+ * @expectedException NotFoundException
+ */
 	function testDynamicBuildFileDebugOff() {
 		Configure::write('debug', 0);
-		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->Controller->get('dynamic.js');
-		$this->assertEqual(404, $this->Controller->response->statusCode());
-		$this->assertFalse(isset($this->Controller->viewVars['contents']));
 	}
 }

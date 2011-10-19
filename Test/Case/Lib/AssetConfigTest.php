@@ -1,5 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetConfig');
+
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetConfigTest extends CakeTestCase {
 
@@ -20,8 +21,8 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
-		$this->assertTrue($config->get('js.timestamp') === '1');
-		$this->assertTrue($config->general('writeCache') === '1');
+		$this->assertEquals(1, $config->get('js.timestamp'));
+		$this->assertEquals(1, $config->general('writeCache'));
 	}
 
 	function testExceptionOnBogusFile() {
@@ -79,7 +80,7 @@ class AssetConfigTest extends CakeTestCase {
 
 	function testPaths() {
 		$this->config->paths('js', array('/path/to/files', 'WEBROOT/js'));
-		$this->assertEqual(array('/path/to/files', WWW_ROOT . 'js'), $this->config->paths('js'));
+		$this->assertEqual(array(DS . 'path' . DS . 'to' . DS . 'files', WWW_ROOT . 'js'), $this->config->paths('js'));
 	}
 
 	function testAddTarget() {

@@ -1,8 +1,8 @@
 <?php
 
-App::import('Lib', 'AssetCompress.AssetConfig');
-App::import('Lib', 'AssetCompress.AssetCompiler');
-App::import('Lib', 'AssetCompress.AssetCache');
+App::uses('AssetConfig', 'AssetCompress.Lib');
+App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('AssetCompiler', 'AssetCompress.Lib');
 
 class AssetsController extends AssetCompressAppController {
 	public $name = 'Assets';
@@ -30,8 +30,8 @@ class AssetsController extends AssetCompressAppController {
 			$build .= '.' . $this->request->params['ext'];
 		}
 
-		if (isset($this->params['url']['theme'])) {
-			$Config->theme($this->params['url']['theme']);
+		if (isset($this->request->query['theme'])) {
+			$Config->theme($this->request->query['theme']);
 		}
 
 		// dynamic build file
@@ -51,12 +51,9 @@ class AssetsController extends AssetCompressAppController {
 				$Cache->write($build, $contents);
 			}
 		} catch (Exception $e) {
-			$this->log($e->getMessage());
-			$this->response->statusCode(404);
-			$this->autoRender = false;
-			return;
+			throw new NotFoundException();
 		}
-
+		
 		$this->response->type($Config->getExt($build));
 		$this->set('contents', $contents);
 		$this->render('contents');
