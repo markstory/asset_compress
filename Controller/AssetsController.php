@@ -8,7 +8,7 @@ class AssetsController extends AssetCompressAppController {
 	public $name = 'Assets';
 	public $uses = array();
 	public $layout = 'script';
-	public $viewPath = 'generic';
+	public $viewPath = 'Generic';
 	public $_Config;
 
 	public function beforeFilter() {
