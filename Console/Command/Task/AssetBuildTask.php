@@ -1,7 +1,7 @@
 <?php
 App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
+App::uses('AssetCache', 'AssetCompress.Lib');
 
 App::uses('Folder', 'Utility');
 

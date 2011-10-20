@@ -1,6 +1,4 @@
 <?php
-
-App::uses('AssetCompressAppController', 'AssetCompress.Controller');
 App::uses('AssetsController', 'AssetCompress.Controller');
 
 class TestAssetsController extends AssetsController {

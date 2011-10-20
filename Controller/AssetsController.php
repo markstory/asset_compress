@@ -1,8 +1,8 @@
 <?php
-
+App::uses('AssetCompressAppController', 'AssetCompress.Controller');
 App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
+App::uses('AssetCache', 'AssetCompress.Lib');
 
 class AssetsController extends AssetCompressAppController {
 	public $name = 'Assets';

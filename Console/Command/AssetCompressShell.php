@@ -2,6 +2,7 @@
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
+
 App::uses('Folder', 'Utility');
 
 /**
@@ -55,7 +56,7 @@ class AssetCompressShell extends Shell {
 
 	public function build_dynamic() {
 		$this->AssetBuild->setConfig($this->_Config);
-		$viewpaths = App::path('views');
+		$viewpaths = App::path('View');
 		$this->AssetBuild->buildDynamic($viewpaths);
 	}
 
@@ -152,11 +153,11 @@ class AssetCompressShell extends Shell {
  * @return array Array of theme names.
  */
 	protected function _findThemes() {
-		$viewpaths = App::path('views');
+		$viewpaths = App::path('View');
 		$themes = array();
 		foreach ($viewpaths as $path) {
 			if (is_dir($path . 'themed')) {
-				$Folder = new Folder($path . 'themed');
+				$Folder = new Folder($path . 'Themed');
 				list($dirs, $files) = $Folder->read();
 				$themes = array_merge($themes, $dirs);
 			}

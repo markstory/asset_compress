@@ -1,5 +1,4 @@
 <?php
-
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 

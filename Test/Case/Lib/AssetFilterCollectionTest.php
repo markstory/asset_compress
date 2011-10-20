@@ -1,7 +1,6 @@
 <?php
-
-App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 App::uses('AssetFilter', 'AssetCompress.Lib');
+App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 
 class AssetFilterCollectionTest extends CakeTestCase {
 

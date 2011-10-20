@@ -1,6 +1,8 @@
 <?php
+App::uses('AssetConfig', 'AssetCompress.Lib');
+App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
 
-App::import('Helper', array('AssetCompress.AssetCompress', 'Html', 'Javascript'));
+App::uses('HtmlHelper', 'View/Helper');
 App::uses('View', 'View');
 
 
