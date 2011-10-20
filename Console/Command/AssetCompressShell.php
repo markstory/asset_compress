@@ -22,13 +22,9 @@ class AssetCompressShell extends Shell {
  */
 	public function startup() {
 		parent::startup();
-		$config = null;
-		if (isset($this->params['config'])) {
-			$config = $this->params['config'];
-		}
 
 		AssetConfig::clearAllCachedKeys();
-		$this->_Config = AssetConfig::buildFromIniFile($config);
+		$this->_Config = AssetConfig::buildFromIniFile($this->params['config']);
 		$this->AssetBuild->setThemes($this->_findThemes());
 		$this->out();
 	}
@@ -77,7 +73,8 @@ class AssetCompressShell extends Shell {
 		$this->hr();
 		$this->_clearBuilds('css');
 
-		$this->out('Complete');
+		$this->out();
+		$this->out('<success>Complete</success>');
 	}
 
 /**
