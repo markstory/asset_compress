@@ -1,5 +1,4 @@
 <?php
-
 App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetConfigTest extends CakeTestCase {
@@ -12,8 +11,8 @@ class AssetConfigTest extends CakeTestCase {
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
-		$this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
-		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
+		$this->testConfig = $this->_testFiles . 'Config' . DS . 'config.ini';
+		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);

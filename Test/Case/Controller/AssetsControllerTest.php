@@ -1,6 +1,4 @@
 <?php
-
-App::uses('AssetCompressAppController', 'AssetCompress.Controller');
 App::uses('AssetsController', 'AssetCompress.Controller');
 
 class TestAssetsController extends AssetsController {
@@ -23,7 +21,7 @@ class AssetsControllerTest extends CakeTestCase {
 
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
-		$this->Controller = new TestAssetsController();
+		$this->Controller = new TestAssetsController(new CakeRequest(null, false), new CakeResponse());
 		$this->Controller->constructClasses();
 		$this->Controller->response = $this->getMock('CakeResponse');
 		$this->Controller->_Config = $config;
@@ -35,28 +33,27 @@ class AssetsControllerTest extends CakeTestCase {
 	}
 
 	function testDynamicBuildFile() {
-		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
-
 		$this->Controller->response
-			->expects($this->once())->method('header')
-			->with($this->equalTo('Content-Type: text/javascript'));
+			->expects($this->once())->method('type')
+			->with($this->equalTo('js'));
 
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->Controller->get('dynamic.js');
 
 		$this->assertPattern('/function test/', $this->Controller->viewVars['contents']);
 		$this->assertPattern('/multi line comments/', $this->Controller->viewVars['contents']);
 	}
 
-	/**
-	 * When debug mode is off, dynamic build files should create errors, this is to try and mitigate
-	 * the ability to DOS attack an app, by hammering expensive to generate resources.
-     *
-     * @expectedException NotFoundException
-	 */
+/**
+ * When debug mode is off, dynamic build files should create errors, this is to try and mitigate
+ * the ability to DOS attack an app, by hammering expensive to generate resources.
+ *
+ * @expectedException NotFoundException
+ */
 	function testDynamicBuildFileDebugOff() {
 		Configure::write('debug', 0);
-		$this->Controller->request->params['url']['file'] = array('library_file.js', 'lots_of_comments.js');
 
+		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->Controller->get('dynamic.js');
 	}
 }

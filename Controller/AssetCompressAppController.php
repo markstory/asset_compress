@@ -8,8 +8,13 @@
  * @author Mark Story
  */
 class AssetCompressAppController extends AppController {
+	/**
+	 * Not working in 2.0
+	 *
 	public $components = false;
 	public $helpers = array();
+	 *
+	 */
 
 /**
  * Stub off the startupProcess so components don't mess around with asset compression

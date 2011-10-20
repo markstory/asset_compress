@@ -38,7 +38,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 * Mark Story
 * Ben McClure
-* Igor Fomin
+* Igor Fomin (evilbloodydemon)
 * Rachman Chavik
 * Sumit Madan
 * Florian Krämer
@@ -47,7 +47,6 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Abbas Ali
 * Jeremy Harris
 * rynop
-* evilbloodydemon
 * Cauan Cabral
 * Renan Gonçalves
 

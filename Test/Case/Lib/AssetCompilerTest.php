@@ -1,8 +1,6 @@
 <?php
-
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
-
 
 class AssetCompilerTest extends CakeTestCase {
 
@@ -10,9 +8,9 @@ class AssetCompilerTest extends CakeTestCase {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
-		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
+		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
-		$testFile = $this->_testFiles . 'config' . DS . 'config.ini';
+		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($testFile);
@@ -75,11 +73,11 @@ TEXT;
 
 	function testCombineThemeFile() {
 		App::build(array(
-			'views' => array($this->_testFiles . 'views' . DS)
+			'View' => array($this->_testFiles . 'View' . DS)
 		));
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', array(
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS . '**'
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
 		));
 		$Config->theme('blue');
 		$Compiler = new AssetCompiler($Config);
@@ -95,11 +93,11 @@ TEXT;
 
 	function testCombineThemeFileWithNonTheme() {
 		App::build(array(
-			'views' => array($this->_testFiles . 'views' . DS)
+			'View' => array($this->_testFiles . 'View' . DS)
 		));
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', array(
-			$this->_pluginPath . 'tests' . DS . 'test_files' . DS . 'css' . DS . '**'
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
 		));
 		$Config->theme('red');
 		$Compiler = new AssetCompiler($Config);

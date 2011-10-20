@@ -1,10 +1,9 @@
 <?php
-
-App::uses('View', 'View');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
+
 App::uses('HtmlHelper', 'View/Helper');
-App::uses('AppHelper', 'View/Helper');
+App::uses('View', 'View');
 
 
 class AssetCompressHelperTest extends CakeTestCase {
@@ -19,16 +18,15 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
-
 		$controller = null;
-		$View = $this->getMock('View', array(), array(&$controller));
-		$View->request = new CakeRequest(null, false);
-
-		$this->Helper = new AssetCompressHelper($View, array('noconfig' => true));
+		$request = new CakeRequest(null, false);
+		$request->webroot = '';
+		$view = new View($controller);
+		$view->request = $request;
+		$this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
 		$this->Helper->config($Config);
-
-		$this->Helper->Html = new HtmlHelper($View);
+		$this->Helper->Html = new HtmlHelper($view);
 
 		Router::reload();
 		Configure::write('debug', 2);
@@ -314,9 +312,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		$this->assertTrue($config->cachingOn('asset_test.js'));
 		$result = $this->Helper->script('asset_test.js');
-
-		$expectedPath = str_replace(DS, '/', TMP . 'asset_test.js');
-		$this->assertTrue(strpos($result, $expectedPath) !== false);
+		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
 		unlink(TMP . 'asset_test.js');
 	}
 
@@ -367,10 +363,9 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		$filename = TMP . 'asset_test.v' . $time . '.js';
 		touch($filename);
-		$result = $this->Helper->script('asset_test.js');
 
-		$expectedPath = str_replace(DS, '/', $filename);
-		$this->assertTrue(strpos($result, $expectedPath) !== false);
+		$result = $this->Helper->script('asset_test.js');
+		$this->assertTrue(strpos($result, $filename) !== false);
 		unlink($filename);
 	}
 

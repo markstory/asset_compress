@@ -1,5 +1,6 @@
 <?php
 App::uses('AssetFilter', 'AssetCompress.Lib');
+
 /**
  * A collection for creating and interacting with filter sets.
  *

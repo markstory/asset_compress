@@ -7,10 +7,9 @@ class AssetCacheTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		AssetConfig::clearBuildTimestamp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
-		$this->testConfig = $this->_testFiles . 'config' . DS . 'integration.ini';
-		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
+		$this->testConfig = $this->_testFiles . 'Config' . DS . 'integration.ini';
+		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->config->cachePath('js', TMP);

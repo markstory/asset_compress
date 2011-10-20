@@ -1,4 +1,6 @@
 <?php
+App::uses('AssetProcess', 'AssetCompress.Lib');
+
 /**
  * AssetFilterInterface all filters declared in your config.ini must implement 
  * this interface or exceptions will be thrown.
@@ -33,7 +35,6 @@ interface AssetFilterInterface {
 	public function settings($settings);
 }
 
-App::uses('AssetProcess', 'AssetCompress.Lib');
 
 /**
  * A simple base class you can build filters on top of 

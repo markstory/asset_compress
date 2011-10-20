@@ -2,6 +2,7 @@
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
+
 App::uses('Folder', 'Utility');
 
 /**
@@ -51,7 +52,7 @@ class AssetCompressShell extends Shell {
 
 	public function build_dynamic() {
 		$this->AssetBuild->setConfig($this->_Config);
-		$viewpaths = App::path('views');
+		$viewpaths = App::path('View');
 		$this->AssetBuild->buildDynamic($viewpaths);
 	}
 
@@ -149,11 +150,11 @@ class AssetCompressShell extends Shell {
  * @return array Array of theme names.
  */
 	protected function _findThemes() {
-		$viewpaths = App::path('views');
+		$viewpaths = App::path('View');
 		$themes = array();
 		foreach ($viewpaths as $path) {
 			if (is_dir($path . 'themed')) {
-				$Folder = new Folder($path . 'themed');
+				$Folder = new Folder($path . 'Themed');
 				list($dirs, $files) = $Folder->read();
 				$themes = array_merge($themes, $dirs);
 			}
@@ -161,28 +162,31 @@ class AssetCompressShell extends Shell {
 		return $themes;
 	}
 
+/**
+ * get the option parser.
+ *
+ * @return void
+ */
 	public function getOptionParser() {
-		return parent::getOptionParser()
-			->description(
-				'AssetCompress shell builds and clears assets',
-				'defined in your asset_compress.ini file, and ',
-				'in your view files.'
-			)->addSubcommand('clear', array(
-				'help' => 'Clears all existing build files.'
-			))->addSubcommand('build', array(
-				'help' => 'Generate all builds defined in the ini and view files.'
-			))->addSubcommand('build_ini', array(
-				'help' => 'Generate only builds defined in the ini file.'
-			))->addSubcommand('build_dynamic', array(
-				'help' => 'Generate only builds defined in view files.'
-			))->addOption('config', array(
-				'short' => 'c',
-				'help' => 'Choose the config file to use.',
-				'default' => APP . 'Config' . DS . 'asset_compress.ini'
-			))->addOption('force', array(
-				'short' => 'f',
-				'help' => 'Force assets to rebuild.  Ignores timestamp rules.',
-				'boolean' => true
-			));
+		$parser = parent::getOptionParser();
+		return $parser->description(
+			'Asset Compress Shell'
+		)->addSubcommand('clear', array(
+			'help' => 'Clears all existing build files.'
+		))->addSubcommand('build', array(
+			'help' => 'Builds all compressed files.'
+		))->addSubcommand('build_ini', array(
+			'help' => 'Build compressed files defined in the ini file.'
+		))->addSubcommand('build_dynamic', array(
+			'help' => 'Build compressed files defined in view files.'
+		))->addOption('config', array(
+			'help' => 'Choose the config file to use.',
+			'short' => 'c',
+			'default' => APP . 'Config' . DS . 'asset_compress.ini'
+		))->addOption('force', array(
+			'help' => 'Force assets to rebuild. Ignores timestamp rules.',
+			'short' => 'f',
+			'boolean' => true
+		));
 	}
 }

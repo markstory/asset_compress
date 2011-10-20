@@ -1,6 +1,7 @@
 <?php
 App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
+
 /**
  * AssetCompress Helper.
  *
@@ -57,12 +58,11 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function __construct(View $View, $settings = array()) {
-		parent::__construct($View, $settings);
-
 		if (empty($settings['noconfig'])) {
 			$config = AssetConfig::buildFromIniFile();
 			$this->config($config);
 		}
+		parent::__construct($View, $settings);
 	}
 
 /**

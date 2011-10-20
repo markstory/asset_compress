@@ -1,14 +1,14 @@
 <?php
-
+App::uses('AssetCompressAppController', 'AssetCompress.Controller');
 App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
+App::uses('AssetCache', 'AssetCompress.Lib');
 
 class AssetsController extends AssetCompressAppController {
 	public $name = 'Assets';
 	public $uses = array();
 	public $layout = 'script';
-	public $viewPath = 'generic';
+	public $viewPath = 'Generic';
 	public $_Config;
 
 	public function beforeFilter() {
@@ -53,22 +53,10 @@ class AssetsController extends AssetCompressAppController {
 		} catch (Exception $e) {
 			throw new NotFoundException();
 		}
-
-		$this->response->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));
+		
+		$this->response->type($Config->getExt($build));
 		$this->set('contents', $contents);
 		$this->render('contents');
-	}
-
-/**
- * Helper method for getting ext -> mime type mappings.
- */
-	protected function _getContentType($ext) {
-		switch ($ext) {
-			case 'js':
-				return 'text/javascript';
-			case 'css':
-				return 'text/css';
-		}
 	}
 
 /**

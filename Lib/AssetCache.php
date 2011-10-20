@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetScanner');
+App::uses('AssetScanner', 'AssetCompress.Lib');
 
 /**
  * Writes compiled assets to the filesystem
@@ -29,7 +29,7 @@ class AssetCache {
 			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path); 
 		}
 		$filename = $this->buildFileName($filename);
-		return file_put_contents($path . $filename, $content);
+		return file_put_contents($path . $filename, $content) !== false;
 	}
 
 /**

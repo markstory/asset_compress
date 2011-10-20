@@ -6,21 +6,20 @@ App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
 App::uses('AssetBuildTask', 'AssetCompress.Console/Command/Task');
 
-class AssetBuildTest extends CakeTestCase {
+class AssetBuildTaskTest extends CakeTestCase {
 
 	function setUp() {
 		parent::setUp();
-
-        $out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Task = $this->getMock('AssetBuildTask',
-            array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'),
-            array($out, $out, $in)
-        );
+			array('in', 'err', 'createFile', '_stop', 'clear'),
+			array($out, $out, $in)
+		);
 
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testFilePath = $this->_pluginPath . 'Test/test_files/View/parse/';
+		$this->testFilePath = $this->_pluginPath . 'Test/test_files/View/Parse/';
 
 		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
 		AssetConfig::clearAllCachedKeys();
@@ -30,7 +29,7 @@ class AssetBuildTest extends CakeTestCase {
 
 	function tearDown() {
 		parent::tearDown();
-		unset($this->Dispatcher, $this->Task);
+		unset($this->Task);
 	}
 
 	function testScanningSimpleFile() {
