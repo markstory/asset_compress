@@ -1,6 +1,6 @@
 <?php
-
-App::import('Lib', 'AssetCompress.AssetFilterCollection');
+App::uses('AssetFilter', 'AssetCompress.Lib');
+App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 
 class AssetFilterCollectionTest extends CakeTestCase {
 

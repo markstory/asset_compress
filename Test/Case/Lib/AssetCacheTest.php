@@ -1,6 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetCache');
-App::import('Lib', 'AssetCompress.AssetConfig');
+App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetCacheTest extends CakeTestCase {
 

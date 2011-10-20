@@ -1,7 +1,6 @@
 <?php
-
-App::import('Lib', 'AssetCompress.AssetCompiler');
-App::import('Lib', 'AssetCompress.AssetConfig');
+App::uses('AssetCompiler', 'AssetCompress.Lib');
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetCompilerTest extends CakeTestCase {
 

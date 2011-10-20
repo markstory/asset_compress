@@ -1,6 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetFilterInterface');
-App::import('Lib', 'AssetCompress.AssetScanner');
+App::uses('AssetFilter', 'AssetCompress.Lib');
+App::uses('AssetScanner', 'AssetCompress.Lib');
 
 /**
  * Implements directive replacement similar to sprockets <http://getsprockets.org>

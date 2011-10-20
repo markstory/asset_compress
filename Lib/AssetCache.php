@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetScanner');
+App::uses('AssetScanner', 'AssetCompress.Lib');
 
 /**
  * Writes compiled assets to the filesystem

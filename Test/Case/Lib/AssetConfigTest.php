@@ -1,5 +1,5 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetConfig');
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetConfigTest extends CakeTestCase {
 

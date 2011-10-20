@@ -1,6 +1,5 @@
 <?php
-
-App::import('Lib', 'AssetCompress.AssetScanner');
+App::uses('AssetScanner', 'AssetCompress.Lib');
 
 class AssetScannerTest extends CakeTestCase {
 

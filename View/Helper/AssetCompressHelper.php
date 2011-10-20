@@ -1,6 +1,6 @@
 <?php
-App::import('Lib', 'AssetCompress.AssetConfig');
-App::import('Lib', 'AssetCompress.AssetCache');
+App::uses('AssetConfig', 'AssetCompress.Lib');
+App::uses('AssetCache', 'AssetCompress.Lib');
 
 /**
  * AssetCompress Helper.
