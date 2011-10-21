@@ -169,16 +169,19 @@ class AssetCompressShell extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(
-			'Asset Compress Shell'
-		)->addSubcommand('clear', array(
-			'help' => 'Clears all existing build files.'
+		return $parser->description(array(
+			'Asset Compress Shell',
+			'',
+			'Builds and clears assets defined in you asset_compress.ini',
+			'file and in your view files.'
+		))->addSubcommand('clear', array(
+			'help' => 'Clears all builds defined in the ini file.'
 		))->addSubcommand('build', array(
-			'help' => 'Builds all compressed files.'
+			'help' => 'Generate all builds defined in the ini and view files.'
 		))->addSubcommand('build_ini', array(
-			'help' => 'Build compressed files defined in the ini file.'
+			'help' => 'Generate only build files defined in the ini file.'
 		))->addSubcommand('build_dynamic', array(
-			'help' => 'Build compressed files defined in view files.'
+			'help' => 'Build build files defined in view files.'
 		))->addOption('config', array(
 			'help' => 'Choose the config file to use.',
 			'short' => 'c',
