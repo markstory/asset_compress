@@ -20,7 +20,7 @@ class AssetCompiler {
  * Generate a compiled asset, with all the configured filters applied.
  *
  * @param string $target The name of the build target to generate.
- * @return The processed result of $target and it dependencies. 
+ * @return The processed result of $target and it dependencies.
  */
 	public function generate($build) {
 		$ext = $this->_Config->getExt($build);

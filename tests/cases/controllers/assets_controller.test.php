@@ -7,7 +7,7 @@ class TestAssetsController extends AssetsController {
 		$this->headers[] = func_get_args();
 	}
 	public function render() {
-	
+
 	}
 }
 
@@ -22,7 +22,7 @@ class AssetsControllerTest extends CakeTestCase {
 			'TEST_FILES/' => $this->_pluginPath . 'tests' . DS . 'test_files' . DS
 		);
 		AssetConfig::clearAllCachedKeys();
-		
+
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
 		$this->Controller = new TestAssetsController();

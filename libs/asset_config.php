@@ -45,7 +45,7 @@ class AssetConfig {
  * @var array
  */
 	public $constantMap = array(
-		'APP/' => APP, 
+		'APP/' => APP,
 		'WEBROOT/' => WWW_ROOT
 	);
 
@@ -59,10 +59,10 @@ class AssetConfig {
 	const GENERAL = 'general';
 
 /**
- * Constructor, set some initial data for a AssetConfig object. 
+ * Constructor, set some initial data for a AssetConfig object.
  *
  * @param array $data Initial data set for the object.
- * @param array $additionalConstants  Additional constants that will be translated 
+ * @param array $additionalConstants  Additional constants that will be translated
  *    when parsing paths.
  */
 	public function __construct(array $data = array(), array $additionalConstants = array()) {
@@ -74,19 +74,19 @@ class AssetConfig {
  * Constructor
  *
  * @param string $iniFile File path for the ini file to parse.
- * @param array $additionalConstants  Additional constants that will be translated 
+ * @param array $additionalConstants  Additional constants that will be translated
  *    when parsing paths.
  */
 	public static function buildFromIniFile($iniFile = null, $constants = array()){
 		if (empty($iniFile)) {
 			$iniFile = CONFIGS . 'asset_compress.ini';
 		}
-		
+
 		// If the AssetConfig is in cache, means that user had General.cacheConfig in their ini.
 		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
 			return $parsedConfig;
 		}
-		
+
 		$contents = self::_readConfig($iniFile);
 		return self::_parseConfig($contents, $constants);
 	}
@@ -109,7 +109,7 @@ class AssetConfig {
 	}
 
 /**
- * Clear the stored config object from cache 
+ * Clear the stored config object from cache
  *
  * @return void
  */
@@ -280,7 +280,7 @@ class AssetConfig {
  * Get/set filters for an extension/build file
  *
  * @param string $ext Name of an extension
- * @param string $target A build target. If provided the target's filters (if any) will also be 
+ * @param string $target A build target. If provided the target's filters (if any) will also be
  *     returned.
  * @param array $filters Filters to replace either the global or per target filters.
  * @return array Filters for that extension.
@@ -394,7 +394,7 @@ class AssetConfig {
 
 /**
  * Get / set values from the General section.  This is preferred
- * to using get()/set() as you don't run the risk of making a 
+ * to using get()/set() as you don't run the risk of making a
  * mistake in General's casing.
  *
  * @param string $key The key to read/write
@@ -410,7 +410,7 @@ class AssetConfig {
 
 /**
  * Check to see if caching is on for an extension.
- * Caching is controlled by General.writeCache and the matching 
+ * Caching is controlled by General.writeCache and the matching
  * extension having a cachePath.
  *
  * @param string $target

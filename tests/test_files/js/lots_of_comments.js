@@ -3,7 +3,7 @@ Important comment
 */
 // this
 //
-// file has 
+// file has
 //     lots of
 //
 // Comments

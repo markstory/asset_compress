@@ -67,7 +67,7 @@ class AssetCompressHelper extends AppHelper {
 /**
  * Modify the runtime configuration of the helper.
  * Used as a get/set for the ini file values.
- * 
+ *
  * @param string $name The dot separated config value to change ie. Css.searchPaths
  * @param mixed $value The value to set the config to.
  * @return mixed Either the value being read or null.  Null also is returned when reading things that don't exist.
@@ -280,7 +280,7 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-		
+
 		if ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
@@ -383,7 +383,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	protected function _getRoute($file) {
 		$url = $this->options['buildUrl'];
-	
+
 		//escape out of prefixes.
 		$prefixes = Router::prefixes();
 		foreach ($prefixes as $prefix) {

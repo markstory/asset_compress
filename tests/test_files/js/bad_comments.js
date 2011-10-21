@@ -1,7 +1,7 @@
 /* COMMENT
 MORE
 MORE WITH NO *
-MORE 
+MORE
 MORE*/
 (function($){function Foo(){this.bar=[];}})
 
@@ -10,7 +10,7 @@ function something() {
 	return 1 + 1;
 }
 		   	/*
-the next 
+the next
 valid
 close */
 function two() {
