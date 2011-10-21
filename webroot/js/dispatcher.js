@@ -26,7 +26,7 @@ App.Dispatcher = function () {
 			}
 			return App[params.controller][params.action](params);
 		},
-		
+
 		_parseUrl: function (url) {
 			var params = {};
 			var urlParts = url.split(PATH_SEPARATOR);

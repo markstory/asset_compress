@@ -3,7 +3,7 @@ App::import('Lib', 'AssetCompress.AssetFilterInterface');
 App::import('Lib', 'AssetCompress.AssetScanner');
 
 /**
- * A preprocessor that inlines files referenced by 
+ * A preprocessor that inlines files referenced by
  * @import() statements in css files.
  *
  * @package asset_compress

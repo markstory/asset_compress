@@ -1,13 +1,13 @@
 <?php
 /**
- * AssetFilterInterface all filters declared in your config.ini must implement 
+ * AssetFilterInterface all filters declared in your config.ini must implement
  * this interface or exceptions will be thrown.
  *
  * @package asset_compress
  */
 interface AssetFilterInterface {
 /**
- * Input filters are used to do pre-processing on each file in a 
+ * Input filters are used to do pre-processing on each file in a
  * build target.
  *
  * @param string $filename Name of the file
@@ -35,7 +35,7 @@ interface AssetFilterInterface {
 
 
 /**
- * A simple base class you can build filters on top of 
+ * A simple base class you can build filters on top of
  * if you only want to implement either input() or output()
  *
  * @package asset_compress
@@ -99,7 +99,7 @@ class AssetFilter implements AssetFilterInterface {
 	}
 
 /**
- * Find the command executable. If $file is an absolute path 
+ * Find the command executable. If $file is an absolute path
  * to a file that exists $search will not be looked at.
  *
  * @param array $search Paths to search.
@@ -117,5 +117,5 @@ class AssetFilter implements AssetFilterInterface {
 			}
 		}
 		return null;
-	} 
+	}
 }
