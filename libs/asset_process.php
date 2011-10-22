@@ -14,7 +14,7 @@ class AssetProcess {
  * Get/set the environment for the command.
  *
  * @param array $env Environment variables.
- * @return The environment variables that are set, or 
+ * @return The environment variables that are set, or
  *    this.
  */
 	public function environment($env = null) {
@@ -40,7 +40,7 @@ class AssetProcess {
 		$process = proc_open(
 			$this->_command,
 			$descriptor_spec,
-			$pipes, 
+			$pipes,
 			null,
 			$this->_env
 		);

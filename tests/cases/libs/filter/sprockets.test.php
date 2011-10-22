@@ -70,7 +70,7 @@ TEXT;
 	}
 
 /**
- * test that <foo> scans all search paths for a suitable file. Unlike "foo" which only scans the 
+ * test that <foo> scans all search paths for a suitable file. Unlike "foo" which only scans the
  * current dir.
  *
  * @return void
