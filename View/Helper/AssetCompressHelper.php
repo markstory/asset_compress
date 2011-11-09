@@ -204,6 +204,26 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
+ * Sort files so core files are included first
+ *
+ * @param array $files Array of destination/build files
+ * @return array Sorted files
+ */
+	protected function _sortFiles($files) {
+		if (count($files) < 2) {
+			return $files;
+		}
+		$sortedFiles = array();
+		foreach ($files as $key => $file) {
+			if ($file[0] != ':') {
+				$sortedFiles[] = $file;
+				unset($files[$key]);
+			}
+		}
+		return array_merge($sortedFiles, $files);
+	}
+
+/**
  * The generic version of includeCss and includeJs
  *
  * @param array $files Array of destination/build files to include
@@ -223,6 +243,7 @@ class AssetCompressHelper extends AppHelper {
 		foreach ($files as &$file) {
 			$file = $this->_addExt($file, '.' . $ext);
 		}
+		$files = $this->_sortFiles($files);
 		$output = array();
 		foreach ($files as $build) {
 			if (empty($this->_runtime[$ext][$build])) {
