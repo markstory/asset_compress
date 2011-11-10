@@ -12,7 +12,7 @@ class AssetsControllerTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'integration.ini';
+		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'integration.ini';
 
 		$map = array(
 			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS

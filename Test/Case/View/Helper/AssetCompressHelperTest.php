@@ -15,7 +15,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'config' . DS . 'config.ini';
+		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$controller = null;
