@@ -110,7 +110,7 @@ class AssetCompressHelper extends AppHelper {
  *
  * @return void
  */
-	public function afterRender() {
+	public function afterRender($viewFile) {
 		$this->_includeViewJs();
 	}
 
