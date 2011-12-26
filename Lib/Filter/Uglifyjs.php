@@ -3,7 +3,7 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * Output minifier for uglify-j
- * 
+ *
  * Requires nodejs and uglify-js to be installed.
  *
  * @see https://github.com/mishoo/UglifyJS

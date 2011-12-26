@@ -61,8 +61,8 @@ AssetCompress.load = function () {
 			delete args[i];
 		}
 	}
-	filename = AssetCompress.classUrl + 
-		AssetCompress.underscore(buildName.reverse().join('')) + '.js' + 
+	filename = AssetCompress.classUrl +
+		AssetCompress.underscore(buildName.reverse().join('')) + '.js' +
 		'?file[]=' + args.join('&file[]=');
 
 	_appendScript(filename, readyCallback);

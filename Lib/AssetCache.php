@@ -26,7 +26,7 @@ class AssetCache {
 		$path = $this->_Config->cachePath($ext);
 
 		if (!is_writable($path)) {
-			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path); 
+			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path);
 		}
 		$filename = $this->buildFileName($filename);
 		return file_put_contents($path . $filename, $content) !== false;
@@ -43,7 +43,7 @@ class AssetCache {
 	public function isFresh($target) {
 		$ext = $this->_Config->getExt($target);
 		$files = $this->_Config->files($target);
-	
+
 		$theme = $this->_Config->theme();
 		$target = $this->buildFileName($target);
 

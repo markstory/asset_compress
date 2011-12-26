@@ -76,7 +76,7 @@ class AssetScanner {
 	}
 
 /**
- * Find a file in the connected paths, and read its contents. 
+ * Find a file in the connected paths, and read its contents.
  *
  * @param string $file The file you want to find.
  * @return mixed Either false on a miss, or the contents of the file.
@@ -102,7 +102,7 @@ class AssetScanner {
  * Resolve a themed file to its full path. The file will be found on the
  * current theme's path.
  *
- * @param string $file The theme file to find.  
+ * @param string $file The theme file to find.
  * @return string Full path to theme file.
  */
 	protected function _resolveTheme($file) {

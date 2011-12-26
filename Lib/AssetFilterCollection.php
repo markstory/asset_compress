@@ -57,7 +57,7 @@ class AssetFilterCollection {
  * @return boolean.
  */
 	public function has($name) {
-		try { 
+		try {
 			$this->get($name);
 			return true;
 		} catch (RuntimeException $e) {
@@ -94,7 +94,7 @@ class AssetFilterCollection {
 		}
 		return $content;
 	}
-	
+
 /**
  * Apply all the output filters in sequence to the file and content.
  *

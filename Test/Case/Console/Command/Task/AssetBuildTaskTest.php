@@ -40,7 +40,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 		$this->assertEqual(4, count($result));
 		$this->assertEqual('addScript', $result[0][2][1]);
 	}
-	
+
 	function testParsingSimpleFile() {
 		$files = array($this->testFilePath . 'single.ctp');
 		$this->Task->setFiles($files);
@@ -58,7 +58,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected, $result);
 	}
-	
+
 	function testParsingMultipleFile() {
 		$files = array($this->testFilePath . 'multiple.ctp');
 		$this->Task->setFiles($files);

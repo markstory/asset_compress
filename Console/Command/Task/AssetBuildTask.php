@@ -6,12 +6,12 @@ App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('Folder', 'Utility');
 
 class AssetBuildTask extends Shell {
-	
+
 	protected $_Config;
 	protected $_themes = array();
 	protected $_files = array();
 	protected $_tokens = array();
-	
+
 /**
  * Array of tokens that indicate a helper call.
  *
@@ -61,7 +61,7 @@ class AssetBuildTask extends Shell {
 
 /**
  * Generate dynamically declared build targets in a set of paths.
- * 
+ *
  * @param array $paths Array of paths to scan for dynamic builds
  * @return void
  */
@@ -85,7 +85,7 @@ class AssetBuildTask extends Shell {
 /**
  * Collects the files to scan and generate build files for.
  *
- * @param array $paths 
+ * @param array $paths
  */
 	protected function _collectFiles($paths) {
 		foreach ($paths as $path) {
@@ -96,7 +96,7 @@ class AssetBuildTask extends Shell {
 	}
 
 /**
- * Scan each file for assetCompress helper calls.  Only pull out the 
+ * Scan each file for assetCompress helper calls.  Only pull out the
  * calls to the helper.
  *
  * @return void
@@ -107,7 +107,7 @@ class AssetBuildTask extends Shell {
 			$this->out('Scanning ' . $file . '...', 1, Shell::VERBOSE);
 
 			$capturing = false;
-		
+
 			$content = file_get_contents($file);
 			$tokens = token_get_all($content);
 			foreach ($tokens as $token) {
@@ -144,11 +144,11 @@ class AssetBuildTask extends Shell {
 			if (!in_array($method, $this->_methods)) {
 				continue;
 			}
-	
+
 			$args = array_slice($call, 3);
 
 			list($files, $build) = $this->_parseArgs($args);
-		
+
 			if (!isset($fileMap[$method][$build])) {
 				$fileMap[$method][$build] = array();
 			}
@@ -267,7 +267,7 @@ class AssetBuildTask extends Shell {
 			$this->err('Error: ' . $e->getMessage());
 		}
 	}
-	
+
 /**
  * Adds an extension if the file doesn't already end with it.
  *

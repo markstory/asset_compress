@@ -153,7 +153,7 @@ class AssetConfigTest extends CakeTestCase {
 		$this->config->set('Bogus.poop', 'smelly');
 		$this->assertEqual('smelly', $this->config->get('Bogus.poop'));
 	}
-	
+
 	function testSetLimit() {
 		try {
 			$this->config->set('only.two.allowed', 'smelly');
@@ -190,7 +190,7 @@ class AssetConfigTest extends CakeTestCase {
 
 /**
  * Test that the default paths work.
- * 
+ *
  */
 	function testDefaultConventions() {
 		$ini = dirname($this->testConfig) . DS . 'bare.ini';

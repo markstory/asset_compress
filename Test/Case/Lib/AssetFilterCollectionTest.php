@@ -49,7 +49,7 @@ FilterTwo::output()
 FilterOne::output()
 test content
 TEXT;
-		$this->assertEqual($result, $expected);	
+		$this->assertEqual($result, $expected);
 	}
 }
 

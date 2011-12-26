@@ -68,7 +68,7 @@ class AssetCompressHelper extends AppHelper {
 /**
  * Modify the runtime configuration of the helper.
  * Used as a get/set for the ini file values.
- * 
+ *
  * @param string $name The dot separated config value to change ie. Css.searchPaths
  * @param mixed $value The value to set the config to.
  * @return mixed Either the value being read or null.  Null also is returned when reading things that don't exist.
