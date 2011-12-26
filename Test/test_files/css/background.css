@@ -1,0 +1,16 @@
+.single {
+	background: url('img/test.gif') left top no-repeat;
+}
+.double {
+	background: url("../css/img/test.gif") left top no-repeat;
+}
+.bare {
+	background: url(img/test.gif) 10px 10px repeat-x;
+}
+.bk-image {
+	background-image: url(../css/img/test.gif);
+}
+.inline { background: url(img/test.gif); }
+.no-change {
+	background: url(/images/foobar.htc);
+}
