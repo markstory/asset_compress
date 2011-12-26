@@ -59,6 +59,10 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ### Changelog
 
+#### 0.6
+
+* Support for CakePHP 2.0.
+
 #### 0.5
 
 *Backwards Incompatible Changes*
