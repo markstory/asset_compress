@@ -1,11 +1,6 @@
 <?php
 App::uses('AssetsController', 'AssetCompress.Controller');
-
-class TestAssetsController extends AssetsController {
-	public function render() {
-
-	}
-}
+App::uses('CakeResponse', 'Network');
 
 class AssetsControllerTest extends CakeTestCase {
 
@@ -21,7 +16,11 @@ class AssetsControllerTest extends CakeTestCase {
 
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
-		$this->Controller = new TestAssetsController(new CakeRequest(null, false), new CakeResponse());
+		$this->Controller = $this->getMock(
+			'AssetsController',
+			array('render'),
+			array(new CakeRequest(null, false), new CakeResponse())
+		);
 		$this->Controller->constructClasses();
 		$this->Controller->response = $this->getMock('CakeResponse');
 		$this->Controller->_Config = $config;
