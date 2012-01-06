@@ -51,7 +51,8 @@ class AssetsController extends AssetCompressAppController {
 				$Cache->write($build, $contents);
 			}
 		} catch (Exception $e) {
-			throw new NotFoundException();
+			$message = (Configure::read('debug') > 0) ? $e->getMessage() : '';
+			throw new NotFoundException($message);
 		}
 		
 		$this->response->type($Config->getExt($build));
