@@ -65,6 +65,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Added `TimestampImage` filter class.  This filter provides the ability
   to timestamp background images used in CSS files.  This is useful for
   cache busting CSS sprites or other CSS background images.
+* Added `ROOT/` path variable for use in configuration files.
 
 #### 0.5
 
