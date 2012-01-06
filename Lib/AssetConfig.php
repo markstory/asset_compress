@@ -46,7 +46,8 @@ class AssetConfig {
  */
 	public $constantMap = array(
 		'APP/' => APP,
-		'WEBROOT/' => WWW_ROOT
+		'WEBROOT/' => WWW_ROOT,
+		'ROOT/' => ROOT
 	);
 
 	const FILTERS = 'filters';
