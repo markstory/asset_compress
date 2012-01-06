@@ -45,15 +45,22 @@ class TimestampImage extends AssetFilter {
 /**
  * Do replacements.
  *
- * $matches[0] -> whole background line.
- * $matches[path] -> the url with any wrapping '/"
+ * - $matches[0] -> whole background line.
+ * - $matches[path] -> the url with any wrapping '/'
+ *
+ * If the image path starts with / its assumed to be an absolute path 
+ * which will be prepended with WWW_ROOT
  *
  * @param array $matches Array of matches
  * @return string Replaced code.
  */
 	protected function _replace($matches) {
 		$path = $matches['path'];
-		$imagePath = realpath(dirname($this->_filename) . DS . $path);
+		if ($path[0] == '/') {
+			$imagePath = WWW_ROOT . rtrim($path, '/');
+		} else {
+			$imagePath = realpath(dirname($this->_filename) . DS . $path);
+		}
 		if (file_exists($imagePath)) {
 			$path = $this->_timestamp($imagePath, $path);
 		}
