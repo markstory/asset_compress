@@ -1,0 +1,62 @@
+$blue: #3bbfce;
+$margin: 16px;
+
+.content-navigation {
+  border-color: $blue;
+  color:
+    darken($blue, 9%);
+}
+
+.border {
+  padding: $margin / 2;
+  margin: $margin / 2;
+  border-color: $blue;
+}
+
+table.hl {
+  margin: 2em 0;
+  td.ln {
+    text-align: right;
+  }
+}
+
+li {
+  font: {
+    family: serif;
+    weight: bold;
+    size: 1.2em;
+  }
+}
+
+@mixin table-base {
+  th {
+    text-align: center;
+    font-weight: bold;
+  }
+  td, th {padding: 2px}
+}
+
+@mixin left($dist) {
+  float: left;
+  margin-left: $dist;
+}
+
+#data {
+  @include left(10px);
+  @include table-base;
+}
+
+
+.error {
+  border: 1px #f00;
+  background: #fdd;
+}
+.error.intrusion {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.badError {
+  @extend .error;
+  border-width: 3px;
+}
