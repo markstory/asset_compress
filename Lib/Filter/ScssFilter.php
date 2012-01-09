@@ -4,7 +4,7 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 /**
  * Pre-processing filter that adds support for SCSS files.
  *
- * Requires nodejs and scss to be installed.
+ * Requires ruby and sass rubygem to be installed
  *
  * @see http://sass-lang.com/
  */
@@ -12,8 +12,7 @@ class ScssFilter extends AssetFilter {
 
 	protected $_settings = array(
 		'ext' => '.scss',
-		'node' => '/usr/local/bin/node',
-		'node_path' => '/usr/local/lib/node_modules'
+		'sass' => '/usr/bin/sass'
 	);
 
 /**
@@ -27,34 +26,10 @@ class ScssFilter extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
-
-		$tmpfile = tempnam(sys_get_temp_dir(), 'asset_compress_scss');
-		$this->_generateScript($tmpfile, $filename);
-
-		$bin = $this->_settings['node'] . ' ' . $tmpfile;
-		$env = array('NODE_PATH' => $this->_settings['node_path']);
-		$return  = $this->_runCmd($bin, '', $env);
-		unlink($tmpfile);		
+		$bin = $this->_settings['sass'] . ' ' . $filename;
+		$return  = $this->_runCmd($bin, '');
 		return $return;
 	}
 
-	protected function _generateScript($file, $input) {
-		$text = <<<JS
-var compiler = require('scss/src/compiler'),
-	sys = require('sys'),
-	fs = require('fs');
-
-
-fs.readFile('%s', function(err, scssFile) {
-	compiler.compile(scssFile.toString(), function(err, css) {
-		if(err) {
-	    	sys.puts(sys.inspect(err));
-		} else {
-			sys.puts(css);
-		}
-	});
-});
-JS;
-		file_put_contents($file, sprintf($text, $input));
-	}
+	
 }
