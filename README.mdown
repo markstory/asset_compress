@@ -6,7 +6,7 @@ Asset Compress is CakePHP plugin for helping reduce the number of requests, and 
 
 * Development mode builder that rebuilds assets on each request.
 * Command line build tool to compile static assets for deployment.
-* Built-in support for LESScss and CoffeeScript, as well as several
+* Built-in support for LESScss, Sass and CoffeeScript, as well as several
   minifiers.
 * Powerful and flexible filter system allowing you to add your own
   minifiers/pre-processors.
@@ -55,6 +55,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * rynop
 * Cauan Cabral
 * Renan Gonçalves
+* Dave Baker
 
 
 ### Changelog
@@ -66,6 +67,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
   to timestamp background images used in CSS files.  This is useful for
   cache busting CSS sprites or other CSS background images.
 * Added `ROOT/` path variable for use in configuration files.
+* Added `ScssFilter`
 
 #### 0.5
 
