@@ -9,6 +9,7 @@ class AssetCompilerTest extends CakeTestCase {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
+		$this->_pluginConfig = $this->_testFiles . 'Config' . DS . 'plugins.ini';
 
 		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
 
@@ -109,6 +110,30 @@ TEXT;
 	width:100%;
 }body {
 	color: red !important;
+}
+TEXT;
+		$this->assertEqual($result, $expected);
+	}
+
+	function testCompilePluginFiles() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestAsset');
+
+		$Config = AssetConfig::buildFromIniFile($this->_pluginConfig);
+		$Config->paths('css', array(
+			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
+		));
+		$Compiler = new AssetCompiler($Config);
+
+		$result = $Compiler->generate('plugins.css');
+		$expected = <<<TEXT
+@import url("reset/reset.css");
+#nav {
+	width:100%;
+}.plugin-box {
+	color: orange;
 }
 TEXT;
 		$this->assertEqual($result, $expected);
