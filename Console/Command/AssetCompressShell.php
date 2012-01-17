@@ -153,7 +153,7 @@ class AssetCompressShell extends Shell {
 		$viewpaths = App::path('View');
 		$themes = array();
 		foreach ($viewpaths as $path) {
-			if (is_dir($path . 'themed')) {
+			if (is_dir($path . 'Themed')) {
 				$Folder = new Folder($path . 'Themed');
 				list($dirs, $files) = $Folder->read();
 				$themes = array_merge($themes, $dirs);
