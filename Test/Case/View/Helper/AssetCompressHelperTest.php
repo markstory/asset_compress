@@ -375,13 +375,24 @@ class AssetCompressHelperTest extends CakeTestCase {
  * @return void
  */
 	function testBaseUrl() {
+		Configure::write('debug', 0);
 		$config = $this->Helper->config();
-		$config->set('js.baseUrl', 'http://cdn.example.com');
+		$config->set('js.baseUrl', 'http://cdn.example.com/js/');
 		$result = $this->Helper->script('libs.js');
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => 'http://cdn.example.com/asset_compress/assets/get/libs.js'
+				'src' => 'http://cdn.example.com/js/libs.js'
+			))
+		);
+		$this->assertTags($result, $expected);
+
+		Configure::write('debug', 1);
+		$result = $this->Helper->script('libs.js');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/libs.js'
 			))
 		);
 		$this->assertTags($result, $expected);

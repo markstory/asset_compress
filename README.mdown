@@ -62,12 +62,22 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 #### 0.6
 
+*Backwards Incompatibile Changes:*
+
+* `baseUrl` now only takes effect when debug = 0.  Build file existence
+  is not checked anymore.  It is assumed that build files exist at
+  the location specified in `baseUrl`.  Because of this `baseUrl` will
+  need to include the directory names as well.
+
+*Other changes:*
+
 * Support for CakePHP 2.0.
 * Added `TimestampImage` filter class.  This filter provides the ability
   to timestamp background images used in CSS files.  This is useful for
   cache busting CSS sprites or other CSS background images.
 * Added `ROOT/` path variable for use in configuration files.
 * Added `ScssFilter`
+
 
 #### 0.5
 

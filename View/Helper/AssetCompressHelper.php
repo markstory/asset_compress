@@ -282,15 +282,13 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		if ($this->useDynamicBuild($file)) {
+		$baseUrl = $this->_Config->get('css.baseUrl');
+		if ($baseUrl && !Configure::read('debug')) {
+			$route = $baseUrl . $file;
+		} elseif ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
 			$route = $this->_locateBuild($file);
-		}
-
-		$baseUrl = $this->_Config->get('css.baseUrl');
-		if ($baseUrl) {
-			$route = $baseUrl . $route;
 		}
 
 		if (DS == '\\') {
@@ -329,15 +327,13 @@ class AssetCompressHelper extends AppHelper {
 			}
 			return $output;
 		}
-		if ($this->useDynamicBuild($file)) {
+		$baseUrl = $this->_Config->get('js.baseUrl');
+		if ($baseUrl && !Configure::read('debug')) {
+			$route = $baseUrl . $file;
+		} elseif ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
 			$route = $this->_locateBuild($file);
-		}
-
-		$baseUrl = $this->_Config->get('js.baseUrl');
-		if ($baseUrl) {
-			$route = $baseUrl . $route;
 		}
 
 		if (DS == '\\') {
