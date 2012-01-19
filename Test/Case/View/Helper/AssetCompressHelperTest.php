@@ -18,6 +18,14 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
+
+		Cache::drop(AssetConfig::CACHE_CONFIG);
+		Cache::config(AssetConfig::CACHE_CONFIG, array(
+			'path' => TMP,
+			'prefix' => 'asset_compress_test_',
+			'engine' => 'File'
+		));
+
 		$controller = null;
 		$request = new CakeRequest(null, false);
 		$request->webroot = '';
@@ -40,6 +48,10 @@ class AssetCompressHelperTest extends CakeTestCase {
 	function tearDown() {
 		parent::tearDown();
 		unset($this->Helper);
+
+		Cache::delete(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
+		Cache::drop(AssetConfig::CACHE_CONFIG);
+		@unlink(TMP . AssetConfig::BUILD_TIME_FILE);
 	}
 
 /**
@@ -378,6 +390,8 @@ class AssetCompressHelperTest extends CakeTestCase {
 		Configure::write('debug', 0);
 		$config = $this->Helper->config();
 		$config->set('js.baseUrl', 'http://cdn.example.com/js/');
+		$config->set('js.timestamp', false);
+
 		$result = $this->Helper->script('libs.js');
 		$expected = array(
 			array('script' => array(
@@ -393,6 +407,31 @@ class AssetCompressHelperTest extends CakeTestCase {
 			array('script' => array(
 				'type' => 'text/javascript',
 				'src' => '/asset_compress/assets/get/libs.js'
+			))
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that baseurl and timestamps play nice.
+ *
+ * @return void
+ */
+	function testBaseUrlAndTimestamp() {
+		Configure::write('debug', 0);
+		$config = $this->Helper->config();
+		$config->set('js.baseUrl', 'http://cdn.example.com/js/');
+		$config->set('js.timestamp', true);
+		$config->general('cacheConfig', true);
+
+		// populate the cache.
+		Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, array('libs.js' => 1234), AssetConfig::CACHE_CONFIG);
+
+		$result = $this->Helper->script('libs.js');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => 'http://cdn.example.com/js/libs.v1234.js'
 			))
 		);
 		$this->assertTags($result, $expected);

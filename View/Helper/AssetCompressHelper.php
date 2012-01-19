@@ -284,7 +284,7 @@ class AssetCompressHelper extends AppHelper {
 
 		$baseUrl = $this->_Config->get('css.baseUrl');
 		if ($baseUrl && !Configure::read('debug')) {
-			$route = $baseUrl . $file;
+			$route = $baseUrl . $this->_getBuildName($file);
 		} elseif ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
@@ -329,7 +329,7 @@ class AssetCompressHelper extends AppHelper {
 		}
 		$baseUrl = $this->_Config->get('js.baseUrl');
 		if ($baseUrl && !Configure::read('debug')) {
-			$route = $baseUrl . $file;
+			$route = $baseUrl . $this->_getBuildName($file);
 		} elseif ($this->useDynamicBuild($file)) {
 			$route = $this->_getRoute($file);
 		} else {
@@ -362,6 +362,22 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
+ * Get the build file name.
+ *
+ * @param string $build The build being resolved.
+ * @return string The resolved build name.
+ */
+	protected function _getBuildName($build) {
+		$ext = $this->_Config->getExt($build);
+		$hash = $this->_getHashName($build, $ext);
+		if ($hash) {
+			$build = $hash;
+		}
+		$this->_Config->theme($this->theme);
+		return $this->_AssetCache->buildFileName($build);
+	}
+
+/**
  * Locates a build file and returns the url path to it.
  *
  * @param string $build Filename of the build to locate.
@@ -373,13 +389,7 @@ class AssetCompressHelper extends AppHelper {
 		if (!$path) {
 			return false;
 		}
-		$hash = $this->_getHashName($build, $ext);
-		if ($hash) {
-			$build = $hash;
-		}
-		$this->_Config->theme($this->theme);
-
-		$build = $this->_AssetCache->buildFileName($build);
+		$build = $this->_getBuildName($build);
 		if (file_exists($path . $build)) {
 			return str_replace(WWW_ROOT, '/', $path . $build);
 		}
