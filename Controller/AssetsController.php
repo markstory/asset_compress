@@ -41,7 +41,7 @@ class AssetsController extends AssetCompressAppController {
 
 		// Dynamically defined build file. Disabled in production for 
 		// hopefully obvious reasons.
-		if (!$production && $Config->files($build) === array()) {
+		if ($Config->files($build) === array()) {
 			$files = array();
 			if (isset($this->request->query['file'])) {
 				$files = $this->request->query['file'];
