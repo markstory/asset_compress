@@ -68,6 +68,10 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
   is not checked anymore.  It is assumed that build files exist at
   the location specified in `baseUrl`.  Because of this `baseUrl` will
   need to include the directory names as well.
+* Removed `General.writeCache`.  It made for more complex deployments.
+  Instead `General.alwaysEnableController` has been added to allow the
+  controller to be used in production instead of pre-generated static files.
+  The default value is *off*.
 
 *Other changes:*
 
