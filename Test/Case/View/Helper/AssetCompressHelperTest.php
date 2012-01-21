@@ -322,7 +322,6 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		touch(TMP . 'asset_test.js');
 
-		$this->assertTrue($config->cachingOn('asset_test.js'));
 		$result = $this->Helper->script('asset_test.js');
 		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
 		unlink(TMP . 'asset_test.js');

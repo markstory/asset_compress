@@ -22,6 +22,11 @@ class AssetsController extends AssetCompressAppController {
  */
 	public function get($build) {
 		$Config = $this->_getConfig();
+		$production = Configure::read('debug') == 0;
+
+		if ($production && !$Config->general('alwaysEnableController')) {
+			throw new ForbiddenException();
+		}
 
 		if (
 			isset($this->request->params['ext']) &&
@@ -34,8 +39,9 @@ class AssetsController extends AssetCompressAppController {
 			$Config->theme($this->request->query['theme']);
 		}
 
-		// dynamic build file
-		if (Configure::read('debug') > 0 && $Config->files($build) === array()) {
+		// Dynamically defined build file. Disabled in production for 
+		// hopefully obvious reasons.
+		if (!$production && $Config->files($build) === array()) {
 			$files = array();
 			if (isset($this->request->query['file'])) {
 				$files = $this->request->query['file'];
@@ -45,11 +51,6 @@ class AssetsController extends AssetCompressAppController {
 		try {
 			$Compiler = new AssetCompiler($Config);
 			$contents = $Compiler->generate($build);
-
-			if ($Config->cachingOn($build)) {
-				$Cache = new AssetCache($Config);
-				$Cache->write($build, $contents);
-			}
 		} catch (Exception $e) {
 			$message = (Configure::read('debug') > 0) ? $e->getMessage() : '';
 			throw new NotFoundException($message);

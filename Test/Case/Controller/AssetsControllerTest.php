@@ -47,7 +47,7 @@ class AssetsControllerTest extends CakeTestCase {
  * When debug mode is off, dynamic build files should create errors, this is to try and mitigate
  * the ability to DOS attack an app, by hammering expensive to generate resources.
  *
- * @expectedException NotFoundException
+ * @expectedException ForbiddenException
  */
 	function testDynamicBuildFileDebugOff() {
 		Configure::write('debug', 0);
@@ -55,4 +55,5 @@ class AssetsControllerTest extends CakeTestCase {
 		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->Controller->get('dynamic.js');
 	}
+
 }

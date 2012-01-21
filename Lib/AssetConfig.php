@@ -412,22 +412,6 @@ class AssetConfig {
 	}
 
 /**
- * Check to see if caching is on for an extension.
- * Caching is controlled by General.writeCache and the matching
- * extension having a cachePath.
- *
- * @param string $target
- * @return boolean
- */
-	public function cachingOn($target) {
-		$ext = $this->getExt($target);
-		if ($this->general('writeCache') && $this->cachePath($ext)) {
-			return true;
-		}
-		return false;
-	}
-
-/**
  * Get the build targets for an extension.
  *
  * @param string $ext The extension you want targets for.
