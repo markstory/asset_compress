@@ -68,6 +68,8 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
   cache busting CSS sprites or other CSS background images.
 * Added `ROOT/` path variable for use in configuration files.
 * Added `ScssFilter`
+* Added support for plugin asset  Using the `p:PluginName:resource.xx`
+  syntax.
 
 #### 0.5
 
