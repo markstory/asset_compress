@@ -98,4 +98,22 @@ class AssetScannerTest extends CakeTestCase {
 		$result = $scanner->find('theme:theme.css');
 		$this->assertEqual($expected, $result);
 	}
+
+	function testResolvePluginPaths() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestAsset');
+	
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths);
+		$result = $scanner->find('p:TestAsset:plugin.css');
+		$expected = $this->_testFiles . 'Plugin' . DS . 'TestAsset' . DS . 'webroot' . DS . 'plugin.css';
+		$this->assertEqual($expected, $result);
+
+		$result = $scanner->find('plugin:TestAsset:plugin.css');
+		$this->assertEqual($expected, $result);
+	}
 }

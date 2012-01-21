@@ -23,9 +23,10 @@ class AssetScanner {
 	protected $_theme = null;
 
 /**
- * @const Pattern for theme prefixes.
+ * @const Pattern for various prefixes.
  */
 	const THEME_PATTERN = '/^(?:t|theme)\:/';
+	const PLUGIN_PATTERN = '/^(?:p|plugin)\:(.*)\:(.*)$/';
 
 	public function __construct(array $paths, $theme = null) {
 		$this->_theme = $theme;
@@ -87,6 +88,10 @@ class AssetScanner {
 			$changed = true;
 			$file = $this->_resolveTheme($file);
 		}
+		if (preg_match(self::PLUGIN_PATTERN, $file)) {
+			$changed = true;
+			$file = $this->_resolvePlugin($file);
+		}
 		if ($changed && file_exists($file)) {
 			return $file;
 		}
@@ -108,6 +113,25 @@ class AssetScanner {
 	protected function _resolveTheme($file) {
 		$file = preg_replace(self::THEME_PATTERN, '', $file);
 		return App::themePath($this->_theme) . 'webroot' . DS . $file;
+	}
+
+/**
+ * Resolve a plugin file to its full path.
+ *
+ * @param string $file The theme file to find.
+ * @return string Full path to theme file.
+ * @throws RuntimeException when plugins are missing.
+ */
+	protected function _resolvePlugin($file) {
+		preg_match(self::PLUGIN_PATTERN, $file, $matches);
+		if (empty($matches[1]) || empty($matches[2])) {
+			throw new RuntimeException('Missing required parameters');
+		}
+		if (!CakePlugin::loaded($matches[1])) {
+			throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
+		}
+		$path = CakePlugin::path($matches[1]);
+		return $path . 'webroot' . DS . $matches[2];
 	}
 
 /**
