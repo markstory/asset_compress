@@ -291,9 +291,10 @@ class AssetConfig {
 	public function filters($ext, $target = null, $filters = null) {
 		if ($filters === null) {
 			if (!isset($this->_data[$ext][self::FILTERS])) {
-				return array();
+				$filters = array();
+			} else {
+				$filters = (array)$this->_data[$ext][self::FILTERS];
 			}
-			$filters = (array)$this->_data[$ext][self::FILTERS];
 			if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
 				$buildFilters = $this->_data[$ext][self::TARGETS][$target][self::FILTERS];
 				$filters = array_merge($filters, $buildFilters);
