@@ -155,7 +155,7 @@ class AssetCompressShell extends Shell {
 		foreach ($viewpaths as $path) {
 			if (is_dir($path . 'Themed')) {
 				$Folder = new Folder($path . 'Themed');
-				list($dirs, $files) = $Folder->read();
+				list($dirs, $files) = $Folder->read(false, true);
 				$themes = array_merge($themes, $dirs);
 			}
 		}
