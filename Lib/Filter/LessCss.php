@@ -24,9 +24,12 @@ class LessCss extends AssetFilter {
  * @return string
  */
 	public function input($filename, $input) {
+
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
+		
+		$path = preg_replace('/[^\/]+$/',"",$filename);
 
 		$tmpfile = tempnam(sys_get_temp_dir(), 'asset_compress_less');
 		$this->_generateScript($tmpfile, $input);
@@ -41,18 +44,21 @@ class LessCss extends AssetFilter {
 	protected function _generateScript($file, $input) {
 		$text = <<<JS
 var less = require('less'),
-	sys = require('sys');
+	sys = require('util');
 
-var parser = new less.Parser();
+var parser = new less.Parser({ paths: %s });
 parser.parse(%s, function (e, tree) {
+	
 	if (e) {
 		less.writeError(e);
 		process.exit(1)
 	}
-	sys.print(tree.toCSS());
+	
+	sys.print(tree.toCSS());	
 	process.exit(0);
 });
 JS;
-		file_put_contents($file, sprintf($text, json_encode($input)));
+		file_put_contents($file, sprintf($text, str_replace('\/*', '', json_encode($this->_settings['paths'])), json_encode($input)));
+	
 	}
 }
