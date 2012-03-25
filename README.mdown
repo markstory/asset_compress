@@ -56,6 +56,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Cauan Cabral
 * Renan Gonçalves
 * Dave Baker
+* Takashi Nojima
 * Lanodd
 
 ### Changelog
