@@ -93,7 +93,7 @@ class AssetCache {
  * Will either read the cached version, or the on disk version. If
  * no timestamp is found for a file, a new time will be generated and saved.
  *
- * If timestamps are disabled, false will be returrned.
+ * If timestamps are disabled, false will be returned.
  *
  * @param string $build The build to get a timestamp for.
  * @return mixed The last build time, or false.

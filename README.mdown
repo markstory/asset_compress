@@ -1,6 +1,6 @@
 # Asset Compress
 
-Asset Compress is CakePHP plugin for helping reduce the number of requests, and optimizing the remaining reqests your application makes for Javascript and CSS files.
+Asset Compress is CakePHP plugin for helping reduce the number of requests, and optimizing the remaining requests your application makes for Javascript and CSS files.
 
 ### Features
 
@@ -70,7 +70,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 #### 0.6
 
-*Backwards Incompatibile Changes:*
+*Backwards Incompatible Changes:*
 
 * `baseUrl` now only takes effect when debug = 0.  Build file existence
   is not checked anymore.  It is assumed that build files exist at
