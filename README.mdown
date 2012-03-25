@@ -56,9 +56,16 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 * Cauan Cabral
 * Renan Gonçalves
 * Dave Baker
-
+* Lanodd
 
 ### Changelog
+
+#### 0.7
+
+*Other changes:*
+
+* Import paths are now set for the less filter.
+* `ROOT/` no longer needs // to work correctly.
 
 #### 0.6
 
