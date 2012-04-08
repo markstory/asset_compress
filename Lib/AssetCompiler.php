@@ -38,7 +38,7 @@ class AssetCompiler {
 			$content = $this->filters->input($file, $content);
 			$output .= $content;
 		}
-		if (Configure::read('debug') < 2) {
+		if (Configure::read('debug') < $this->_Config->requiredDebug()) {
 			$output = $this->filters->output($build, $output);
 		}
 		return trim($output);

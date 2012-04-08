@@ -27,6 +27,9 @@ class AssetConfig {
 		'css' => array(
 			'paths' => array('WEBROOT/css/**')
 		),
+		'general' => array(
+			'requiredDebug' => 2
+		)
 	);
 
 /**
@@ -479,6 +482,15 @@ class AssetConfig {
 		$exts = array_flip(array_keys($this->_data));
 		unset($exts[self::FILTERS], $exts[self::GENERAL]);
 		return array_keys($exts);
+	}
+
+/**
+ * Get the debug level required to process output
+ * 
+ * @return int Required debug level
+ */
+	public function requiredDebug() {
+		return $this->_data['general']['requiredDebug'];
 	}
 
 }
