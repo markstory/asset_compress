@@ -50,13 +50,6 @@ class AssetConfig {
 		'ROOT' => ROOT
 	);
 
-/**
- * Are we running from shell?
- * 
- * @var boolean
- */
-	public $shell = false;
-
 	const FILTERS = 'filters';
 	const FILTER_PREFIX = 'filter_';
 	const TARGETS = 'targets';

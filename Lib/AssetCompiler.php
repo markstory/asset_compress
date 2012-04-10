@@ -38,7 +38,7 @@ class AssetCompiler {
 			$content = $this->filters->input($file, $content);
 			$output .= $content;
 		}
-		if (Configure::read('debug') < 2 || $this->_Config->shell) {
+		if (Configure::read('debug') < 2 || php_sapi_name() == 'cli') {
 			$output = $this->filters->output($build, $output);
 		}
 		return trim($output);
