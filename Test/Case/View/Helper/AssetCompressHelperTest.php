@@ -132,7 +132,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 			'link' => array(
 				'type' => 'text/css',
 				'rel' => 'stylesheet',
-				'href' => '/asset_compress/assets/get/' . $hash . '.css?file%5B0%5D=base&file%5B1%5D=reset'
+				'href' => '/asset_compress/assets/get/' . $hash . '.css?file%5B0%5D=base&amp;file%5B1%5D=reset'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -153,7 +153,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$expected = array(
 			'script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/assets/get/' . $hash . '.js?file%5B0%5D=libraries&file%5B1%5D=thing'
+				'src' => '/asset_compress/assets/get/' . $hash . '.js?file%5B0%5D=libraries&amp;file%5B1%5D=thing'
 			),
 			'/script'
 		);
@@ -178,12 +178,12 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/assets/get/' . $hash1 . '.js?file%5B0%5D=libraries&file%5B1%5D=thing'
+				'src' => '/asset_compress/assets/get/' . $hash1 . '.js?file%5B0%5D=libraries&amp;file%5B1%5D=thing'
 			)),
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/assets/get/' . $hash2 . '.js?file%5B0%5D=jquery.js&file%5B1%5D=jquery-ui.js'
+				'src' => '/asset_compress/assets/get/' . $hash2 . '.js?file%5B0%5D=jquery.js&amp;file%5B1%5D=jquery-ui.js'
 			)),
 			'/script'
 		);
