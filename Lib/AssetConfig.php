@@ -78,7 +78,7 @@ class AssetConfig {
  * @param array $additionalConstants  Additional constants that will be translated
  *    when parsing paths.
  */
-	public static function buildFromIniFile($iniFile = null, $constants = array()){
+	public static function buildFromIniFile($iniFile = null, $constants = array()) {
 		if (empty($iniFile)) {
 			$iniFile = APP . 'Config' . DS . 'asset_compress.ini';
 		}
@@ -121,7 +121,7 @@ class AssetConfig {
 /**
  * Clear all the cached keys associated with AssetConfig
  */
-	public static function clearAllCachedKeys(){
+	public static function clearAllCachedKeys() {
 		self::clearCachedBuildTime();
 		self::clearCachedAssetConfig();
 	}
@@ -131,6 +131,7 @@ class AssetConfig {
  *
  * @param string $filename Name of the inifile to parse
  * @return array Inifile contents
+ * @throws RuntimeException
  */
 	protected static function _readConfig($filename) {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
@@ -212,7 +213,7 @@ class AssetConfig {
 	protected function _parseExtensionDef($target) {
 		$paths = array();
 		if (!empty($target['paths'])) {
-			$paths = array_map(array($this, '_replacePathConstants'), (array) $target['paths']);
+			$paths = array_map(array($this, '_replacePathConstants'), (array)$target['paths']);
 		}
 		$target['paths'] = $paths;
 		if (!empty($target['cachePath'])) {
@@ -240,6 +241,7 @@ class AssetConfig {
  *
  * @param string $path The path to set.
  * @param string $value The value to set.
+ * @throws RuntimeException
  */
 	public function set($path, $value) {
 		$parts = explode('.', $path);
@@ -373,7 +375,7 @@ class AssetConfig {
 	public function paths($ext, $paths = null) {
 		if ($paths === null) {
 			if (!empty($this->_data[$ext]['paths'])) {
-				return (array) $this->_data[$ext]['paths'];
+				return (array)$this->_data[$ext]['paths'];
 			}
 			return array();
 		}

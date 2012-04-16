@@ -8,6 +8,7 @@ App::uses('AssetProcess', 'AssetCompress.Lib');
  * @package asset_compress
  */
 interface AssetFilterInterface {
+
 /**
  * Input filters are used to do pre-processing on each file in a
  * build target.
@@ -33,6 +34,7 @@ interface AssetFilterInterface {
  * @param array $settings Array of settings.
  */
 	public function settings($settings);
+
 }
 
 
@@ -87,6 +89,7 @@ class AssetFilter implements AssetFilterInterface {
  * @param string $cmd The command to run.
  * @param string $content The content to run through the command.
  * @return The result of the command.
+ * @throws RuntimeException
  */
 	protected function _runCmd($cmd, $content, $environment = null) {
 		$Process = new AssetProcess();

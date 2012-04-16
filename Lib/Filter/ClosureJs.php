@@ -19,7 +19,7 @@ class ClosureJs extends AssetFilter {
  */
 	protected $_settings = array(
 		'path' => 'closure/compiler.jar',
-		'warning_level' => 'QUIET'			//Supress warnings by default
+		'warning_level' => 'QUIET' //Supress warnings by default
 	);
 
 /**
@@ -36,7 +36,7 @@ class ClosureJs extends AssetFilter {
 		//Closure works better if you specify an input file. Also supress warnings by default
 		$tmpFile = tempnam(TMP,'CLOSURE');
 		file_put_contents($tmpFile, $input);
-		$cmd = 'java -jar "' . $jar . '" --js='.$tmpFile.' --warning_level='.$this->_settings['warning_level'];
+		$cmd = 'java -jar "' . $jar . '" --js=' . $tmpFile . ' --warning_level=' . $this->_settings['warning_level'];
 
 		try {
 			$output = $this->_runCmd($cmd, null);

@@ -25,7 +25,7 @@ class TimestampImage extends AssetFilter {
  */
 	protected $_backgroundImagePattern = '/^(?<prop>.*background-image\s*\:\s*url\([\'"]?)(?<path>[^\'")]+?(?:png|gif|jpg))(?<trail>[\'"]?\))/m';
 
-	protected $filename;
+	protected $_filename;
 
 /**
  * Input filter.  Locates CSS background images relative to the 

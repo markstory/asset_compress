@@ -20,6 +20,7 @@ class AssetCache {
  *
  * @param string $filename The filename to write.
  * @param string $contents The contents to write.
+ * @throws RuntimeException
  */
 	public function write($filename, $content) {
 		$ext = $this->_Config->getExt($filename);
@@ -122,7 +123,7 @@ class AssetCache {
 		$data = array();
 		$cachedConfig = $this->_Config->general('cacheConfig');
 		if ($cachedConfig) {
-			$data =  Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
+			$data = Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
 		}
 		if (empty($data) && file_exists(TMP . AssetConfig::BUILD_TIME_FILE)) {
 			$data = file_get_contents(TMP . AssetConfig::BUILD_TIME_FILE);

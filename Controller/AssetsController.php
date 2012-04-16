@@ -5,11 +5,18 @@ App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 
 class AssetsController extends AssetCompressAppController {
+
 	public $name = 'Assets';
+
 	public $uses = array();
+
 	public $layout = 'script';
+
 	public $viewPath = 'Generic';
-	public $_Config;
+
+	public $configFile;
+
+	protected $_Config;
 
 	public function beforeFilter() {
 		$this->configFile = APP . 'Config' . DS . 'asset_compress.ini';
@@ -19,6 +26,9 @@ class AssetsController extends AssetCompressAppController {
  * Get a built file.  Use query parameters for dynamic builds.
  * for dynamic builds to work, you must be in debug mode, and not have the same
  * build file already defined.
+ *
+ * @throws ForbiddenException
+ * @throws NotFoundException
  */
 	public function get($build) {
 		$Config = $this->_getConfig();
@@ -39,7 +49,7 @@ class AssetsController extends AssetCompressAppController {
 			$Config->theme($this->request->query['theme']);
 		}
 
-		// Dynamically defined build file. Disabled in production for 
+		// Dynamically defined build file. Disabled in production for
 		// hopefully obvious reasons.
 		if ($Config->files($build) === array()) {
 			$files = array();
@@ -55,7 +65,7 @@ class AssetsController extends AssetCompressAppController {
 			$message = (Configure::read('debug') > 0) ? $e->getMessage() : '';
 			throw new NotFoundException($message);
 		}
-		
+
 		$this->response->type($Config->getExt($build));
 		$this->set('contents', $contents);
 		$this->render('contents');

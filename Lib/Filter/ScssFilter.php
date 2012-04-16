@@ -31,5 +31,4 @@ class ScssFilter extends AssetFilter {
 		return $return;
 	}
 
-	
 }

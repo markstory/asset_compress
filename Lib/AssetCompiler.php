@@ -12,7 +12,7 @@ class AssetCompiler {
 
 	protected $_Config;
 
-	function __construct(AssetConfig $config) {
+	public function __construct(AssetConfig $config) {
 		$this->_Config = $config;
 	}
 
@@ -21,6 +21,7 @@ class AssetCompiler {
  *
  * @param string $target The name of the build target to generate.
  * @return The processed result of $target and it dependencies.
+ * @throws RuntimeException
  */
 	public function generate($build) {
 		$ext = $this->_Config->getExt($build);

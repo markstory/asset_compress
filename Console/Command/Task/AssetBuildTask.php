@@ -8,8 +8,11 @@ App::uses('Folder', 'Utility');
 class AssetBuildTask extends Shell {
 
 	protected $_Config;
+
 	protected $_themes = array();
+
 	protected $_files = array();
+
 	protected $_tokens = array();
 
 /**
@@ -65,10 +68,10 @@ class AssetBuildTask extends Shell {
  * @param array $paths Array of paths to scan for dynamic builds
  * @return void
  */
-	function buildDynamic($paths) {
+	public function buildDynamic($paths) {
 		$this->_collectFiles($paths);
-		$this->_scanFiles();
-		$this->_parse();
+		$this->scanFiles();
+		$this->parse();
 		$this->_buildFiles();
 	}
 
@@ -101,7 +104,7 @@ class AssetBuildTask extends Shell {
  *
  * @return void
  */
-	function _scanFiles() {
+	public function scanFiles() {
 		$calls = array();
 		foreach ($this->_files as $file) {
 			$this->out('Scanning ' . $file . '...', 1, Shell::VERBOSE);
@@ -136,7 +139,7 @@ class AssetBuildTask extends Shell {
  *
  * @return void
  */
-	function _parse() {
+	public function parse() {
 		$fileMap = array();
 
 		foreach ($this->_tokens as $call) {
@@ -163,7 +166,7 @@ class AssetBuildTask extends Shell {
  *
  * @return array ($files, $buildFile)
  */
-	function _parseArgs($tokens) {
+	protected function _parseArgs($tokens) {
 		$files = array();
 		$build = ':hash-default';
 		$wasArray = false;
@@ -194,7 +197,7 @@ class AssetBuildTask extends Shell {
  *
  * @return array Array of array members
  */
-	function _parseArray(&$tokens) {
+	protected function _parseArray(&$tokens) {
 		$files = array();
 		while (true) {
 			if (empty($tokens)) {

@@ -8,6 +8,7 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  * @package asset_compress
  */
 class AssetFilterCollection {
+
 	protected $_config = array();
 
 	protected $_filters = array();
@@ -18,11 +19,16 @@ class AssetFilterCollection {
  * @param array $filters An array of filters as keys, with their settings as the values.
  * @param array $config An array of global settings for all filters. Contains 'paths'
  */
-	function __construct(array $filters, array $config, array $filterSettings) {
+	public function __construct(array $filters, array $config, array $filterSettings) {
 		$this->_config = $config;
 		$this->_buildFilters($filters, $filterSettings);
 	}
 
+/**
+ * Builds the filters in the collection.
+ *
+ * @throws Exception
+ */
 	protected function _buildFilters($filters, $settings) {
 		foreach ($filters as $className) {
 			list($plugin, $className) = pluginSplit($className, true);

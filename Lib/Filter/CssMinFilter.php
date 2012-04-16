@@ -10,6 +10,7 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  * @package asset_compress
  */
 class CssMinFilter extends AssetFilter {
+
 /**
  * Where CssMin can be found.
  *
@@ -30,4 +31,5 @@ class CssMinFilter extends AssetFilter {
 		App::import('Vendor', 'cssmin', array('file' => $this->_settings['path']));
 		return CssMin::minify($content);
 	}
+
 }

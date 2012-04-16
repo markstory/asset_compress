@@ -11,7 +11,9 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
 class ImportInline extends AssetFilter {
 
 	protected $_pattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)));/m';
+
 	protected $_Scanner = null;
+
 	protected $_loaded = array();
 
 	public function settings($settings) {
@@ -38,16 +40,18 @@ class ImportInline extends AssetFilter {
  * Does file replacements.
  *
  * @param array $matches
+ * @throws RuntimeException
  */
 	protected function _replace($matches) {
 		$required = empty($matches[2]) ? $matches[4] : $matches[2];
 		$filename = $this->_Scanner->find($required);
 		if (!$filename) {
-			throw RuntimeException('Could not find dependency');
+			throw RuntimeException(sprintf('Could not find dependency "%s"', $required));
 		}
 		if (empty($this->_loaded[$filename])) {
 			return $this->input($filename, file_get_contents($filename));
 		}
 		return '';
 	}
+
 }

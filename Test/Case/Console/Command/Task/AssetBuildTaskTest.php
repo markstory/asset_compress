@@ -35,7 +35,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 	function testScanningSimpleFile() {
 		$files = array($this->testFilePath . 'single.ctp');
 		$this->Task->setFiles($files);
-		$result = $this->Task->_scanFiles();
+		$result = $this->Task->scanFiles();
 
 		$this->assertEqual(4, count($result));
 		$this->assertEqual('addScript', $result[0][2][1]);
@@ -44,8 +44,8 @@ class AssetBuildTaskTest extends CakeTestCase {
 	function testParsingSimpleFile() {
 		$files = array($this->testFilePath . 'single.ctp');
 		$this->Task->setFiles($files);
-		$this->Task->_scanFiles();
-		$result = $this->Task->_parse();
+		$this->Task->scanFiles();
+		$result = $this->Task->parse();
 		$expected = array(
 			'addCss' => array(
 				'single' => array('one_file'),
@@ -62,8 +62,8 @@ class AssetBuildTaskTest extends CakeTestCase {
 	function testParsingMultipleFile() {
 		$files = array($this->testFilePath . 'multiple.ctp');
 		$this->Task->setFiles($files);
-		$this->Task->_scanFiles();
-		$result = $this->Task->_parse();
+		$this->Task->scanFiles();
+		$result = $this->Task->parse();
 		$expected = array(
 			'addCss' => array(
 				'multi' => array('one_file', 'two_file', 'three_file'),
@@ -78,8 +78,8 @@ class AssetBuildTaskTest extends CakeTestCase {
 	function testParsingArrayFile() {
 		$files = array($this->testFilePath . 'array.ctp');
 		$this->Task->setFiles($files);
-		$this->Task->_scanFiles();
-		$result = $this->Task->_parse();
+		$this->Task->scanFiles();
+		$result = $this->Task->parse();
 
 		$expected = array(
 			'addCss' => array(

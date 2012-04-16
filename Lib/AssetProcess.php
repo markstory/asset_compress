@@ -6,8 +6,11 @@
 class AssetProcess {
 
 	protected $_env = null;
+
 	protected $_command = '';
+
 	protected $_error;
+
 	protected $_output;
 
 /**
@@ -32,14 +35,14 @@ class AssetProcess {
  * @param string Output from the command.
  */
 	public function run($input = null) {
-		$descriptor_spec = array(
+		$descriptorSpec = array(
 			0 => array('pipe', 'r'),
 			1 => array('pipe', 'w'),
 			2 => array('pipe', 'w')
 		);
 		$process = proc_open(
 			$this->_command,
-			$descriptor_spec,
+			$descriptorSpec,
 			$pipes,
 			null,
 			$this->_env
