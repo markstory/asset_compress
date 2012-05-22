@@ -36,14 +36,29 @@ class AssetScanner {
 	}
 
 /**
- * Ensure all paths end in a DS and expand any APP/WEBROOT constants
- *
+ * Ensure all paths end in a DS and expand any APP/WEBROOT constants.
+ * Normalizes the Directory Separator as well.
  * @return void
  */
 	protected function _normalizePaths() {
 		foreach ($this->_paths as &$path) {
-			$path = rtrim($path, DS) . DS;
+			if (!($ds = $this->isRemote($path))) {
+				// Remote paths are normalized to their own DS, else they will be normalized to Cake's DS const.
+				$ds = DS;
+			}
+			$path = $this->_normalizePath($path, $ds);
+			$path = rtrim($path, $ds) . $ds;
 		}
+	}
+	
+	/**
+	 * Normalize a file path to the specified Directory Separator ($ds)
+	 * @param string $name Path to normalize
+	 * @param type $ds Directory Separator to be used
+	 * @return string Normalized path
+	 */
+	protected function _normalizePath($name, $ds) {
+		return str_replace(array('/','\\'), $ds, $name);
 	}
 
 /**
@@ -54,7 +69,10 @@ class AssetScanner {
 	protected function _expandPaths() {
 		$expanded = array();
 		foreach ($this->_paths as $path) {
-			if (preg_match('/[*.\[\]]/', $path)) {
+			if ($this->isRemote($path)) {
+				// Remote path. Not expandable!
+				$expanded[] = $path;
+			} elseif (preg_match('/[*.\[\]]/', $path)) {
 				$tree = $this->_generateTree($path);
 				$expanded = array_merge($expanded, $tree);
 			} else {
@@ -77,10 +95,10 @@ class AssetScanner {
 	}
 
 /**
- * Find a file in the connected paths, and read its contents.
+ * Find a file in the connected paths, and check for its existance.
  *
  * @param string $file The file you want to find.
- * @return mixed Either false on a miss, or the contents of the file.
+ * @return mixed Either false on a miss, or the full path of the file.
  */
 	public function find($file) {
 		$changed = false;
@@ -96,13 +114,26 @@ class AssetScanner {
 			return $file;
 		}
 		foreach ($this->_paths as $path) {
-			if (file_exists($path . $file)) {
-				return $path . $file;
+			if ($ds = $this->isRemote($path)) {
+				$file = $this->_normalizePath($file, $ds);
+				$fullPath = $path . $file;
+				// Opens and closes the remote file, just to check for its existance. Its contents will be read elsewhere.
+				$handle = @fopen($fullPath, 'rb');
+				if ($handle) {
+					fclose($handle);
+					return $fullPath;
+				}
+			} else {
+				$file = $this->_normalizePath($file, DS);
+				$fullPath = $path . $file;
+				if (file_exists($fullPath)) {
+					return $fullPath;
+				}
 			}
 		}
 		return false;
 	}
-
+	
 /**
  * Resolve a themed file to its full path. The file will be found on the
  * current theme's path.
@@ -143,4 +174,30 @@ class AssetScanner {
 		return $this->_paths;
 	}
 
+		
+/**
+ * Checks if a string represents a remote file
+ * @param string $target
+ * @return mixed If $target is a handable remote resource, it will return its Directory Separator character. False if not.
+ *		This doesn't seem to be very logic, but simplifies things. It's compatible with a TRUE|FALSE logic though.
+ */
+	public function isRemote($target) {
+		/* 
+		 * Patterns for matching readable remote resources
+		 * Make sure that any included pattern will be accepted by fopen() as well.
+		 * Please surround the directory separator with (). It will be used for path normalization.
+		 */
+		$remotePatterns = array(
+			'/^http:\/(\/)/i' // Just HTTP protocol for now, but anything that fopen() can read should work.
+		);
+		
+		$matches = array();
+		foreach ($remotePatterns as $pattern) {
+			if (preg_match($pattern, $target, $matches)) {
+				return $matches[1]; // The first match is expected to be the Directory Separator. Please see the definition of $remotePatterns above.
+			}
+		}
+			
+		return false;
+	}
 }
