@@ -231,7 +231,6 @@ class AssetConfig {
  */
 	protected function _replacePathConstants($path) {
 		$result = strtr($path, $this->constantMap);
-		//$result = str_replace('/', DS, $result); // If $path is remote this will screw it up. I've moved it to AssetScanner::_normalizePaths().
 		return $result;
 	}
 
