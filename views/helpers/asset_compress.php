@@ -210,9 +210,9 @@ class AssetCompressHelper extends AppHelper {
  * @return string A string containing asset tags.
  */
 	protected function _genericInclude($files, $ext) {
-		$numArgs = count($files) - 1;
+		$numArgs = count($files);
 		$options = array();
-		if (isset($files[$numArgs]) && is_array($files[$numArgs])) {
+		if (isset($files[$numArgs - 1]) && is_array($files[$numArgs - 1])) {
 			$options = array_pop($files);
 			$numArgs -= 1;
 		}

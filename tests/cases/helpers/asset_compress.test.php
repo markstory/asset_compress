@@ -227,7 +227,16 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 		$this->Helper->addScript('thing', 'second');
 		$this->Helper->addScript('other', 'third');
 
-		$result = $this->Helper->includeJs('second', 'default');
+		$result = $this->Helper->includeJs('default');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/asset_compress/assets/get/default.js?file%5B0%5D=libraries'
+			)),
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Helper->includeJs('second', 'third');
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
@@ -236,7 +245,7 @@ class AssetCompressHelperTestCase extends CakeTestCase {
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/asset_compress/assets/get/default.js?file%5B0%5D=libraries'
+				'src' => '/asset_compress/assets/get/third.js?file%5B0%5D=other'
 			)),
 			'/script'
 		);
