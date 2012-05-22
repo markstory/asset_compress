@@ -116,18 +116,18 @@ class AssetScanner {
 		foreach ($this->_paths as $path) {
 			if ($ds = $this->isRemote($path)) {
 				$file = $this->_normalizePath($file, $ds);
-				$full_path = $path . $file;
+				$fullPath = $path . $file;
 				// Opens and closes the remote file, just to check for its existance. Its contents will be read elsewhere.
-				$handle = @fopen($full_path, 'rb');
+				$handle = @fopen($fullPath, 'rb');
 				if ($handle) {
 					fclose($handle);
-					return $full_path;
+					return $fullPath;
 				}
 			} else {
 				$file = $this->_normalizePath($file, DS);
-				$full_path = $path . $file;
-				if (file_exists($full_path)) {
-					return $full_path;
+				$fullPath = $path . $file;
+				if (file_exists($fullPath)) {
+					return $fullPath;
 				}
 			}
 		}
