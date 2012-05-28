@@ -38,26 +38,11 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ## Copyright
 
-2010-2011 Mark Story (http://mark-story.com)
+2010-2012 Mark Story (http://mark-story.com)
 
 ### Authors
 
-* Mark Story
-* Ben McClure
-* Igor Fomin (evilbloodydemon)
-* Rachman Chavik
-* Sumit Madan
-* Florian Krämer
-* Frank de Graaf (Phally)
-* Alan Bount
-* Abbas Ali
-* Jeremy Harris
-* rynop
-* Cauan Cabral
-* Renan Gonçalves
-* Dave Baker
-* Takashi Nojima
-* Lanodd
+See the [github contributors list](https://github.com/markstory/asset_compress/graphs/contributors)
 
 ### Changelog
 
