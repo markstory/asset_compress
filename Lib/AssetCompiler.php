@@ -34,17 +34,8 @@ class AssetCompiler {
 			throw new RuntimeException(sprintf('No files found for build file "%s"', $build));
 		}
 		foreach ($files as $file) {
-			$content = '';
 			$file = $this->_findFile($file);
-			if ($this->_Scanner->isRemote($file)) {
-				$handle = @fopen($file, 'rb');
-				if ($handle) {
-					$content = stream_get_contents($handle);
-					fclose($handle);
-				}
-			} else {
-				$content = file_get_contents($file);
-			}
+			$content = $this->_readFile($file);
 			$content = $this->filters->input($file, $content);
 			$output .= $content;
 		}
@@ -93,4 +84,25 @@ class AssetCompiler {
 		}
 		return $filename;
 	}
+
+/**
+ * Reads the asset file and returns the contents.
+ *
+ * @param string $file The filename
+ * @return string The contents of $file.
+ */
+	protected function _readFile($file) {
+		$content = '';
+		if ($this->_Scanner->isRemote($file)) {
+			$handle = @fopen($file, 'rb');
+			if ($handle) {
+				$content = stream_get_contents($handle);
+				fclose($handle);
+			}
+		} else {
+			$content = file_get_contents($file);
+		}
+		return $content;
+	}
+
 }
