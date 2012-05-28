@@ -42,23 +42,23 @@ class AssetScanner {
  */
 	protected function _normalizePaths() {
 		foreach ($this->_paths as &$path) {
-			if (!($ds = $this->isRemote($path))) {
-				// Remote paths are normalized to their own DS, else they will be normalized to Cake's DS const.
-				$ds = DS;
+			$ds = DS;
+			if ($this->isRemote($path)) {
+				$ds = '/';
 			}
 			$path = $this->_normalizePath($path, $ds);
 			$path = rtrim($path, $ds) . $ds;
 		}
 	}
-	
-	/**
-	 * Normalize a file path to the specified Directory Separator ($ds)
-	 * @param string $name Path to normalize
-	 * @param type $ds Directory Separator to be used
-	 * @return string Normalized path
-	 */
+
+/**
+ * Normalize a file path to the specified Directory Separator ($ds)
+ * @param string $name Path to normalize
+ * @param type $ds Directory Separator to be used
+ * @return string Normalized path
+ */
 	protected function _normalizePath($name, $ds) {
-		return str_replace(array('/','\\'), $ds, $name);
+		return str_replace(array('/', '\\'), $ds, $name);
 	}
 
 /**
@@ -114,10 +114,11 @@ class AssetScanner {
 			return $file;
 		}
 		foreach ($this->_paths as $path) {
-			if ($ds = $this->isRemote($path)) {
-				$file = $this->_normalizePath($file, $ds);
+			if ($this->isRemote($path)) {
+				$file = $this->_normalizePath($file, '/');
 				$fullPath = $path . $file;
-				// Opens and closes the remote file, just to check for its existance. Its contents will be read elsewhere.
+				// Opens and closes the remote file, just to
+				// check for its existance. Its contents will be read elsewhere.
 				$handle = @fopen($fullPath, 'rb');
 				if ($handle) {
 					fclose($handle);
@@ -133,7 +134,7 @@ class AssetScanner {
 		}
 		return false;
 	}
-	
+
 /**
  * Resolve a themed file to its full path. The file will be found on the
  * current theme's path.
@@ -174,30 +175,26 @@ class AssetScanner {
 		return $this->_paths;
 	}
 
-		
 /**
  * Checks if a string represents a remote file
+ *
  * @param string $target
- * @return mixed If $target is a handable remote resource, it will return its Directory Separator character. False if not.
- *		This doesn't seem to be very logic, but simplifies things. It's compatible with a TRUE|FALSE logic though.
+ * @return boolean If $target is a handable remote resource.:
  */
 	public function isRemote($target) {
-		/* 
-		 * Patterns for matching readable remote resources
-		 * Make sure that any included pattern will be accepted by fopen() as well.
-		 * Please surround the directory separator with (). It will be used for path normalization.
-		 */
+		// Patterns for matching readable remote resources
+		// Make sure that any included pattern will 
+		// be accepted by fopen() as well.
 		$remotePatterns = array(
-			'/^http:\/(\/)/i' // Just HTTP protocol for now, but anything that fopen() can read should work.
+			'/^https?:\/\//i'
 		);
-		
 		$matches = array();
 		foreach ($remotePatterns as $pattern) {
 			if (preg_match($pattern, $target, $matches)) {
-				return $matches[1]; // The first match is expected to be the Directory Separator. Please see the definition of $remotePatterns above.
+				return true;
 			}
 		}
-			
 		return false;
 	}
+
 }

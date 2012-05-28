@@ -36,7 +36,7 @@ class AssetCompiler {
 		foreach ($files as $file) {
 			$content = '';
 			$file = $this->_findFile($file);
-			if (AssetScanner::isRemote($file)) {
+			if ($this->_Scanner->isRemote($file)) {
 				$handle = @fopen($file, 'rb');
 				if ($handle) {
 					$content = stream_get_contents($handle);

@@ -116,4 +116,14 @@ class AssetScannerTest extends CakeTestCase {
 		$result = $scanner->find('plugin:TestAsset:plugin.css');
 		$this->assertEqual($expected, $result);
 	}
+
+	function testIsRemote() {
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths);
+		$this->assertFalse($scanner->isRemote('/Users/markstory/cakephp'));
+		$this->assertFalse($scanner->isRemote('C:\\Project\\cakephp'));
+		$this->assertTrue($scanner->isRemote('http://example.com'));
+	}
 }
