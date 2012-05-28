@@ -52,6 +52,8 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
 
 * Import paths are now set for the less filter.
 * `ROOT/` no longer needs // to work correctly.
+* `paths[]` can now contain remote URL's allowing you to create build files
+  using assets on CDN's or other remote hosts.
 
 #### 0.6
 

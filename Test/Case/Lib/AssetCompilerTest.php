@@ -138,4 +138,13 @@ TEXT;
 TEXT;
 		$this->assertEqual($result, $expected);
 	}
+
+	function testCompileRemoteFiles() {
+		$Config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config' . DS . 'remote_file.ini');
+		$Compiler = new AssetCompiler($Config);
+
+		$result = $Compiler->generate('remote_file.js');
+		$this->assertContains('jQuery', $result);
+	}
+
 }

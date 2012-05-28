@@ -34,8 +34,17 @@ class AssetCompiler {
 			throw new RuntimeException(sprintf('No files found for build file "%s"', $build));
 		}
 		foreach ($files as $file) {
+			$content = '';
 			$file = $this->_findFile($file);
-			$content = file_get_contents($file);
+			if ($this->_Scanner->isRemote($file)) {
+				$handle = @fopen($file, 'rb');
+				if ($handle) {
+					$content = stream_get_contents($handle);
+					fclose($handle);
+				}
+			} else {
+				$content = file_get_contents($file);
+			}
 			$content = $this->filters->input($file, $content);
 			$output .= $content;
 		}
