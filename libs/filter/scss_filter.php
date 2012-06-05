@@ -12,7 +12,7 @@ class ScssFilter extends AssetFilter {
 
 	protected $_settings = array(
 		'ext' => '.scss',
-		'sass' => '/usr/local/bin/sass'
+		'sass' => '/usr/bin/sass'
 	);
 
 /**
