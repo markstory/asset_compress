@@ -15,7 +15,8 @@ class AssetCompressHelperTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$testFile = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'config.ini';
+		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
+		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 
@@ -484,5 +485,54 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$result = $this->Helper->script('asset_test.js');
 		$this->assertTrue(strpos($result, TMP . 'blue-asset_test.js') !== false);
 		unlink(TMP . 'blue-asset_test.js');
+	}
+
+	function testRawAssets() {
+		$result = $this->Helper->script('new_file.js', array('raw' => true));
+		$expected = array(
+			array(
+				'script' => array(
+					'type' => 'text/javascript',
+					'src' => 'js/prototype.js'
+				),
+			),
+			'/script',
+			array(
+				'script' => array(
+					'type' => 'text/javascript',
+					'src' => 'js/scriptaculous.js'
+				),
+			),
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+	}
+
+	function testRawAssetsPlugin() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestAsset');
+		$config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config/plugins.ini');
+		$this->Helper->config($config);
+
+		$result = $this->Helper->css('plugins.css', array('raw' => true));
+		$expected = array(
+			array(
+				'link' => array(
+					'type' => 'text/css',
+					'rel' => 'stylesheet',
+					'href' => 'css/nav.css'
+				)
+			),
+			array(
+				'link' => array(
+					'type' => 'text/css',
+					'rel' => 'stylesheet',
+					'href' => '/test_asset/plugin.css'
+				)
+			),
+		);
+		$this->assertTags($result, $expected);
 	}
 }

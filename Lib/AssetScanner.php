@@ -102,14 +102,11 @@ class AssetScanner {
  */
 	public function find($file) {
 		$changed = false;
-		if ($this->_theme && preg_match(self::THEME_PATTERN, $file)) {
+		$resolved = $this->resolve($file);
+		if ($resolved !== $file) {
 			$changed = true;
-			$file = $this->_resolveTheme($file);
 		}
-		if (preg_match(self::PLUGIN_PATTERN, $file)) {
-			$changed = true;
-			$file = $this->_resolvePlugin($file);
-		}
+		$file = $resolved;
 		if ($changed && file_exists($file)) {
 			return $file;
 		}
@@ -136,25 +133,46 @@ class AssetScanner {
 	}
 
 /**
+ * Resolve a plugin or theme path into the file path without the search paths.
+ *
+ * @param string $path Path to resolve
+ * @param boolean $full Gives absolute paths
+ * @return string resolved path
+ */
+	public function resolve($path, $full = true) {
+		if (preg_match(self::PLUGIN_PATTERN, $path)) {
+			return $this->_resolvePlugin($path, $full);
+		}
+		if ($this->_theme && preg_match(self::THEME_PATTERN, $path)) {
+			return $this->_resolveTheme($path, $full);
+		}
+		return $path;
+	}
+
+/**
  * Resolve a themed file to its full path. The file will be found on the
  * current theme's path.
  *
  * @param string $file The theme file to find.
+ * @param boolean $full Gives absolute paths
  * @return string Full path to theme file.
  */
-	protected function _resolveTheme($file) {
+	protected function _resolveTheme($file, $full = true) {
 		$file = preg_replace(self::THEME_PATTERN, '', $file);
-		return App::themePath($this->_theme) . 'webroot' . DS . $file;
+		if ($full) {
+			return App::themePath($this->_theme) . 'webroot' . DS . $file;
+		}
+		return DS . Inflector::underscore($this->_theme) . DS . $file;
 	}
 
 /**
  * Resolve a plugin file to its full path.
  *
  * @param string $file The theme file to find.
- * @return string Full path to theme file.
+ * @param boolean $full Gives absolute paths
  * @throws RuntimeException when plugins are missing.
  */
-	protected function _resolvePlugin($file) {
+	protected function _resolvePlugin($file, $full = true) {
 		preg_match(self::PLUGIN_PATTERN, $file, $matches);
 		if (empty($matches[1]) || empty($matches[2])) {
 			throw new RuntimeException('Missing required parameters');
@@ -162,8 +180,11 @@ class AssetScanner {
 		if (!CakePlugin::loaded($matches[1])) {
 			throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
 		}
-		$path = CakePlugin::path($matches[1]);
-		return $path . 'webroot' . DS . $matches[2];
+		if ($full) {
+			$path = CakePlugin::path($matches[1]);
+			return $path . 'webroot' . DS . $matches[2];
+		}
+		return DS . Inflector::underscore($matches[1]) . DS . $matches[2];
 	}
 
 /**

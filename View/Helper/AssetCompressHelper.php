@@ -1,4 +1,5 @@
 <?php
+App::uses('AssetScanner', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 
@@ -15,6 +16,7 @@ class AssetCompressHelper extends AppHelper {
 	public $helpers = array('Html');
 
 	protected $_Config;
+
 	protected $_AssetCache;
 
 /**
@@ -278,13 +280,13 @@ class AssetCompressHelper extends AppHelper {
 		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a stylesheet tag for a build that does not exist.');
 		}
+		$output = '';
 		if (!empty($options['raw'])) {
-			$output = '';
 			unset($options['raw']);
+			$config = $this->config();
+			$scanner = new AssetScanner($config->paths('css'), $this->theme);
 			foreach ($buildFiles as $part) {
-				if (preg_match(self::PLUGIN_PATTERN, $part)) {
-					$part = $this->_resolvePlugin($part);
-				}
+				$part = $scanner->resolve($part, false);
 				$output .= $this->Html->css($part, null, $options);
 			}
 			return $output;
@@ -330,10 +332,10 @@ class AssetCompressHelper extends AppHelper {
 		if (!empty($options['raw'])) {
 			$output = '';
 			unset($options['raw']);
+			$config = $this->config();
+			$scanner = new AssetScanner($config->paths('js'), $this->theme);
 			foreach ($buildFiles as $part) {
-				if (preg_match(self::PLUGIN_PATTERN, $part)) {
-					$part = $this->_resolvePlugin($part);
-				}
+				$part = $scanner->resolve($part, false);
 				$output .= $this->Html->script($part, $options);
 			}
 			return $output;
