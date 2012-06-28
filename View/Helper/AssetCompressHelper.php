@@ -55,11 +55,6 @@ class AssetCompressHelper extends AppHelper {
 	public $autoInclude = true;
 
 /**
- * @const Pattern for various prefixes.
- */
-	const PLUGIN_PATTERN = '/^(?:p|plugin)\:(.*)\:(.*)$/';
-
-/**
  * Constructor - finds and parses the ini file the plugin uses.
  *
  * @return void
@@ -280,13 +275,13 @@ class AssetCompressHelper extends AppHelper {
 		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a stylesheet tag for a build that does not exist.');
 		}
+		$output = '';
 		if (!empty($options['raw'])) {
-			$output = '';
 			unset($options['raw']);
+			$config = $this->config();
+			$scanner = new AssetScanner($config->paths('css'), $this->theme);
 			foreach ($buildFiles as $part) {
-				if (preg_match(self::PLUGIN_PATTERN, $part)) {
-					$part = $this->_resolvePlugin($part);
-				}
+				$part = $scanner->resolve($part, false);
 				$output .= $this->Html->css($part, null, $options);
 			}
 			return $output;
@@ -332,10 +327,10 @@ class AssetCompressHelper extends AppHelper {
 		if (!empty($options['raw'])) {
 			$output = '';
 			unset($options['raw']);
+			$config = $this->config();
+			$scanner = new AssetScanner($config->paths('js'), $this->theme);
 			foreach ($buildFiles as $part) {
-				if (preg_match(self::PLUGIN_PATTERN, $part)) {
-					$part = $this->_resolvePlugin($part);
-				}
+				$part = $scanner->resolve($part, false);
 				$output .= $this->Html->script($part, $options);
 			}
 			return $output;
@@ -455,25 +450,6 @@ class AssetCompressHelper extends AppHelper {
 			return md5(implode('_', $buildFiles)) . '.' . $ext;
 		}
 		return false;
-	}
-
-/**
- * Resolve a plugin file to its path.
- *
- * @param string $file The plugin file to find.
- * @return string path to file.
- * @throws RuntimeException when plugins are missing.
- */
-	protected function _resolvePlugin($file) {
-		preg_match(self::PLUGIN_PATTERN, $file, $matches);
-		if (empty($matches[1]) || empty($matches[2])) {
-			throw new RuntimeException('Missing required parameters');
-		}
-		if (!CakePlugin::loaded($matches[1])) {
-			throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
-		}
-		$underscored = Inflector::underscore($matches[1]);
-		return '/' . $underscored . '/' . $matches[2];
 	}
 
 /**
