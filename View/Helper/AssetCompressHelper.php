@@ -1,4 +1,5 @@
 <?php
+App::uses('AssetScanner', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 
@@ -15,6 +16,7 @@ class AssetCompressHelper extends AppHelper {
 	public $helpers = array('Html');
 
 	protected $_Config;
+
 	protected $_AssetCache;
 
 /**
