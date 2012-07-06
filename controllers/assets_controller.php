@@ -7,7 +7,6 @@ App::import('Lib', 'AssetCompress.AssetCache');
 class AssetsController extends AssetCompressAppController {
 	public $name = 'Assets';
 	public $uses = array();
-	public $layout = 'script';
 	public $viewPath = 'generic';
 	public $_Config;
 
@@ -59,6 +58,7 @@ class AssetsController extends AssetCompressAppController {
 
 		$this->header('Content-Type: ' . $this->_getContentType($Config->getExt($build)));
 		$this->set('contents', $contents);
+		$this->layout = 'script';
 		$this->render('contents');
 	}
 
