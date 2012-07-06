@@ -10,8 +10,6 @@ class AssetsController extends AssetCompressAppController {
 
 	public $uses = array();
 
-	public $layout = 'script';
-
 	public $viewPath = 'Generic';
 
 	public $configFile;
@@ -68,6 +66,7 @@ class AssetsController extends AssetCompressAppController {
 
 		$this->response->type($Config->getExt($build));
 		$this->set('contents', $contents);
+		$this->layout = 'script';
 		$this->render('contents');
 	}
 
