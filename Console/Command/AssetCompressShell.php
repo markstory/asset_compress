@@ -1,4 +1,5 @@
 <?php
+App::uses('Shell', 'Console');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');

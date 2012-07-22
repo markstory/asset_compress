@@ -30,7 +30,7 @@ var Template = new Class({
 });
 
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	 }
 
 	function testInputWithRecursion() {
@@ -49,7 +49,7 @@ var NestedClass = BaseClassTwo.extend({
 
 });
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 
 	function testDoubleInclusion() {
@@ -66,7 +66,7 @@ var DoubleInclusion = new Class({
 
 });
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -96,7 +96,7 @@ var Slideshow = new Class({
 
 });
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -124,6 +124,6 @@ var DoubleInclusion = new Class({
 
 });
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 }

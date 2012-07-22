@@ -6,8 +6,6 @@ App::uses('AssetCache', 'AssetCompress.Lib');
 
 class AssetsController extends AssetCompressAppController {
 
-	public $name = 'Assets';
-
 	public $uses = array();
 
 	public $viewPath = 'Generic';
