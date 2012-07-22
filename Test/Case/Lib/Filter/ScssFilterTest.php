@@ -11,13 +11,13 @@ class ScssFilterTest extends CakeTestCase {
 	}
 
 	function testParsing() {
-		$content = file_get_contents($this->_cssDir . DS . 'test.scss');
+		$content = file_get_contents($this->_cssDir . 'test.scss');
 
-		$result = $this->filter->input($this->_cssDir . DS . 'test.scss', $content);
+		$result = $this->filter->input($this->_cssDir . 'test.scss', $content);
 		
-		$expected = file_get_contents($this->_cssDir . DS . 'compiled_scss.css');
+		$expected = file_get_contents($this->_cssDir . 'compiled_scss.css');
 		
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	 }
 
 }
