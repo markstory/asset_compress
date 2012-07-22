@@ -69,7 +69,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		$this->Helper->addScript('one.js');
 		$result = $this->Helper->includeAssets();
-		$this->assertPattern('#"/some/dir/asset_compress#', $result, 'double dir set %s');
+		$this->assertRegExp('#"/some/dir/asset_compress#', $result, 'double dir set %s');
 	}
 
 /**
@@ -317,7 +317,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Helper->includeCss('default');
-		$this->assertEqual($result, '');
+		$this->assertEquals('', $result);
 	}
 
 /**
@@ -333,6 +333,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 		touch(TMP . 'asset_test.js');
 
 		$result = $this->Helper->script('asset_test.js');
+		$result = str_replace('/', DS, $result);
 		$this->assertTrue(strpos($result, TMP . 'asset_test.js') !== false);
 		unlink(TMP . 'asset_test.js');
 	}
@@ -386,6 +387,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 		touch($filename);
 
 		$result = $this->Helper->script('asset_test.js');
+		$result = str_replace('/', DS, $result);
 		$this->assertTrue(strpos($result, $filename) !== false);
 		unlink($filename);
 	}
@@ -483,6 +485,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		$this->Helper->theme = 'blue';
 		$result = $this->Helper->script('asset_test.js');
+		$result = str_replace('/', DS, $result);
 		$this->assertTrue(strpos($result, TMP . 'blue-asset_test.js') !== false);
 		unlink(TMP . 'blue-asset_test.js');
 	}

@@ -1,4 +1,5 @@
 <?php
+App::uses('AppHelper', 'View/Helper');
 App::uses('AssetScanner', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
@@ -164,13 +165,13 @@ class AssetCompressHelper extends AppHelper {
  * ### Usage
  *
  * #### Include one destination file:
- * `$assetCompress->includeCss('default');`
+ * `$this->AssetCompress->includeCss('default');`
  *
  * #### Include multiple files:
- * `$assetCompress->includeCss('default', 'reset', 'themed');`
+ * `$this->AssetCompress->includeCss('default', 'reset', 'themed');`
  *
  * #### Include all the files:
- * `$assetCompress->includeCss();`
+ * `$this->AssetCompress->includeCss();`
  *
  * @param string $name Name of the destination file to include.  You can pass any number of strings in to
  *    include multiple files.  Leave null to include all files.
@@ -188,13 +189,13 @@ class AssetCompressHelper extends AppHelper {
  * ### Usage
  *
  * #### Include one runtime destination file:
- * `$assetCompress->includeJs('default');`
+ * `$this->AssetCompress->includeJs('default');`
  *
  * #### Include multiple runtime files:
- * `$assetCompress->includeJs('default', 'reset', 'themed');`
+ * `$this->AssetCompress->includeJs('default', 'reset', 'themed');`
  *
  * #### Include all the runtime files:
- * `$assetCompress->includeJs();`
+ * `$this->AssetCompress->includeJs();`
  *
  * @param string $name Name of the destination file to include.  You can pass any number of strings in to
  *    include multiple files.  Leave null to include all files.
@@ -282,6 +283,7 @@ class AssetCompressHelper extends AppHelper {
 			$scanner = new AssetScanner($config->paths('css'), $this->theme);
 			foreach ($buildFiles as $part) {
 				$part = $scanner->resolve($part, false);
+				$part = str_replace(DS, '/', $part);
 				$output .= $this->Html->css($part, null, $options);
 			}
 			return $output;

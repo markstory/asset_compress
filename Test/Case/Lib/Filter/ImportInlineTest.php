@@ -26,7 +26,7 @@ class ImportInlineTest extends CakeTestCase {
 	width:100%;
 }
 TEXT;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testReplacementNested() {
@@ -45,6 +45,6 @@ body {
 	background:#000;
 }
 TEXT;
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 }

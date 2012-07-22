@@ -38,7 +38,7 @@ var Template = new Class({
 
 });
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testConcatenationCss() {
@@ -54,7 +54,7 @@ TEXT;
 	width:100%;
 }
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testCombiningWithOtherExtensions() {
@@ -69,7 +69,7 @@ TEXT;
 	width:100%;
 }
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testCombineThemeFile() {
@@ -89,7 +89,7 @@ body {
 	color: blue !important;
 }
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testCombineThemeFileWithNonTheme() {
@@ -112,7 +112,7 @@ TEXT;
 	color: red !important;
 }
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testCompilePluginFiles() {
@@ -136,7 +136,7 @@ TEXT;
 	color: orange;
 }
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testCompileRemoteFiles() {

@@ -1,4 +1,5 @@
 <?php
+App::uses('AppController', 'Controller');
 
 /**
  * Asset Compress base controller. Stubs out some of the controller processes so
