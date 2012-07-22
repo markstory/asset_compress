@@ -1,6 +1,7 @@
 <?php
 App::uses('AssetsController', 'AssetCompress.Controller');
 App::uses('CakeResponse', 'Network');
+App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetsControllerTest extends CakeTestCase {
 
