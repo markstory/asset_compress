@@ -37,8 +37,8 @@ class AssetBuildTaskTest extends CakeTestCase {
 		$this->Task->setFiles($files);
 		$result = $this->Task->scanFiles();
 
-		$this->assertEqual(4, count($result));
-		$this->assertEqual('addScript', $result[0][2][1]);
+		$this->assertEquals(4, count($result));
+		$this->assertEquals('addScript', $result[0][2][1]);
 	}
 
 	function testParsingSimpleFile() {
@@ -56,7 +56,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 				':hash-default' => array('no_build')
 			)
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testParsingMultipleFile() {
@@ -72,7 +72,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 				'multi' => array('one_file', 'two_file', 'three_file'),
 			)
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 
 	function testParsingArrayFile() {
@@ -91,6 +91,6 @@ class AssetBuildTaskTest extends CakeTestCase {
 				'multi_file' => array('one_file', 'two_file')
 			)
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEquals($expected, $result);
 	}
 }

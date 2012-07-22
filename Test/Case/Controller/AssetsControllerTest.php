@@ -40,8 +40,8 @@ class AssetsControllerTest extends CakeTestCase {
 		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->Controller->get('dynamic.js');
 
-		$this->assertPattern('/function test/', $this->Controller->viewVars['contents']);
-		$this->assertPattern('/multi line comments/', $this->Controller->viewVars['contents']);
+		$this->assertRegExp('/function test/', $this->Controller->viewVars['contents']);
+		$this->assertRegExp('/multi line comments/', $this->Controller->viewVars['contents']);
 	}
 
 /**

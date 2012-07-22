@@ -23,7 +23,7 @@ class AssetFilterCollectionTest extends CakeTestCase {
 		);
 		$Filters = new AssetFilterCollection($filters, array(), $settings);
 		$result = $Filters->get('TestFilterOne');
-		$this->assertEqual(array('key' => 'value'), $result->settings);
+		$this->assertEquals(array('key' => 'value'), $result->settings);
 	}
 
 	function testInputOrder() {
@@ -36,7 +36,7 @@ FilterTwo::input()
 FilterOne::input()
 test content
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 
 	function testOutput() {
@@ -49,7 +49,7 @@ FilterTwo::output()
 FilterOne::output()
 test content
 TEXT;
-		$this->assertEqual($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 }
 
