@@ -38,7 +38,7 @@ class AssetCacheTest extends CakeTestCase {
 		unlink(TMP . 'test.v' . $now . '.js');
 	}
 
-	public function testIsFreshNoBuild(){
+	public function testIsFreshNoBuild() {
 		$this->assertFalse($this->cache->isFresh('libs.js'));
 	}
 
