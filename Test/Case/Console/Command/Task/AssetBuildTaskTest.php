@@ -8,7 +8,7 @@ App::uses('AssetBuildTask', 'AssetCompress.Console/Command/Task');
 
 class AssetBuildTaskTest extends CakeTestCase {
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
@@ -27,12 +27,12 @@ class AssetBuildTaskTest extends CakeTestCase {
 		$this->Task->setConfig($this->config);
 	}
 
-	function tearDown() {
+	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
 	}
 
-	function testScanningSimpleFile() {
+	public function testScanningSimpleFile() {
 		$files = array($this->testFilePath . 'single.ctp');
 		$this->Task->setFiles($files);
 		$result = $this->Task->scanFiles();
@@ -41,7 +41,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 		$this->assertEquals('addScript', $result[0][2][1]);
 	}
 
-	function testParsingSimpleFile() {
+	public function testParsingSimpleFile() {
 		$files = array($this->testFilePath . 'single.ctp');
 		$this->Task->setFiles($files);
 		$this->Task->scanFiles();
@@ -59,7 +59,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testParsingMultipleFile() {
+	public function testParsingMultipleFile() {
 		$files = array($this->testFilePath . 'multiple.ctp');
 		$this->Task->setFiles($files);
 		$this->Task->scanFiles();
@@ -75,7 +75,7 @@ class AssetBuildTaskTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testParsingArrayFile() {
+	public function testParsingArrayFile() {
 		$files = array($this->testFilePath . 'array.ctp');
 		$this->Task->setFiles($files);
 		$this->Task->scanFiles();

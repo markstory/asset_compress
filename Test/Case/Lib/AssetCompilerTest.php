@@ -4,7 +4,7 @@ App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetCompilerTest extends CakeTestCase {
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
@@ -26,7 +26,7 @@ class AssetCompilerTest extends CakeTestCase {
 		$this->Compiler = new AssetCompiler($this->config);
 	}
 
-	function testConcatenationJavascript() {
+	public function testConcatenationJavascript() {
 		$this->config->filters('js', null, array());
 		$this->config->addTarget('template.js', array('classes/base_class.js', 'classes/template.js'));
 		$result = $this->Compiler->generate('template.js');
@@ -41,7 +41,7 @@ TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	function testConcatenationCss() {
+	public function testConcatenationCss() {
 		$this->config->filters('css', null, array());
 		$this->config->addTarget('all.css', array('reset/reset.css', 'nav.css'));
 		$result = $this->Compiler->generate('all.css');
@@ -57,7 +57,7 @@ TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	function testCombiningWithOtherExtensions() {
+	public function testCombiningWithOtherExtensions() {
 		$this->config->filters('css', null, array());
 		$this->config->addTarget('all.css', array('other.less', 'nav.css'));
 		$result = $this->Compiler->generate('all.css');
@@ -72,7 +72,7 @@ TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	function testCombineThemeFile() {
+	public function testCombineThemeFile() {
 		App::build(array(
 			'View' => array($this->_testFiles . 'View' . DS)
 		));
@@ -92,7 +92,7 @@ TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	function testCombineThemeFileWithNonTheme() {
+	public function testCombineThemeFileWithNonTheme() {
 		App::build(array(
 			'View' => array($this->_testFiles . 'View' . DS)
 		));
@@ -115,7 +115,7 @@ TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	function testCompilePluginFiles() {
+	public function testCompilePluginFiles() {
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
@@ -139,7 +139,7 @@ TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	function testCompileRemoteFiles() {
+	public function testCompileRemoteFiles() {
 		$Config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config' . DS . 'remote_file.ini');
 		$Compiler = new AssetCompiler($Config);
 

@@ -62,7 +62,7 @@ class Sprockets extends AssetFilter {
 /**
  * Performs the replacements and inlines dependencies.
  *
- * @param array $matches
+ * @param string $content
  */
 	protected function _replace($matches) {
 		$file = $this->_currentFile;

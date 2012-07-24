@@ -3,7 +3,7 @@ App::uses('TimestampImage', 'AssetCompress.Filter');
 
 class TimestampImageTest extends CakeTestCase {
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testPath = $this->_pluginPath . 'Test/test_files/css/';
@@ -11,7 +11,7 @@ class TimestampImageTest extends CakeTestCase {
 		$this->filter = new TimestampImage();
 	}
 
-	function testReplacement() {
+	public function testReplacement() {
 		$path = $this->_testPath . 'background.css';
 		$content = file_get_contents($path);
 		$result = $this->filter->input($path, $content);
