@@ -30,6 +30,9 @@ class LessPHP extends AssetFilter {
 			return $input;
 		}
 		App::import('Vendor', 'lessc', array('file' => $this->_settings['path']));
+		if (!class_exists('lessc')) {
+			throw new Exception(sprintf('Cannot not load filter class "%s".', 'lessc'));
+		}
 		$lc = new lessc($filename);
 		return $lc->parse();
 	}
