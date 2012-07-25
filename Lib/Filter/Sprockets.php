@@ -49,6 +49,7 @@ class Sprockets extends AssetFilter {
  *
  * @param string $filename
  * @param string $content
+ * @return string $content
  */
 	public function input($filename, $content) {
 		$this->_currentFile = $filename;
@@ -62,7 +63,8 @@ class Sprockets extends AssetFilter {
 /**
  * Performs the replacements and inlines dependencies.
  *
- * @param string $content
+ * @param array $matches
+ * @return string $content
  */
 	protected function _replace($matches) {
 		$file = $this->_currentFile;
