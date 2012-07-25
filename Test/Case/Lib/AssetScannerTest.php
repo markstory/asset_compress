@@ -3,7 +3,7 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
 
 class AssetScannerTest extends CakeTestCase {
 
-	function setUp() {
+	public function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$paths = array(
@@ -13,7 +13,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->Scanner = new AssetScanner($paths);
 	}
 
-	function testFind() {
+	public function testFind() {
 		$result = $this->Scanner->find('base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEquals($expected, $result);
@@ -21,7 +21,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertFalse($this->Scanner->find('does not exist'));
 	}
 
-	function testNormalizePaths() {
+	public function testNormalizePaths() {
 		$paths = array(
 			$this->_testFiles . 'js',
 			$this->_testFiles . 'js' . DS . 'classes'
@@ -33,7 +33,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testExpandStarStar() {
+	public function testExpandStarStar() {
 		$paths = array(
 			$this->_testFiles . 'js' . DS . '**',
 		);
@@ -56,7 +56,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testExpandGlob() {
+	public function testExpandGlob() {
 		$paths = array(
 			$this->_testFiles . 'js' . DS,
 			$this->_testFiles . 'js' . DS . '*'
@@ -73,7 +73,7 @@ class AssetScannerTest extends CakeTestCase {
 	}
 
 
-	function testFindOtherExtension() {
+	public function testFindOtherExtension() {
 		$paths = array(
 			$this->_testFiles . 'css' . DS
 		);
@@ -83,7 +83,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testResolveThemePaths() {
+	public function testResolveThemePaths() {
 		App::build(array(
 			'View' => array($this->_testFiles . 'View' . DS)
 		));
@@ -99,7 +99,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testResolvePluginPaths() {
+	public function testResolvePluginPaths() {
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
@@ -117,7 +117,7 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	function testIsRemote() {
+	public function testIsRemote() {
 		$paths = array(
 			$this->_testFiles . 'css' . DS
 		);

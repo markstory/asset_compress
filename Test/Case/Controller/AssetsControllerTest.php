@@ -5,7 +5,7 @@ App::uses('AssetConfig', 'AssetCompress.Lib');
 
 class AssetsControllerTest extends CakeTestCase {
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'integration.ini';
@@ -28,11 +28,11 @@ class AssetsControllerTest extends CakeTestCase {
 		$this->_debug = Configure::read('debug');
 	}
 
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('debug', $this->_debug);
 	}
 
-	function testDynamicBuildFile() {
+	public function testDynamicBuildFile() {
 		$this->Controller->response
 			->expects($this->once())->method('type')
 			->with($this->equalTo('js'));
@@ -50,7 +50,7 @@ class AssetsControllerTest extends CakeTestCase {
  *
  * @expectedException ForbiddenException
  */
-	function testDynamicBuildFileDebugOff() {
+	public function testDynamicBuildFileDebugOff() {
 		Configure::write('debug', 0);
 
 		$this->Controller->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
