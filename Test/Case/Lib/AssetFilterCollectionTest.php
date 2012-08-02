@@ -4,7 +4,7 @@ App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 
 class AssetFilterCollectionTest extends CakeTestCase {
 
-	function testBuildingFilters() {
+	public function testBuildingFilters() {
 		$filters = array('AssetFilter');
 		$settings = array(
 			'paths' => array()
@@ -14,7 +14,7 @@ class AssetFilterCollectionTest extends CakeTestCase {
 		$this->assertFalse($Filters->has('Boogers'));
 	}
 
-	function testFilterSettings() {
+	public function testFilterSettings() {
 		$filters = array('TestFilterOne', 'TestFilterTwo');
 		$settings = array(
 			'TestFilterOne' => array(
@@ -26,7 +26,7 @@ class AssetFilterCollectionTest extends CakeTestCase {
 		$this->assertEquals(array('key' => 'value'), $result->settings);
 	}
 
-	function testInputOrder() {
+	public function testInputOrder() {
 		$filters = array('TestFilterOne', 'TestFilterTwo');
 		$Filters = new AssetFilterCollection($filters, array(), array());
 
@@ -39,7 +39,7 @@ TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
 
-	function testOutput() {
+	public function testOutput() {
 		$filters = array('TestFilterOne', 'TestFilterTwo');
 		$Filters = new AssetFilterCollection($filters, array(), array());
 
