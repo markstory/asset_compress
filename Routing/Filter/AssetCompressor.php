@@ -84,7 +84,7 @@ class AssetCompressor extends DispatcherFilter {
 			return false;
 		}
 
-		$path = $this->_Config->cachePath($parts[1]);
+		$path = $this->_getConfig()->cachePath($parts[1]);
 		if (empty($path)) {
 			return false;
 		}
