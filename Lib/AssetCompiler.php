@@ -12,6 +12,8 @@ class AssetCompiler {
 
 	protected $_Config;
 
+	protected $filesList = array();
+
 	public function __construct(AssetConfig $config) {
 		$this->_Config = $config;
 	}
@@ -24,6 +26,48 @@ class AssetCompiler {
  * @throws RuntimeException
  */
 	public function generate($build) {
+		$output = '';
+		foreach ($this->_getFilesList($build) as $file) {
+			$content = $this->_readFile($file);
+			$content = $this->filters->input($file, $content);
+			$output .= $content;
+		}
+		if (Configure::read('debug') < 2 || php_sapi_name() == 'cli') {
+			$output = $this->filters->output($build, $output);
+		}
+		return trim($output);
+	}
+
+/**
+ * Gets the latest modified time for the files set on the build
+ *
+ * @param string $target The name of the build target to generate.
+ * @return int last modified time in UNIX seconds
+ */
+	public function getLastModified($build) {
+		$time  = 0;
+		foreach ($this->_getFilesList($build) as $file) {
+			if ($this->_Scanner->isRemote($file)) {
+				return time();
+			}
+			$mtime = filemtime($file);
+			$time = ($mtime > $time) ? $mtime : $time;
+		}
+		return $time;
+	}
+
+/**
+ * Returns the list of files required to generate a named build
+ *
+ * @param string $target The name of the build target to generate.
+ * @return array The list of files to be processed
+ * @throws RuntimeException
+ */
+	protected function _getFilesList($build) {
+		if (!empty($this->_fileList[$build])) {
+			return $this->_fileList[$build];
+		}
+
 		$ext = $this->_Config->getExt($build);
 		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext), $this->_Config->theme());
 		$this->filters = $this->_makeFilters($ext, $build);
@@ -33,16 +77,11 @@ class AssetCompiler {
 		if (empty($files)) {
 			throw new RuntimeException(sprintf('No files found for build file "%s"', $build));
 		}
-		foreach ($files as $file) {
+
+		foreach ($files as &$file) {
 			$file = $this->_findFile($file);
-			$content = $this->_readFile($file);
-			$content = $this->filters->input($file, $content);
-			$output .= $content;
 		}
-		if (Configure::read('debug') < 2 || php_sapi_name() == 'cli') {
-			$output = $this->filters->output($build, $output);
-		}
-		return trim($output);
+		return $this->_fileList[$build] = $files;
 	}
 
 /**
