@@ -381,6 +381,9 @@ class AssetCompressHelper extends AppHelper {
 			}
 			$query['file'] = $components;
 		}
+		if (substr($base, -1) !== DS) {
+			$base .= '/';
+		}
 		$query = empty($query) ? '' : '?' . http_build_query($query);
 		return $base . $file . $query;
 	}
