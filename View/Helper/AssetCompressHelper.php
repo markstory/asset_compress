@@ -284,8 +284,13 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		$baseUrl = str_replace(WWW_ROOT, '/', $this->_Config->get('css.cachePath'));
-		$route = $this->_getRoute($file, $baseUrl);
+		$baseUrl = $this->_Config->get('css.baseUrl');
+		if ($baseUrl && !Configure::read('debug')) {
+			$route = $baseUrl . $this->_getBuildName($file);
+		} else {
+			$baseUrl = str_replace(WWW_ROOT, '/', $this->_Config->get('css.cachePath'));
+			$route = $this->_getRoute($file, $baseUrl);
+		}
 
 		if (DS == '\\') {
 			$route = str_replace(DS, '/', $route);
@@ -327,14 +332,35 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		$baseUrl = str_replace(WWW_ROOT, '/', $this->_Config->get('js.cachePath'));
-		$route = $this->_getRoute($file, $baseUrl);
+		$baseUrl = $this->_Config->get('js.baseUrl');
+		if ($baseUrl && !Configure::read('debug')) {
+			$route = $baseUrl . $this->_getBuildName($file);
+		} else {
+			$baseUrl = str_replace(WWW_ROOT, '/', $this->_Config->get('js.cachePath'));
+			$route = $this->_getRoute($file, $baseUrl);
+		}
 
 		if (DS == '\\') {
 			$route = str_replace(DS, '/', $route);
 		}
 
 		return $this->Html->script($route, $options);
+	}
+
+/**
+* Get the build file name.
+*
+* @param string $build The build being resolved.
+* @return string The resolved build name.
+*/
+	protected function _getBuildName($build) {
+		$ext = $this->_Config->getExt($build);
+		$hash = $this->_getHashName($build, $ext);
+		if ($hash) {
+			$build = $hash;
+		}
+		$this->_Config->theme($this->theme);
+		return $this->_AssetCache->buildFileName($build);
 	}
 
 /**
