@@ -11,7 +11,9 @@ class AssetCacheTest extends CakeTestCase {
 		$this->testConfig = $this->_testFiles . 'Config' . DS . 'integration.ini';
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
-		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
+		$this->config = AssetConfig::buildFromIniFile($this->testConfig, array(
+			'TEST_FILES' => $this->_testFiles
+		));
 		$this->config->cachePath('js', TMP);
 		$this->config->set('js.timestamp', true);
 		$this->cache = new AssetCache($this->config);
