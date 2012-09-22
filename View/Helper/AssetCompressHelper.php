@@ -284,19 +284,8 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		$baseUrl = $this->_Config->get('css.baseUrl');
-		if ($baseUrl && !Configure::read('debug')) {
-			$route = $baseUrl . $this->_getBuildName($file);
-		} else {
-			$baseUrl = str_replace(WWW_ROOT, '/', $this->_Config->get('css.cachePath'));
-			$route = $this->_getRoute($file, $baseUrl);
-		}
-
-		if (DS == '\\') {
-			$route = str_replace(DS, '/', $route);
-		}
-
-		return $this->Html->css($route, null, $options);
+		$url = $this->_getAssetUrl('css', $file);
+		return $this->Html->css($url, null, $options);
 	}
 
 /**
@@ -332,23 +321,44 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		$baseUrl = $this->_Config->get('js.baseUrl');
-		if ($baseUrl && !Configure::read('debug')) {
+		$url = $this->_getAssetUrl('js', $file);
+		return $this->Html->script($url, $options);
+	}
+
+/**
+ * Get the url for an asset based on the type and file.
+ *
+ * @param string $type The type of file. (css/js)
+ * @param string $file The build filename.
+ */
+	protected function _getAssetUrl($type, $file) {
+		$baseUrl = $this->_Config->get($type . '.baseUrl');
+		$devMode = Configure::read('debug') > 0;
+
+		$route = null;
+		if ($baseUrl && !$devMode) {
 			$route = $baseUrl . $this->_getBuildName($file);
-		} else {
-			$baseUrl = str_replace(WWW_ROOT, '/', $this->_Config->get('js.cachePath'));
+		}
+		if (empty($route) && !$devMode) {
+			$route = $this->_getBuildName($file);
+		}
+		if ($devMode) {
+			$path = $this->_Config->get($type . '.cachePath');
+			$baseUrl = str_replace(WWW_ROOT, '/', $path);
 			$route = $this->_getRoute($file, $baseUrl);
 		}
 
 		if (DS == '\\') {
 			$route = str_replace(DS, '/', $route);
 		}
-
-		return $this->Html->script($route, $options);
+		return $route;
 	}
 
 /**
 * Get the build file name.
+*
+* Generates filenames that are intended for production use
+* with statically generated files.
 *
 * @param string $build The build being resolved.
 * @return string The resolved build name.
@@ -365,6 +375,12 @@ class AssetCompressHelper extends AppHelper {
 
 /**
  * Get the dynamic build path for an asset.
+ *
+ * This generates URLs that work with the development dispatcher filter.
+ *
+ * @param string $file The build file you want to make a url for.
+ * @param string $base The base path to fetch a url with.
+ * @return string Generated URL.
  */
 	protected function _getRoute($file, $base) {
 		$ext = $this->_Config->getExt($file);
@@ -373,6 +389,7 @@ class AssetCompressHelper extends AppHelper {
 		if ($this->_Config->isThemed($file)) {
 			$query['theme'] = $this->theme;
 		}
+
 		if (isset($this->_runtime[$ext][$file])) {
 			$hash = $this->_getHashName($file, $ext);
 			$components = $this->_Config->files($file);

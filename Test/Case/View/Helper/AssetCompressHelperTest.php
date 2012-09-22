@@ -454,4 +454,22 @@ class AssetCompressHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
+	public function testCompiledBuildWithThemes() {
+		Configure::write('debug', 0);
+		$config = $this->Helper->config();
+		$config->general('writeCache', true);
+		$config->set('js.timestamp', false);
+		$config->cachePath('js', TMP);
+		$config->addTarget('asset_test.js', array(
+			'files' => array('one.js'),
+			'theme' => true
+		));
+
+		$this->Helper->theme = 'blue';
+		$result = $this->Helper->script('asset_test.js');
+		$result = str_replace('/', DS, $result);
+		$this->assertContains('blue-asset_test.js', $result);
+	}
+
 }
