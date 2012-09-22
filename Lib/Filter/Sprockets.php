@@ -17,7 +17,7 @@ class Sprockets extends AssetFilter {
  *
  * @var stgin
  */
-	protected $_pattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>][\r]\n+/m';
+	protected $_pattern = '/^\s?\/\/\=\s+require\s+([\"\<])([^\"\>]+)[\"\>](?:[\r\n]+|[\n]+)/m';
 
 /**
  * A list of unique files already processed.
