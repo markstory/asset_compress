@@ -333,6 +333,7 @@ class AssetCompressHelper extends AppHelper {
  */
 	protected function _getAssetUrl($type, $file) {
 		$baseUrl = $this->_Config->get($type . '.baseUrl');
+		$path = $this->_Config->get($type . '.cachePath');
 		$devMode = Configure::read('debug') > 0;
 
 		$route = null;
@@ -340,10 +341,11 @@ class AssetCompressHelper extends AppHelper {
 			$route = $baseUrl . $this->_getBuildName($file);
 		}
 		if (empty($route) && !$devMode) {
-			$route = $this->_getBuildName($file);
+			$path = str_replace(WWW_ROOT, '/', $path);
+			$path = rtrim($path, '/') . '/';
+			$route = $path . $this->_getBuildName($file);
 		}
 		if ($devMode) {
-			$path = $this->_Config->get($type . '.cachePath');
 			$baseUrl = str_replace(WWW_ROOT, '/', $path);
 			$route = $this->_getRoute($file, $baseUrl);
 		}

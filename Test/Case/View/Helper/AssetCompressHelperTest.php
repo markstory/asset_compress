@@ -472,4 +472,18 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->assertContains('blue-asset_test.js', $result);
 	}
 
+	public function testUrlGenerationProductionMode() {
+		Configure::write('debug', 0);
+		$this->Helper->config()->set('js.timestamp', false);
+
+		$result = $this->Helper->script('libs.js');
+		$expected = array(
+			array('script' => array(
+				'type' => 'text/javascript',
+				'src' => '/cache_js/libs.js'
+			))
+		);
+		$this->assertTags($result, $expected);
+	}
+
 }
