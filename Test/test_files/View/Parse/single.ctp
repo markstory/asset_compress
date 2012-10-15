@@ -1,5 +1,9 @@
 <?php
 
+if (isset($this->AssetCompress)) {
+	$available = true;
+}
+
 $this->AssetCompress->addScript('one_file', 'single');
 $this->AssetCompress->addScript('no_build');
 
