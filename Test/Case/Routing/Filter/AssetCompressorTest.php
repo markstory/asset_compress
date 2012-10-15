@@ -62,7 +62,6 @@ class AssetsCompressorTest extends CakeTestCase {
 		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
 		$this->assertEquals('', $this->response->body());
-		$this->assertEquals(304, $this->response->statusCode());
 		$this->assertTrue($event->isStopped());
 	}
 

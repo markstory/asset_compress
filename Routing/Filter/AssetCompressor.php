@@ -59,7 +59,6 @@ class AssetCompressor extends DispatcherFilter {
 			$mtime = $Compiler->getLastModified($build);
 			$event->data['response']->modified($mtime);
 			if ($event->data['response']->checkNotModified($event->data['request'])) {
-				$event->data['response']->notModified();
 				$event->stopPropagation();
 				return $event->data['response'];
 			}
