@@ -25,7 +25,7 @@ class AssetsCompressorTest extends CakeTestCase {
 			->will($this->returnValue($config));
 
 		$this->request = new CakeRequest(null, false);
-		$this->response = $this->getMock('CakeResponse', array('type', 'send'));
+		$this->response = $this->getMock('CakeResponse', array('checkNotModified', 'type', 'send'));
 		$this->_debug = Configure::read('debug');
 	}
 
@@ -38,7 +38,6 @@ class AssetsCompressorTest extends CakeTestCase {
 			->expects($this->once())->method('type')
 			->with($this->equalTo('js'));
 
-
 		$this->request->url = 'cache_js/dynamic.js';
 		$this->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$data = array('request' => $this->request, 'response' => $this->response);
@@ -47,6 +46,23 @@ class AssetsCompressorTest extends CakeTestCase {
 
 		$this->assertRegExp('/function test/', $this->response->body());
 		$this->assertRegExp('/multi line comments/', $this->response->body());
+		$this->assertTrue($event->isStopped());
+	}
+
+	public function testDynamicBuildFileCheckNotModified() {
+		$this->response
+			->expects($this->once())->method('checkNotModified')
+			->with($this->request)
+			->will($this->returnValue(true));
+
+		$this->request->url = 'cache_js/dynamic.js';
+		$this->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
+
+		$this->assertEquals('', $this->response->body());
+		$this->assertEquals(304, $this->response->statusCode());
 		$this->assertTrue($event->isStopped());
 	}
 
