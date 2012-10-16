@@ -104,7 +104,10 @@ class AssetConfigTest extends CakeTestCase {
 
 	public function testCachePath() {
 		$this->config->cachePath('js', 'WEBROOT/css_build');
-		$this->assertEquals(WWW_ROOT . 'css_build', $this->config->cachePath('js'));
+		$this->assertEquals(WWW_ROOT . 'css_build/', $this->config->cachePath('js'));
+
+		$this->config->cachePath('js', 'WEBROOT/css_build/');
+		$this->assertEquals(WWW_ROOT . 'css_build/', $this->config->cachePath('js'));
 	}
 
 	public function testFilterConfig() {
@@ -146,7 +149,7 @@ class AssetConfigTest extends CakeTestCase {
 
 	public function testGet() {
 		$result = $this->config->get('js.cachePath');
-		$this->assertEquals(WWW_ROOT . 'cache_js', $result);
+		$this->assertEquals(WWW_ROOT . 'cache_js/', $result);
 
 		$this->assertNull($this->config->get('Bogus.poop'));
 	}

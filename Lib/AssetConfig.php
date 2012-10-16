@@ -217,7 +217,8 @@ class AssetConfig {
 		}
 		$target['paths'] = $paths;
 		if (!empty($target['cachePath'])) {
-			$target['cachePath'] = $this->_replacePathConstants($target['cachePath']);
+			$path = $this->_replacePathConstants($target['cachePath']);
+			$target['cachePath'] = rtrim($path, '/') . '/';
 		}
 		return $target;
 	}
@@ -394,7 +395,8 @@ class AssetConfig {
 			}
 			return '';
 		}
-		$this->_data[$ext]['cachePath'] = $this->_replacePathConstants($path);
+		$path = $this->_replacePathConstants($path);
+		$this->_data[$ext]['cachePath'] = rtrim($path, '/') . '/';
 	}
 
 /**
