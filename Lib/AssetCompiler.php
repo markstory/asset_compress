@@ -45,7 +45,7 @@ class AssetCompiler {
  * @return int last modified time in UNIX seconds
  */
 	public function getLastModified($build) {
-		$time  = 0;
+		$time = 0;
 		foreach ($this->_getFilesList($build) as $file) {
 			if ($this->_Scanner->isRemote($file)) {
 				return time();
