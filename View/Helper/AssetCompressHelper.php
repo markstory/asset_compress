@@ -400,7 +400,7 @@ class AssetCompressHelper extends AppHelper {
 			}
 			$query['file'] = $components;
 		}
-		if (substr($base, -1) !== DS) {
+		if (substr($base, -1) !== DS && DS !== '\\') {
 			$base .= '/';
 		}
 		$query = empty($query) ? '' : '?' . http_build_query($query);

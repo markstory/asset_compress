@@ -30,7 +30,7 @@ class AssetCompressor extends DispatcherFilter {
 	public function beforeDispatch($event) {
 		$url = $event->data['request']->url;
 		$Config = $this->_getConfig();
-		$production = Configure::read('debug') === 0;
+		$production = !Configure::read('debug');
 		if ($production && !$Config->general('alwaysEnableController')) {
 			return;
 		}
