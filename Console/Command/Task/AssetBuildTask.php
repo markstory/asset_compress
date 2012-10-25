@@ -100,7 +100,7 @@ class AssetBuildTask extends Shell {
 	}
 
 /**
- * Scan each file for assetCompress helper calls.  Only pull out the
+ * Scan each file for assetCompress helper calls. Only pull out the
  * calls to the helper.
  *
  * @return void
@@ -226,7 +226,7 @@ class AssetBuildTask extends Shell {
 				if (strpos($target, ':hash') === 0) {
 					$target = md5(implode('_', $contents));
 				}
-				$ext = $method == 'addScript'  ? '.js' : '.css';
+				$ext = $method == 'addScript' ? '.js' : '.css';
 				$target = $this->_addExt($target, $ext);
 				$this->_Config->files($target, $contents);
 				$this->_buildTarget($target);

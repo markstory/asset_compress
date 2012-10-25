@@ -3,7 +3,7 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * Adds timestamp querystrings to all background images in CSS files.
- * This helps with cachebusting CSS sprites.  This is useful in 
+ * This helps with cachebusting CSS sprites. This is useful in 
  * development, and deployment to ensure you always have the most recent 
  * images.
  *
@@ -28,7 +28,7 @@ class TimestampImage extends AssetFilter {
 	protected $_filename;
 
 /**
- * Input filter.  Locates CSS background images relative to the 
+ * Input filter. Locates CSS background images relative to the 
  * filename and gets the filemtime for the images.
  *
  * @param string $filename The file being processed
@@ -68,7 +68,7 @@ class TimestampImage extends AssetFilter {
 	}
 
 /**
- * Add timestamps to the given path.  Will not change paths with 
+ * Add timestamps to the given path. Will not change paths with 
  * querystrings, as they could have anything in them or be customized 
  * already.
  *

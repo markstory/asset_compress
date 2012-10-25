@@ -69,7 +69,7 @@ class AssetCompressHelper extends AppHelper {
  *
  * @param string $name The dot separated config value to change ie. Css.searchPaths
  * @param mixed $value The value to set the config to.
- * @return mixed Either the value being read or null.  Null also is returned when reading things that don't exist.
+ * @return mixed Either the value being read or null. Null also is returned when reading things that don't exist.
  */
 	public function config($config = null) {
 		if ($config === null) {
@@ -135,7 +135,7 @@ class AssetCompressHelper extends AppHelper {
 	}
 
 /**
- * Used to include runtime defined build files.  To include build files defined in your
+ * Used to include runtime defined build files. To include build files defined in your
  * ini file use script() or css().
  *
  * Calling this method will clear the asset caches.
@@ -168,8 +168,8 @@ class AssetCompressHelper extends AppHelper {
  * #### Include all the files:
  * `$this->AssetCompress->includeCss();`
  *
- * @param string $name Name of the destination file to include.  You can pass any number of strings in to
- *    include multiple files.  Leave null to include all files.
+ * @param string $name Name of the destination file to include. You can pass any number of strings in to
+ *    include multiple files. Leave null to include all files.
  * @return string A string containing the link tags
  */
 	public function includeCss() {
@@ -192,8 +192,8 @@ class AssetCompressHelper extends AppHelper {
  * #### Include all the runtime files:
  * `$this->AssetCompress->includeJs();`
  *
- * @param string $name Name of the destination file to include.  You can pass any number of strings in to
- *    include multiple files.  Leave null to include all files.
+ * @param string $name Name of the destination file to include. You can pass any number of strings in to
+ *    include multiple files. Leave null to include all files.
  * @return string A string containing the script tags.
  */
 	public function includeJs() {

@@ -173,7 +173,7 @@ class AssetCache {
 	}
 
 /**
- * Get the final filename for a build.  Resolves
+ * Get the final filename for a build. Resolves
  * theme prefixes and timestamps.
  *
  * @param string $target The build target name.

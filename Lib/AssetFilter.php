@@ -28,7 +28,7 @@ interface AssetFilterInterface {
 	public function output($targetFile, $content);
 
 /**
- * Gets settings for this filter.  Will always include 'paths'
+ * Gets settings for this filter. Will always include 'paths'
  * key which points at paths available for the type of asset being generated.
  *
  * @param array $settings Array of settings.
@@ -54,7 +54,7 @@ class AssetFilter implements AssetFilterInterface {
 	protected $_settings = array();
 
 /**
- * Gets settings for this filter.  Will always include 'paths'
+ * Gets settings for this filter. Will always include 'paths'
  * key which points at paths available for the type of asset being generated.
  *
  * @param array $settings Array of settings.
