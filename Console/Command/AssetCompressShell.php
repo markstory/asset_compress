@@ -173,7 +173,7 @@ class AssetCompressShell extends Shell {
 		return $parser->description(array(
 			'Asset Compress Shell',
 			'',
-			'Builds and clears assets defined in you asset_compress.ini',
+			'Builds and clears assets defined in your asset_compress.ini',
 			'file and in your view files.'
 		))->addSubcommand('clear', array(
 			'help' => 'Clears all builds defined in the ini file.'

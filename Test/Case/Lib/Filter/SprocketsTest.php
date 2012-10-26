@@ -100,7 +100,7 @@ TEXT;
 	}
 
 /**
- * The unique dependency counter should persist across input() calls.  Without that
+ * The unique dependency counter should persist across input() calls. Without that
  * members of the same build will re-include their dependencies if multiple components rely on a single parent.
  *
  */

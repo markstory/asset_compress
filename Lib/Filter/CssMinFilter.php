@@ -4,8 +4,8 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 /**
  * CssMin filter.
  *
- * Allows you to filter Css files through CssMin.  You need to put CssMin in your application's
- * vendors directories.  You can get it from http://code.google.com/p/cssmin/
+ * Allows you to filter Css files through CssMin. You need to put CssMin in your application's
+ * vendors directories. You can get it from http://code.google.com/p/cssmin/
  *
  * @package asset_compress
  */

@@ -63,13 +63,13 @@ class AssetCache {
 			} else {
 				$time = filemtime($path);
 			}
-			if ($time === false  ||  $time >= $buildTime) {
+			if ($time === false || $time >= $buildTime) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Gets the modification time of a remote $url.
 	 * Based on: http://www.php.net/manual/en/function.filemtime.php#81194
@@ -99,11 +99,11 @@ class AssetCache {
 				break;
 			}
 		}
-		
+
 		fclose($fp);
 		return $unixtime;
 	}
-	
+
 /**
  * Set the timestamp for a build file.
  *
@@ -173,7 +173,7 @@ class AssetCache {
 	}
 
 /**
- * Get the final filename for a build.  Resolves
+ * Get the final filename for a build. Resolves
  * theme prefixes and timestamps.
  *
  * @param string $target The build target name.

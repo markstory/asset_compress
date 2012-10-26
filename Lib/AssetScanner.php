@@ -1,7 +1,7 @@
 <?php
 /**
  * Used for dynamic build files where a set of searchPaths
- * are declared in the config file.  This class allows you search through
+ * are declared in the config file. This class allows you search through
  * those searchPaths and locate assets.
  *
  * @package asset_compress
