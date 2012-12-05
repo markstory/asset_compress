@@ -69,7 +69,7 @@ class AssetCompiler {
 		}
 
 		$ext = $this->_Config->getExt($build);
-		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext), $this->_Config->theme());
+		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext, $build), $this->_Config->theme());
 		$this->filters = $this->_makeFilters($ext, $build);
 
 		$output = '';
@@ -102,7 +102,7 @@ class AssetCompiler {
  */
 	protected function _makeFilters($ext, $target) {
 		$config = array(
-			'paths' => $this->_Config->paths($ext),
+			'paths' => $this->_Config->paths($ext, $target),
 			'target' => $target
 		);
 		$filters = $this->_Config->filters($ext, $target);
