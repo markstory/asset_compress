@@ -1,0 +1,33 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+
+env:
+  - CAKE_VERSION=master
+  - CAKE_VERSION=2.3
+
+before_script:
+  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+  - git clone --depth 1 git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
+  - cp -R ../asset_compress plugins/AssetCompress
+  - chmod -R 777 ../cakephp/app/tmp
+  - set +H
+  - echo "<?php
+    class DATABASE_CONFIG {
+    public \$test = array(
+      'datasource' => 'Database/Mysql',
+      'database' => 'cakephp_test',
+      'host' => '0.0.0.0',
+      'login' => 'travis'
+      'host' => '',
+      'persistent' => false,
+    );
+    }" > ../cakephp/app/Config/database.php
+
+script:
+  - ./lib/Cake/Console/cake test AssetCompress AllTests --stderr
+
+notifications:
+  email: false
