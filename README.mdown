@@ -60,6 +60,9 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
 * `ROOT/` no longer needs // to work correctly.
 * `paths[]` can now contain remote URL's allowing you to create build files
   using assets on CDN's or other remote hosts.
+* `paths[]` can now be defined inside a build target. This lets you only scan certain
+  paths for specific builds. Or when you might have duplicate file names that should not
+  be shared between builds.
 
 #### 0.6
 
