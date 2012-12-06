@@ -11,14 +11,13 @@ class ScssFilterTest extends CakeTestCase {
 
 	public function testParsing() {
 		$this->skipIf(DS == '\\', 'Requires ruby and sass rubygem to be installed');
-		
-		$content = file_get_contents($this->_cssDir . 'test.scss');
+		$hasSass = `which sass`;
+		$this->skipIf(empty($hasSass), 'Requires ruby and sass to be installed');
 
+		$content = file_get_contents($this->_cssDir . 'test.scss');
 		$result = $this->filter->input($this->_cssDir . 'test.scss', $content);
-		
 		$expected = file_get_contents($this->_cssDir . 'compiled_scss.css');
-		
 		$this->assertEquals($expected, $result);
-	 }
+	}
 
 }
