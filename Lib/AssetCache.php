@@ -54,7 +54,7 @@ class AssetCache {
 			return false;
 		}
 		$buildTime = filemtime($buildFile);
-		$Scanner = new AssetScanner($this->_Config->paths($ext), $theme);
+		$Scanner = new AssetScanner($this->_Config->paths($ext, $target), $theme);
 
 		foreach ($files as $file) {
 			$path = $Scanner->find($file);
