@@ -367,19 +367,34 @@ class AssetConfig {
 
 /**
  * Get/set paths for an extension. Setting paths will replace
- * all existing paths. Its only intended for testing.
+ * global or per target existing paths. Its only intended for testing.
  *
  * @param string $ext Extension to get paths for.
+ * @param string $target A build target. If provided the target's paths (if any) will also be
+ *     returned.
+ * @param array $paths Paths to replace either the global or per target paths.
  * @return array An array of paths to search for assets on.
  */
-	public function paths($ext, $paths = null) {
+	public function paths($ext, $target = null, $paths = null) {
 		if ($paths === null) {
-			if (!empty($this->_data[$ext]['paths'])) {
-				return (array)$this->_data[$ext]['paths'];
+			if (empty($this->_data[$ext]['paths'])) {
+				$paths = array();
+			} else {
+				$paths = (array)$this->_data[$ext]['paths'];
 			}
-			return array();
+			if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target]['paths'])) {
+				$buildPaths = $this->_data[$ext][self::TARGETS][$target]['paths'];
+				$paths = array_merge($paths, $buildPaths);
+			}
+			return array_unique($paths);
 		}
-		$this->_data[$ext]['paths'] = array_map(array($this, '_replacePathConstants'), $paths);
+
+		$paths = array_map(array($this, '_replacePathConstants'), $paths);
+		if ($target === null) {
+			$this->_data[$ext]['paths'] = $paths;
+		} else {
+			$this->_data[$ext][self::TARGETS][$target]['paths'] = $paths;
+		}
 	}
 
 /**
@@ -445,6 +460,9 @@ class AssetConfig {
 				'filters' => $filters,
 				'theme' => false
 			);
+		}
+		if (!empty($config['paths'])) {
+			$config['paths'] = array_map(array($this, '_replacePathConstants'), (array)$config['paths']);
 		}
 		$this->_data[$ext][self::TARGETS][$target] = $config;
 	}
