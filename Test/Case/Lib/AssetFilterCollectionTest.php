@@ -73,5 +73,3 @@ class TestFilterTwo extends AssetFilter {
 		return "FilterTwo::output()\n" . $content;
 	}
 }
-
-
