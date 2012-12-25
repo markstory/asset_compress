@@ -237,7 +237,7 @@ class AssetConfig {
 
 /**
  * Set values into the config object, You can't modify targets, or filters
- * with this.  Use the appropriate methods for those settings.
+ * with this. Use the appropriate methods for those settings.
  *
  * @param string $path The path to set.
  * @param string $value The value to set.
@@ -415,13 +415,13 @@ class AssetConfig {
 	}
 
 /**
- * Get / set values from the General section.  This is preferred
+ * Get / set values from the General section. This is preferred
  * to using get()/set() as you don't run the risk of making a
  * mistake in General's casing.
  *
  * @param string $key The key to read/write
  * @param mixed $value The value to set.
- * @return mixed Null when writing.  Either a value or null when reading.
+ * @return mixed Null when writing. Either a value or null when reading.
  */
 	public function general($key, $value = null) {
 		if ($value === null) {
@@ -446,8 +446,8 @@ class AssetConfig {
 /**
  * Create a new build target.
  *
- * @param string $target Name of the target file.  The extension will be inferred based on the last extension.
- * @param array $config Config data for the target.  Should contain files, filters and theme key.
+ * @param string $target Name of the target file. The extension will be inferred based on the last extension.
+ * @param array $config Config data for the target. Should contain files, filters and theme key.
  * @param array $filters The filters for the build (deprecated)
  */
 	public function addTarget($target, array $config, $filters = array()) {
