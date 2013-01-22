@@ -451,4 +451,15 @@ class AssetCompressHelper extends AppHelper {
 		$defined = $this->_Config->files($target);
 		$this->_Config->files($target, array_merge($defined, (array)$files));
 	}
+    
+/**
+ * Check if a build exists (is defined and have at least one file) in the ini file.
+ *
+ * @param string $file A string containing the name of the build that will be checked if exists.
+ * @return boolean
+ */
+	public function exists($file) {
+		$buildFiles = $this->_Config->files($file);
+        return count($buildFiles) > 0;
+	}
 }
