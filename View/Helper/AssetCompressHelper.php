@@ -460,6 +460,6 @@ class AssetCompressHelper extends AppHelper {
  */
 	public function exists($file) {
 		$buildFiles = $this->_Config->files($file);
-        return count($buildFiles) > 0;
+		return count($buildFiles) > 0;
 	}
 }
