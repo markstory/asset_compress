@@ -456,7 +456,7 @@ class AssetCompressHelper extends AppHelper {
  * Check if a build exists (is defined and have at least one file) in the ini file.
  *
  * @param string $file A string containing the name of the build that will be checked if exists.
- * @return boolean
+ * @return boolean True if exists with files, false if not exists or exists, but have no files.
  */
 	public function exists($file) {
 		$buildFiles = $this->_Config->files($file);
