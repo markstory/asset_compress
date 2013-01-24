@@ -26,11 +26,7 @@ class AssetsCompressorTest extends CakeTestCase {
 
 		$this->request = new CakeRequest(null, false);
 		$this->response = $this->getMock('CakeResponse', array('checkNotModified', 'type', 'send'));
-		$this->_debug = Configure::read('debug');
-	}
-
-	public function tearDown() {
-		Configure::write('debug', $this->_debug);
+		Configure::write('debug', 2);
 	}
 
 	public function testDynamicBuildFile() {
