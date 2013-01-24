@@ -502,4 +502,15 @@ class AssetConfig {
 		return array_keys($exts);
 	}
 
+/**
+ * Check if a build target exists.
+ *
+ * @param string $file Name of the build file to check.
+ * @return boolean Exists
+ */
+	public function exists($target) {
+		$ext = $this->getExt($target);
+		return !empty($this->_data[$ext][self::TARGETS][$target]);
+	}
+
 }
