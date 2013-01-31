@@ -27,7 +27,7 @@ class AssetCompressor extends DispatcherFilter {
  * @param CakeEvent $event containing the request and response object
  * @return CakeResponse if the client is requesting a recognized asset, null otherwise
  */
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		$url = $event->data['request']->url;
 		$Config = $this->_getConfig();
 		$production = !Configure::read('debug');
