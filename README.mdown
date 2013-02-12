@@ -59,6 +59,13 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
 
 ### Changelog
 
+#### 0.8
+
+*Backwards Incompatible Changes:*
+
+*  AssetCompress requires at least CakePHP 2.3.0. CakePHP 2.3.0 added type hints to Dispatcher filters.
+   While this version will work with CakePHP 2.2.x it will trigger E_STRICT errors.
+
 #### 0.7
 
 *Backwards Incompatible Changes:*
