@@ -10,7 +10,7 @@ env:
 
 before_script:
   - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
-  - git clone --depth 1 git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
+  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
   - cp -R ../asset_compress plugins/AssetCompress
   - chmod -R 777 ../cakephp/app/tmp
   - set +H
