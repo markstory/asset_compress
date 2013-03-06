@@ -10,10 +10,26 @@ App::uses('AssetFilterCollection', 'AssetCompress.Lib');
  */
 class AssetCompiler {
 
+/**
+ * Instance of AssetConfig
+ *
+ * @var AssetConfig
+ */
 	protected $_Config;
 
-	protected $filesList = array();
+/**
+ * The files associated with a build.
+ *
+ * @var array
+ */
+	protected $_filesList = array();
 
+/**
+ * Constructor.
+ *
+ * @param AssetConfig $config Configuration object.
+ * @return void
+ */
 	public function __construct(AssetConfig $config) {
 		$this->_Config = $config;
 	}
@@ -67,7 +83,6 @@ class AssetCompiler {
 		if (!empty($this->_fileList[$build])) {
 			return $this->_fileList[$build];
 		}
-
 		$ext = $this->_Config->getExt($build);
 		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext, $build), $this->_Config->theme());
 		$this->filters = $this->_makeFilters($ext, $build);
