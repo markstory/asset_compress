@@ -18,11 +18,11 @@ class AssetCompiler {
 	protected $_Config;
 
 /**
- * The files associated with a build.
+ * The file list associated with a build.
  *
  * @var array
  */
-	protected $_filesList = array();
+	protected $_fileList = array();
 
 /**
  * Constructor.
@@ -42,6 +42,7 @@ class AssetCompiler {
  * @throws RuntimeException
  */
 	public function generate($build) {
+		$this->_fileList = array();
 		$output = '';
 		foreach ($this->_getFilesList($build) as $file) {
 			$content = $this->_readFile($file);
