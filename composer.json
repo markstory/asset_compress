@@ -1,0 +1,23 @@
+{
+	"name": "markstory/asset_compress",
+	"description": "An asset compression plugin for CakePHP. Provides file concatenation and a flexible filter system for preprocessing and minification.",
+	"type": "cakephp-plugin",
+	"keywords": ["cakephp", "assets", "minifier", "less", "coffee-script", "sass"],
+	"homepage": "https://github.com/markstory/asset_compress",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Mark Story",
+			"homepage": "http://mark-story.com",
+			"role": "Author"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/markstory/asset_compress/issues",
+		"source": "https://github.com/markstory/asset_compress"
+	},
+	"require": {
+		"php": ">=5.3.0",
+		"composer/installers": "*"
+	}
+}
