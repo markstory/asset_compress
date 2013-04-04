@@ -227,4 +227,9 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertFalse($this->config->exists('derped.js'));
 	}
 
+	public function testModifiedTime() {
+		$this->assertInternalType('integer', $this->config->modifiedTime());
+		$this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
+	}
+
 }

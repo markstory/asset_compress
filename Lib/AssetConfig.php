@@ -40,6 +40,13 @@ class AssetConfig {
 	);
 
 /**
+ * The timestamp that configuration changed.
+ *
+ * @var integer
+ */
+	protected $_modifiedTime;
+
+/**
  * A hash of constants that can be expanded when reading ini files.
  *
  * @var array
@@ -65,10 +72,15 @@ class AssetConfig {
  * @param array $data Initial data set for the object.
  * @param array $additionalConstants  Additional constants that will be translated
  *    when parsing paths.
+ * @param int $modifiedTime The time configuration data changed.
  */
-	public function __construct(array $data = array(), array $additionalConstants = array()) {
+	public function __construct(array $data = array(), array $additionalConstants = array(), $modifiedTime = null) {
 		$this->_data = $data;
 		$this->constantMap = array_merge($this->constantMap, $additionalConstants);
+		if (!$modifiedTime) {
+			$modifiedTime = time();
+		}
+		$this->_modifiedTime = $modifiedTime;
 	}
 
 /**
@@ -87,9 +99,10 @@ class AssetConfig {
 		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
 			return $parsedConfig;
 		}
-
 		$contents = self::_readConfig($iniFile);
-		return self::_parseConfig($contents, $constants);
+
+		$modifiedTime = filemtime($iniFile);
+		return self::_parseConfig($contents, $constants, $modifiedTime);
 	}
 
 /**
@@ -144,10 +157,12 @@ class AssetConfig {
  * Transforms the config data into a more structured form
  *
  * @param array $contents Contents to build a config object from.
+ * @param array $constants Array of constants that will be mapped.
+ * @param int $modifiedTime The modified time of the config data.
  * @return AssetConfig
  */
-	protected static function _parseConfig($config, $constants) {
-		$AssetConfig = new AssetConfig(self::$_defaults, $constants);
+	protected static function _parseConfig($config, $constants, $modifiedTime) {
+		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
 		foreach ($config as $section => $values) {
 			if (in_array($section, self::$_extensionTypes)) {
 				// extension section, merge in the defaults.
@@ -511,6 +526,15 @@ class AssetConfig {
 	public function exists($target) {
 		$ext = $this->getExt($target);
 		return !empty($this->_data[$ext][self::TARGETS][$target]);
+	}
+
+/**
+ * Get the modified time of the config object.
+ *
+ * @return integer
+ */
+	public function modifiedTime() {
+		return $this->_modifiedTime;
 	}
 
 }
