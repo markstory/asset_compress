@@ -45,10 +45,35 @@ class AssetCacheTest extends CakeTestCase {
 	}
 
 	public function testIsFreshSuccess() {
+		// Disable timestamps so the filenames are known
 		$this->config->set('js.timestamp', false);
 		touch(TMP . '/libs.js');
 
 		$this->assertTrue($this->cache->isFresh('libs.js'));
+		unlink(TMP . '/libs.js');
+	}
+
+	public function testIsFreshConfigExpire() {
+		touch(TMP . '/libs.js');
+
+		$data = parse_ini_file($this->testConfig, true);
+		$constants = array(
+			'TEST_FILES' => $this->_testFiles
+		);
+		$config = new AssetConfig($data, $constants, strtotime('-1 minute'));
+		$config->cachePath('js', TMP);
+		$config->set('js.timestamp', false);
+
+		$cache = new AssetCache($config);
+		$this->assertTrue($cache->isFresh('libs.js'));
+
+		$config = new AssetConfig($data, $constants, strtotime('+1 minute'));
+		$config->cachePath('js', TMP);
+		$config->set('js.timestamp', false);
+
+		$cache = new AssetCache($config);
+		$this->assertFalse($cache->isFresh('libs.js'));
+
 		unlink(TMP . '/libs.js');
 	}
 

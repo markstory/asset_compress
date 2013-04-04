@@ -93,4 +93,5 @@ class AssetBuildTaskTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 }

@@ -1,10 +1,9 @@
 <?php
 App::uses('Shell', 'Console');
+App::uses('Folder', 'Utility');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
-
-App::uses('Folder', 'Utility');
 
 class AssetBuildTask extends Shell {
 
@@ -251,13 +250,21 @@ class AssetBuildTask extends Shell {
 		}
 	}
 
+/**
+ * Generate a build file.
+ *
+ * @param string $build The build name to generate.
+ * @return void
+ */
 	protected function _generateFile($build) {
 		$name = $this->Cacher->buildFileName($build);
 		if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
 			$this->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 			return;
 		}
+		// Clear the timestamp so it can be regenerated.
 		$this->Cacher->setTimestamp($build, 0);
+
 		$name = $this->Cacher->buildFileName($build);
 		try {
 			$this->out('<success>Saving file</success> for ' . $name);

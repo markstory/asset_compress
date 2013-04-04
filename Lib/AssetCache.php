@@ -53,7 +53,14 @@ class AssetCache {
 		if (!file_exists($buildFile)) {
 			return false;
 		}
+		$configTime = $this->_Config->modifiedTime();
 		$buildTime = filemtime($buildFile);
+
+
+		if ($configTime >= $buildTime) {
+			return false;
+		}
+
 		$Scanner = new AssetScanner($this->_Config->paths($ext, $target), $theme);
 
 		foreach ($files as $file) {
@@ -109,6 +116,7 @@ class AssetCache {
  *
  * @param string $build The name of the build to set a timestamp for.
  * @param int $time The timestamp.
+ * @return void
  */
 	public function setTimestamp($build, $time) {
 		$ext = $this->_Config->getExt($build);
