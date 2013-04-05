@@ -25,6 +25,7 @@ class AssetCompressor extends DispatcherFilter {
  * Checks if request is for a compiled asset, otherwise skip any operation
  *
  * @param CakeEvent $event containing the request and response object
+ * @throws NotFoundException
  * @return CakeResponse if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch(CakeEvent $event) {

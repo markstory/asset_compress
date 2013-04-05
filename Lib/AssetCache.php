@@ -56,7 +56,6 @@ class AssetCache {
 		$configTime = $this->_Config->modifiedTime();
 		$buildTime = filemtime($buildFile);
 
-
 		if ($configTime >= $buildTime) {
 			return false;
 		}
@@ -77,17 +76,19 @@ class AssetCache {
 		return true;
 	}
 
-	/**
-	 * Gets the modification time of a remote $url.
-	 * Based on: http://www.php.net/manual/en/function.filemtime.php#81194
-	 * @param type $url
-	 * @return The last modified time of the $url file, in Unix timestamp, or false it can't be read.
-	 */
+/**
+ * Gets the modification time of a remote $url.
+ * Based on: http://www.php.net/manual/en/function.filemtime.php#81194
+ * @param type $url
+ * @return The last modified time of the $url file, in Unix timestamp, or false it can't be read.
+ */
 	public function getRemoteFileLastModified($url) {
 		// default
 		$unixtime = 0;
 
+		// @codingStandardsIgnoreStart
 		$fp = @fopen($url, 'rb');
+		// @codingStandardsIgnoreEnd
 		if (!$fp) {
 			return false;
 		}
@@ -101,7 +102,9 @@ class AssetCache {
 				return $this->getRemoteFileLastModified($newUri);
 			}
 			// case: last-modified
+			// @codingStandardsIgnoreStart
 			elseif (substr(strtolower($response), 0, 15) == 'last-modified: ') {
+			// @codingStandardsIgnoreEnd
 				$unixtime = strtotime(substr($response, 15));
 				break;
 			}

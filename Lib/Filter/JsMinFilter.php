@@ -25,6 +25,7 @@ class JsMinFilter extends AssetFilter {
  *
  * @param string $filename
  * @param string $content Content to filter.
+ * @throws Exception
  * @return string
  */
 	public function output($filename, $content) {
