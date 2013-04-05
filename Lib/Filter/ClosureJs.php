@@ -27,6 +27,7 @@ class ClosureJs extends AssetFilter {
  *
  * @param string $filename Filename being generated.
  * @param string $input Contents of file
+ * @throws Exception $e
  * @return Compressed file
  */
 	public function output($filename, $input) {
@@ -42,11 +43,15 @@ class ClosureJs extends AssetFilter {
 			$output = $this->_runCmd($cmd, null);
 		} catch (Exception $e) {
 			//If there is an error need to remove tmpFile.
+			// @codingStandardsIgnoreStart
 			@unlink($tmpFile);
+			// @codingStandardsIgnoreStart
 			throw $e;
 		}
 
+		// @codingStandardsIgnoreStart
 		@unlink($tmpFile);
+		// @codingStandardsIgnoreStart
 		return $output;
 	}
 

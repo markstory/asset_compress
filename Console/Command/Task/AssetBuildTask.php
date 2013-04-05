@@ -115,7 +115,7 @@ class AssetBuildTask extends Shell {
 			$tokens = token_get_all($content);
 			foreach ($tokens as $i => $token) {
 				// found a helper method start grabbing tokens.
-				if (is_array($token) && in_array($token[1], $this->helperTokens) && is_array($tokens[$i+2]) && in_array($tokens[$i+2][1], $this->_methods)) {
+				if (is_array($token) && in_array($token[1], $this->helperTokens) && is_array($tokens[$i + 2]) && in_array($tokens[$i + 2][1], $this->_methods)) {
 					$capturing = true;
 					$call = array();
 				}

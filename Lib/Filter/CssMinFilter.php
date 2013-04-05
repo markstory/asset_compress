@@ -25,6 +25,7 @@ class CssMinFilter extends AssetFilter {
  *
  * @param string $filename target filename
  * @param string $content Content to filter.
+ * @throws Exception
  * @return string
  */
 	public function output($filename, $content) {

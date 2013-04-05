@@ -119,7 +119,9 @@ class AssetScanner {
 				$fullPath = $path . $file;
 				// Opens and closes the remote file, just to
 				// check for its existance. Its contents will be read elsewhere.
+				// @codingStandardsIgnoreStart
 				$handle = @fopen($fullPath, 'rb');
+				// @codingStandardsIgnoreStart
 				if ($handle) {
 					fclose($handle);
 					return $fullPath;
@@ -207,7 +209,7 @@ class AssetScanner {
  */
 	public function isRemote($target) {
 		// Patterns for matching readable remote resources
-		// Make sure that any included pattern will 
+		// Make sure that any included pattern will
 		// be accepted by fopen() as well.
 		$remotePatterns = array(
 			'/^https?:\/\//i'

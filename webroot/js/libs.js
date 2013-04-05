@@ -50,7 +50,7 @@ AssetCompress.load = function () {
 		i, className,
 		filename;
 
-	if (typeof args[args.length -1] == 'function') {
+	if (typeof args[args.length - 1] == 'function') {
 		readyCallback = args.pop();
 	}
 
