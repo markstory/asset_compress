@@ -53,7 +53,9 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		Cache::delete(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
 		Cache::drop(AssetConfig::CACHE_CONFIG);
+		// @codingStandardsIgnoreStart
 		@unlink(TMP . AssetConfig::BUILD_TIME_FILE);
+		// @codingStandardsIgnoreEnd
 	}
 
 /**

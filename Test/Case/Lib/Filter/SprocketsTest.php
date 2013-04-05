@@ -31,7 +31,7 @@ var Template = new Class({
 
 TEXT;
 		$this->assertTextEquals($expected, $result);
-	 }
+	}
 
 	public function testInputWithRecursion() {
 		$content = file_get_contents($this->_jsDir . 'classes' . DS . 'nested_class.js');

@@ -51,25 +51,33 @@ test content
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
+
 }
 
 class TestFilterOne extends AssetFilter {
+
 	public function settings($settings) {
 		$this->settings = $settings;
 	}
+
 	public function input($filename, $contents) {
 		return "FilterOne::input()\n" . $contents;
 	}
+
 	public function output($build, $content) {
 		return "FilterOne::output()\n" . $content;
 	}
+
 }
 
 class TestFilterTwo extends AssetFilter {
+
 	public function input($filename, $contents) {
 		return "FilterTwo::input()\n" . $contents;
 	}
+
 	public function output($build, $content) {
 		return "FilterTwo::output()\n" . $content;
 	}
+
 }

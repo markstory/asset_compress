@@ -27,7 +27,7 @@ class Hogan extends AssetFilter {
 		'ext' => '.mustache',
 		'node' => '/usr/local/bin/node',
 		'node_path' => '',
-	 );
+	);
 
 /**
  * Runs `hogan.compile` against all template fragments in a file.
@@ -36,8 +36,7 @@ class Hogan extends AssetFilter {
  * @param string $input The content of the file.
  * @return string
  */
-	public function input($filename, $input)
-	{
+	public function input($filename, $input) {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
@@ -60,8 +59,7 @@ class Hogan extends AssetFilter {
  * @param string input The mustache template content.
  * @return void
  */
-	protected function _generateScript($file, $id, $input)
-	{
+	protected function _generateScript($file, $id, $input) {
 		$config = array(
 			'asString' => true,
 		);

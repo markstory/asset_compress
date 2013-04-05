@@ -109,7 +109,9 @@ class AssetConfig {
  * Clear the build timestamp file and the associated cache entry
  */
 	public static function clearBuildTimeStamp() {
+		// @codingStandardsIgnoreStart
 		@unlink(TMP . self::BUILD_TIME_FILE);
+		// @codingStandardsIgnoreEnd
 		self::clearCachedBuildTime();
 	}
 

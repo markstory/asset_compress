@@ -72,7 +72,6 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-
 	public function testFindOtherExtension() {
 		$paths = array(
 			$this->_testFiles . 'css' . DS
@@ -104,7 +103,7 @@ class AssetScannerTest extends CakeTestCase {
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestAsset');
-	
+
 		$paths = array(
 			$this->_testFiles . 'css' . DS
 		);
