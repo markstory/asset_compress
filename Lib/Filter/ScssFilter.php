@@ -12,7 +12,8 @@ class ScssFilter extends AssetFilter {
 
 	protected $_settings = array(
 		'ext' => '.scss',
-		'sass' => '/usr/bin/sass'
+		'sass' => '/usr/bin/sass',
+		'path' => '/usr/bin',
 	);
 
 /**
@@ -27,7 +28,7 @@ class ScssFilter extends AssetFilter {
 			return $input;
 		}
 		$bin = $this->_settings['sass'] . ' ' . $filename;
-		$return = $this->_runCmd($bin, '');
+		$return = $this->_runCmd($bin, '', array('PATH' => $this->_settings['path']));
 		return $return;
 	}
 
