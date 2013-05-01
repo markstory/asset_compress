@@ -232,4 +232,26 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
 	}
 
+	public function testPluginIni() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestAssetIni');
+
+		AssetConfig::clearAllCachedKeys();
+		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
+
+		$result = $this->config->files('TestAssetIni.libs.js');
+		$expected = array('classes/base_class.js', 'classes/template.js');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->config->files('TestAssetIni.foo.bar.js');
+		$expected = array('test.js');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->config->files('TestAssetIni.all.css');
+		$expected = array('layout.css');
+		$this->assertEquals($expected, $result);
+	}
+
 }
