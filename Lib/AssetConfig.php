@@ -163,6 +163,10 @@ class AssetConfig {
  * @return AssetConfig
  */
 	protected static function _parseConfig($baseFile, $constants, $modifiedTime = null) {
+		if (!$modifiedTime && file_exists($baseFile)) {
+			$modifiedTime = filemtime($baseFile);
+		}
+
 		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
 		self::_parseConfigFile($baseFile, $AssetConfig);
 		
