@@ -35,6 +35,11 @@ class AssetsCompressorTest extends CakeTestCase {
 		Configure::write('debug', 2);
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+		App::build(array(), App::RESET);
+	}
+
 	public function testDynamicBuildFile() {
 		$this->response
 			->expects($this->once())->method('type')
