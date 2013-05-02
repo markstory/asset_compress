@@ -24,7 +24,7 @@ class Uglifyjs extends AssetFilter {
  * @return string Compressed contents.
  */
 	public function output($filename, $input) {
-		$cmd = $this->_settings['node'] . ' ' . $this->_settings['uglify'];
+		$cmd = $this->_settings['node'] . ' ' . $this->_settings['uglify'] . ' - ';
 		$env = array('NODE_PATH' => $this->_settings['node_path']);
 		return $this->_runCmd($cmd, $input, $env);
 	}
