@@ -16,9 +16,6 @@ class AssetsCompressorTest extends CakeTestCase {
 			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS
 		);
 		
-		App::build(array(
-			'Plugin' => array($map['TEST_FILES/'] . 'Plugin' . DS)
-		));
 		CakePlugin::load('TestAssetIni');
 		
 		AssetConfig::clearAllCachedKeys();
@@ -37,7 +34,7 @@ class AssetsCompressorTest extends CakeTestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		App::build(array(), App::RESET);
+		CakePlugin::unload('TestAssetIni');
 	}
 
 	public function testDynamicBuildFile() {
