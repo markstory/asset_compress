@@ -19,13 +19,6 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
 
-		if ($this->getName() == 'testUrlGenerationProductionModePluginIni') {
-			App::build(array(
-				'Plugin' => array($this->_testFiles . 'Plugin' . DS)
-			));
-			CakePlugin::load('TestAssetIni');
-		}
-
 		AssetConfig::clearAllCachedKeys();
 
 		Cache::drop(AssetConfig::CACHE_CONFIG);
@@ -63,10 +56,6 @@ class AssetCompressHelperTest extends CakeTestCase {
 		// @codingStandardsIgnoreStart
 		@unlink(TMP . AssetConfig::BUILD_TIME_FILE);
 		// @codingStandardsIgnoreEnd
-
-		if ($this->getName() == 'testUrlGenerationProductionModePluginIni') {
-			CakePlugin::unload('TestAssetIni');
-		}
 	}
 
 /**
@@ -494,20 +483,6 @@ class AssetCompressHelperTest extends CakeTestCase {
 			array('script' => array(
 				'type' => 'text/javascript',
 				'src' => '/cache_js/libs.js'
-			))
-		);
-		$this->assertTags($result, $expected);
-	}
-
-	public function testUrlGenerationProductionModePluginIni() {
-		Configure::write('debug', 0);
-		$this->Helper->config()->set('js.timestamp', false);
-
-		$result = $this->Helper->script('TestAssetIni.libs.js');
-		$expected = array(
-			array('script' => array(
-				'type' => 'text/javascript',
-				'src' => '/cache_js/TestAssetIni.libs.js'
 			))
 		);
 		$this->assertTags($result, $expected);

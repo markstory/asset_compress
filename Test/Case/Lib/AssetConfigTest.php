@@ -14,23 +14,8 @@ class AssetConfigTest extends CakeTestCase {
 		$this->testConfig = $this->_testFiles . 'Config' . DS . 'config.ini';
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
-		if ($this->getName() == 'testPluginIni' || $this->getName() == 'testIniTargets') {
-			App::build(array(
-				'Plugin' => array($this->_testFiles . 'Plugin' . DS)
-			));
-			CakePlugin::load('TestAssetIni');
-		}
-
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
-	}
-
-	public function tearDown() {
-		parent::tearDown();
-
-		if ($this->getName() == 'testPluginIni' || $this->getName() == 'testIniTargets') {
-			CakePlugin::unload('TestAssetIni');
-		}
 	}
 
 	public function testBuildFromIniFile() {
@@ -245,30 +230,6 @@ class AssetConfigTest extends CakeTestCase {
 	public function testModifiedTime() {
 		$this->assertInternalType('integer', $this->config->modifiedTime());
 		$this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
-	}
-
-	public function testPluginIni() {
-		$result = $this->config->files('TestAssetIni.libs.js');
-		$expected = array('classes/base_class.js', 'classes/template.js');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->config->files('TestAssetIni.foo.bar.js');
-		$expected = array('test.js');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->config->files('TestAssetIni.all.css');
-		$expected = array('layout.css');
-		$this->assertEquals($expected, $result);
-	}
-
-	public function testIniTargets() {
-		$expected = array('libs.js', 'foo.bar.js', 'new_file.js', 'TestAssetIni.libs.js', 'TestAssetIni.foo.bar.js');
-		$result = $this->config->targets('js');
-		$this->assertEquals($expected, $result);
-
-		$expected = array('all.css', 'pink.css', 'TestAssetIni.all.css');
-		$result = $this->config->targets('css');
-		$this->assertEquals($expected, $result);
 	}
 
 }
