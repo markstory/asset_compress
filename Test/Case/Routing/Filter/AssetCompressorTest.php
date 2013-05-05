@@ -15,7 +15,9 @@ class AssetsCompressorTest extends CakeTestCase {
 		$map = array(
 			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS
 		);
-		
+		App::build(array(
+			'Plugin' => array($map['TEST_FILES/'] . 'Plugin' . DS )
+		));
 		CakePlugin::load('TestAssetIni');
 		
 		AssetConfig::clearAllCachedKeys();
