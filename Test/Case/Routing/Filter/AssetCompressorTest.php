@@ -15,6 +15,11 @@ class AssetsCompressorTest extends CakeTestCase {
 		$map = array(
 			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS
 		);
+		App::build(array(
+			'Plugin' => array($map['TEST_FILES/'] . 'Plugin' . DS )
+		));
+		CakePlugin::load('TestAssetIni');
+		
 		AssetConfig::clearAllCachedKeys();
 
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
@@ -27,6 +32,11 @@ class AssetsCompressorTest extends CakeTestCase {
 		$this->request = new CakeRequest(null, false);
 		$this->response = $this->getMock('CakeResponse', array('checkNotModified', 'type', 'send'));
 		Configure::write('debug', 2);
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+		CakePlugin::unload('TestAssetIni');
 	}
 
 	public function testDynamicBuildFile() {
@@ -42,6 +52,21 @@ class AssetsCompressorTest extends CakeTestCase {
 
 		$this->assertRegExp('/function test/', $this->response->body());
 		$this->assertRegExp('/multi line comments/', $this->response->body());
+		$this->assertTrue($event->isStopped());
+	}
+
+	public function testPluginIniBuildFile() {
+		$this->response
+			->expects($this->once())->method('type')
+			->with($this->equalTo('js'));
+
+		$this->request->url = 'cache_js/TestAssetIni.libs.js';
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
+
+		$this->assertRegExp('/var BaseClass = new Class/', $this->response->body());
+		$this->assertRegExp('/var Template = new Class/', $this->response->body());
 		$this->assertTrue($event->isStopped());
 	}
 

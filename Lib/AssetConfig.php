@@ -99,10 +99,8 @@ class AssetConfig {
 		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
 			return $parsedConfig;
 		}
-		$contents = self::_readConfig($iniFile);
-
-		$modifiedTime = filemtime($iniFile);
-		return self::_parseConfig($contents, $constants, $modifiedTime);
+		
+		return self::_parseConfig($iniFile, $constants);
 	}
 
 /**
@@ -152,6 +150,7 @@ class AssetConfig {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
 			throw new RuntimeException(sprintf('Configuration file "%s" was not found.', $filename));
 		}
+
 		return parse_ini_file($filename, true);
 	}
 
@@ -163,8 +162,38 @@ class AssetConfig {
  * @param int $modifiedTime The modified time of the config data.
  * @return AssetConfig
  */
-	protected static function _parseConfig($config, $constants, $modifiedTime) {
+	protected static function _parseConfig($baseFile, $constants, $modifiedTime = null) {
+		if (!$modifiedTime && file_exists($baseFile)) {
+			$modifiedTime = filemtime($baseFile);
+		}
+
 		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
+		self::_parseConfigFile($baseFile, $AssetConfig);
+		
+		$plugins = CakePlugin::loaded();
+		foreach ($plugins as $plugin) {
+			if (file_exists(CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini')) {
+				self::_parseConfigFile(CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini', $AssetConfig, $plugin . '.');
+			}
+		}
+		
+		if ($AssetConfig->general('cacheConfig')) {
+			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
+		}
+		
+		return $AssetConfig;
+	}
+
+/**
+ * Reads a config file and applies it to the given config instance
+ *
+ * @param string $iniFile Contents to apply to the config instance.
+ * @param AssetConfig $AssetConfig The config instance instance we're applying this config file to.
+ * @param string $prefix Prefix for the target key
+ */
+	protected static function _parseConfigFile($iniFile, $AssetConfig, $prefix = '') {
+		$config = self::_readConfig($iniFile);
+		
 		foreach ($config as $section => $values) {
 			if (in_array($section, self::$_extensionTypes)) {
 				// extension section, merge in the defaults.
@@ -193,14 +222,9 @@ class AssetConfig {
 				}
 
 				// must be a build target.
-				$AssetConfig->addTarget($key, $values);
+				$AssetConfig->addTarget($prefix . $key, $values);
 			}
 		}
-
-		if ($AssetConfig->general('cacheConfig')) {
-			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
-		}
-		return $AssetConfig;
 	}
 
 /**
