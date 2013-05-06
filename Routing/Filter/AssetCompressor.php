@@ -81,12 +81,12 @@ class AssetCompressor extends DispatcherFilter {
  * with url path otherwise
  */
 	protected function _getBuild($url) {
-		$parts = explode('.', $url, 2);
+		$parts = explode('.', $url);
 		if (count($parts) < 2) {
 			return false;
 		}
 
-		$path = $this->_getConfig()->cachePath($parts[1]);
+		$path = $this->_getConfig()->cachePath($parts[(count($parts) - 1)]);
 		if (empty($path)) {
 			return false;
 		}
