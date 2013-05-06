@@ -59,6 +59,17 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
 
 ### Changelog
 
+#### 0.9
+
+*Other Changes*
+
+* Static assets will be re-built if the configuration file changes. This prevents issues
+  where the configuration would result in different build files without the source files changing.
+* AssetCompress will now attempt to load configuration files from all loaded plugins. If
+  a plugin contains `Config/asset_compress.ini`, that file will be loaded and appended
+  to the application configuration file.
+
+
 #### 0.8
 
 *Backwards Incompatible Changes:*
