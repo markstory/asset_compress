@@ -99,7 +99,7 @@ class AssetConfig {
 		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
 			return $parsedConfig;
 		}
-		
+
 		return self::_parseConfig($iniFile, $constants);
 	}
 
@@ -169,18 +169,18 @@ class AssetConfig {
 
 		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
 		self::_parseConfigFile($baseFile, $AssetConfig);
-		
+
 		$plugins = CakePlugin::loaded();
 		foreach ($plugins as $plugin) {
 			if (file_exists(CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini')) {
 				self::_parseConfigFile(CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini', $AssetConfig, $plugin . '.');
 			}
 		}
-		
+
 		if ($AssetConfig->general('cacheConfig')) {
 			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
 		}
-		
+
 		return $AssetConfig;
 	}
 
@@ -193,7 +193,7 @@ class AssetConfig {
  */
 	protected static function _parseConfigFile($iniFile, $AssetConfig, $prefix = '') {
 		$config = self::_readConfig($iniFile);
-		
+
 		foreach ($config as $section => $values) {
 			if (in_array($section, self::$_extensionTypes)) {
 				// extension section, merge in the defaults.

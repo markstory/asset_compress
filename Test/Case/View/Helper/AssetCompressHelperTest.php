@@ -12,7 +12,7 @@ class AssetCompressHelperTest extends CakeTestCase {
  * start a test
  *
  * @return void
- **/
+ */
 	public function setUp() {
 		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
@@ -46,7 +46,7 @@ class AssetCompressHelperTest extends CakeTestCase {
  * end a test
  *
  * @return void
- **/
+ */
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Helper);

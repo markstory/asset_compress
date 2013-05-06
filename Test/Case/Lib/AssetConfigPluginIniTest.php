@@ -1,6 +1,9 @@
 <?php
 App::uses('AssetConfig', 'AssetCompress.Lib');
 
+/**
+ * AssetConfig test for plugins
+ */
 class AssetConfigPluginIniTest extends CakeTestCase {
 
 	public function setUp() {
@@ -25,7 +28,6 @@ class AssetConfigPluginIniTest extends CakeTestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-
 		CakePlugin::unload('TestAssetIni');
 	}
 
