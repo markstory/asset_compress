@@ -68,6 +68,7 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
 * AssetCompress will now attempt to load configuration files from all loaded plugins. If
   a plugin contains `Config/asset_compress.ini`, that file will be loaded and appended
   to the application configuration file.
+* `ScssPHP` filter was added. This allows you to use SCSS without ruby dependencies.
 
 
 #### 0.8
