@@ -47,7 +47,7 @@ class AssetCompiler {
 		foreach ($this->_getFilesList($build) as $file) {
 			$content = $this->_readFile($file);
 			$content = $this->filters->input($file, $content);
-			$output .= $content;
+			$output .= $content . "\n";
 		}
 		if (Configure::read('debug') < 2 || php_sapi_name() == 'cli') {
 			$output = $this->filters->output($build, $output);

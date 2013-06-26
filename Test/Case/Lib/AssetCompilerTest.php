@@ -33,7 +33,8 @@ class AssetCompilerTest extends CakeTestCase {
 		$expected = <<<TEXT
 var BaseClass = new Class({
 
-});//= require "base_class"
+});
+//= require "base_class"
 var Template = new Class({
 
 });
@@ -49,7 +50,8 @@ TEXT;
 * {
 	margin:0;
 	padding:0;
-}@import url("reset/reset.css");
+}
+@import url("reset/reset.css");
 #nav {
 	width:100%;
 }
@@ -64,6 +66,7 @@ TEXT;
 		$expected = <<<TEXT
 #footer
 	color: blue;
+
 @import url("reset/reset.css");
 #nav {
 	width:100%;
@@ -131,7 +134,8 @@ TEXT;
 @import url("reset/reset.css");
 #nav {
 	width:100%;
-}body {
+}
+body {
 	color: red !important;
 }
 TEXT;
@@ -155,7 +159,8 @@ TEXT;
 @import url("reset/reset.css");
 #nav {
 	width:100%;
-}.plugin-box {
+}
+.plugin-box {
 	color: orange;
 }
 TEXT;
