@@ -149,9 +149,7 @@ class AssetCompiler {
 	protected function _readFile($file) {
 		$content = '';
 		if ($this->_Scanner->isRemote($file)) {
-			// @codingStandardsIgnoreStart
-			$handle = @fopen($file, 'rb');
-			// @codingStandardsIgnoreEnd
+			$handle = fopen($file, 'rb');
 			if ($handle) {
 				$content = stream_get_contents($handle);
 				fclose($handle);
