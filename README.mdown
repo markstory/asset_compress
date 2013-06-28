@@ -69,6 +69,8 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
   a plugin contains `Config/asset_compress.ini`, that file will be loaded and appended
   to the application configuration file.
 * `ScssPHP` filter was added. This allows you to use SCSS without ruby dependencies.
+* A new line is inserted between concatenated files. This helps fix parse errors when concatenating
+  poorly authored javascript files together.
 
 
 #### 0.8
