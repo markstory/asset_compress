@@ -71,6 +71,7 @@ See the [github contributors list](https://github.com/markstory/asset_compress/g
 * `ScssPHP` filter was added. This allows you to use SCSS without ruby dependencies.
 * A new line is inserted between concatenated files. This helps fix parse errors when concatenating
   poorly authored javascript files together.
+* Loading filters from the App dir works as documented.
 
 
 #### 0.8
