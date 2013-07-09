@@ -19,8 +19,7 @@ before_script:
       'datasource' => 'Database/Mysql',
       'database' => 'cakephp_test',
       'host' => '0.0.0.0',
-      'login' => 'travis'
-      'host' => '',
+      'login' => 'travis',
       'persistent' => false,
     );
     }" > ../cakephp/app/Config/database.php
