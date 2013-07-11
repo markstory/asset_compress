@@ -35,9 +35,16 @@ class ClosureJs extends AssetFilter {
 		$jar = $this->_findExecutable(App::path('vendors'), $this->_settings['path']);
 
 		//Closure works better if you specify an input file. Also supress warnings by default
-		$tmpFile = tempnam(TMP,'CLOSURE');
+		$tmpFile = tempnam(TMP, 'CLOSURE');
 		file_put_contents($tmpFile, $input);
-		$cmd = 'java -jar "' . $jar . '" --js=' . $tmpFile . ' --warning_level=' . $this->_settings['warning_level'];
+
+		$options = array('js' => $tmpFile) + $this->_settings;
+		$options = array_diff_key($options, array('path' => null, 'paths' => null, 'target' => null));
+
+		$cmd = 'java -jar "' . $jar . '"';
+		foreach ($options as $key => $value) {
+			$cmd .= sprintf(' --%s=%s', $key, $value);
+		}
 
 		try {
 			$output = $this->_runCmd($cmd, null);
