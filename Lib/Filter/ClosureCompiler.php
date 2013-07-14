@@ -25,7 +25,6 @@ class ClosureCompiler extends AssetFilter {
  * NOTE: statistics and warnings are only used when in debug mode.
  *
  * - level (string) Defaults to WHITESPACE_ONLY. Values: SIMPLE_OPTIMIZATIONS, ADVANCED_OPTIMIZATIONS.
- * - print (string) How to output the errors, statistics and/or warnings.
  * - statistics (boolean) Defaults to FALSE.
  * - warnings (mixed) Defaults to FALSE. Values: TRUE or QUIET, DEFAULT, VERBOSE.
  *
