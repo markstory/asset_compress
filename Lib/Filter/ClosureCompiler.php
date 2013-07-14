@@ -33,7 +33,6 @@ class ClosureCompiler extends AssetFilter {
  */
 	protected $_settings = array(
 		'level' => null,
-		'print' => "%s:\n%s\n",
 		'statistics' => false,
 		'warnings' => false
 	);
@@ -64,8 +63,7 @@ class ClosureCompiler extends AssetFilter {
 
 		$errors = $this->_query($content, array('output_info' => 'errors'));
 		if (!empty($errors)) {
-			printf($this->_settings['print'], 'Errors', $errors);
-			exit;
+			throw new Exception(sprintf("%s:\n%s\n", 'Errors', $errors));
 		}
 
 		$output = $this->_query($content, array('output_info' => 'compiled_code'));
@@ -85,7 +83,7 @@ class ClosureCompiler extends AssetFilter {
 			}
 
 			$$setting = $this->_query($content, $args);
-			printf($this->_settings['print'], ucfirst($setting), $$setting);
+			printf("%s:\n%s\n", ucfirst($setting), $$setting);
 		}
 
 		return $output;
@@ -96,10 +94,15 @@ class ClosureCompiler extends AssetFilter {
  *
  * @param string $content Javascript to compile.
  * @param array $args API parameters.
+ * @throws Exception If curl extension is missing.
  * @throws Exception If curl triggers an error.
  * @return string
  */
 	protected function _query($content, $args = array()) {
+		if (!extension_loaded('curl')) {
+			throw new Exception('Missing the `curl` extension.');
+		}
+
 		$args = array_merge($this->_defaults, $args);
 		if (!empty($this->_settings['level'])) {
 			$args['compilation_level'] = $this->_settings['level'];
