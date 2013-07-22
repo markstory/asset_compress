@@ -68,7 +68,7 @@ class Sprockets extends AssetFilter {
  */
 	protected function _replace($matches) {
 		$file = $this->_currentFile;
-		if ($matches[1] == '"') {
+		if ($matches[1] === '"') {
 			// Same directory include
 			$file = $this->_findFile($matches[2], dirname($file) . DS);
 		} else {
@@ -98,7 +98,7 @@ class Sprockets extends AssetFilter {
  * @throws Exception when files can't be located.
  */
 	protected function _findFile($file, $path = null) {
-		if (substr($file, -2) != 'js') {
+		if (substr($file, -2) !== 'js') {
 			$file .= '.js';
 		}
 		if ($path && file_exists($path . $file)) {

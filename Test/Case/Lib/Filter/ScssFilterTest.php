@@ -10,7 +10,7 @@ class ScssFilterTest extends CakeTestCase {
 	}
 
 	public function testParsing() {
-		$this->skipIf(DS == '\\', 'Requires ruby and sass rubygem to be installed');
+		$this->skipIf(DS === '\\', 'Requires ruby and sass rubygem to be installed');
 		$hasSass = `which sass`;
 		$this->skipIf(empty($hasSass), 'Requires ruby and sass to be installed');
 

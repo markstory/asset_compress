@@ -3,8 +3,8 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * Adds timestamp querystrings to all background images in CSS files.
- * This helps with cachebusting CSS sprites. This is useful in 
- * development, and deployment to ensure you always have the most recent 
+ * This helps with cachebusting CSS sprites. This is useful in
+ * development, and deployment to ensure you always have the most recent
  * images.
  *
  * @package asset_compress
@@ -28,7 +28,7 @@ class TimestampImage extends AssetFilter {
 	protected $_filename;
 
 /**
- * Input filter. Locates CSS background images relative to the 
+ * Input filter. Locates CSS background images relative to the
  * filename and gets the filemtime for the images.
  *
  * @param string $filename The file being processed
@@ -48,7 +48,7 @@ class TimestampImage extends AssetFilter {
  * - $matches[0] -> whole background line.
  * - $matches[path] -> the url with any wrapping '/'
  *
- * If the image path starts with / its assumed to be an absolute path 
+ * If the image path starts with / its assumed to be an absolute path
  * which will be prepended with WWW_ROOT
  *
  * @param array $matches Array of matches
@@ -56,7 +56,7 @@ class TimestampImage extends AssetFilter {
  */
 	protected function _replace($matches) {
 		$path = $matches['path'];
-		if ($path[0] == '/') {
+		if ($path[0] === '/') {
 			$imagePath = WWW_ROOT . rtrim($path, '/');
 		} else {
 			$imagePath = realpath(dirname($this->_filename) . DS . $path);
@@ -68,8 +68,8 @@ class TimestampImage extends AssetFilter {
 	}
 
 /**
- * Add timestamps to the given path. Will not change paths with 
- * querystrings, as they could have anything in them or be customized 
+ * Add timestamps to the given path. Will not change paths with
+ * querystrings, as they could have anything in them or be customized
  * already.
  *
  * @param string $filepath The absolute path to the file for timestamping
