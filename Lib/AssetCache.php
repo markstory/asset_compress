@@ -96,14 +96,14 @@ class AssetCache {
 		$metadata = stream_get_meta_data($fp);
 		foreach ($metadata['wrapper_data'] as $response) {
 			// case: redirection
-			if (substr(strtolower($response), 0, 10) == 'location: ') {
+			if (substr(strtolower($response), 0, 10) === 'location: ') {
 				$newUri = substr($response, 10);
 				fclose($fp);
 				return $this->getRemoteFileLastModified($newUri);
 			}
 			// case: last-modified
 			// @codingStandardsIgnoreStart
-			elseif (substr(strtolower($response), 0, 15) == 'last-modified: ') {
+			elseif (substr(strtolower($response), 0, 15) === 'last-modified: ') {
 			// @codingStandardsIgnoreEnd
 				$unixtime = strtotime(substr($response, 15));
 				break;

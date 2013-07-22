@@ -124,7 +124,7 @@ class AssetBuildTask extends Shell {
 				}
 
 				// end of function stop capturing
-				if ($capturing && $token == ';') {
+				if ($capturing && $token === ';') {
 					$capturing = false;
 					$calls[] = $call;
 				}
@@ -204,7 +204,7 @@ class AssetBuildTask extends Shell {
 				$files[] = trim($token[1], '"\'');
 			}
 			// end of array
-			if ($token[0] == ')') {
+			if ($token[0] === ')') {
 				break;
 			}
 		}
@@ -225,7 +225,7 @@ class AssetBuildTask extends Shell {
 				if (strpos($target, ':hash') === 0) {
 					$target = md5(implode('_', $contents));
 				}
-				$ext = $method == 'addScript' ? '.js' : '.css';
+				$ext = $method === 'addScript' ? '.js' : '.css';
 				$target = $this->_addExt($target, $ext);
 				$this->_Config->files($target, $contents);
 				$this->_buildTarget($target);
