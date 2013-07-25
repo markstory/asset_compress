@@ -1,11 +1,11 @@
 <?php
-App::uses('Shell', 'Console');
+App::uses('AppShell', 'Console/Command');
 App::uses('Folder', 'Utility');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 
-class AssetBuildTask extends Shell {
+class AssetBuildTask extends AppShell {
 
 	protected $_Config;
 
