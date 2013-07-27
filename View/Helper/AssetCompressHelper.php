@@ -226,9 +226,9 @@ class AssetCompressHelper extends AppHelper {
 			if (empty($this->_runtime[$ext][$build])) {
 				continue;
 			}
-			if ($ext == 'js') {
+			if ($ext === 'js') {
 				$output[] = $this->script($build, $options);
-			} elseif ($ext == 'css') {
+			} elseif ($ext === 'css') {
 				$output[] = $this->css($build, $options);
 			}
 			unset($this->_runtime[$ext][$build]);
@@ -352,7 +352,7 @@ class AssetCompressHelper extends AppHelper {
 			$route = $this->_getRoute($file, $baseUrl);
 		}
 
-		if (DS == '\\') {
+		if (DS === '\\') {
 			$route = str_replace(DS, '/', $route);
 		}
 		return $route;
