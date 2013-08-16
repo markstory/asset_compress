@@ -11,6 +11,13 @@ App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 class AssetCompiler {
 
 /**
+ * Instance of AssetFilterCollection
+ *
+ * @var AssetFilterCollection
+ */
+	protected $_FilterCollection;
+
+/**
  * Instance of AssetConfig
  *
  * @var AssetConfig
@@ -46,11 +53,11 @@ class AssetCompiler {
 		$output = '';
 		foreach ($this->_getFilesList($build) as $file) {
 			$content = $this->_readFile($file);
-			$content = $this->filters->input($file, $content);
+			$content = $this->_FilterCollection->input($file, $content);
 			$output .= $content . "\n";
 		}
 		if (Configure::read('debug') < 2 || php_sapi_name() === 'cli') {
-			$output = $this->filters->output($build, $output);
+			$output = $this->_FilterCollection->output($build, $output);
 		}
 		return trim($output);
 	}
@@ -86,7 +93,7 @@ class AssetCompiler {
 		}
 		$ext = $this->_Config->getExt($build);
 		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext, $build), $this->_Config->theme());
-		$this->filters = $this->_makeFilters($ext, $build);
+		$this->_FilterCollection = $this->_makeFilters($ext, $build);
 
 		$output = '';
 		$files = $this->_Config->files($build);
@@ -115,6 +122,7 @@ class AssetCompiler {
  * Factory method for AssetFilterCollection
  *
  * @param string $ext The extension An array of filters to put in the collection
+ * @return FilterCollection
  */
 	protected function _makeFilters($ext, $target) {
 		$config = array(
