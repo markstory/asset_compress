@@ -34,10 +34,10 @@ class AssetFilterCollection {
 			list($plugin, $className) = pluginSplit($className, true);
 			App::uses($className, 'AssetCompress.Lib/Filter');
 			if (!class_exists($className)) {
-				App::uses($className, 'AssetCompress/Filter');
+				App::uses($className, $plugin . 'AssetCompress/Filter');
 			}
 			if (!class_exists($className)) {
-				throw new Exception(sprintf('Cannot not load filter "%s".', $className));
+				throw new Exception(sprintf('Cannot not load filter "%s".', $plugin . $className));
 			}
 			$config = array_merge($this->_config, isset($settings[$className]) ? $settings[$className] : array());
 			$filter = new $className();
