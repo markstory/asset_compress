@@ -1,5 +1,5 @@
 @import "nav.css";
-@import "theme:red.css";
+@import "theme:theme.css";
 body {
 	color:#f00;
 	background:#000;
