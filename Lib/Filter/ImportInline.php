@@ -46,7 +46,7 @@ class ImportInline extends AssetFilter {
 		$required = empty($matches[2]) ? $matches[4] : $matches[2];
 		$filename = $this->_Scanner->find($required);
 		if (!$filename) {
-			throw RuntimeException(sprintf('Could not find dependency "%s"', $required));
+			throw new RuntimeException(sprintf('Could not find dependency "%s"', $required));
 		}
 		if (empty($this->_loaded[$filename])) {
 			return $this->input($filename, file_get_contents($filename));
