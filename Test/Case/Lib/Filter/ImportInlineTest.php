@@ -10,7 +10,8 @@ class ImportInlineTest extends CakeTestCase {
 		$settings = array(
 			'paths' => array(
 				$this->_pluginPath . 'Test/test_files/css/'
-			)
+			),
+			'theme' => 'red',
 		);
 		$this->filter->settings($settings);
 	}
@@ -26,11 +27,12 @@ class ImportInlineTest extends CakeTestCase {
 #nav {
 	width:100%;
 }
+
 TEXT;
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testReplacementNested() {
+	public function testReplacementNestedAndTheme() {
 		$content = file_get_contents($this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . 'has_import.css');
 		$result = $this->filter->input('has_import.css', $content);
 		$expected = <<<TEXT
@@ -48,4 +50,5 @@ body {
 TEXT;
 		$this->assertEquals($expected, $result);
 	}
+
 }

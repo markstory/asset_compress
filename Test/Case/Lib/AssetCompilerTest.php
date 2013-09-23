@@ -135,6 +135,7 @@ TEXT;
 #nav {
 	width:100%;
 }
+
 body {
 	color: red !important;
 }
@@ -160,6 +161,7 @@ TEXT;
 #nav {
 	width:100%;
 }
+
 .plugin-box {
 	color: orange;
 }
