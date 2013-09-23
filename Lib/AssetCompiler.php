@@ -127,7 +127,8 @@ class AssetCompiler {
 	protected function _makeFilters($ext, $target) {
 		$config = array(
 			'paths' => $this->_Config->paths($ext, $target),
-			'target' => $target
+			'target' => $target,
+			'theme' => $this->_Config->theme()
 		);
 		$filters = $this->_Config->filters($ext, $target);
 		$filterSettings = $this->_Config->filterConfig($filters);
