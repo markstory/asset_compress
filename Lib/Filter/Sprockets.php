@@ -41,7 +41,7 @@ class Sprockets extends AssetFilter {
  */
 	public function settings($settings) {
 		parent::settings($settings);
-		$this->_Scanner = new AssetScanner($settings['paths']);
+		$this->_Scanner = new AssetScanner($settings['paths'], $settings['theme']);
 	}
 
 /**
