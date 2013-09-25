@@ -92,22 +92,22 @@ class Sprockets extends AssetFilter {
 /**
  * Locates sibling files, or uses AssetScanner to locate <> style dependencies.
  *
- * @param string $file The basename of the file needing to be found.
+ * @param string $filename The basename of the file needing to be found.
  * @param string $path The path for same directory includes.
  * @return string Path to file.
  * @throws Exception when files can't be located.
  */
-	protected function _findFile($file, $path = null) {
-		if (substr($file, -2) !== 'js') {
-			$file .= '.js';
+	protected function _findFile($filename, $path = null) {
+		if (substr($filename, -2) !== 'js') {
+			$filename .= '.js';
 		}
-		if ($path && file_exists($path . $file)) {
-			return $path . $file;
+		if ($path && file_exists($path . $filename)) {
+			return $path . $filename;
 		}
-		$file = $this->_Scanner->find($file);
+		$file = $this->_Scanner->find($filename);
 		if ($file) {
 			return $file;
 		}
-		throw new Exception('Sprockets - Could not locate ' . $file);
+		throw new Exception('Sprockets - Could not locate file "' . $filename . '"');
 	}
 }
