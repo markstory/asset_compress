@@ -3,7 +3,7 @@ MORE
 MORE WITH NO *
 MORE
 MORE*/
-(function($){function Foo(){this.bar=[];}})
+(function($){function Foo(){this.bar = [];}})
 
 //     	 COMMENT
 function something() {

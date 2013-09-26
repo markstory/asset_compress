@@ -2,9 +2,10 @@
 App::uses('ClosureJs', 'AssetCompress.Filter');
 
 class ClosureJsTest extends CakeTestCase {
+
 	public function testCommand() {
 		$Filter = $this->getMock('ClosureJs', array('_findExecutable', '_runCmd'));
-		
+
 		$Filter->expects($this->at(0))
 			->method('_findExecutable')
 			->will($this->returnValue('closure/compiler.jar'));
