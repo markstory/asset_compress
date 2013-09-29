@@ -3,7 +3,6 @@
  * Parses the ini files AssetCompress uses into arrays that
  * other objects can use.
  *
- * @package asset_compress
  */
 class AssetConfig {
 
@@ -72,7 +71,7 @@ class AssetConfig {
  * @param array $data Initial data set for the object.
  * @param array $additionalConstants  Additional constants that will be translated
  *    when parsing paths.
- * @param int $modifiedTime The time configuration data changed.
+ * @param integer $modifiedTime The time configuration data changed.
  */
 	public function __construct(array $data = array(), array $additionalConstants = array(), $modifiedTime = null) {
 		$this->_data = $data;
@@ -159,7 +158,7 @@ class AssetConfig {
  *
  * @param array $contents Contents to build a config object from.
  * @param array $constants Array of constants that will be mapped.
- * @param int $modifiedTime The modified time of the config data.
+ * @param integer $modifiedTime The modified time of the config data.
  * @return AssetConfig
  */
 	protected static function _parseConfig($baseFile, $constants, $modifiedTime = null) {

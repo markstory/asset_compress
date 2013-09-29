@@ -8,7 +8,6 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  *
  * You can get closure here at http://code.google.com/closure/compiler/
  *
- * @package asset_compress.libs.filter
  */
 class ClosureJs extends AssetFilter {
 

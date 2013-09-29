@@ -5,7 +5,6 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  * A collection for creating and interacting with filter sets.
  *
  *
- * @package asset_compress
  */
 class AssetFilterCollection {
 

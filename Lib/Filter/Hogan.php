@@ -14,7 +14,6 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  *
  * Will install hogan.
  *
- * @package asset_compress
  */
 class Hogan extends AssetFilter {
 

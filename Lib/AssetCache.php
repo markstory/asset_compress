@@ -5,7 +5,6 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
  * Writes compiled assets to the filesystem
  * with optional timestamps.
  *
- * @package asset_compress
  */
 class AssetCache {
 
@@ -118,7 +117,7 @@ class AssetCache {
  * Set the timestamp for a build file.
  *
  * @param string $build The name of the build to set a timestamp for.
- * @param int $time The timestamp.
+ * @param integer $time The timestamp.
  * @return void
  */
 	public function setTimestamp($build, $time) {
@@ -206,7 +205,7 @@ class AssetCache {
  * Modify a file name and append in the timestamp
  *
  * @param string $file The filename.
- * @param int $time The timestamp.
+ * @param integer $time The timestamp.
  * @return string The build filename to cache on disk.
  */
 	protected function _timestampFile($file, $time) {
