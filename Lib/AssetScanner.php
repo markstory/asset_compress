@@ -4,7 +4,6 @@
  * are declared in the config file. This class allows you search through
  * those searchPaths and locate assets.
  *
- * @package asset_compress
  */
 class AssetScanner {
 

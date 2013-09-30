@@ -6,7 +6,6 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
  * Implements directive replacement similar to sprockets <http://getsprockets.org>
  * Does not implement the //= provides syntax.
  *
- * @package asset_compress
  */
 class Sprockets extends AssetFilter {
 
@@ -49,7 +48,7 @@ class Sprockets extends AssetFilter {
  *
  * @param string $filename
  * @param string $content
- * @return string $content
+ * @return string content
  */
 	public function input($filename, $content) {
 		$this->_currentFile = $filename;
@@ -64,7 +63,7 @@ class Sprockets extends AssetFilter {
  * Performs the replacements and inlines dependencies.
  *
  * @param array $matches
- * @return string $content
+ * @return string content
  */
 	protected function _replace($matches) {
 		$file = $this->_currentFile;

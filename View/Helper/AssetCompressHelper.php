@@ -10,7 +10,6 @@ App::uses('AssetConfig', 'AssetCompress.Lib');
  * Handle inclusion assets using the AssetCompress features for concatenating and
  * compressing asset files.
  *
- * @package asset_compress.helpers
  */
 class AssetCompressHelper extends AppHelper {
 

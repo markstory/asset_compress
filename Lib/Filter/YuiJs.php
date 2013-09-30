@@ -6,7 +6,6 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  * This filter assumes you have Java installed on your system and that its accessible
  * via the PATH. It also assumes that the yuicompressor.jar file is located in "vendors/yuicompressor" directory.
  *
- * @package asset_compress.libs.filter
  */
 class YuiJs extends AssetFilter {
 

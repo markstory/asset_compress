@@ -6,7 +6,6 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
  * A preprocessor that inlines files referenced by
  * @import() statements in css files.
  *
- * @package asset_compress
  */
 class ImportInline extends AssetFilter {
 

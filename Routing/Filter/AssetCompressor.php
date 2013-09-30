@@ -10,7 +10,7 @@ class AssetCompressor extends DispatcherFilter {
 /**
  * Filter priority, we need it to run before router
  *
- * @var int
+ * @var integer
  */
 	public $priority = 9;
 
