@@ -6,7 +6,6 @@ App::uses('AssetFilterCollection', 'AssetCompress.Lib');
  * Compiles a set of assets together, and applies filters.
  * Forms the center of AssetCompress
  *
- * @package asset_compress
  */
 class AssetCompiler {
 
@@ -66,7 +65,7 @@ class AssetCompiler {
  * Gets the latest modified time for the files set on the build
  *
  * @param string $target The name of the build target to generate.
- * @return int last modified time in UNIX seconds
+ * @return integer last modified time in UNIX seconds
  */
 	public function getLastModified($build) {
 		$time = 0;

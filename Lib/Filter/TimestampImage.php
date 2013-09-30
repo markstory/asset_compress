@@ -7,7 +7,6 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
  * development, and deployment to ensure you always have the most recent
  * images.
  *
- * @package asset_compress
  */
 class TimestampImage extends AssetFilter {
 

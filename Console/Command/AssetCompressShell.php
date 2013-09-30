@@ -11,7 +11,6 @@ App::uses('Folder', 'Utility');
  *
  * Assists in clearing and creating the build files this plugin makes.
  *
- * @package AssetCompress
  */
 class AssetCompressShell extends AppShell {
 

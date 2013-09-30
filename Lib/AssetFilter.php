@@ -5,7 +5,6 @@ App::uses('AssetProcess', 'AssetCompress.Lib');
  * AssetFilterInterface all filters declared in your config.ini must implement
  * this interface or exceptions will be thrown.
  *
- * @package asset_compress
  */
 interface AssetFilterInterface {
 
@@ -42,7 +41,6 @@ interface AssetFilterInterface {
  * A simple base class you can build filters on top of
  * if you only want to implement either input() or output()
  *
- * @package asset_compress
  */
 class AssetFilter implements AssetFilterInterface {
 
