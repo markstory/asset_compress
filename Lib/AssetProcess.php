@@ -17,12 +17,14 @@ class AssetProcess {
  * Get/set the environment for the command.
  *
  * @param array $env Environment variables.
+ * @param bool $inherit Inherit the php process environment 
+ *    variables [true]. Values passed in $env always overwrite $_ENV.
  * @return The environment variables that are set, or
  *    this.
  */
-	public function environment($env = null) {
+	public function environment($env = null, $inherit = true) {
 		if ($env !== null) {
-			$this->_env = $env;
+			$this->_env = array_merge($_ENV, $env);
 			return $this;
 		}
 		return $this->_env;
