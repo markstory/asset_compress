@@ -37,7 +37,7 @@ class AssetProcess {
  *    are set. 
  **/
 	private function __getenv($vars) {
-		is_array($vars) || $vars = array($vars);
+		$vars = (array)$vars;
 		$result = array();
 		foreach ($vars as $var) {
 			if (getenv($var)) {
