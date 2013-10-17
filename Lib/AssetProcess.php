@@ -17,17 +17,34 @@ class AssetProcess {
  * Get/set the environment for the command.
  *
  * @param array $env Environment variables.
- * @param bool $inherit Inherit the php process environment 
- *    variables [true]. Values passed in $env always overwrite $_ENV.
  * @return The environment variables that are set, or
  *    this.
  */
-	public function environment($env = null, $inherit = true) {
+	public function environment($env = null) {
 		if ($env !== null) {
-			$this->_env = array_merge($_ENV, $env);
+			// Windows nodejs needs these environment variables.
+			$winenv = $this->__getenv(array('SystemDrive', 'SystemRoot'));
+			$this->_env = array_merge($winenv, $env);
 			return $this;
 		}
 		return $this->_env;
+	}
+
+/**
+ * Gets selected variables from the global environment.
+ * @param mixed $vars An array of variable names or a single variable name.
+ * @return An array with values of selected environment variables if they
+ *    are set. 
+ **/
+	private function __getenv($vars) {
+		is_array($vars) || $vars = array($vars);
+		$result = array();
+		foreach ($vars as $var) {
+			if (getenv($var)) {
+				$result[$var] = getenv($var);
+			}
+		}
+		return $result;
 	}
 
 /**
@@ -92,7 +109,7 @@ class AssetProcess {
 		// Checks for path name with one or more spaces followed by `.exe`
 		// Wraps only the exe,  not any arguments following the .exe.
 		// Unix commands wont have .exe so they remain unchanged.
-		$command = preg_replace('/^\s*([^"\s]+\s.+\.exe)(\s|$)/', '"$1"', $command);
+		$command = preg_replace('/^\s*([^"\s]+\s.+\.exe)(\s|$)/', '"$1"$2', $command);
 		$this->_command = $command;
 		return $this;
 	}
