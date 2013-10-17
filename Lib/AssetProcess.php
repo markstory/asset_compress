@@ -88,6 +88,11 @@ class AssetProcess {
  * @return $this
  */
 	public function command($command) {
+		// Wrap Windows exe in quotes if needed. "C:\Program Files\nodejs\node.exe"
+		// Checks for path name with one or more spaces followed by `.exe`
+		// Wraps only the exe,  not any arguments following the .exe.
+		// Unix commands wont have .exe so they remain unchanged.
+		$command = preg_replace('/^\s*([^"\s]+\s.+\.exe)(\s|$)/', '"$1"', $command);
 		$this->_command = $command;
 		return $this;
 	}
