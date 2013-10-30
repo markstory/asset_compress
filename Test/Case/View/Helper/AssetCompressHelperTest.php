@@ -175,19 +175,19 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->Helper->addScript('jquery.js', ':hash-jquery');
 		$this->Helper->addScript('jquery-ui.js', ':hash-jquery');
 
-		$hash1 = md5('libraries_thing');
-		$hash2 = md5('jquery.js_jquery-ui.js');
+		$hashOne = md5('libraries_thing');
+		$hashTwo = md5('jquery.js_jquery-ui.js');
 
 		$result = $this->Helper->includeAssets();
 		$expected = array(
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/cache_js/' . $hash1 . '.js?file%5B0%5D=libraries&amp;file%5B1%5D=thing'
+				'src' => '/cache_js/' . $hashOne . '.js?file%5B0%5D=libraries&amp;file%5B1%5D=thing'
 			)),
 			'/script',
 			array('script' => array(
 				'type' => 'text/javascript',
-				'src' => '/cache_js/' . $hash2 . '.js?file%5B0%5D=jquery.js&amp;file%5B1%5D=jquery-ui.js'
+				'src' => '/cache_js/' . $hashTwo . '.js?file%5B0%5D=jquery.js&amp;file%5B1%5D=jquery-ui.js'
 			)),
 			'/script'
 		);

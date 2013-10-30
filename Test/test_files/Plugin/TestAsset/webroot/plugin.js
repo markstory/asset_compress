@@ -1,0 +1,3 @@
+var Plugin = new Class({
+
+});

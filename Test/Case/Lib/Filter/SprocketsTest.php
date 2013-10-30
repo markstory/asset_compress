@@ -5,7 +5,8 @@ class SprocketsTest extends CakeTestCase {
 
 	public function setUp() {
 		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->_jsDir = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'js' . DS;
+		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
+		$this->_jsDir = $this->_testFiles . 'js' . DS;
 
 		$this->filter = new Sprockets();
 		$settings = array(
@@ -65,6 +66,40 @@ var BaseClassTwo = BaseClass.extend({
 var DoubleInclusion = new Class({
 
 });
+TEXT;
+		$this->assertTextEquals($expected, $result);
+	}
+
+	public function testThemeAndPluginInclusion() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS),
+			'View' => array($this->_testFiles . 'View' . DS),
+		));
+		CakePlugin::load('TestAsset');
+
+		$settings = array(
+			'paths' => array(),
+			'theme' => 'Red',
+		);
+		$this->filter->settings($settings);
+
+		$this->_themeDir = $this->_testFiles . DS . 'View' . DS . 'Themed' . DS . $settings['theme'] . DS;
+
+		$content = file_get_contents($this->_themeDir . 'webroot' . DS . 'theme.js');
+		$result = $this->filter->input('theme.js', $content);
+		$expected = <<<TEXT
+var Theme = new Class({
+
+});
+var ThemeInclude = new Class({
+
+});
+
+var Plugin = new Class({
+
+});
+
+
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
