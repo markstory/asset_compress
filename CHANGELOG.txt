@@ -1,6 +1,7 @@
 0.11.0 Changes
 
 - NodeJS based filters now work correctly on windows systems.
+- Sprockets filter now supports theme: and plugin: prefixes.
 
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.
