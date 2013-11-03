@@ -39,6 +39,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		Router::reload();
 		Configure::write('debug', 2);
+		Configure::write('App.fullBaseUrl', 'http://example.com');
 	}
 
 /**
@@ -479,12 +480,32 @@ class AssetCompressHelperTest extends CakeTestCase {
 
 		$result = $this->Helper->script('libs.js');
 		$expected = array(
-			array('script' => array(
+			'script' => array(
 				'type' => 'text/javascript',
 				'src' => '/cache_js/libs.js'
-			))
+			)
 		);
 		$this->assertTags($result, $expected);
+	}
+
+	public function testUrlGenerationWithAbsoluteOption() {
+		$result = $this->Helper->script('libs.js', array('full' => true));
+		$expected = array(
+			'script' => array(
+				'type' => 'text/javascript',
+				'src' => 'http://example.com/cache_js/libs.js'
+			)
+		);
+
+		$result = $this->Helper->css('all.css', array('full' => true));
+		$expected = array(
+			'link' => array(
+				'type' => 'text/css',
+				'test' => 'value',
+				'rel' => 'stylesheet',
+				'href' => 'http://example.com/cache_css/all.css'
+			)
+		);
 	}
 
 }
