@@ -5,7 +5,6 @@ App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
 App::uses('HtmlHelper', 'View/Helper');
 App::uses('View', 'View');
 
-
 class AssetCompressHelperTest extends CakeTestCase {
 
 /**
