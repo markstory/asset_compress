@@ -13,10 +13,25 @@ App::uses('AssetConfig', 'AssetCompress.Lib');
  */
 class AssetCompressHelper extends AppHelper {
 
+/**
+ * Helpers used.
+ *
+ * @var array
+ */
 	public $helpers = array('Html');
 
+/**
+ * Configuration object
+ *
+ * @var AssetConfig
+ */
 	protected $_Config;
 
+/**
+ * Cacher object
+ *
+ * @var AssetCache
+ */
 	protected $_AssetCache;
 
 /**
