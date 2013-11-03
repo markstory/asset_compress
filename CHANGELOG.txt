@@ -2,6 +2,7 @@
 
 - NodeJS based filters now work correctly on windows systems.
 - Sprockets filter now supports theme: and plugin: prefixes.
+- Added AssetCompressHelper::url() to get the URL of any known build file.
 
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.
