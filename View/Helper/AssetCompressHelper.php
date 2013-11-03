@@ -4,6 +4,7 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('Hash', 'Utility');
+App::uses('Router', 'Routing');
 
 /**
  * AssetCompress Helper.
@@ -301,7 +302,8 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		$url = $this->_getAssetUrl('css', $file);
+		$url = $this->url($file, $options);
+		unset($options['full']);
 		return $this->Html->css($url, null, $options);
 	}
 
@@ -339,33 +341,50 @@ class AssetCompressHelper extends AppHelper {
 			return $output;
 		}
 
-		$url = $this->_getAssetUrl('js', $file);
+		$url = $this->url($file, $options);
+		unset($options['full']);
+
 		return $this->Html->script($url, $options);
 	}
 
 /**
- * Get the url for an asset based on the type and file.
+ * Get the URL for a given asset name.
  *
- * @param string $type The type of file. (css/js)
- * @param string $file The build filename.
+ * Takes an build filename, and returns the URL
+ * to that build file.
+ *
+ * @param string $file The build file that you want a URL for.
+ * @param array $options Options for URL generation.
+ * @return string The generated URL.
+ * @throws Exception when the build file does not exist.
  */
-	protected function _getAssetUrl($type, $file) {
+	public function url($file = null, $full = false) {
 		$config = $this->config();
+		if (!$config->exists($file)) {
+			throw new Exception('Cannot get URL for build file that does not exist.');
+		}
+
+		$options = $full;
+		if (!is_array($full)) {
+			$options = array('full' => $full);
+		}
+		$options += array('full' => false);
+		$type = $config->getExt($file);
+
 		$baseUrl = $config->get($type . '.baseUrl');
 		$path = $config->get($type . '.cachePath');
 		$devMode = Configure::read('debug') > 0;
 
-		$route = null;
+		// CDN routes.
 		if ($baseUrl && !$devMode) {
-			$route = $baseUrl . $this->_getBuildName($file);
+			return $baseUrl . $this->_getBuildName($file);
 		}
 
-		if (empty($route) && !$devMode) {
+		if (!$devMode) {
 			$path = str_replace(WWW_ROOT, '/', $path);
 			$path = rtrim($path, '/') . '/';
 			$route = $path . $this->_getBuildName($file);
 		}
-
 		if ($devMode || $config->general('alwaysEnableController')) {
 			$baseUrl = str_replace(WWW_ROOT, '/', $path);
 			$route = $this->_getRoute($file, $baseUrl);
@@ -374,6 +393,11 @@ class AssetCompressHelper extends AppHelper {
 		if (DS === '\\') {
 			$route = str_replace(DS, '/', $route);
 		}
+
+		if ($options['full']) {
+			return Router::fullBaseUrl() . $route;
+		}
+
 		return $route;
 	}
 

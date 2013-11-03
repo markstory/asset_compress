@@ -361,31 +361,6 @@ class AssetCompressHelperTest extends CakeTestCase {
 	}
 
 /**
- * test that baseurl and timestamps play nice.
- *
- * @return void
- */
-	public function testBaseUrlAndTimestamp() {
-		Configure::write('debug', 0);
-		$config = $this->Helper->config();
-		$config->set('js.baseUrl', 'http://cdn.example.com/js/');
-		$config->set('js.timestamp', true);
-		$config->general('cacheConfig', true);
-
-		// populate the cache.
-		Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, array('libs.js' => 1234), AssetConfig::CACHE_CONFIG);
-
-		$result = $this->Helper->script('libs.js');
-		$expected = array(
-			array('script' => array(
-				'type' => 'text/javascript',
-				'src' => 'http://cdn.example.com/js/libs.v1234.js'
-			))
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * Test that builds using themes defined in the ini file work
  * with themes.
  *
@@ -474,38 +449,64 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->assertContains('blue-asset_test.js', $result);
 	}
 
-	public function testUrlGenerationProductionMode() {
+	public function testUrlBasic() {
+		$url = $this->Helper->url('all.css');
+		$this->assertEquals('/cache_css/all.css', $url);
+
+		$url = $this->Helper->url('libs.js');
+		$this->assertEquals('/cache_js/libs.js', $url);
+	}
+
+	public function testUrlProductionMode() {
 		Configure::write('debug', 0);
 		$this->Helper->config()->set('js.timestamp', false);
 
-		$result = $this->Helper->script('libs.js');
-		$expected = array(
-			'script' => array(
-				'type' => 'text/javascript',
-				'src' => '/cache_js/libs.js'
-			)
-		);
-		$this->assertTags($result, $expected);
+		$result = $this->Helper->url('libs.js');
+		$this->assertEquals('/cache_js/libs.js', $result);
 	}
 
-	public function testUrlGenerationWithAbsoluteOption() {
-		$result = $this->Helper->script('libs.js', array('full' => true));
-		$expected = array(
-			'script' => array(
-				'type' => 'text/javascript',
-				'src' => 'http://example.com/cache_js/libs.js'
-			)
+	public function testUrlFullOption() {
+		$result = $this->Helper->url('libs.js', array('full' => true));
+		$this->assertEqual(
+			'http://example.com/cache_js/libs.js',
+			$result
 		);
 
-		$result = $this->Helper->css('all.css', array('full' => true));
-		$expected = array(
-			'link' => array(
-				'type' => 'text/css',
-				'test' => 'value',
-				'rel' => 'stylesheet',
-				'href' => 'http://example.com/cache_css/all.css'
-			)
+		$result = $this->Helper->url('libs.js', true);
+		$this->assertEqual(
+			'http://example.com/cache_js/libs.js',
+			$result
 		);
+	}
+
+/**
+ * test that baseurl and timestamps play nice.
+ *
+ * @return void
+ */
+	public function testUrlWithBaseUrlAndTimestamp() {
+		Configure::write('debug', 0);
+		$config = $this->Helper->config();
+		$config->set('js.baseUrl', 'http://cdn.example.com/js/');
+		$config->set('js.timestamp', true);
+		$config->general('cacheConfig', true);
+
+		// populate the cache.
+		Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, array('libs.js' => 1234), AssetConfig::CACHE_CONFIG);
+
+		$result = $this->Helper->url('libs.js');
+		$expected = 'http://cdn.example.com/js/libs.v1234.js';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test exceptions when getting URLs
+ *
+ * @expectedException Exception
+ * @expectedExceptionMessage Cannot get URL for build file that does not exist.
+ */
+	public function testUrlError() {
+		$this->Helper->url('nope.js');
 	}
 
 }
