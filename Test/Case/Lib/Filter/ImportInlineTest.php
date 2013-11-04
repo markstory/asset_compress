@@ -4,6 +4,7 @@ App::uses('ImportInline', 'AssetCompress.Filter');
 class ImportInlineTest extends CakeTestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'Test/test_files/';
 
