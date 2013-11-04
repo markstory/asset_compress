@@ -395,7 +395,8 @@ class AssetCompressHelper extends AppHelper {
 		}
 
 		if ($options['full']) {
-			return Router::fullBaseUrl() . $route;
+			$base = method_exists('Router', 'fullBaseUrl') ? Router::fullBaseUrl() : FULL_BASE_URL;
+			return $base . $route;
 		}
 
 		return $route;
