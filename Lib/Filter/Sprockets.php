@@ -1,6 +1,7 @@
 <?php
 App::uses('AssetFilter', 'AssetCompress.Lib');
 App::uses('AssetScanner', 'AssetCompress.Lib');
+App::uses('Hash', 'Utility');
 
 /**
  * Implements directive replacement similar to sprockets <http://getsprockets.org>
