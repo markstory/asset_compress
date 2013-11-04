@@ -4,6 +4,7 @@ App::uses('Hogan', 'AssetCompress.Filter');
 class HoganTest extends CakeTestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_path = $this->_pluginPath . 'Test/test_files/hogan/';
 

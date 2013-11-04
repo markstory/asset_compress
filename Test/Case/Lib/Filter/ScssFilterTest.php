@@ -4,6 +4,7 @@ App::uses('ScssFilter', 'AssetCompress.Filter');
 class ScssFilterTest extends CakeTestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_cssDir = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS;
 		$this->filter = new ScssFilter();

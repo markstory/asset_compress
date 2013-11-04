@@ -7,6 +7,7 @@ App::uses('AssetConfig', 'AssetCompress.Lib');
 class AssetConfigPluginIniTest extends CakeTestCase {
 
 	public function setUp() {
+		parent::setUp();
 		Cache::drop(AssetConfig::CACHE_CONFIG);
 		Cache::config(AssetConfig::CACHE_CONFIG, array(
 			'engine' => 'File'

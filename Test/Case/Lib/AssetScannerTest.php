@@ -4,6 +4,7 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
 class AssetScannerTest extends CakeTestCase {
 
 	public function setUp() {
+		parent::setUp();
 		$this->_pluginPath = App::pluginPath('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$paths = array(
