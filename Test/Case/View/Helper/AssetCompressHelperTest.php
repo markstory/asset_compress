@@ -466,6 +466,9 @@ class AssetCompressHelperTest extends CakeTestCase {
 	}
 
 	public function testUrlFullOption() {
+		$version = Configure::read('Cake.version');
+		$this->skipIf(version_compare($version, '2.4.0', '<'));
+
 		$result = $this->Helper->url('libs.js', array('full' => true));
 		$this->assertEqual(
 			'http://example.com/cache_js/libs.js',
