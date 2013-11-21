@@ -94,7 +94,7 @@ class AssetFilter implements AssetFilterInterface {
 		$Process->environment($environment);
 		$Process->command($cmd)->run($content);
 
-		if ($Process->error()) {
+		if (trim($Process->error())) {
 			throw new RuntimeException($Process->error());
 		}
 		return $Process->output();
