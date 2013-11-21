@@ -166,7 +166,7 @@ class AssetScanner {
 		if ($full) {
 			return App::themePath($this->_theme) . 'webroot' . DS . $file;
 		}
-		return DS . Inflector::underscore($this->_theme) . DS . $file;
+		return DS . 'theme' . DS . Inflector::underscore($this->_theme) . DS . $file;
 	}
 
 /**
