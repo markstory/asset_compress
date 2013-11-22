@@ -86,7 +86,7 @@ class AssetProcess {
  * @return string Content from the command.
  */
 	public function error() {
-		return $this->_error;
+		return trim($this->_error);
 	}
 
 /**
