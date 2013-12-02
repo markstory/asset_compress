@@ -297,14 +297,14 @@ class AssetCompressHelper extends AppHelper {
 			foreach ($buildFiles as $part) {
 				$part = $scanner->resolve($part, false);
 				$part = str_replace(DS, '/', $part);
-				$output .= $this->Html->css($part, null, $options);
+				$output .= $this->Html->css($part, $options);
 			}
 			return $output;
 		}
 
 		$url = $this->url($file, $options);
 		unset($options['full']);
-		return $this->Html->css($url, null, $options);
+		return $this->Html->css($url, $options);
 	}
 
 /**
