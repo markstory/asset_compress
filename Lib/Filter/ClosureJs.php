@@ -38,7 +38,7 @@ class ClosureJs extends AssetFilter {
 		file_put_contents($tmpFile, $input);
 
 		$options = array('js' => $tmpFile) + $this->_settings;
-		$options = array_diff_key($options, array('path' => null, 'paths' => null, 'target' => null));
+		$options = array_diff_key($options, array('path' => null, 'paths' => null, 'target' => null, 'theme' => null));
 
 		$cmd = 'java -jar "' . $jar . '"';
 		foreach ($options as $key => $value) {
