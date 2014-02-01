@@ -1,4 +1,4 @@
-0.12.0 Changes
+0.13.0 Changes
 
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.
