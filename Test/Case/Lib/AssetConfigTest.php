@@ -19,6 +19,47 @@ class AssetConfigTest extends CakeTestCase {
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 	}
 
+    public function testLocalConfig() {
+        $ini = dirname($this->testConfig) . DS . 'overridable.ini';
+        $config = AssetConfig::buildFromIniFile($ini);
+        
+        $this->assertEquals('', $config->general('cacheConfig'));
+        $this->assertEquals(1, $config->general('alwaysUseController'));
+        
+        $this->assertEquals('', $config->get('js.timestamp'));
+        
+        $result = $config->paths('js');
+        $result = str_replace('/', DS, $result);
+        $expectedJsPaths = array(WWW_ROOT . 'js/*', WWW_ROOT . 'js_local/*');
+        $this->assertEquals($expectedJsPaths, $result);
+        
+        $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
+        
+        $result = $config->filters('js');
+        $expectedJsFilters = array('sprockets', 'jsyuicompressor', 'mylocalfilter');
+        $this->assertEquals($expectedJsFilters, $result);
+        
+        $result = $config->filterConfig('jsyuicompressor');
+        $this->assertEquals(array('path' => '/path/to/local/yuicompressor'), $result);
+        
+        $result = $config->filterConfig('uglify');
+        $this->assertEquals(array('path' => '/path/to/uglify-js'), $result);
+        
+        $result = $config->paths('js', 'libs.js');
+        $result = str_replace('/', DS, $result);
+        $expectedJsPaths[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
+        $this->assertEquals($expectedJsPaths, $result);
+        
+        $result = $config->files('libs.js');
+        $expected = array('jquery.js', 'mootools.js', 'class.js');
+        $this->assertEquals($expected, $result);
+        
+        $result = $config->filters('js', 'libs.js');
+        $expectedJsFilters[] = 'uglify';
+        $expectedJsFilters[] = 'anotherlocalfilter';
+        $this->assertEquals($expectedJsFilters, $result);
+    }
+
 	public function testBuildFromIniFile() {
 		$config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->assertEquals(1, $config->get('js.timestamp'));
@@ -232,5 +273,4 @@ class AssetConfigTest extends CakeTestCase {
 		$this->assertInternalType('integer', $this->config->modifiedTime());
 		$this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
 	}
-
 }
