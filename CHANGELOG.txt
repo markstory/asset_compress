@@ -1,4 +1,11 @@
 0.13.0 Changes
 
+* Added per install `.local.ini` config files. This allows you to store the
+  build file descriptions in one file, and put environment specific
+  configuration like platform specific paths to nodejs in a separate
+  configuration file. Thanks QTSdev
+* Added ClosureCompiler filter. This adds support for google's closure
+  compiler webservice as a javascript minifier. Thanks jadb
+
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.
