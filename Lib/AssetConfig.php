@@ -169,10 +169,23 @@ class AssetConfig {
 		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
 		self::_parseConfigFile($baseFile, $AssetConfig);
 
+		// Load related .local.ini file if exists
+		$localConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $baseFile);
+		if (file_exists($localConfig)) {
+			self::_parseConfigFile($localConfig, $AssetConfig);
+		}
+
 		$plugins = CakePlugin::loaded();
 		foreach ($plugins as $plugin) {
-			if (file_exists(CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini')) {
-				self::_parseConfigFile(CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini', $AssetConfig, $plugin . '.');
+			$pluginConfig = CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini';
+			if (file_exists($pluginConfig)) {
+				self::_parseConfigFile($pluginConfig, $AssetConfig, $plugin . '.');
+
+				// Load related plugin .local.ini file if exists
+				$localPluginConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $pluginConfig);
+				if (file_exists($localPluginConfig)) {
+					self::_parseConfigFile($localPluginConfig, $AssetConfig, $plugin . '.');
+				}
 			}
 		}
 

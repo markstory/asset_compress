@@ -47,13 +47,22 @@ class AssetConfigPluginIniTest extends CakeTestCase {
 	}
 
 	public function testIniTargets() {
-		$expected = array('libs.js', 'foo.bar.js', 'new_file.js', 'TestAssetIni.libs.js', 'TestAssetIni.foo.bar.js');
+		$expected = array('libs.js', 'foo.bar.js', 'new_file.js', 'TestAssetIni.libs.js', 'TestAssetIni.foo.bar.js', 'TestAssetIni.overridable_scripts.js');
 		$result = $this->config->targets('js');
 		$this->assertEquals($expected, $result);
 
-		$expected = array('all.css', 'pink.css', 'TestAssetIni.all.css');
+		$expected = array('all.css', 'pink.css', 'TestAssetIni.all.css', 'TestAssetIni.overridable_styles.css');
 		$result = $this->config->targets('css');
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testLocalPluginConfig() {
+		$result = $this->config->files('TestAssetIni.overridable_scripts.js');
+		$expected = array('base.js', 'local_script.js');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->config->files('TestAssetIni.overridable_styles.css');
+		$expected = array('local_style.css');
+		$this->assertEquals($expected, $result);
+	}
 }
