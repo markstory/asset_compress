@@ -1,5 +1,7 @@
 # Asset Compress
 
+[![Build Status](https://travis-ci.org/markstory/asset_compress.svg?branch=master)](https://travis-ci.org/markstory/asset_compress)
+
 Asset Compress is CakePHP plugin for helping reduce the number of requests, and optimizing the remaining requests your application makes for Javascript and CSS files.
 
 ### Features
