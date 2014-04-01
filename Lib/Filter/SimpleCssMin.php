@@ -3,7 +3,7 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
  * SimpleCssMin filter.
- * Easily compresses CSS files. Allows to circuveim problems that some minifiers have
+ * Easily compresses CSS files. Allows to avoid problems that some minifiers have
  * with previously processed files.
  */
 class SimpleCssMin extends AssetFilter {
