@@ -148,8 +148,12 @@ class AssetConfig {
 		if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
 			throw new RuntimeException(sprintf('Configuration file "%s" was not found.', $filename));
 		}
-
-		return parse_ini_file($filename, true);
+		
+		if (function_exists('parse_ini_file')) {
+ 			return parse_ini_file($filename, true);
+ 		} else {
+ 			return parse_ini_string(file_get_contents($filename), true);
+ 		}
 	}
 
 /**
