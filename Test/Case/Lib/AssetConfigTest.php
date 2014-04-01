@@ -30,7 +30,7 @@ class AssetConfigTest extends CakeTestCase {
 
 		$result = $config->paths('js');
 		$result = str_replace('/', DS, $result);
-		$expectedJsPaths = array(WWW_ROOT . 'js/*', WWW_ROOT . 'js_local/*');
+		$expectedJsPaths = array(WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*');
 		$this->assertEquals($expectedJsPaths, $result);
 
 		$this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
