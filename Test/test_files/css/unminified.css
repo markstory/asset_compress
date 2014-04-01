@@ -1,0 +1,67 @@
+
+
+/*
+ * Comment A
+ */
+
+/*****
+Comment B
+*****/
+html >/**/ body p {
+    color: blue; 
+}
+/*****
+Comment
+C
+*
+*/
+/* Comment D    */
+	/*commment E*/
+body {
+	/*commment F*/ color:#000000; /*commment D*/ 
+}
+
+#mydiv {
+	clear:both;
+	padding-top:10px;
+/*	margin:0 auto;
+	width: 650px;*/
+}
+
+.class1 {
+	
+  border-color    : #3bbfce;
+  
+  
+  color   : #2ca2af; 
+  
+}
+
+.class1:hover .subclass {
+	       color:  red;
+}
+
+.class1,
+
+
+.class2 {
+	font-size: 
+	
+	200%;
+}
+
+.class-with-shorthand {
+	border: 1px solid #001122; 
+}
+
+@media     
+screen  
+   and 
+(min-device-width   :  481px      )  
+              and
+(max-device-width     :     768px      ) { 
+	.class-with-shorthand {
+		border: 1px solid #111119; 
+	}
+}
+
