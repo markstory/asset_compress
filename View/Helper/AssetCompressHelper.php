@@ -336,6 +336,7 @@ class AssetCompressHelper extends AppHelper {
 			$scanner = new AssetScanner($config->paths('js', $file), $this->theme);
 			foreach ($buildFiles as $part) {
 				$part = $scanner->resolve($part, false);
+				$part = str_replace(DS, '/', $part);
 				$output .= $this->Html->script($part, $options);
 			}
 			return $output;

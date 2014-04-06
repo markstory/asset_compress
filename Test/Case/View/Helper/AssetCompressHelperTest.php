@@ -430,6 +430,17 @@ class AssetCompressHelperTest extends CakeTestCase {
 			),
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Helper->script('plugins.js', array('raw' => true));
+		$expected = array(
+			array(
+				'script' => array(
+					'type' => 'text/javascript',
+					'src' => '/test_asset/plugin.js'
+				)
+			)
+		);
+		$this->assertTags($result, $expected);
 	}
 
 	public function testCompiledBuildWithThemes() {
