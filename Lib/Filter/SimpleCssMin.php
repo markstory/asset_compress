@@ -10,7 +10,10 @@ class SimpleCssMin extends AssetFilter {
 
 /**
  * Apply SimpleCssMin to $content.
+ *
  * Based on code by Manas Tungare (https://gist.github.com/manastungare/2625128).
+ * Copyright (c) 2009 and onwards, Manas Tungare.
+ * Creative Commons Attribution, Share-Alike.
  *
  * @param string $filename target filename
  * @param string $content Content to filter.
