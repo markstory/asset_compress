@@ -39,7 +39,7 @@ class Hogan extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
-		$tmpfile = tempnam(sys_get_temp_dir(), 'asset_compress_hogan');
+		$tmpfile = tempnam(TMP, 'asset_compress_hogan');
 		$id = str_replace($this->_settings['ext'], '', basename($filename));
 		$this->_generateScript($tmpfile, $id, $input);
 		$bin = $this->_settings['node'] . ' ' . $tmpfile;

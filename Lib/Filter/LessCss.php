@@ -28,7 +28,7 @@ class LessCss extends AssetFilter {
 			return $input;
 		}
 
-		$tmpfile = tempnam(sys_get_temp_dir(), 'asset_compress_less');
+		$tmpfile = tempnam(TMP, 'asset_compress_less');
 		$this->_generateScript($tmpfile, $input);
 
 		$bin = $this->_settings['node'] . ' ' . $tmpfile;
