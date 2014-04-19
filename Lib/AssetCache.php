@@ -133,7 +133,7 @@ class AssetCache {
 		}
 		$data = serialize($data);
 		file_put_contents(TMP . AssetConfig::BUILD_TIME_FILE, $data);
-		chmod(TMP . AssetConfig::BUILD_TIME_FILE, 0777);
+		chmod(TMP . AssetConfig::BUILD_TIME_FILE, 0644);
 	}
 
 /**
