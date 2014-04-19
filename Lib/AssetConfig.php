@@ -150,10 +150,10 @@ class AssetConfig {
 		}
 		
 		if (function_exists('parse_ini_file')) {
- 			return parse_ini_file($filename, true);
- 		} else {
- 			return parse_ini_string(file_get_contents($filename), true);
- 		}
+			return parse_ini_file($filename, true);
+		} else {
+			return parse_ini_string(file_get_contents($filename), true);
+		}
 	}
 
 /**
