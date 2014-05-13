@@ -31,9 +31,11 @@ class AssetFilterCollection {
 	protected function _buildFilters($filters, $settings) {
 		foreach ($filters as $className) {
 			list($plugin, $className) = pluginSplit($className, true);
-			App::uses($className, 'AssetCompress.Lib/Filter');
 			if (!class_exists($className)) {
-				App::uses($className, $plugin . 'AssetCompress/Filter');
+				App::uses($className, 'AssetCompress.Lib/Filter');
+				if (!class_exists($className)) {
+					App::uses($className, $plugin . 'AssetCompress/Filter');
+				}
 			}
 			if (!class_exists($className)) {
 				throw new Exception(sprintf('Cannot not load filter "%s".', $plugin . $className));
