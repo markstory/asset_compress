@@ -81,10 +81,18 @@ class AssetCompressHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testNoCompression() {
-		$this->Helper->addCss('one', 'lib');
-		$this->Helper->addCss('two');
-		$this->Helper->addScript('one');
-		$this->Helper->addScript('dir/two');
+		$config = $this->Helper->config();
+		$config->paths('css', null, array(
+			$this->_testFiles . 'css' . DS
+		));
+		$config->paths('js', null, array(
+			$this->_testFiles . 'js' . DS
+		));
+
+		$this->Helper->addCss('background.css', 'lib');
+		$this->Helper->addCss('nav.css');
+		$this->Helper->addScript('library_file.js');
+		$this->Helper->addScript('classes/base_class.js');
 
 		$result = $this->Helper->includeAssets(true);
 		$expected = array(
@@ -92,27 +100,27 @@ class AssetCompressHelperTest extends CakeTestCase {
 				'link' => array(
 					'type' => 'text/css',
 					'rel' => 'stylesheet',
-					'href' => 'preg:/.*css\/one\.css/'
+					'href' => 'preg:/.*css\/background\.css/'
 				)
 			),
 			array(
 				'link' => array(
 					'type' => 'text/css',
 					'rel' => 'stylesheet',
-					'href' => 'preg:/.*css\/two\.css/'
+					'href' => 'preg:/.*css\/nav\.css/'
 				)
 			),
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'preg:/.*js\/one\.js/'
+					'src' => 'preg:/.*js\/library_file\.js/'
 				)
 			),
 			'/script',
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'preg:/.*js\/dir\/two\.js/'
+					'src' => 'preg:/.*js\/classes\/base_class\.js/'
 				)
 			),
 			'/script'
@@ -384,19 +392,27 @@ class AssetCompressHelperTest extends CakeTestCase {
 	}
 
 	public function testRawAssets() {
-		$result = $this->Helper->script('new_file.js', array('raw' => true));
+		$config = $this->Helper->config();
+		$config->addTarget('raw.js', array(
+			'files' => array('classes/base_class.js', 'classes/base_class_two.js')
+		));
+		$config->paths('js', null, array(
+			$this->_testFiles . 'js' . DS
+		));
+
+		$result = $this->Helper->script('raw.js', array('raw' => true));
 		$expected = array(
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'js/prototype.js'
+					'src' => 'js/classes/base_class.js'
 				),
 			),
 			'/script',
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'js/scriptaculous.js'
+					'src' => 'js/classes/base_class_two.js'
 				),
 			),
 			'/script',
@@ -409,7 +425,14 @@ class AssetCompressHelperTest extends CakeTestCase {
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
 		CakePlugin::load('TestAsset');
+
 		$config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config/plugins.ini');
+		$config->paths('css', null, array(
+			$this->_testFiles . 'css' . DS
+		));
+		$config->paths('js', null, array(
+			$this->_testFiles . 'js' . DS
+		));
 		$this->Helper->config($config);
 
 		$result = $this->Helper->css('plugins.css', array('raw' => true));
@@ -418,7 +441,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 				'link' => array(
 					'type' => 'text/css',
 					'rel' => 'stylesheet',
-					'href' => 'css/nav.css'
+					'href' => 'preg:/.*css\/nav.css/'
 				)
 			),
 			array(

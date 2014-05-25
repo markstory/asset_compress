@@ -100,18 +100,17 @@ class AssetScanner {
  * Find a file in the connected paths, and check for its existance.
  *
  * @param string $file The file you want to find.
+ * @param boolean $absolute Set to false to get relative URL compatible paths.
  * @return mixed Either false on a miss, or the full path of the file.
  */
-	public function find($file) {
-		$changed = false;
-		$resolved = $this->resolve($file);
-		if ($resolved !== $file) {
-			$changed = true;
+	public function find($file, $absolute = true) {
+		$expanded = $this->_expandPrefix($file);
+
+		if (isset($expanded['absolute']) && file_exists($expanded['absolute'])) {
+			$key = $absolute ? 'absolute' : 'relative';
+			return $expanded[$key];
 		}
-		$file = $resolved;
-		if ($changed && file_exists($file)) {
-			return $file;
-		}
+
 		foreach ($this->_paths as $path) {
 			if ($this->isRemote($path)) {
 				$file = $this->_normalizePath($file, '/');
@@ -128,12 +127,25 @@ class AssetScanner {
 			} else {
 				$file = $this->_normalizePath($file, DS);
 				$fullPath = $path . $file;
-				if (file_exists($fullPath)) {
-					return $fullPath;
+
+				$exists = file_exists($fullPath);
+
+				if ($absolute === false && $exists) {
+					$expanded['relative'] = str_replace(WWW_ROOT, '/', $expanded['relative']);
+				}
+				if ($exists) {
+					$expanded['absolute'] = $fullPath;
+					break;
 				}
 			}
 		}
-		return false;
+
+		// Could not find absolute file path.
+		if (empty($expanded['absolute'])) {
+			return false;
+		}
+		$key = $absolute ? 'absolute' : 'relative';
+		return $expanded[$key];
 	}
 
 /**
@@ -143,14 +155,14 @@ class AssetScanner {
  * @param boolean $full Gives absolute paths
  * @return string resolved path
  */
-	public function resolve($path, $full = true) {
+	protected function _expandPrefix($path) {
 		if (preg_match(self::PLUGIN_PATTERN, $path)) {
-			return $this->_resolvePlugin($path, $full);
+			return $this->_expandPlugin($path);
 		}
 		if ($this->_theme && preg_match(self::THEME_PATTERN, $path)) {
-			return $this->_resolveTheme($path, $full);
+			return $this->_expandTheme($path);
 		}
-		return $path;
+		return array('relative' => $path);
 	}
 
 /**
@@ -158,25 +170,24 @@ class AssetScanner {
  * current theme's path.
  *
  * @param string $file The theme file to find.
- * @param boolean $full Gives absolute paths
- * @return string Full path to theme file.
+ * @return array An array of the relative and absolute paths.
  */
-	protected function _resolveTheme($file, $full = true) {
+	protected function _expandTheme($file) {
 		$file = preg_replace(self::THEME_PATTERN, '', $file);
-		if ($full) {
-			return App::themePath($this->_theme) . 'webroot' . DS . $file;
-		}
-		return DS . 'theme' . DS . Inflector::underscore($this->_theme) . DS . $file;
+		return array(
+			'absolute' => App::themePath($this->_theme) . 'webroot' . DS . $file,
+			'relative' => DS . 'theme' . DS . Inflector::underscore($this->_theme) . DS . $file,
+		);
 	}
 
 /**
  * Resolve a plugin file to its full path.
  *
  * @param string $file The theme file to find.
- * @param boolean $full Gives absolute paths
  * @throws RuntimeException when plugins are missing.
+ * @return array An array of the relative and absolute paths.
  */
-	protected function _resolvePlugin($file, $full = true) {
+	protected function _expandPlugin($file) {
 		preg_match(self::PLUGIN_PATTERN, $file, $matches);
 		if (empty($matches[1]) || empty($matches[2])) {
 			throw new RuntimeException('Missing required parameters');
@@ -184,11 +195,11 @@ class AssetScanner {
 		if (!CakePlugin::loaded($matches[1])) {
 			throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
 		}
-		if ($full) {
-			$path = CakePlugin::path($matches[1]);
-			return $path . 'webroot' . DS . $matches[2];
-		}
-		return DS . Inflector::underscore($matches[1]) . DS . $matches[2];
+		$path = CakePlugin::path($matches[1]);
+		return array(
+			'absolute' => $path . 'webroot' . DS . $matches[2],
+			'relative' => DS . Inflector::underscore($matches[1]) . DS . $matches[2],
+		);
 	}
 
 /**
