@@ -504,13 +504,13 @@ class AssetCompressHelperTest extends CakeTestCase {
 		$this->skipIf(version_compare($version, '2.4.0', '<'));
 
 		$result = $this->Helper->url('libs.js', array('full' => true));
-		$this->assertEqual(
+		$this->assertEquals(
 			'http://example.com/cache_js/libs.js',
 			$result
 		);
 
 		$result = $this->Helper->url('libs.js', true);
-		$this->assertEqual(
+		$this->assertEquals(
 			'http://example.com/cache_js/libs.js',
 			$result
 		);
