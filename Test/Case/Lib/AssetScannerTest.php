@@ -19,7 +19,68 @@ class AssetScannerTest extends CakeTestCase {
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
 		$this->assertEquals($expected, $result);
 
+		$result = $this->Scanner->find('base_class.js', false);
+		$this->assertEquals('base_class.js', $result, 'No WWW_ROOT replacement as it is a test file.');
+
 		$this->assertFalse($this->Scanner->find('does not exist'));
+	}
+
+	public function testFindOtherExtension() {
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths);
+		$result = $scanner->find('other.less');
+		$expected = $this->_testFiles . 'css' . DS . 'other.less';
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testFindResolveThemePaths() {
+		App::build(array(
+			'View' => array($this->_testFiles . 'View' . DS)
+		));
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths, 'Blue');
+		$result = $scanner->find('t:theme.css');
+		$expected = $this->_testFiles . 'View' . DS . 'Themed' . DS . 'Blue' . DS . 'webroot' . DS . 'theme.css';
+		$this->assertEquals($expected, $result);
+
+		$result = $scanner->find('theme:theme.css');
+		$this->assertEquals($expected, $result);
+
+		$result = $scanner->find('t:theme.css', false);
+		$expected = DS . 'theme' . DS . 'blue' . DS . 'theme.css';
+		$this->assertEquals($expected, $result);
+
+		$result = $scanner->find('theme:theme.css', false);
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testFindResolvePluginPaths() {
+		App::build(array(
+			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestAsset');
+
+		$paths = array(
+			$this->_testFiles . 'css' . DS
+		);
+		$scanner = new AssetScanner($paths);
+		$result = $scanner->find('p:TestAsset:plugin.css');
+		$expected = $this->_testFiles . 'Plugin' . DS . 'TestAsset' . DS . 'webroot' . DS . 'plugin.css';
+		$this->assertEquals($expected, $result);
+
+		$result = $scanner->find('plugin:TestAsset:plugin.css');
+		$this->assertEquals($expected, $result);
+
+		$expected = DS . 'test_asset' . DS . 'plugin.css';
+		$result = $scanner->find('plugin:TestAsset:plugin.css', false);
+		$this->assertEquals($expected, $result);
+
+		$result = $scanner->find('p:TestAsset:plugin.css', false);
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testNormalizePaths() {
@@ -70,50 +131,6 @@ class AssetScannerTest extends CakeTestCase {
 
 		$result = $scanner->find('classes' . DS . 'base_class.js');
 		$expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
-		$this->assertEquals($expected, $result);
-	}
-
-	public function testFindOtherExtension() {
-		$paths = array(
-			$this->_testFiles . 'css' . DS
-		);
-		$scanner = new AssetScanner($paths);
-		$result = $scanner->find('other.less');
-		$expected = $this->_testFiles . 'css' . DS . 'other.less';
-		$this->assertEquals($expected, $result);
-	}
-
-	public function testResolveThemePaths() {
-		App::build(array(
-			'View' => array($this->_testFiles . 'View' . DS)
-		));
-		$paths = array(
-			$this->_testFiles . 'css' . DS
-		);
-		$scanner = new AssetScanner($paths, 'Blue');
-		$result = $scanner->find('t:theme.css');
-		$expected = $this->_testFiles . 'View' . DS . 'Themed' . DS . 'Blue' . DS . 'webroot' . DS . 'theme.css';
-		$this->assertEquals($expected, $result);
-
-		$result = $scanner->find('theme:theme.css');
-		$this->assertEquals($expected, $result);
-	}
-
-	public function testResolvePluginPaths() {
-		App::build(array(
-			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
-		));
-		CakePlugin::load('TestAsset');
-
-		$paths = array(
-			$this->_testFiles . 'css' . DS
-		);
-		$scanner = new AssetScanner($paths);
-		$result = $scanner->find('p:TestAsset:plugin.css');
-		$expected = $this->_testFiles . 'Plugin' . DS . 'TestAsset' . DS . 'webroot' . DS . 'plugin.css';
-		$this->assertEquals($expected, $result);
-
-		$result = $scanner->find('plugin:TestAsset:plugin.css');
 		$this->assertEquals($expected, $result);
 	}
 
