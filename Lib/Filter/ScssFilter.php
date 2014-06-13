@@ -27,6 +27,7 @@ class ScssFilter extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
+		$filename = preg_replace('/ /', '\\ ', $filename);
 		$bin = $this->_settings['sass'] . ' ' . $filename;
 		$return = $this->_runCmd($bin, '', array('PATH' => $this->_settings['path']));
 		return $return;
