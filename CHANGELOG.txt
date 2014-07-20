@@ -1,9 +1,4 @@
-0.15.0 Changes
-
-* Build timestamp file is now generated with 0644 permissions instead of 0777.
-* Fix raw asset links when js/css had multiple paths. This required making
-  dynamic builds require the extension when combining raw links and dynamic
-  build files.
+0.16.0 Changes
 
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.
