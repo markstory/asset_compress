@@ -513,4 +513,67 @@ class AssetCompressHelper extends AppHelper {
 		return $this->config()->exists($file);
 	}
 
+/**
+  * Create a CSS file. Will generate inline style tags
+  * in production, or reference the dynamic build file in development
+  *
+  * To create build files without configuration use addCss()
+  *
+  * Options:
+  *
+  * - All options supported by HtmlHelper::css() are supported.
+  *
+  * @param string $file A build target to include.
+  * @param array $options An array of options for the stylesheet tag.
+  * @throws RuntimeException
+  * @return string style tag
+  */
+    public function inlineCss($file, $options = array()) {
+        $devMode = Configure::read('debug') > 0;
+        if ($devMode) {
+            return $this->css($file, $options);
+        }
+
+        $buildFiles = $this->config()->files($file);
+        if (!$buildFiles) {
+            throw new RuntimeException('Cannot create a stylesheet for a build that does not exist.');
+        }
+
+        $compiler = new AssetCompiler($this->config());
+        $results = $compiler->generate($file);
+
+        return $this->Html->tag('style', $results, array('type' => 'text/css'));
+    }
+
+/**
+  * Create an inline script tag for a script asset. Will generate inline script tags
+  * in production, or reference the dynamic build file in development.
+  *
+  * To create build files without configuration use addScript()
+  *
+  * Options:
+  *
+  * - All options supported by HtmlHelper::css() are supported.
+  *
+  * @param string $file A build target to include.
+  * @param array $options An array of options for the script tag.
+  * @throws RuntimeException
+  * @return string script tag
+  */
+    public function inlineScript($file, $options = array()) {
+        $devMode = Configure::read('debug') > 0;
+        if ($devMode) {
+            return $this->script($file, $options);
+        }
+
+        $buildFiles = $this->config()->files($file);
+        if (!$buildFiles) {
+            throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
+        }
+
+        $compiler = new AssetCompiler($this->config());
+        $results = $compiler->generate($file);
+
+        return $this->Html->tag('script', $results);
+    }
 }
