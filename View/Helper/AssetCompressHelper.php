@@ -524,16 +524,10 @@ class AssetCompressHelper extends AppHelper {
   * - All options supported by HtmlHelper::css() are supported.
   *
   * @param string $file A build target to include.
-  * @param array $options An array of options for the stylesheet tag.
   * @throws RuntimeException
   * @return string style tag
   */
-    public function inlineCss($file, $options = array()) {
-        $devMode = Configure::read('debug') > 0;
-        if ($devMode) {
-            return $this->css($file, $options);
-        }
-
+    public function inlineCss($file) {
         $buildFiles = $this->config()->files($file);
         if (!$buildFiles) {
             throw new RuntimeException('Cannot create a stylesheet for a build that does not exist.');
@@ -556,16 +550,10 @@ class AssetCompressHelper extends AppHelper {
   * - All options supported by HtmlHelper::css() are supported.
   *
   * @param string $file A build target to include.
-  * @param array $options An array of options for the script tag.
   * @throws RuntimeException
   * @return string script tag
   */
-    public function inlineScript($file, $options = array()) {
-        $devMode = Configure::read('debug') > 0;
-        if ($devMode) {
-            return $this->script($file, $options);
-        }
-
+    public function inlineScript($file) {
         $buildFiles = $this->config()->files($file);
         if (!$buildFiles) {
             throw new RuntimeException('Cannot create a script tag for a build that does not exist.');

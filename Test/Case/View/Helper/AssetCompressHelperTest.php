@@ -565,7 +565,12 @@ class AssetCompressHelperTest extends CakeTestCase {
         Configure::write('debug', 1);
         $results = $this->Helper->inlineCss('nav.css');
 
-        $expected = '<link rel="stylesheet" type="text/css" href="/cache_css/nav.css" />';
+        $expected = <<<EOF
+<style type="text/css">@import url("reset/reset.css");
+#nav {
+	width:100%;
+}</style>
+EOF;
         $this->assertEquals($expected, $results);
     }
 
@@ -639,6 +644,8 @@ EOF;
   */
     public function testInlineScriptDevelopment() {
         $config = $this->Helper->config();
+        $config->set('js.filters', array());
+
         $config->paths('js', null, array(
             $this->_testFiles . 'js' . DS . 'classes'
         ));
@@ -650,7 +657,12 @@ EOF;
         Configure::write('debug', 1);
         $results = $this->Helper->inlineScript('all.js');
 
-        $expected = '<script type="text/javascript" src="/cache_js/all.js"></script>';
+        $expected = <<<EOF
+<script>var BaseClass = new Class({
+
+});</script>
+EOF;
+
         $this->assertEquals($expected, $results);
     }
 
