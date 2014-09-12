@@ -14,11 +14,10 @@ class AssetsCompressorTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'integration.ini';
+		$this->testConfig = APP . 'Config' . DS . 'integration.ini';
 
 		$map = array(
-			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS
+			'TEST_FILES/' => APP
 		);
 		Plugin::load('TestAssetIni');
 
@@ -34,9 +33,9 @@ class AssetsCompressorTest extends TestCase {
 			->method('_getConfig')
 			->will($this->returnValue($config));
 
-		$this->request = new Request(null, false);
-		$this->response = $this->getMock('Response', array('checkNotModified', 'type', 'send'));
-		Configure::write('debug', 2);
+		$this->request = new Request();
+		$this->response = $this->getMock('Cake\Network\Response', array('checkNotModified', 'type', 'send'));
+		Configure::write('debug', true);
 	}
 
 	public function tearDown() {
@@ -61,6 +60,8 @@ class AssetsCompressorTest extends TestCase {
 	}
 
 	public function testPluginIniBuildFile() {
+		Plugin::load('TestAssetIni');
+
 		$this->response
 			->expects($this->once())->method('type')
 			->with($this->equalTo('js'));

@@ -4,6 +4,7 @@ namespace AssetCompress;
 use AssetCompress\AssetFilterCollection;
 use AssetCompress\AssetScanner;
 use Cake\Core\Configure;
+use RuntimeException;
 
 /**
  * Compiles a set of assets together, and applies filters.

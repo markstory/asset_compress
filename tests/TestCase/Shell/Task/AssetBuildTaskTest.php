@@ -1,9 +1,8 @@
 <?php
 namespace AssetCompress\Test\TestCase\Shell\Task;
 
-use AssetCompress\Console\Command\Task\AssetBuildTask;
-use Cake\Console\ConsoleInput;
-use Cake\Console\ConsoleOutput;
+use AssetCompress\Shell\Task\AssetBuildTask;
+use AssetCompress\AssetConfig;
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
 use Cake\TestSuite\TestCase;
@@ -12,18 +11,16 @@ class AssetBuildTaskTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$io = $this->getMock('Cake\Console\ConsoleIo', array(), array(), '', false);
 
-		$this->Task = $this->getMock('AssetBuildTask',
+		$this->Task = $this->getMock('AssetCompress\Shell\Task\AssetBuildTask',
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array($out, $out, $in)
+			array($io)
 		);
 
-		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->testFilePath = $this->_pluginPath . 'Test/test_files/View/Parse/';
+		$this->testFilePath = APP . 'Template/Parse/';
+		$this->testConfig = APP . 'config' . DS . 'config.ini';
 
-		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'config.ini';
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 		$this->Task->setConfig($this->config);

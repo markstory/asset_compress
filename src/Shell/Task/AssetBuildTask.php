@@ -5,7 +5,9 @@ use App\Console\Command\AppShell;
 use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use Cake\Console\Shell;
 use Cake\Utility\Folder;
+
 class AssetBuildTask extends Shell {
 
 	protected $_Config;
