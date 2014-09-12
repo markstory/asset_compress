@@ -1,37 +1,19 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
-
-env:
-  - CAKE_VERSION=2.3.10
-  - CAKE_VERSION=2.4.10
-  - CAKE_VERSION=master
-
-install:
-  - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
-  - cp -R ../asset_compress plugins/AssetCompress
-  - chmod -R 777 ../cakephp/app/tmp
-  - sh -c "composer global require 'phpunit/phpunit=3.7.33'"
-  - sh -c "ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ../cakephp/vendors/PHPUnit"
+  - 5.6
 
 before_script:
-  - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
-  - echo "<?php
-    class DATABASE_CONFIG {
-    public \$test = array(
-      'datasource' => 'Database/Mysql',
-      'database' => 'cakephp_test',
-      'host' => '0.0.0.0',
-      'login' => 'travis',
-      'persistent' => false,
-    );
-    }" > ../cakephp/app/Config/database.php
+    - phpenv rehash
+
+install:
+    - composer self-update
+    - composer install --dev
 
 script:
-  - ./lib/Cake/Console/cake test AssetCompress AllTests --stderr
+  - phpunit
 
 notifications:
   email: false
