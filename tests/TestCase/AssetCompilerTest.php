@@ -11,8 +11,7 @@ class AssetCompilerTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = Plugin::path('AssetCompress') . 'Test' . DS . 'test_files' . DS;
+		$this->_testFiles = APP;
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 		$this->_pluginConfig = $this->_testFiles . 'Config' . DS . 'plugins.ini';
 
@@ -81,12 +80,9 @@ TEXT;
 	}
 
 	public function testCombineThemeFile() {
-		App::build(array(
-			'View' => array($this->_testFiles . 'View' . DS)
-		));
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', null, array(
-			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
+			APP . DS . 'css' . DS . '**'
 		));
 		$Config->theme('blue');
 		$Compiler = new AssetCompiler($Config);
@@ -101,9 +97,6 @@ TEXT;
 	}
 
 	public function testMultipleThemeGeneration() {
-		App::build(array(
-			'View' => array($this->_testFiles . 'View' . DS)
-		));
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', null, array(
 			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
@@ -124,9 +117,6 @@ TEXT;
 	}
 
 	public function testCombineThemeFileWithNonTheme() {
-		App::build(array(
-			'View' => array($this->_testFiles . 'View' . DS)
-		));
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', null, array(
 			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
@@ -149,9 +139,6 @@ TEXT;
 	}
 
 	public function testCompilePluginFiles() {
-		App::build(array(
-			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
-		));
 		Plugin::load('TestAsset');
 
 		$Config = AssetConfig::buildFromIniFile($this->_pluginConfig);

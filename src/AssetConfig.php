@@ -6,6 +6,7 @@
 namespace AssetCompress;
 
 use Cake\Cache\Cache;
+use Cake\Core\Plugin;
 use RuntimeException;
 
 class AssetConfig {
@@ -177,9 +178,9 @@ class AssetConfig {
 		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
 		self::_parseConfigFileLocal($baseFile, $AssetConfig);
 
-		$plugins = CakePlugin::loaded();
+		$plugins = Plugin::loaded();
 		foreach ($plugins as $plugin) {
-			$pluginConfig = CakePlugin::path($plugin) . 'Config' . DS . 'asset_compress.ini';
+			$pluginConfig = Plugin::path($plugin) . 'config' . DS . 'asset_compress.ini';
 			if (file_exists($pluginConfig)) {
 				self::_parseConfigFileLocal($pluginConfig, $AssetConfig, $plugin . '.');
 			}

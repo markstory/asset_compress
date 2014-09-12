@@ -10,9 +10,9 @@ class AssetCacheTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		AssetConfig::clearBuildTimestamp();
-		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
-		$this->testConfig = $this->_testFiles . 'Config' . DS . 'integration.ini';
-		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
+		$this->_testFiles = APP;
+		$this->testConfig = $this->_testFiles . 'config' . DS . 'integration.ini';
+		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig, array(
 			'TEST_FILES' => $this->_testFiles
@@ -25,7 +25,7 @@ class AssetCacheTest extends TestCase {
 	public function testWrite() {
 		$this->config->set('js.timestamp', false);
 		$result = $this->cache->write('test.js', 'Some content');
-		$this->assertNotEqual($result, false);
+		$this->assertNotEquals($result, false);
 		$contents = file_get_contents(TMP . 'test.js');
 		$this->assertEquals('Some content', $contents);
 		unlink(TMP . 'test.js');

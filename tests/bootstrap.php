@@ -68,6 +68,11 @@ Cache::config([
 		'engine' => 'File',
 		'prefix' => 'default_',
 		'serialize' => true
+	],
+	'asset_compress' => [
+		'engine' => 'File',
+		'prefix' => 'asset_compress_',
+		'serialize' => true
 	]
 ]);
 

@@ -40,7 +40,7 @@ class AssetFilterCollection {
 				$className = App::className('AssetCompress.' . $className, 'Filter');
 			}
 			if (!class_exists($className)) {
-				throw new Exception(sprintf('Cannot not load filter "%s".', $plugin . $className));
+				throw new Exception(sprintf('Cannot not load filter "%s".', $className));
 			}
 			$config = array_merge($this->_config, isset($settings[$className]) ? $settings[$className] : array());
 			$filter = new $className();

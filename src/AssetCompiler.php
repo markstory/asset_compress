@@ -3,6 +3,8 @@ namespace AssetCompress;
 
 use AssetCompress\AssetFilterCollection;
 use AssetCompress\AssetScanner;
+use Cake\Core\Configure;
+
 /**
  * Compiles a set of assets together, and applies filters.
  * Forms the center of AssetCompress
