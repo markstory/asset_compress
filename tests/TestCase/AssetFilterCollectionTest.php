@@ -18,7 +18,10 @@ class AssetFilterCollectionTest extends TestCase {
 	}
 
 	public function testFilterSettings() {
-		$filters = array('TestFilterOne', 'TestFilterTwo');
+		$filters = array(
+			__NAMESPACE__ . '\TestFilterOne',
+			__NAMESPACE__ . '\TestFilterTwo'
+		);
 		$settings = array(
 			'TestFilterOne' => array(
 				'key' => 'value'
@@ -30,7 +33,10 @@ class AssetFilterCollectionTest extends TestCase {
 	}
 
 	public function testInputOrder() {
-		$filters = array('TestFilterOne', 'TestFilterTwo');
+		$filters = array(
+			__NAMESPACE__ . '\TestFilterOne',
+			__NAMESPACE__ . '\TestFilterTwo'
+		);
 		$Filters = new AssetFilterCollection($filters, array(), array());
 
 		$result = $Filters->input('test.js', 'test content');
@@ -43,7 +49,10 @@ TEXT;
 	}
 
 	public function testOutput() {
-		$filters = array('TestFilterOne', 'TestFilterTwo');
+		$filters = array(
+			__NAMESPACE__ . '\TestFilterOne',
+			__NAMESPACE__ . '\TestFilterTwo'
+		);
 		$Filters = new AssetFilterCollection($filters, array(), array());
 
 		$result = $Filters->output('test.js', 'test content');

@@ -15,8 +15,7 @@ class AssetConfigTest extends TestCase {
 			'engine' => 'File'
 		));
 
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = Plugin::path('AssetCompress') . 'Test' . DS . 'test_files' . DS;
+		$this->_testFiles = APP;
 		$this->testConfig = $this->_testFiles . 'Config' . DS . 'config.ini';
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
@@ -75,7 +74,7 @@ class AssetConfigTest extends TestCase {
 		try {
 			$config = AssetConfig::buildFromIniFile('/bogus');
 			$this->assertFalse(true, 'Exception not thrown.');
-		} catch (Exception $e) {
+		} catch (\RuntimeException $e) {
 			$this->assertEquals('Configuration file "/bogus" was not found.', $e->getMessage());
 		}
 	}
@@ -217,7 +216,7 @@ class AssetConfigTest extends TestCase {
 		try {
 			$this->config->set('only.two.allowed', 'smelly');
 			$this->assertFalse(true, 'No exception');
-		} catch (RuntimeException $e) {
+		} catch (\RuntimeException $e) {
 			$this->assertTrue(true, 'Exception was raised.');
 		}
 	}

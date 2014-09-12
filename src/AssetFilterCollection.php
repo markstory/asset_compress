@@ -9,7 +9,6 @@ use RuntimeException;
 /**
  * A collection for creating and interacting with filter sets.
  *
- *
  */
 class AssetFilterCollection {
 
@@ -34,13 +33,13 @@ class AssetFilterCollection {
  * @throws Exception
  */
 	protected function _buildFilters($filters, $settings) {
-		foreach ($filters as $className) {
-			$className = App::className($className, 'Filter');
+		foreach ($filters as $name) {
+			$className = App::className($name, 'Filter');
 			if (!class_exists($className)) {
-				$className = App::className('AssetCompress.' . $className, 'Filter');
+				$className = App::className('AssetCompress.' . $name, 'Filter');
 			}
 			if (!class_exists($className)) {
-				throw new Exception(sprintf('Cannot not load filter "%s".', $className));
+				throw new Exception(sprintf('Cannot not load filter "%s".', $name));
 			}
 			$config = array_merge($this->_config, isset($settings[$className]) ? $settings[$className] : array());
 			$filter = new $className();
