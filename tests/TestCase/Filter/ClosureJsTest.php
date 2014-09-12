@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\Filter;
 App::uses('ClosureJs', 'AssetCompress.Filter');
 
 class ClosureJsTest extends CakeTestCase {

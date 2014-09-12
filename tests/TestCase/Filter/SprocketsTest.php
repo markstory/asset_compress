@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\Filter;
 App::uses('Sprockets', 'AssetCompress.Filter');
 
 class SprocketsTest extends CakeTestCase {

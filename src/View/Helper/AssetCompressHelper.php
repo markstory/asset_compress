@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\View\Helper;
 App::uses('AppHelper', 'View/Helper');
 App::uses('AssetScanner', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');

@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress;
 App::uses('AssetScanner', 'AssetCompress.Lib');
 App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 

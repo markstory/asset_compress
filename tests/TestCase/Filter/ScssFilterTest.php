@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\Filter;
 App::uses('ScssFilter', 'AssetCompress.Filter');
 
 class ScssFilterTest extends CakeTestCase {

@@ -1,5 +1,6 @@
 <?php
 
+namespace AssetCompress\Test\TestCase\Console\Command\Task;
 App::uses('ShellDispatcher', 'Console');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');

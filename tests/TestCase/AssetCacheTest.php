@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase;
 App::uses('AssetCache', 'AssetCompress.Lib');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 

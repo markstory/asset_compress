@@ -5,6 +5,7 @@
  * those searchPaths and locate assets.
  *
  */
+namespace AssetCompress;
 class AssetScanner {
 
 /**

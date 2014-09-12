@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\Routing\Filter;
 App::uses('AssetCompressor', 'AssetCompress.Routing/Filter');
 App::uses('CakeResponse', 'Network');
 App::uses('CakeRequest', 'Network');

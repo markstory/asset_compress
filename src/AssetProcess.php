@@ -3,6 +3,7 @@
  * Thin wrapper around proc_open() so Filters
  * don't have to directly fiddle with that API.
  */
+namespace AssetCompress;
 class AssetProcess {
 
 	protected $_env = null;

@@ -1,5 +1,6 @@
 <?php
 
+namespace AssetCompress\Filter;
 App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**

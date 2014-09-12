@@ -1,5 +1,6 @@
 <?php
 
+namespace AssetCompress\Routing\Filter;
 App::uses('DispatcherFilter', 'Routing');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');

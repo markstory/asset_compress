@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress;
 App::uses('AssetProcess', 'AssetCompress.Lib');
 
 /**

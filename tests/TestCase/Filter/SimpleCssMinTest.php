@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\Filter;
 App::uses('SimpleCssMin', 'AssetCompress.Filter');
 
 class SimpleCssMinTest extends CakeTestCase {

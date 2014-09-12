@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\Filter;
 App::uses('ImportInline', 'AssetCompress.Filter');
 
 class ImportInlineTest extends CakeTestCase {

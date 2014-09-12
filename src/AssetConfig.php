@@ -3,6 +3,7 @@
  * Parses the ini files AssetCompress uses into arrays that
  * other objects can use.
  */
+namespace AssetCompress;
 class AssetConfig {
 
 /**

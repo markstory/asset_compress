@@ -1,4 +1,5 @@
 <?php
+namespace AssetCompress\Test\TestCase\View\Helper;
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
 
