@@ -198,10 +198,10 @@ class AssetScanner {
 		if (empty($matches[1]) || empty($matches[2])) {
 			throw new RuntimeException('Missing required parameters');
 		}
-		if (!CakePlugin::loaded($matches[1])) {
+		if (!Plugin::loaded($matches[1])) {
 			throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
 		}
-		$path = CakePlugin::path($matches[1]);
+		$path = Plugin::path($matches[1]);
 		return array(
 			'absolute' => $path . 'webroot' . DS . $matches[2],
 			'relative' => DS . Inflector::underscore($matches[1]) . DS . $matches[2],

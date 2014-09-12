@@ -11,8 +11,7 @@ class AssetScannerTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
+		$this->_testFiles = APP;
 		$paths = array(
 			$this->_testFiles . 'js' . DS,
 			$this->_testFiles . 'js' . DS . 'classes' . DS
@@ -42,15 +41,13 @@ class AssetScannerTest extends TestCase {
 	}
 
 	public function testFindResolveThemePaths() {
-		Configure::write('App.paths.templates', [
-			$this->_testFiles . 'View' . DS
-		]);
+		Plugin::load('Blue');
 		$paths = array(
 			$this->_testFiles . 'css' . DS
 		);
 		$scanner = new AssetScanner($paths, 'Blue');
 		$result = $scanner->find('t:theme.css');
-		$expected = $this->_testFiles . 'View' . DS . 'Themed' . DS . 'Blue' . DS . 'webroot' . DS . 'theme.css';
+		$expected = $this->_testFiles . 'Plugin' . DS . 'Blue' . DS . 'webroot' . DS . 'theme.css';
 		$this->assertEquals($expected, $result);
 
 		$result = $scanner->find('theme:theme.css');
