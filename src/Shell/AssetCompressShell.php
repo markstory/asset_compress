@@ -12,7 +12,7 @@ App::uses('Folder', 'Utility');
  * Assists in clearing and creating the build files this plugin makes.
  *
  */
-class AssetCompressShell extends AppShell {
+class AssetCompressShell extends Shell {
 
 	public $tasks = array('AssetCompress.AssetBuild');
 

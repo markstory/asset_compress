@@ -5,7 +5,7 @@ App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
 
-class AssetBuildTask extends AppShell {
+class AssetBuildTask extends Shell {
 
 	protected $_Config;
 
