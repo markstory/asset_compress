@@ -6,6 +6,7 @@ use AssetCompress\View\Helper\AssetCompressHelper;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\View\View;
 use Cake\TestSuite\TestCase;
@@ -19,8 +20,7 @@ class AssetCompressHelperPluginIniTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
+		$this->_testFiles = APP;
 		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
 
 		Plugin::load('TestAssetIni');
@@ -35,7 +35,7 @@ class AssetCompressHelperPluginIniTest extends TestCase {
 		));
 
 		$controller = null;
-		$request = new Request(null, false);
+		$request = new Request();
 		$request->webroot = '';
 		$view = new View($controller);
 		$view->request = $request;

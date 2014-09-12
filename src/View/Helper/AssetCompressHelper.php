@@ -1,12 +1,13 @@
 <?php
 namespace AssetCompress\View\Helper;
 
-use App\View\Helper\AppHelper;
 use AssetCompress\AssetCache;
 use AssetCompress\AssetConfig;
 use AssetCompress\AssetScanner;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
+use Cake\View\Helper;
+
 /**
  * AssetCompress Helper.
  *
@@ -14,7 +15,7 @@ use Cake\Utility\Hash;
  * compressing asset files.
  *
  */
-class AssetCompressHelper extends AppHelper {
+class AssetCompressHelper extends Helper {
 
 /**
  * Helpers used.
