@@ -2,6 +2,10 @@
 namespace AssetCompress;
 
 use AssetCompress\AssetFilter;
+use Cake\Core\App;
+use Exception;
+use RuntimeException;
+
 /**
  * A collection for creating and interacting with filter sets.
  *
@@ -31,12 +35,9 @@ class AssetFilterCollection {
  */
 	protected function _buildFilters($filters, $settings) {
 		foreach ($filters as $className) {
-			list($plugin, $className) = pluginSplit($className, true);
+			$className = App::className($className, 'Filter');
 			if (!class_exists($className)) {
-				/* TODO: App::uses($className, 'AssetCompress.Lib/Filter'); */
-				if (!class_exists($className)) {
-					/* TODO: App::uses($className, $plugin . 'AssetCompress/Filter'); */
-				}
+				$className = App::className('AssetCompress.' . $className, 'Filter');
 			}
 			if (!class_exists($className)) {
 				throw new Exception(sprintf('Cannot not load filter "%s".', $plugin . $className));

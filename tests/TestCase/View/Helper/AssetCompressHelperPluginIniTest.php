@@ -1,11 +1,14 @@
 <?php
 namespace AssetCompress\Test\TestCase\View\Helper;
+
 use AssetCompress\AssetConfig;
 use AssetCompress\View\Helper\AssetCompressHelper;
-
-use App\View\Helper\HtmlHelper;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Routing\Router;
 use Cake\View\View;
-
+use Cake\TestSuite\TestCase;
 
 class AssetCompressHelperPluginIniTest extends TestCase {
 
@@ -16,13 +19,10 @@ class AssetCompressHelperPluginIniTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
 
-		App::build(array(
-			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
-		));
 		Plugin::load('TestAssetIni');
 
 		AssetConfig::clearAllCachedKeys();
@@ -42,7 +42,6 @@ class AssetCompressHelperPluginIniTest extends TestCase {
 		$this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
 		$this->Helper->config($Config);
-		$this->Helper->Html = new HtmlHelper($view);
 
 		Router::reload();
 		Configure::write('debug', 2);

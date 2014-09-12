@@ -4,6 +4,10 @@
  * other objects can use.
  */
 namespace AssetCompress;
+
+use Cake\Cache\Cache;
+use RuntimeException;
+
 class AssetConfig {
 
 /**

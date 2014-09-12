@@ -3,6 +3,8 @@ namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetCache;
 use AssetCompress\AssetConfig;
+use Cake\TestSuite\TestCase;
+
 class AssetCacheTest extends TestCase {
 
 	public function setUp() {

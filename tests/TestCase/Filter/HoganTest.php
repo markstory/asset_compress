@@ -2,11 +2,14 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\Hogan;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 class HoganTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->_path = $this->_pluginPath . 'Test/test_files/hogan/';
 
 		$this->filter = new Hogan();

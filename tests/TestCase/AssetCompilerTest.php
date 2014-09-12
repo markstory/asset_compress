@@ -3,12 +3,16 @@ namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 class AssetCompilerTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
+		$this->_pluginPath = Plugin::path('AssetCompress');
+		$this->_testFiles = Plugin::path('AssetCompress') . 'Test' . DS . 'test_files' . DS;
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 		$this->_pluginConfig = $this->_testFiles . 'Config' . DS . 'plugins.ini';
 

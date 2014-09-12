@@ -19,7 +19,7 @@ class ClosureJs extends AssetFilter {
  */
 	protected $_settings = array(
 		'path' => 'closure/compiler.jar',
-		'warning_level' => 'QUIET' //Supress warnings by default
+		'warning_level' => 'QUIET' // Supress warnings by default
 	);
 
 /**
@@ -32,7 +32,7 @@ class ClosureJs extends AssetFilter {
  */
 	public function output($filename, $input) {
 		$output = null;
-		$jar = $this->_findExecutable(App::path('vendors'), $this->_settings['path']);
+		$jar = $this->_findExecutable(ROOT . 'vendor', $this->_settings['path']);
 
 		//Closure works better if you specify an input file. Also supress warnings by default
 		$tmpFile = tempnam(TMP, 'CLOSURE');

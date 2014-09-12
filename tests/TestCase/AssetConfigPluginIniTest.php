@@ -2,6 +2,11 @@
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetConfig;
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 /**
  * AssetConfig test for plugins
  */
@@ -14,14 +19,11 @@ class AssetConfigPluginIniTest extends TestCase {
 			'engine' => 'File'
 		));
 
-		$this->_pluginPath = App::pluginPath('AssetCompress');
-		$this->_testFiles = App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS;
+		$this->_pluginPath = Plugin::path('AssetCompress');
+		$this->_testFiles = Plugin::path('AssetCompress') . 'Test' . DS . 'test_files' . DS;
 		$this->testConfig = $this->_testFiles . 'Config' . DS . 'config.ini';
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 
-		App::build(array(
-			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
-		));
 		Plugin::load('TestAssetIni');
 
 		AssetConfig::clearAllCachedKeys();

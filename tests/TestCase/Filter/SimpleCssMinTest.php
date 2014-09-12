@@ -2,11 +2,14 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\SimpleCssMin;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 class SimpleCssMinTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->_cssDir = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS;
 		$this->filter = new SimpleCssMin();
 	}

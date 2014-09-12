@@ -1,3 +1,5 @@
 <?php
-namespace AssetCompress\config;
-Configure::write('Dispatcher.filters.asset_compress', 'AssetCompress.AssetCompressor');
+
+use Cake\Routing\DispatcherFactory;
+
+DispatcherFactory::add('AssetCompress.AssetCompressor');

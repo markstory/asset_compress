@@ -2,11 +2,15 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\Sprockets;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 class SprocketsTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
 		$this->_jsDir = $this->_testFiles . 'js' . DS;
 
@@ -73,10 +77,6 @@ TEXT;
 	}
 
 	public function testThemeAndPluginInclusion() {
-		App::build(array(
-			'Plugin' => array($this->_testFiles . 'Plugin' . DS),
-			'View' => array($this->_testFiles . 'View' . DS),
-		));
 		Plugin::load('TestAsset');
 
 		$settings = array(

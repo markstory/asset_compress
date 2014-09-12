@@ -2,30 +2,34 @@
 namespace AssetCompress\Test\TestCase\Routing\Filter;
 
 use AssetCompress\AssetConfig;
-use AssetCompress\Routing\Filter\AssetCompressor;
+use AssetCompress\Routing\Filter\AssetCompressorFilter;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\TestSuite\TestCase;
+
 class AssetsCompressorTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->testConfig = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'integration.ini';
 
 		$map = array(
 			'TEST_FILES/' => $this->_pluginPath . 'Test' . DS . 'test_files' . DS
 		);
-		App::build(array(
-			'Plugin' => array($map['TEST_FILES/'] . 'Plugin' . DS )
-		));
 		Plugin::load('TestAssetIni');
 
 		AssetConfig::clearAllCachedKeys();
 
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
-		$this->Compressor = $this->getMock('AssetCompressor', array('_getConfig'));
+		$this->Compressor = $this->getMock(
+			'AssetCompress\Routing\Filter\AssetCompressorFilter',
+			array('_getConfig')
+		);
 		$this->Compressor->expects($this->atLeastOnce())
 			->method('_getConfig')
 			->will($this->returnValue($config));

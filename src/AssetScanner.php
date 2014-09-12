@@ -1,11 +1,16 @@
 <?php
+namespace AssetCompress;
+
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
+
 /**
  * Used for dynamic build files where a set of searchPaths
  * are declared in the config file. This class allows you search through
  * those searchPaths and locate assets.
  *
  */
-namespace AssetCompress;
 class AssetScanner {
 
 /**
@@ -176,7 +181,7 @@ class AssetScanner {
 	protected function _expandTheme($file) {
 		$file = preg_replace(self::THEME_PATTERN, '', $file);
 		return array(
-			'absolute' => App::themePath($this->_theme) . 'webroot' . DS . $file,
+			'absolute' => Plugin::path($this->_theme) . 'webroot' . DS . $file,
 			'relative' => DS . 'theme' . DS . Inflector::underscore($this->_theme) . DS . $file,
 		);
 	}

@@ -2,16 +2,15 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ImportInline;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 class ImportInlineTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->_testFiles = $this->_pluginPath . 'Test/test_files/';
-
-		App::build(array(
-			'View' => array($this->_testFiles . 'View' . DS)
-		));
 
 		$this->filter = new ImportInline();
 		$settings = array(

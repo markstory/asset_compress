@@ -1,12 +1,13 @@
 <?php
-
-namespace AssetCompress\Test\TestCase\Console\Command\Task;
+namespace AssetCompress\Test\TestCase\Shell\Task;
 
 use AssetCompress\Console\Command\Task\AssetBuildTask;
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
+use Cake\TestSuite\TestCase;
+
 class AssetBuildTaskTest extends TestCase {
 
 	public function setUp() {

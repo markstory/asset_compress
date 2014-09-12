@@ -3,6 +3,8 @@ namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetFilter;
 use AssetCompress\AssetFilterCollection;
+use Cake\TestSuite\TestCase;
+
 class AssetFilterCollectionTest extends TestCase {
 
 	public function testBuildingFilters() {

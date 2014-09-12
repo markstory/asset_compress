@@ -6,7 +6,8 @@ use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
 use Cake\Routing\DispatcherFilter;
-class AssetCompressor extends DispatcherFilter {
+
+class AssetCompressorFilter extends DispatcherFilter {
 
 /**
  * Filter priority, we need it to run before router

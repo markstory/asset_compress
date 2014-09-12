@@ -1,6 +1,9 @@
 <?php
 namespace AssetCompress;
 
+use Cake\Cache\Cache;
+use RuntimeException;
+
 use AssetCompress\AssetScanner;
 /**
  * Writes compiled assets to the filesystem

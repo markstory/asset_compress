@@ -2,11 +2,14 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\TimestampImage;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
+
 class TimestampImageTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = App::pluginPath('AssetCompress');
+		$this->_pluginPath = Plugin::path('AssetCompress');
 		$this->_testPath = $this->_pluginPath . 'Test/test_files/css/';
 
 		$this->filter = new TimestampImage();
