@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
 /**
  * Provides precompilation for mustache templates
  * with Hogan.js. Compiled templates will be inserted

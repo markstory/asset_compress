@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase\Filter;
-App::uses('ClosureJs', 'AssetCompress.Filter');
 
+use AssetCompress\Filter\ClosureJs;
 class ClosureJsTest extends CakeTestCase {
 
 	public function testCommand() {

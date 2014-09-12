@@ -1,8 +1,8 @@
 <?php
 
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
 /**
  * Pre-processing filter that adds support for LESS.css files.
  *

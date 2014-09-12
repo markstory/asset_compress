@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
 /**
  * Output minifier for uglify-j
  *

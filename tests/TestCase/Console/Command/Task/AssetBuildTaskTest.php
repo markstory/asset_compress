@@ -1,12 +1,12 @@
 <?php
 
 namespace AssetCompress\Test\TestCase\Console\Command\Task;
-App::uses('ShellDispatcher', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
-App::uses('AssetBuildTask', 'AssetCompress.Console/Command/Task');
 
+use AssetCompress\Console\Command\Task\AssetBuildTask;
+use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleOutput;
+use Cake\Console\Shell;
+use Cake\Console\ShellDispatcher;
 class AssetBuildTaskTest extends CakeTestCase {
 
 	public function setUp() {

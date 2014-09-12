@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase;
-App::uses('AssetConfig', 'AssetCompress.Lib');
 
+use AssetCompress\AssetConfig;
 /**
  * AssetConfig test for plugins
  */
@@ -22,7 +22,7 @@ class AssetConfigPluginIniTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestAssetIni');
+		Plugin::load('TestAssetIni');
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
@@ -30,7 +30,7 @@ class AssetConfigPluginIniTest extends CakeTestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		CakePlugin::unload('TestAssetIni');
+		Plugin::unload('TestAssetIni');
 	}
 
 	public function testPluginIni() {

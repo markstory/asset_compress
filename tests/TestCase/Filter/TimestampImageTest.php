@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase\Filter;
-App::uses('TimestampImage', 'AssetCompress.Filter');
 
+use AssetCompress\Filter\TimestampImage;
 class TimestampImageTest extends CakeTestCase {
 
 	public function setUp() {

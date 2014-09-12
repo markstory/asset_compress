@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress;
-App::uses('AssetFilter', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
 /**
  * A collection for creating and interacting with filter sets.
  *
@@ -33,9 +33,9 @@ class AssetFilterCollection {
 		foreach ($filters as $className) {
 			list($plugin, $className) = pluginSplit($className, true);
 			if (!class_exists($className)) {
-				App::uses($className, 'AssetCompress.Lib/Filter');
+				/* TODO: App::uses($className, 'AssetCompress.Lib/Filter'); */
 				if (!class_exists($className)) {
-					App::uses($className, $plugin . 'AssetCompress/Filter');
+					/* TODO: App::uses($className, $plugin . 'AssetCompress/Filter'); */
 				}
 			}
 			if (!class_exists($className)) {

@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
 /**
  * Adds timestamp querystrings to all background images in CSS files.
  * This helps with cachebusting CSS sprites. This is useful in

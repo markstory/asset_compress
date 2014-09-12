@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress;
-App::uses('AssetScanner', 'AssetCompress.Lib');
-App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilterCollection;
+use AssetCompress\AssetScanner;
 /**
  * Compiles a set of assets together, and applies filters.
  * Forms the center of AssetCompress

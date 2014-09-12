@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase\Filter;
-App::uses('Hogan', 'AssetCompress.Filter');
 
+use AssetCompress\Filter\Hogan;
 class HoganTest extends CakeTestCase {
 
 	public function setUp() {

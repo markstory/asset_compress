@@ -1,11 +1,11 @@
 <?php
 namespace AssetCompress\Shell;
-App::uses('AppShell', 'Console/Command');
-App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCompiler', 'AssetCompress.Lib');
-App::uses('AssetCache', 'AssetCompress.Lib');
 
-App::uses('Folder', 'Utility');
+use App\Console\Command\AppShell;
+use AssetCompress\AssetCache;
+use AssetCompress\AssetCompiler;
+use AssetCompress\AssetConfig;
+use Cake\Utility\Folder;
 
 /**
  * Asset Compress Shell

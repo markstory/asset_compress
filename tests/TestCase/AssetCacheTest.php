@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\Test\TestCase;
-App::uses('AssetCache', 'AssetCompress.Lib');
-App::uses('AssetConfig', 'AssetCompress.Lib');
 
+use AssetCompress\AssetCache;
+use AssetCompress\AssetConfig;
 class AssetCacheTest extends CakeTestCase {
 
 	public function setUp() {

@@ -1,11 +1,11 @@
 <?php
 namespace AssetCompress\Test\TestCase\Routing\Filter;
-App::uses('AssetCompressor', 'AssetCompress.Routing/Filter');
-App::uses('CakeResponse', 'Network');
-App::uses('CakeRequest', 'Network');
-App::uses('CakeEvent', 'Event');
-App::uses('AssetConfig', 'AssetCompress.Lib');
 
+use AssetCompress\AssetConfig;
+use AssetCompress\Routing\Filter\AssetCompressor;
+use Cake\Event\Event;
+use Cake\Network\Request;
+use Cake\Network\Response;
 class AssetsCompressorTest extends CakeTestCase {
 
 	public function setUp() {
@@ -19,7 +19,7 @@ class AssetsCompressorTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array($map['TEST_FILES/'] . 'Plugin' . DS )
 		));
-		CakePlugin::load('TestAssetIni');
+		Plugin::load('TestAssetIni');
 
 		AssetConfig::clearAllCachedKeys();
 
@@ -30,14 +30,14 @@ class AssetsCompressorTest extends CakeTestCase {
 			->method('_getConfig')
 			->will($this->returnValue($config));
 
-		$this->request = new CakeRequest(null, false);
-		$this->response = $this->getMock('CakeResponse', array('checkNotModified', 'type', 'send'));
+		$this->request = new Request(null, false);
+		$this->response = $this->getMock('Response', array('checkNotModified', 'type', 'send'));
 		Configure::write('debug', 2);
 	}
 
 	public function tearDown() {
 		parent::tearDown();
-		CakePlugin::unload('TestAssetIni');
+		Plugin::unload('TestAssetIni');
 	}
 
 	public function testDynamicBuildFile() {
@@ -48,7 +48,7 @@ class AssetsCompressorTest extends CakeTestCase {
 		$this->request->url = 'cache_js/dynamic.js';
 		$this->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$data = array('request' => $this->request, 'response' => $this->response);
-		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$event = new Event('Dispatcher.beforeDispatch', $this, $data);
 		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
 		$this->assertRegExp('/function test/', $this->response->body());
@@ -63,7 +63,7 @@ class AssetsCompressorTest extends CakeTestCase {
 
 		$this->request->url = 'cache_js/TestAssetIni.libs.js';
 		$data = array('request' => $this->request, 'response' => $this->response);
-		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$event = new Event('Dispatcher.beforeDispatch', $this, $data);
 		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
 		$this->assertRegExp('/var BaseClass = new Class/', $this->response->body());
@@ -80,7 +80,7 @@ class AssetsCompressorTest extends CakeTestCase {
 		$this->request->url = 'cache_js/dynamic.js';
 		$this->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$data = array('request' => $this->request, 'response' => $this->response);
-		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$event = new Event('Dispatcher.beforeDispatch', $this, $data);
 		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
 		$this->assertEquals('', $this->response->body());
@@ -95,7 +95,7 @@ class AssetsCompressorTest extends CakeTestCase {
 	public function testDynamicBuildFileDebugOff() {
 		Configure::write('debug', 0);
 		$data = array('request' => $this->request, 'response' => $this->response);
-		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$event = new Event('Dispatcher.beforeDispatch', $this, $data);
 		$this->request->url = 'cache_js/dynamic.js';
 		$this->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$this->assertEmpty($this->Compressor->beforeDispatch($event));

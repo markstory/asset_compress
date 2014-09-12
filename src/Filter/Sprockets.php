@@ -1,9 +1,9 @@
 <?php
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
-App::uses('AssetScanner', 'AssetCompress.Lib');
-App::uses('Hash', 'Utility');
 
+use AssetCompress\AssetFilter;
+use AssetCompress\AssetScanner;
+use Cake\Utility\Hash;
 /**
  * Implements directive replacement similar to sprockets <http://getsprockets.org>
  * Does not implement the //= provides syntax.

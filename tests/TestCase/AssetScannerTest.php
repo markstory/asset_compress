@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase;
-App::uses('AssetScanner', 'AssetCompress.Lib');
 
+use AssetCompress\AssetScanner;
 class AssetScannerTest extends CakeTestCase {
 
 	public function setUp() {
@@ -63,7 +63,7 @@ class AssetScannerTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestAsset');
+		Plugin::load('TestAsset');
 
 		$paths = array(
 			$this->_testFiles . 'css' . DS

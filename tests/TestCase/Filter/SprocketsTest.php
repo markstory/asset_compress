@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase\Filter;
-App::uses('Sprockets', 'AssetCompress.Filter');
 
+use AssetCompress\Filter\Sprockets;
 class SprocketsTest extends CakeTestCase {
 
 	public function setUp() {
@@ -77,7 +77,7 @@ TEXT;
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS),
 			'View' => array($this->_testFiles . 'View' . DS),
 		));
-		CakePlugin::load('TestAsset');
+		Plugin::load('TestAsset');
 
 		$settings = array(
 			'paths' => array(),

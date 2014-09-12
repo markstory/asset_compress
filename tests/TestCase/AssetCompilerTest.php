@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\Test\TestCase;
-App::uses('AssetCompiler', 'AssetCompress.Lib');
-App::uses('AssetConfig', 'AssetCompress.Lib');
 
+use AssetCompress\AssetCompiler;
+use AssetCompress\AssetConfig;
 class AssetCompilerTest extends CakeTestCase {
 
 	public function setUp() {
@@ -148,7 +148,7 @@ TEXT;
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestAsset');
+		Plugin::load('TestAsset');
 
 		$Config = AssetConfig::buildFromIniFile($this->_pluginConfig);
 		$Config->paths('css', null, array(

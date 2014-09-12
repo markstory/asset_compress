@@ -1,10 +1,10 @@
 <?php
 namespace AssetCompress\Test\TestCase\View\Helper;
-App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
+use AssetCompress\AssetConfig;
+use AssetCompress\View\Helper\AssetCompressHelper;
 
-App::uses('HtmlHelper', 'View/Helper');
-App::uses('View', 'View');
+use App\View\Helper\HtmlHelper;
+use Cake\View\View;
 
 
 class AssetCompressHelperPluginIniTest extends CakeTestCase {
@@ -23,7 +23,7 @@ class AssetCompressHelperPluginIniTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestAssetIni');
+		Plugin::load('TestAssetIni');
 
 		AssetConfig::clearAllCachedKeys();
 
@@ -35,7 +35,7 @@ class AssetCompressHelperPluginIniTest extends CakeTestCase {
 		));
 
 		$controller = null;
-		$request = new CakeRequest(null, false);
+		$request = new Request(null, false);
 		$request->webroot = '';
 		$view = new View($controller);
 		$view->request = $request;
@@ -63,7 +63,7 @@ class AssetCompressHelperPluginIniTest extends CakeTestCase {
 		@unlink(TMP . AssetConfig::BUILD_TIME_FILE);
 		// @codingStandardsIgnoreEnd
 
-		CakePlugin::unload('TestAssetIni');
+		Plugin::unload('TestAssetIni');
 	}
 
 	public function testUrlGenerationProductionModePluginIni() {

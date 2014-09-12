@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase;
-App::uses('AssetConfig', 'AssetCompress.Lib');
 
+use AssetCompress\AssetConfig;
 class AssetConfigTest extends CakeTestCase {
 
 	public function setUp() {

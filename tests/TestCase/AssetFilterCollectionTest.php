@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\Test\TestCase;
-App::uses('AssetFilter', 'AssetCompress.Lib');
-App::uses('AssetFilterCollection', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
+use AssetCompress\AssetFilterCollection;
 class AssetFilterCollectionTest extends CakeTestCase {
 
 	public function testBuildingFilters() {

@@ -1,11 +1,11 @@
 <?php
 
 namespace AssetCompress\Routing\Filter;
-App::uses('DispatcherFilter', 'Routing');
-App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCompiler', 'AssetCompress.Lib');
-App::uses('AssetCache', 'AssetCompress.Lib');
 
+use AssetCompress\AssetCache;
+use AssetCompress\AssetCompiler;
+use AssetCompress\AssetConfig;
+use Cake\Routing\DispatcherFilter;
 class AssetCompressor extends DispatcherFilter {
 
 /**
@@ -25,11 +25,11 @@ class AssetCompressor extends DispatcherFilter {
 /**
  * Checks if request is for a compiled asset, otherwise skip any operation
  *
- * @param CakeEvent $event containing the request and response object
+ * @param Event $event containing the request and response object
  * @throws NotFoundException
- * @return CakeResponse if the client is requesting a recognized asset, null otherwise
+ * @return Response if the client is requesting a recognized asset, null otherwise
  */
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 		$url = $event->data['request']->url;
 		$Config = $this->_getConfig();
 		$production = !Configure::read('debug');

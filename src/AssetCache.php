@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress;
-App::uses('AssetScanner', 'AssetCompress.Lib');
 
+use AssetCompress\AssetScanner;
 /**
  * Writes compiled assets to the filesystem
  * with optional timestamps.

@@ -1,11 +1,11 @@
 <?php
 namespace AssetCompress\Shell\Task;
-App::uses('AppShell', 'Console/Command');
-App::uses('Folder', 'Utility');
-App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCompiler', 'AssetCompress.Lib');
-App::uses('AssetCache', 'AssetCompress.Lib');
 
+use App\Console\Command\AppShell;
+use AssetCompress\AssetCache;
+use AssetCompress\AssetCompiler;
+use AssetCompress\AssetConfig;
+use Cake\Utility\Folder;
 class AssetBuildTask extends Shell {
 
 	protected $_Config;

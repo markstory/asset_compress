@@ -1,10 +1,10 @@
 <?php
 namespace AssetCompress\Test\TestCase\View\Helper;
-App::uses('AssetConfig', 'AssetCompress.Lib');
-App::uses('AssetCompressHelper', 'AssetCompress.View/Helper');
 
-App::uses('HtmlHelper', 'View/Helper');
-App::uses('View', 'View');
+use App\View\Helper\HtmlHelper;
+use AssetCompress\AssetConfig;
+use AssetCompress\View\Helper\AssetCompressHelper;
+use Cake\View\View;
 
 class AssetCompressHelperTest extends CakeTestCase {
 
@@ -29,7 +29,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 		));
 
 		$controller = null;
-		$request = new CakeRequest(null, false);
+		$request = new Request(null, false);
 		$request->webroot = '';
 		$view = new View($controller);
 		$view->request = $request;
@@ -425,7 +425,7 @@ class AssetCompressHelperTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array($this->_testFiles . 'Plugin' . DS)
 		));
-		CakePlugin::load('TestAsset');
+		Plugin::load('TestAsset');
 
 		$config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config/plugins.ini');
 		$config->paths('css', null, array(

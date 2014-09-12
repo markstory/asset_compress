@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
 /**
  * SimpleCssMin filter.
  * Easily compresses CSS files. Allows to avoid problems that some minifiers have

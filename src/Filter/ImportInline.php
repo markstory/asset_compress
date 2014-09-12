@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\Filter;
-App::uses('AssetFilter', 'AssetCompress.Lib');
-App::uses('AssetScanner', 'AssetCompress.Lib');
 
+use AssetCompress\AssetFilter;
+use AssetCompress\AssetScanner;
 /**
  * A preprocessor that inlines files referenced by
  * @import() statements in css files.
