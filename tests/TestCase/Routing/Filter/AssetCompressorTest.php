@@ -6,7 +6,7 @@ use AssetCompress\Routing\Filter\AssetCompressor;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
-class AssetsCompressorTest extends CakeTestCase {
+class AssetsCompressorTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

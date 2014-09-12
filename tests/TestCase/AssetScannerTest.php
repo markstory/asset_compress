@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetScanner;
-class AssetScannerTest extends CakeTestCase {
+class AssetScannerTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

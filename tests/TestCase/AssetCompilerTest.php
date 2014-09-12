@@ -3,7 +3,7 @@ namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
-class AssetCompilerTest extends CakeTestCase {
+class AssetCompilerTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

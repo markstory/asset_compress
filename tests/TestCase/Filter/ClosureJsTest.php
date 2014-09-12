@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ClosureJs;
-class ClosureJsTest extends CakeTestCase {
+class ClosureJsTest extends TestCase {
 
 	public function testCommand() {
 		$Filter = $this->getMock('ClosureJs', array('_findExecutable', '_runCmd'));

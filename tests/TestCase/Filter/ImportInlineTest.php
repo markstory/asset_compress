@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ImportInline;
-class ImportInlineTest extends CakeTestCase {
+class ImportInlineTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

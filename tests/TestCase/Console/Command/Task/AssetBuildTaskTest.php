@@ -7,7 +7,7 @@ use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
-class AssetBuildTaskTest extends CakeTestCase {
+class AssetBuildTaskTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

@@ -5,7 +5,7 @@ use AssetCompress\AssetConfig;
 /**
  * AssetConfig test for plugins
  */
-class AssetConfigPluginIniTest extends CakeTestCase {
+class AssetConfigPluginIniTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

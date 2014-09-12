@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ScssFilter;
-class ScssFilterTest extends CakeTestCase {
+class ScssFilterTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

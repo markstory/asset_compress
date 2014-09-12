@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\Hogan;
-class HoganTest extends CakeTestCase {
+class HoganTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

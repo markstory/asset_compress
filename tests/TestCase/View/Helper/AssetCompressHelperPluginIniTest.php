@@ -7,7 +7,7 @@ use App\View\Helper\HtmlHelper;
 use Cake\View\View;
 
 
-class AssetCompressHelperPluginIniTest extends CakeTestCase {
+class AssetCompressHelperPluginIniTest extends TestCase {
 
 /**
  * start a test

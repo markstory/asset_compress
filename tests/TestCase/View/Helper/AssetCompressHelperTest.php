@@ -6,7 +6,7 @@ use AssetCompress\AssetConfig;
 use AssetCompress\View\Helper\AssetCompressHelper;
 use Cake\View\View;
 
-class AssetCompressHelperTest extends CakeTestCase {
+class AssetCompressHelperTest extends TestCase {
 
 /**
  * start a test

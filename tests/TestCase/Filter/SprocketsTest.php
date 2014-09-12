@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\Sprockets;
-class SprocketsTest extends CakeTestCase {
+class SprocketsTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

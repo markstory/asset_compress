@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\TimestampImage;
-class TimestampImageTest extends CakeTestCase {
+class TimestampImageTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

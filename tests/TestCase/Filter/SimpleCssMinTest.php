@@ -2,7 +2,7 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\SimpleCssMin;
-class SimpleCssMinTest extends CakeTestCase {
+class SimpleCssMinTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
