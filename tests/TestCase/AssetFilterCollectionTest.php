@@ -8,12 +8,12 @@ use Cake\TestSuite\TestCase;
 class AssetFilterCollectionTest extends TestCase {
 
 	public function testBuildingFilters() {
-		$filters = array('AssetFilter');
+		$filters = array('ImportInline');
 		$settings = array(
 			'paths' => array()
 		);
 		$Filters = new AssetFilterCollection($filters, $settings, array());
-		$this->assertTrue($Filters->has('AssetFilter'));
+		$this->assertTrue($Filters->has('AssetCompress\Filter\ImportInline'));
 		$this->assertFalse($Filters->has('Boogers'));
 	}
 
@@ -23,12 +23,12 @@ class AssetFilterCollectionTest extends TestCase {
 			__NAMESPACE__ . '\TestFilterTwo'
 		);
 		$settings = array(
-			'TestFilterOne' => array(
+			__NAMESPACE__ . '\TestFilterOne' => array(
 				'key' => 'value'
 			)
 		);
 		$Filters = new AssetFilterCollection($filters, array(), $settings);
-		$result = $Filters->get('TestFilterOne');
+		$result = $Filters->get(__NAMESPACE__ . '\TestFilterOne');
 		$this->assertEquals(array('key' => 'value'), $result->settings);
 	}
 
