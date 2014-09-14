@@ -258,7 +258,7 @@ class AssetConfigTest extends TestCase {
 		$this->assertEquals('', $result);
 
 		$result = $this->config->theme();
-		$this->assertEquals('red', $result);
+		$this->assertEquals('Red', $result);
 	}
 
 	public function testIsThemed() {

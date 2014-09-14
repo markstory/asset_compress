@@ -2,6 +2,7 @@
 namespace AssetCompress;
 
 use Cake\Cache\Cache;
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 use AssetCompress\AssetScanner;
@@ -196,7 +197,7 @@ class AssetCache {
 	public function buildFileName($target, $timestamp = true) {
 		$file = $target;
 		if ($this->_Config->isThemed($target)) {
-			$file = $this->_Config->theme() . '-' . $target;
+			$file = Inflector::underscore($this->_Config->theme()) . '-' . $target;
 		}
 		if ($timestamp) {
 			$time = $this->getTimestamp($target);

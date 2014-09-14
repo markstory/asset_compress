@@ -7,6 +7,7 @@ namespace AssetCompress;
 
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 class AssetConfig {
@@ -545,7 +546,7 @@ class AssetConfig {
 		if ($theme === null) {
 			return isset($this->_data['theme']) ? $this->_data['theme'] : '';
 		}
-		$this->_data['theme'] = $theme;
+		$this->_data['theme'] = Inflector::camelize($theme);
 	}
 
 /**

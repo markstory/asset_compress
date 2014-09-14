@@ -80,6 +80,8 @@ TEXT;
 	}
 
 	public function testCombineThemeFile() {
+		Plugin::load('Blue');
+
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', null, array(
 			APP . DS . 'css' . DS . '**'
@@ -97,9 +99,12 @@ TEXT;
 	}
 
 	public function testMultipleThemeGeneration() {
+		Plugin::load('Blue');
+		Plugin::load('Red');
+
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', null, array(
-			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
+			APP . 'css' . DS . '**'
 		));
 		$Config->theme('blue');
 		$Compiler = new AssetCompiler($Config);
@@ -117,9 +122,10 @@ TEXT;
 	}
 
 	public function testCombineThemeFileWithNonTheme() {
+		Plugin::load('Red');
 		$Config = AssetConfig::buildFromIniFile($this->_themeConfig);
 		$Config->paths('css', null, array(
-			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
+			APP . 'css' . DS . '**'
 		));
 		$Config->theme('red');
 		$Compiler = new AssetCompiler($Config);
@@ -143,7 +149,7 @@ TEXT;
 
 		$Config = AssetConfig::buildFromIniFile($this->_pluginConfig);
 		$Config->paths('css', null, array(
-			$this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . '**'
+			APP . 'css' . DS . '**'
 		));
 		$Compiler = new AssetCompiler($Config);
 
