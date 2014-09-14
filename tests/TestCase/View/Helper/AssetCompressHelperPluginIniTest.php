@@ -21,7 +21,7 @@ class AssetCompressHelperPluginIniTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->_testFiles = APP;
-		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
+		$testFile = $this->_testFiles . 'config' . DS . 'config.ini';
 
 		Plugin::load('TestAssetIni');
 
