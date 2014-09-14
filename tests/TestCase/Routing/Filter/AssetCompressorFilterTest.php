@@ -14,7 +14,7 @@ class AssetsCompressorTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->testConfig = APP . 'Config' . DS . 'integration.ini';
+		$this->testConfig = APP . 'config' . DS . 'integration.ini';
 
 		$map = array(
 			'TEST_FILES/' => APP

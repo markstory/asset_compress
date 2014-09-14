@@ -12,10 +12,10 @@ class AssetCompilerTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->_testFiles = APP;
-		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
-		$this->_pluginConfig = $this->_testFiles . 'Config' . DS . 'plugins.ini';
+		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
+		$this->_pluginConfig = $this->_testFiles . 'config' . DS . 'plugins.ini';
 
-		$testFile = $this->_testFiles . 'Config' . DS . 'config.ini';
+		$testFile = $this->_testFiles . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($testFile);

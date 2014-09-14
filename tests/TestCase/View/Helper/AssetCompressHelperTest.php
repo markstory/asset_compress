@@ -399,7 +399,7 @@ class AssetCompressHelperTest extends TestCase {
 	public function testRawAssetsPlugin() {
 		Plugin::load('TestAsset');
 
-		$config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config/plugins.ini');
+		$config = AssetConfig::buildFromIniFile($this->_testFiles . 'config/plugins.ini');
 		$config->paths('css', null, array(
 			$this->_testFiles . 'css' . DS
 		));
