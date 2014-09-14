@@ -14,7 +14,7 @@ class ClosureJsTest extends TestCase {
 			->will($this->returnValue('closure/compiler.jar'));
 		$Filter->expects($this->at(1))
 			->method('_runCmd')
-			->with($this->matchesRegularExpression('/java -jar "closure\/compiler\.jar" --js=(.*)\/tmp\/CLOSURE(.*) --warning_level=QUIET/'));
+			->with($this->matchesRegularExpression('/java -jar "closure\/compiler\.jar" --js=(.*)\/CLOSURE(.*) --warning_level=QUIET/'));
 		$Filter->output('file.js', 'var a = 1;');
 
 		$Filter->expects($this->at(0))
@@ -22,7 +22,7 @@ class ClosureJsTest extends TestCase {
 			->will($this->returnValue('closure/compiler.jar'));
 		$Filter->expects($this->at(1))
 			->method('_runCmd')
-			->with($this->matchesRegularExpression('/java -jar "closure\/compiler\.jar" --js=(.*)\/tmp\/CLOSURE(.*) --warning_level=QUIET --language_in=ECMASCRIPT5/'));
+			->with($this->matchesRegularExpression('/java -jar "closure\/compiler\.jar" --js=(.*)\/CLOSURE(.*) --warning_level=QUIET --language_in=ECMASCRIPT5/'));
 		$Filter->settings(array('language_in' => 'ECMASCRIPT5'));
 		$Filter->output('file.js', 'var a = 1;');
 	}

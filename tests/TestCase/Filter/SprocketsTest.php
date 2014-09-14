@@ -10,8 +10,7 @@ class SprocketsTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = $this->_pluginPath . 'Test' . DS . 'test_files' . DS;
+		$this->_testFiles = APP;
 		$this->_jsDir = $this->_testFiles . 'js' . DS;
 
 		$this->filter = new Sprockets();
@@ -78,6 +77,7 @@ TEXT;
 
 	public function testThemeAndPluginInclusion() {
 		Plugin::load('TestAsset');
+		Plugin::load('Red');
 
 		$settings = array(
 			'paths' => array(),
@@ -85,7 +85,7 @@ TEXT;
 		);
 		$this->filter->settings($settings);
 
-		$this->_themeDir = $this->_testFiles . DS . 'View' . DS . 'Themed' . DS . $settings['theme'] . DS;
+		$this->_themeDir = $this->_testFiles . 'Plugin' . DS . $settings['theme'] . DS;
 
 		$content = file_get_contents($this->_themeDir . 'webroot' . DS . 'theme.js');
 		$result = $this->filter->input('theme.js', $content);

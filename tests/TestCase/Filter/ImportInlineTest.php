@@ -9,21 +9,19 @@ class ImportInlineTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = $this->_pluginPath . 'Test/test_files/';
-
+		Plugin::load('Red');
 		$this->filter = new ImportInline();
 		$settings = array(
 			'paths' => array(
-				$this->_pluginPath . 'Test/test_files/css/'
+				APP . 'css/'
 			),
-			'theme' => 'red',
+			'theme' => 'Red',
 		);
 		$this->filter->settings($settings);
 	}
 
 	public function testReplacement() {
-		$content = file_get_contents($this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . 'nav.css');
+		$content = file_get_contents(APP . 'css' . DS . 'nav.css');
 		$result = $this->filter->input('nav.css', $content);
 		$expected = <<<TEXT
 * {
@@ -39,7 +37,7 @@ TEXT;
 	}
 
 	public function testReplacementNestedAndTheme() {
-		$content = file_get_contents($this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS . 'has_import.css');
+		$content = file_get_contents(APP . 'css' . DS . 'has_import.css');
 		$result = $this->filter->input('has_import.css', $content);
 		$expected = <<<TEXT
 * {

@@ -9,8 +9,7 @@ class ScssFilterTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_cssDir = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'css' . DS;
+		$this->_cssDir = APP . 'css' . DS;
 		$this->filter = new ScssFilter();
 	}
 

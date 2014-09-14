@@ -55,9 +55,6 @@ class AssetCompressHelperTest extends TestCase {
 
 		AssetConfig::clearAllCachedKeys();
 		Cache::drop(AssetConfig::CACHE_CONFIG);
-		// @codingStandardsIgnoreStart
-		@unlink(TMP . AssetConfig::BUILD_TIME_FILE);
-		// @codingStandardsIgnoreEnd
 	}
 
 /**

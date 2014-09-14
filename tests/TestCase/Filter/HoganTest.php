@@ -9,8 +9,7 @@ class HoganTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_path = $this->_pluginPath . 'Test/test_files/hogan/';
+		$this->_path = APP . '/hogan/';
 
 		$this->filter = new Hogan();
 		$settings = array(

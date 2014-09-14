@@ -4,6 +4,7 @@ namespace AssetCompress;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use RuntimeException;
 
 /**
  * Used for dynamic build files where a set of searchPaths

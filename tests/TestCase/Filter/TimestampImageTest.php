@@ -9,8 +9,7 @@ class TimestampImageTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testPath = $this->_pluginPath . 'Test/test_files/css/';
+		$this->_testPath = APP . 'css/';
 
 		$this->filter = new TimestampImage();
 	}

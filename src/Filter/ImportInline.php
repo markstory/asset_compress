@@ -4,6 +4,7 @@ namespace AssetCompress\Filter;
 use AssetCompress\AssetFilter;
 use AssetCompress\AssetScanner;
 use Cake\Utility\Hash;
+use RuntimeException;
 
 /**
  * A preprocessor that inlines files referenced by

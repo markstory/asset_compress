@@ -41,10 +41,9 @@ class AssetCompressHelperPluginIniTest extends TestCase {
 		$view->request = $request;
 		$this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
 		$Config = AssetConfig::buildFromIniFile($testFile);
-		$this->Helper->config($Config);
+		$this->Helper->assetConfig($Config);
 
 		Router::reload();
-		Configure::write('debug', 2);
 	}
 
 /**
@@ -56,23 +55,17 @@ class AssetCompressHelperPluginIniTest extends TestCase {
 		parent::tearDown();
 		unset($this->Helper);
 
-		Cache::delete(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
-		Cache::drop(AssetConfig::CACHE_CONFIG);
-		// @codingStandardsIgnoreStart
-		@unlink(TMP . AssetConfig::BUILD_TIME_FILE);
-		// @codingStandardsIgnoreEnd
-
+		AssetConfig::clearAllCachedKeys();
 		Plugin::unload('TestAssetIni');
 	}
 
 	public function testUrlGenerationProductionModePluginIni() {
-		Configure::write('debug', 0);
-		$this->Helper->config()->set('js.timestamp', false);
+		Configure::write('debug', false);
+		$this->Helper->assetConfig()->set('js.timestamp', false);
 
 		$result = $this->Helper->script('TestAssetIni.libs.js');
 		$expected = array(
 			array('script' => array(
-				'type' => 'text/javascript',
 				'src' => '/cache_js/TestAssetIni.libs.js'
 			))
 		);
