@@ -1,11 +1,11 @@
 <?php
 namespace AssetCompress;
 
+use AssetCompress\AssetScanner;
 use Cake\Cache\Cache;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
-use AssetCompress\AssetScanner;
 /**
  * Writes compiled assets to the filesystem
  * with optional timestamps.

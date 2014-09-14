@@ -101,10 +101,10 @@ class AssetConfig {
 		}
 
 		// If the AssetConfig is in cache, means that user had General.cacheConfig in their ini.
-		if ($parsedConfig = Cache::read(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG)) {
+		$parsedConfig = static::_readCache(static::CACHE_ASSET_CONFIG_KEY);
+		if ($parsedConfig) {
 			return $parsedConfig;
 		}
-
 		return self::_parseConfig($iniFile, $constants);
 	}
 
@@ -119,12 +119,55 @@ class AssetConfig {
 	}
 
 /**
+ * Helper method for clearing cache data.
+ *
+ * @param string $key The key to clear.
+ * @return void
+ */
+	protected static function _deleteCache($key) {
+		try {
+			Cache::delete($key, self::CACHE_CONFIG);
+		} catch (\InvalidArgumentException $e) {
+			// Do nothing cache config probably doesn't exist.
+		}
+	}
+
+/**
+ * Write a cache value safely.
+ *
+ * @param $key The key to write.
+ * @param $value The value to write.
+ * @return mixed The cache value or null
+ */
+	protected static function _writeCache($key, $value) {
+		try {
+			return Cache::write($key, $value, self::CACHE_CONFIG);
+		} catch (\InvalidArgumentException $e) {
+			return null;
+		}
+	}
+
+/**
+ * Read a cache value safely.
+ *
+ * @param $key The key to read
+ * @return mixed The cache value or null
+ */
+	protected static function _readCache($key) {
+		try {
+			return Cache::read($key, static::CACHE_CONFIG);
+		} catch (\InvalidArgumentException $e) {
+			return null;
+		}
+	}
+
+/**
  * Clear the cached key for the build timestamp
  *
  * @return void
  */
 	public static function clearCachedBuildTime() {
-		Cache::delete(self::CACHE_BUILD_TIME_KEY, self::CACHE_CONFIG);
+		static::_deleteCache(static::CACHE_BUILD_TIME_KEY);
 	}
 
 /**
@@ -133,7 +176,7 @@ class AssetConfig {
  * @return void
  */
 	public static function clearCachedAssetConfig() {
-		Cache::delete(self::CACHE_ASSET_CONFIG_KEY, self::CACHE_CONFIG);
+		static::_deleteCache(static::CACHE_ASSET_CONFIG_KEY);
 	}
 
 /**
@@ -188,7 +231,7 @@ class AssetConfig {
 		}
 
 		if ($AssetConfig->general('cacheConfig')) {
-			Cache::write(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig, self::CACHE_CONFIG);
+			$this->_writeCache(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig);
 		}
 
 		return $AssetConfig;

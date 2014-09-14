@@ -19,8 +19,7 @@ class AssetConfigPluginIniTest extends TestCase {
 			'engine' => 'File'
 		));
 
-		$this->_pluginPath = Plugin::path('AssetCompress');
-		$this->_testFiles = Plugin::path('AssetCompress') . 'Test' . DS . 'test_files' . DS;
+		$this->_testFiles = APP;
 		$this->testConfig = $this->_testFiles . 'Config' . DS . 'config.ini';
 		$this->_themeConfig = $this->_testFiles . 'Config' . DS . 'themed.ini';
 

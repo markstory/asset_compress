@@ -4,9 +4,12 @@ namespace AssetCompress\View\Helper;
 use AssetCompress\AssetCache;
 use AssetCompress\AssetConfig;
 use AssetCompress\AssetScanner;
+use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
+use Cake\View\View;
+use RuntimeException;
 
 /**
  * AssetCompress Helper.
@@ -74,7 +77,7 @@ class AssetCompressHelper extends Helper {
 	public function __construct(View $View, $settings = array()) {
 		if (empty($settings['noconfig'])) {
 			$config = AssetConfig::buildFromIniFile();
-			$this->config($config);
+			$this->assetConfig($config);
 		}
 		parent::__construct($View, $settings);
 	}
@@ -87,7 +90,7 @@ class AssetCompressHelper extends Helper {
  * @param mixed $value The value to set the config to.
  * @return mixed Either the value being read or null. Null also is returned when reading things that don't exist.
  */
-	public function config($config = null) {
+	public function assetConfig($config = null) {
 		if ($config === null) {
 			return $this->_Config;
 		}
@@ -287,7 +290,7 @@ class AssetCompressHelper extends Helper {
  */
 	public function css($file, $options = array()) {
 		$file = $this->_addExt($file, '.css');
-		$config = $this->config();
+		$config = $this->assetConfig();
 		$buildFiles = $config->files($file);
 		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a stylesheet tag for a build that does not exist.');
@@ -299,14 +302,14 @@ class AssetCompressHelper extends Helper {
 			foreach ($buildFiles as $part) {
 				$part = $scanner->find($part, false);
 				$part = str_replace(DS, '/', $part);
-				$output .= $this->Html->css($part, null, $options);
+				$output .= $this->Html->css($part, $options);
 			}
 			return $output;
 		}
 
 		$url = $this->url($file, $options);
 		unset($options['full']);
-		return $this->Html->css($url, null, $options);
+		return $this->Html->css($url, $options);
 	}
 
 /**
@@ -327,7 +330,7 @@ class AssetCompressHelper extends Helper {
  */
 	public function script($file, $options = array()) {
 		$file = $this->_addExt($file, '.js');
-		$config = $this->config();
+		$config = $this->assetConfig();
 		$buildFiles = $config->files($file);
 		if (!$buildFiles) {
 			throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
@@ -359,12 +362,12 @@ class AssetCompressHelper extends Helper {
  * @param string $file The build file that you want a URL for.
  * @param array $options Options for URL generation.
  * @return string The generated URL.
- * @throws Exception when the build file does not exist.
+ * @throws RuntimeException when the build file does not exist.
  */
 	public function url($file = null, $full = false) {
-		$config = $this->config();
+		$config = $this->assetConfig();
 		if (!$config->exists($file)) {
-			throw new Exception('Cannot get URL for build file that does not exist.');
+			throw new RuntimeException('Cannot get URL for build file that does not exist.');
 		}
 
 		$options = $full;
@@ -376,7 +379,7 @@ class AssetCompressHelper extends Helper {
 
 		$baseUrl = $config->get($type . '.baseUrl');
 		$path = $config->get($type . '.cachePath');
-		$devMode = Configure::read('debug') > 0;
+		$devMode = Configure::read('debug');
 
 		// CDN routes.
 		if ($baseUrl && !$devMode) {
@@ -398,7 +401,7 @@ class AssetCompressHelper extends Helper {
 		}
 
 		if ($options['full']) {
-			$base = method_exists('Router', 'fullBaseUrl') ? Router::fullBaseUrl() : FULL_BASE_URL;
+			$base = Router::fullBaseUrl();
 			return $base . $route;
 		}
 
@@ -415,7 +418,7 @@ class AssetCompressHelper extends Helper {
  * @return string The resolved build name.
  */
 	protected function _getBuildName($build) {
-		$config = $this->config();
+		$config = $this->assetConfig();
 		$ext = $config->getExt($build);
 		$hash = $this->_getHashName($build, $ext);
 		if ($hash) {
@@ -435,7 +438,7 @@ class AssetCompressHelper extends Helper {
  * @return string Generated URL.
  */
 	protected function _getRoute($file, $base) {
-		$config = $this->config();
+		$config = $this->assetConfig();
 		$ext = $config->getExt($file);
 		$query = array();
 
@@ -467,7 +470,7 @@ class AssetCompressHelper extends Helper {
  */
 	protected function _getHashName($build, $ext) {
 		if (strpos($build, ':hash') === 0) {
-			$buildFiles = $this->config()->files($build);
+			$buildFiles = $this->assetConfig()->files($build);
 			return md5(implode('_', $buildFiles)) . '.' . $ext;
 		}
 		return false;
@@ -484,7 +487,7 @@ class AssetCompressHelper extends Helper {
 	public function addScript($files, $target = ':hash-default.js') {
 		$target = $this->_addExt($target, '.js');
 		$this->_runtime['js'][$target] = true;
-		$config = $this->config();
+		$config = $this->assetConfig();
 		$defined = $config->files($target);
 		$config->files($target, array_merge($defined, (array)$files));
 	}
@@ -500,7 +503,7 @@ class AssetCompressHelper extends Helper {
 	public function addCss($files, $target = ':hash-default.css') {
 		$target = $this->_addExt($target, '.css');
 		$this->_runtime['css'][$target] = true;
-		$config = $this->config();
+		$config = $this->assetConfig();
 		$defined = $config->files($target);
 		$config->files($target, array_merge($defined, (array)$files));
 	}
@@ -512,7 +515,7 @@ class AssetCompressHelper extends Helper {
  * @return boolean True if the build file exists.
  */
 	public function exists($file) {
-		return $this->config()->exists($file);
+		return $this->assetConfig()->exists($file);
 	}
 
 }
