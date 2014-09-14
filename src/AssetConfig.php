@@ -112,10 +112,11 @@ class AssetConfig {
  * Clear the build timestamp file and the associated cache entry
  */
 	public static function clearBuildTimeStamp() {
-		// @codingStandardsIgnoreStart
-		@unlink(TMP . self::BUILD_TIME_FILE);
-		// @codingStandardsIgnoreEnd
-		self::clearCachedBuildTime();
+		$buildTime = TMP . static::BUILD_TIME_FILE;
+		if (is_file($buildTime)) {
+			unlink($buildTime);
+		}
+		static::_deleteCache(static::CACHE_BUILD_TIME_KEY);
 	}
 
 /**
@@ -162,15 +163,6 @@ class AssetConfig {
 	}
 
 /**
- * Clear the cached key for the build timestamp
- *
- * @return void
- */
-	public static function clearCachedBuildTime() {
-		static::_deleteCache(static::CACHE_BUILD_TIME_KEY);
-	}
-
-/**
  * Clear the stored config object from cache
  *
  * @return void
@@ -183,7 +175,7 @@ class AssetConfig {
  * Clear all the cached keys associated with AssetConfig
  */
 	public static function clearAllCachedKeys() {
-		self::clearCachedBuildTime();
+		self::clearBuildTimeStamp();
 		self::clearCachedAssetConfig();
 	}
 
