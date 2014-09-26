@@ -262,8 +262,8 @@ class AssetBuildTask extends AppShell {
 			$this->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 			return;
 		}
-		// Clear the timestamp so it can be regenerated.
-		$this->Cacher->setTimestamp($build, 0);
+		
+		$this->Cacher->invalidate($build);
 
 		$name = $this->Cacher->buildFileName($build);
 		try {
