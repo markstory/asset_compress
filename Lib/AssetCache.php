@@ -140,10 +140,13 @@ class AssetCache {
 	public function finalize($build) {
 		$ext = $this->_Config->getExt($build);
 		if (!$this->_Config->get($ext . '.timestamp')) {
-			return false;
+			return;
 		}
 		$data = $this->_readTimestamp();
 		$name = $this->buildCacheName($build);
+		if (!isset($data[$name])) {
+			return;
+		}
 		$time = $data[$name];
 		unset($data[$name]);
 		$this->_invalidated = null;
