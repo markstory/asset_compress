@@ -118,16 +118,21 @@ class AssetCache {
  *
  * @param string $build The name of the build to set a timestamp for.
  * @param integer $time The timestamp.
+ * @param boolean $buildComplete Has the build successfully completed?
  * @return void
  */
-	public function setTimestamp($build, $time) {
+	public function setTimestamp($build, $time, $buildComplete = false) {
 		$ext = $this->_Config->getExt($build);
 		if (!$this->_Config->get($ext . '.timestamp')) {
 			return false;
 		}
 		$data = $this->_readTimestamp();
 		$build = $this->buildFileName($build, false);
-		$data[$build] = $time;
+		$name = $buildComplete ? $build : '~' . $build;
+		$data[$name] = $time;
+		if ($buildComplete && isset($data['~' . $build])) {
+			unset($data['~' . $build]);
+		}
 		if ($this->_Config->general('cacheConfig')) {
 			Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, $data, AssetConfig::CACHE_CONFIG);
 		}
@@ -154,6 +159,9 @@ class AssetCache {
 		}
 		$data = $this->_readTimestamp();
 		$name = $this->buildFileName($build, false);
+		if (isset($data['~' . $name])) {
+			return $data['~' . $name];
+		}
 		if (!empty($data[$name])) {
 			return $data[$name];
 		}
