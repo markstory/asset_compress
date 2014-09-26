@@ -262,14 +262,16 @@ class AssetBuildTask extends AppShell {
 			$this->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 			return;
 		}
-		// Clear the timestamp so it can be regenerated.
-		$this->Cacher->setTimestamp($build, 0);
-
+		
+		$time = time();
+		$this->Cacher->setTimestamp($build, $time);
+		
 		$name = $this->Cacher->buildFileName($build);
 		try {
 			$this->out('<success>Saving file</success> for ' . $name);
 			$contents = $this->Compiler->generate($build);
 			$this->Cacher->write($build, $contents);
+			$this->Cacher->setTimestamp($build, $time, true);
 		} catch (Exception $e) {
 			$this->err('Error: ' . $e->getMessage());
 		}
