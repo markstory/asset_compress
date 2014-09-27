@@ -134,5 +134,24 @@ class AssetCacheTest extends CakeTestCase {
 		$result = $this->cache->buildFilename('libs.js');
 		$this->assertEquals('libs.v' . $time . '.js', $result);
 	}
+	
+	public function testInvalidateAndFinalizeBuildTimestamp() {
+		$this->config->general('cacheConfig', true);
+		$this->config->set('js.timestamp', true);
+		
+		$cacheName = $this->cache->buildCacheName('libs.js');
+		$this->cache->invalidate('libs.js');
+		$invalidatedCacheName = $this->cache->buildCacheName('libs.js');
+		$this->assertNotEquals($cacheName, $invalidatedCacheName);
+		
+		$time = $this->cache->getTimestamp('libs.js');
+		
+		$this->cache->finalize('libs.js');
+		$finalizedCacheName = $this->cache->buildCacheName('libs.js');
+		$this->assertEquals($cacheName, $finalizedCacheName);
+		
+		$finalizedTime = $this->cache->getTimestamp('libs.js');
+		$this->assertEquals($time, $finalizedTime);
+	}
 
 }

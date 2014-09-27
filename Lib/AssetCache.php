@@ -9,6 +9,7 @@ App::uses('AssetScanner', 'AssetCompress.Lib');
 class AssetCache {
 
 	protected $_Config = null;
+	protected $_invalidated = null;
 
 	public function __construct(AssetConfig $config) {
 		$this->_Config = $config;
@@ -17,19 +18,21 @@ class AssetCache {
 /**
  * Writes content into a file
  *
- * @param string $filename The filename to write.
- * @param string $contents The contents to write.
+ * @param string $build The filename to write.
+ * @param string $content The contents to write.
  * @throws RuntimeException
  */
-	public function write($filename, $content) {
-		$ext = $this->_Config->getExt($filename);
+	public function write($build, $content) {
+		$ext = $this->_Config->getExt($build);
 		$path = $this->_Config->cachePath($ext);
 
 		if (!is_writable($path)) {
 			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path);
 		}
-		$filename = $this->buildFileName($filename);
-		return file_put_contents($path . $filename, $content) !== false;
+		$filename = $this->buildFileName($build);
+		$success = file_put_contents($path . $filename, $content) !== false;
+		$this->finalize($build);
+		return $success;
 	}
 
 /**
@@ -114,6 +117,45 @@ class AssetCache {
 	}
 
 /**
+ * Invalidate a build before re-generating the file.
+ *
+ * @param string $build The build to invalidate.
+ * @return void
+ */
+	public function invalidate($build) {
+		$ext = $this->_Config->getExt($build);
+		if (!$this->_Config->get($ext . '.timestamp')) {
+			return false;
+		}
+		$this->_invalidated = $build;
+		$this->setTimestamp($build, 0);
+	}
+
+/**
+ * Finalize a build after written to filesystem.
+ *
+ * @param string $build The build to finalize.
+ * @return void
+ */
+	public function finalize($build) {
+		$ext = $this->_Config->getExt($build);
+		if (!$this->_Config->get($ext . '.timestamp')) {
+			return;
+		}
+		$data = $this->_readTimestamp();
+		$name = $this->buildCacheName($build);
+		if (!isset($data[$name])) {
+			return;
+		}
+		$time = $data[$name];
+		unset($data[$name]);
+		$this->_invalidated = null;
+		$name = $this->buildCacheName($build);
+		$data[$name] = $time;
+		$this->_writeTimestamp($data);
+	}
+
+/**
  * Set the timestamp for a build file.
  *
  * @param string $build The name of the build to set a timestamp for.
@@ -123,17 +165,12 @@ class AssetCache {
 	public function setTimestamp($build, $time) {
 		$ext = $this->_Config->getExt($build);
 		if (!$this->_Config->get($ext . '.timestamp')) {
-			return false;
+			return;
 		}
 		$data = $this->_readTimestamp();
-		$build = $this->buildFileName($build, false);
+		$build = $this->buildCacheName($build);
 		$data[$build] = $time;
-		if ($this->_Config->general('cacheConfig')) {
-			Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, $data, AssetConfig::CACHE_CONFIG);
-		}
-		$data = serialize($data);
-		file_put_contents(TMP . AssetConfig::BUILD_TIME_FILE, $data);
-		chmod(TMP . AssetConfig::BUILD_TIME_FILE, 0644);
+		$this->_writeTimestamp($data);
 	}
 
 /**
@@ -153,7 +190,7 @@ class AssetCache {
 			return false;
 		}
 		$data = $this->_readTimestamp();
-		$name = $this->buildFileName($build, false);
+		$name = $this->buildCacheName($build);
 		if (!empty($data[$name])) {
 			return $data[$name];
 		}
@@ -183,6 +220,21 @@ class AssetCache {
 	}
 
 /**
+ * Write timestamps to either the fast cache, or the serialized file.
+ *
+ * @param array $data An array of timestamps for build files.
+ * @return void
+ */
+	protected function _writeTimestamp($data) {
+		if ($this->_Config->general('cacheConfig')) {
+			Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, $data, AssetConfig::CACHE_CONFIG);
+		}
+		$data = serialize($data);
+		file_put_contents(TMP . AssetConfig::BUILD_TIME_FILE, $data);
+		chmod(TMP . AssetConfig::BUILD_TIME_FILE, 0644);
+	}
+
+/**
  * Get the final filename for a build. Resolves
  * theme prefixes and timestamps.
  *
@@ -201,6 +253,20 @@ class AssetCache {
 		return $file;
 	}
 
+/**
+ * Get the cache name a build. 
+ *
+ * @param string $build The build target name.
+ * @return string The build cache name.
+ */
+	public function buildCacheName($build) {
+		$name = $this->buildFileName($build, false);
+		if ($build == $this->_invalidated) {
+			return '~' . $name;
+		}
+		return $name;
+	}
+	
 /**
  * Modify a file name and append in the timestamp
  *
