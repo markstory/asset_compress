@@ -53,7 +53,7 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ## Copyright
 
-2010-2012 Mark Story (http://mark-story.com)
+2010-2014 Mark Story (http://mark-story.com)
 
 ### Authors
 
