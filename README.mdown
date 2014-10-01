@@ -21,20 +21,8 @@ Asset Compress is CakePHP plugin for helping reduce the number of requests, and 
 Clone or download the plugin into one of your plugin paths. Then make
 sure you load the plugin:
 
-	// in app/Config/bootstrap.php
-	CakePlugin::load('AssetCompress', array('bootstrap' => true));
-
-You should make sure to load the plugin **after** configuring other
-dispatcher filters as the following will replace the configuration
-added by AssetCompress. For example using the default bootstrap.php, you
-should end up with something like:
-
-	// in app/Config/bootstrap.php
-	Configure::write('Dispatcher.filters', array(
-		'AssetDispatcher',
-		'CacheDispatcher'
-	));
-	CakePlugin::load('AssetCompress', array('bootstrap' => true));
+	// in config/bootstrap.php
+	Plugin::load('AssetCompress', ['bootstrap' => true]);
 
 Copy the `Config/asset_compress.sample.ini` to `App/Config/asset_compress.ini`. From there
 read the [wiki](http://github.com/markstory/asset_compress/wiki) for more information.
