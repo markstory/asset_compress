@@ -12,6 +12,11 @@ use Cake\TestSuite\TestCase;
  */
 class AssetConfigPluginIniTest extends TestCase {
 
+/**
+ * setup method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		Cache::drop(AssetConfig::CACHE_CONFIG);
@@ -29,6 +34,11 @@ class AssetConfigPluginIniTest extends TestCase {
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 	}
 
+/**
+ * teardown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload('TestAssetIni');

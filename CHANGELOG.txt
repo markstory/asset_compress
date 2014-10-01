@@ -6,6 +6,10 @@
   Dynamic build files presented a few challenges around maintenance and went
   against my goals of creating a fast and simple way to integrate all your
   asset pipeline features into one plugin.
+* Prefixes on build files have been removed. In previous versions if you
+  started a build file with `js_` or `css_`, these prefixes would be removed
+  and used as the file suffix. You must now always include the file extension
+  in the build target.
 
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.

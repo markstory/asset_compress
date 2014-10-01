@@ -13,11 +13,11 @@ use RuntimeException;
  */
 class AssetCache {
 
-	protected $_Config = null;
+	protected $_config = null;
 	protected $_invalidated = null;
 
 	public function __construct(AssetConfig $config) {
-		$this->_Config = $config;
+		$this->_config = $config;
 	}
 
 /**
@@ -28,8 +28,8 @@ class AssetCache {
  * @throws RuntimeException
  */
 	public function write($build, $content) {
-		$ext = $this->_Config->getExt($build);
-		$path = $this->_Config->cachePath($ext);
+		$ext = $this->_config->getExt($build);
+		$path = $this->_config->cachePath($ext);
 
 		if (!is_writable($path)) {
 			throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path);
@@ -49,29 +49,29 @@ class AssetCache {
  * @return boolean
  */
 	public function isFresh($target) {
-		$ext = $this->_Config->getExt($target);
-		$files = $this->_Config->files($target);
+		$ext = $this->_config->getExt($target);
+		$files = $this->_config->files($target);
 
-		$theme = $this->_Config->theme();
+		$theme = $this->_config->theme();
 		$target = $this->buildFileName($target);
 
-		$buildFile = $this->_Config->cachePath($ext) . $target;
+		$buildFile = $this->_config->cachePath($ext) . $target;
 
 		if (!file_exists($buildFile)) {
 			return false;
 		}
-		$configTime = $this->_Config->modifiedTime();
+		$configTime = $this->_config->modifiedTime();
 		$buildTime = filemtime($buildFile);
 
 		if ($configTime >= $buildTime) {
 			return false;
 		}
 
-		$Scanner = new AssetScanner($this->_Config->paths($ext, $target), $theme);
+		$scanner = new AssetScanner($this->_config->paths($ext, $target), $theme);
 
 		foreach ($files as $file) {
-			$path = $Scanner->find($file);
-			if ($Scanner->isRemote($path)) {
+			$path = $scanner->find($file);
+			if ($scanner->isRemote($path)) {
 				$time = $this->getRemoteFileLastModified($path);
 			} else {
 				$time = filemtime($path);
@@ -128,8 +128,8 @@ class AssetCache {
  * @return void
  */
 	public function invalidate($build) {
-		$ext = $this->_Config->getExt($build);
-		if (!$this->_Config->get($ext . '.timestamp')) {
+		$ext = $this->_config->getExt($build);
+		if (!$this->_config->get($ext . '.timestamp')) {
 			return false;
 		}
 		$this->_invalidated = $build;
@@ -143,8 +143,8 @@ class AssetCache {
  * @return void
  */
 	public function finalize($build) {
-		$ext = $this->_Config->getExt($build);
-		if (!$this->_Config->get($ext . '.timestamp')) {
+		$ext = $this->_config->getExt($build);
+		if (!$this->_config->get($ext . '.timestamp')) {
 			return;
 		}
 		$data = $this->_readTimestamp();
@@ -168,8 +168,8 @@ class AssetCache {
  * @return void
  */
 	public function setTimestamp($build, $time) {
-		$ext = $this->_Config->getExt($build);
-		if (!$this->_Config->get($ext . '.timestamp')) {
+		$ext = $this->_config->getExt($build);
+		if (!$this->_config->get($ext . '.timestamp')) {
 			return;
 		}
 		$data = $this->_readTimestamp();
@@ -190,8 +190,8 @@ class AssetCache {
  * @return mixed The last build time, or false.
  */
 	public function getTimestamp($build) {
-		$ext = $this->_Config->getExt($build);
-		if (!$this->_Config->get($ext . '.timestamp')) {
+		$ext = $this->_config->getExt($build);
+		if (!$this->_config->get($ext . '.timestamp')) {
 			return false;
 		}
 		$data = $this->_readTimestamp();
@@ -211,7 +211,7 @@ class AssetCache {
  */
 	protected function _readTimestamp() {
 		$data = array();
-		$cachedConfig = $this->_Config->general('cacheConfig');
+		$cachedConfig = $this->_config->general('cacheConfig');
 		if ($cachedConfig) {
 			$data = Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
 		}
@@ -231,7 +231,7 @@ class AssetCache {
  * @return void
  */
 	protected function _writeTimestamp($data) {
-		if ($this->_Config->general('cacheConfig')) {
+		if ($this->_config->general('cacheConfig')) {
 			Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, $data, AssetConfig::CACHE_CONFIG);
 		}
 		$data = serialize($data);
@@ -248,8 +248,8 @@ class AssetCache {
  */
 	public function buildFileName($target, $timestamp = true) {
 		$file = $target;
-		if ($this->_Config->isThemed($target)) {
-			$file = Inflector::underscore($this->_Config->theme()) . '-' . $target;
+		if ($this->_config->isThemed($target)) {
+			$file = Inflector::underscore($this->_config->theme()) . '-' . $target;
 		}
 		if ($timestamp) {
 			$time = $this->getTimestamp($target);
@@ -259,7 +259,7 @@ class AssetCache {
 	}
 
 /**
- * Get the cache name a build. 
+ * Get the cache name a build.
  *
  * @param string $build The build target name.
  * @return string The build cache name.
@@ -288,4 +288,5 @@ class AssetCache {
 		$ext = substr($file, $pos);
 		return $name . '.v' . $time . $ext;
 	}
+
 }

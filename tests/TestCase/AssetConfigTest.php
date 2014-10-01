@@ -8,6 +8,11 @@ use Cake\TestSuite\TestCase;
 
 class AssetConfigTest extends TestCase {
 
+/**
+ * setup method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		Cache::drop(AssetConfig::CACHE_CONFIG);
@@ -23,6 +28,11 @@ class AssetConfigTest extends TestCase {
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
 	}
 
+/**
+ * Test local configuration files.
+ *
+ * @return void
+ */
 	public function testLocalConfig() {
 		$ini = dirname($this->testConfig) . DS . 'overridable.ini';
 		$config = AssetConfig::buildFromIniFile($ini);

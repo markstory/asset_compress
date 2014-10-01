@@ -18,14 +18,14 @@ class AssetCompiler {
  *
  * @var AssetFilterCollection
  */
-	protected $_FilterCollection;
+	protected $_filterCollection;
 
 /**
  * Instance of AssetConfig
  *
  * @var AssetConfig
  */
-	protected $_Config;
+	protected $_config;
 
 /**
  * The file list associated with a build.
@@ -41,7 +41,7 @@ class AssetCompiler {
  * @return void
  */
 	public function __construct(AssetConfig $config) {
-		$this->_Config = $config;
+		$this->_config = $config;
 	}
 
 /**
@@ -56,11 +56,11 @@ class AssetCompiler {
 		$output = '';
 		foreach ($this->_getFilesList($build) as $file) {
 			$content = $this->_readFile($file);
-			$content = $this->_FilterCollection->input($file, $content);
+			$content = $this->_filterCollection->input($file, $content);
 			$output .= $content . "\n";
 		}
 		if (!Configure::read('debug') || php_sapi_name() === 'cli') {
-			$output = $this->_FilterCollection->output($build, $output);
+			$output = $this->_filterCollection->output($build, $output);
 		}
 		return trim($output);
 	}
@@ -74,7 +74,7 @@ class AssetCompiler {
 	public function getLastModified($build) {
 		$time = 0;
 		foreach ($this->_getFilesList($build) as $file) {
-			if ($this->_Scanner->isRemote($file)) {
+			if ($this->_scanner->isRemote($file)) {
 				return time();
 			}
 			$mtime = filemtime($file);
@@ -94,12 +94,12 @@ class AssetCompiler {
 		if (!empty($this->_fileList[$build])) {
 			return $this->_fileList[$build];
 		}
-		$ext = $this->_Config->getExt($build);
-		$this->_Scanner = $this->_makeScanner($this->_Config->paths($ext, $build), $this->_Config->theme());
-		$this->_FilterCollection = $this->_makeFilters($ext, $build);
+		$ext = $this->_config->getExt($build);
+		$this->_scanner = $this->_makeScanner($this->_config->paths($ext, $build), $this->_config->theme());
+		$this->_filterCollection = $this->_makeFilters($ext, $build);
 
 		$output = '';
-		$files = $this->_Config->files($build);
+		$files = $this->_config->files($build);
 		if (empty($files)) {
 			throw new RuntimeException(sprintf('No files found for build file "%s"', $build));
 		}
@@ -129,12 +129,12 @@ class AssetCompiler {
  */
 	protected function _makeFilters($ext, $target) {
 		$config = array(
-			'paths' => $this->_Config->paths($ext, $target),
+			'paths' => $this->_config->paths($ext, $target),
 			'target' => $target,
-			'theme' => $this->_Config->theme()
+			'theme' => $this->_config->theme()
 		);
-		$filters = $this->_Config->filters($ext, $target);
-		$filterSettings = $this->_Config->filterConfig($filters);
+		$filters = $this->_config->filters($ext, $target);
+		$filterSettings = $this->_config->filterConfig($filters);
 		return new AssetFilterCollection($filters, $config, $filterSettings);
 	}
 
@@ -145,7 +145,7 @@ class AssetCompiler {
  * @throws Exception when files can't be found.
  */
 	protected function _findFile($object) {
-		$filename = $this->_Scanner->find($object);
+		$filename = $this->_scanner->find($object);
 		if (!$filename) {
 			throw new Exception(sprintf('Could not locate file "%s"', $object));
 		}
@@ -160,7 +160,7 @@ class AssetCompiler {
  */
 	protected function _readFile($file) {
 		$content = '';
-		if ($this->_Scanner->isRemote($file)) {
+		if ($this->_scanner->isRemote($file)) {
 			$handle = fopen($file, 'rb');
 			if ($handle) {
 				$content = stream_get_contents($handle);

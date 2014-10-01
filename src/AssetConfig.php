@@ -211,39 +211,39 @@ class AssetConfig {
 			$modifiedTime = filemtime($baseFile);
 		}
 
-		$AssetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
-		self::_parseConfigFileLocal($baseFile, $AssetConfig);
+		$assetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
+		self::_parseConfigFileLocal($baseFile, $assetConfig);
 
 		$plugins = Plugin::loaded();
 		foreach ($plugins as $plugin) {
 			$pluginConfig = Plugin::path($plugin) . 'config' . DS . 'asset_compress.ini';
 			if (file_exists($pluginConfig)) {
-				self::_parseConfigFileLocal($pluginConfig, $AssetConfig, $plugin . '.');
+				self::_parseConfigFileLocal($pluginConfig, $assetConfig, $plugin . '.');
 			}
 		}
 
-		if ($AssetConfig->general('cacheConfig')) {
-			$this->_writeCache(self::CACHE_ASSET_CONFIG_KEY, $AssetConfig);
+		if ($assetConfig->general('cacheConfig')) {
+			$this->_writeCache(self::CACHE_ASSET_CONFIG_KEY, $assetConfig);
 		}
 
-		return $AssetConfig;
+		return $assetConfig;
 	}
 
 /**
  * Parse a file and optionally the .local version of the file.
  *
  * @param string $file The file to parse.
- * @param AssetConfig $AssetConfig The config object to add data to.
+ * @param AssetConfig $assetConfig The config object to add data to.
  * @param null|string $prefix The prefix to append to build targets.
  * @return void
  */
-	protected static function _parseConfigFileLocal($file, $AssetConfig, $prefix = null) {
-		self::_parseConfigFile($file, $AssetConfig, $prefix);
+	protected static function _parseConfigFileLocal($file, $assetConfig, $prefix = null) {
+		self::_parseConfigFile($file, $assetConfig, $prefix);
 
 		// Load related .local.ini file if exists
 		$localConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $file);
 		if (file_exists($localConfig)) {
-			self::_parseConfigFile($localConfig, $AssetConfig, $prefix);
+			self::_parseConfigFile($localConfig, $assetConfig, $prefix);
 		}
 	}
 
@@ -251,41 +251,36 @@ class AssetConfig {
  * Reads a config file and applies it to the given config instance
  *
  * @param string $iniFile Contents to apply to the config instance.
- * @param AssetConfig $AssetConfig The config instance instance we're applying this config file to.
+ * @param AssetConfig $assetConfig The config instance instance we're applying this config file to.
  * @param string $prefix Prefix for the target key
  */
-	protected static function _parseConfigFile($iniFile, $AssetConfig, $prefix = '') {
+	protected static function _parseConfigFile($iniFile, $assetConfig, $prefix = '') {
 		$config = self::_readConfig($iniFile);
 
 		foreach ($config as $section => $values) {
 			if (in_array($section, self::$_extensionTypes)) {
 				// extension section, merge in the defaults.
-				$defaults = $AssetConfig->get($section);
+				$defaults = $assetConfig->get($section);
 				if ($defaults) {
 					$values = array_merge($defaults, $values);
 				}
-				$AssetConfig->addExtension($section, $values);
+				$assetConfig->addExtension($section, $values);
 
 			} elseif (strtolower($section) === self::GENERAL) {
-				$AssetConfig->set(self::GENERAL, $values);
+				$assetConfig->set(self::GENERAL, $values);
 
 			} elseif (strpos($section, self::FILTER_PREFIX) === 0) {
 				// filter section.
 				$name = str_replace(self::FILTER_PREFIX, '', $section);
-				$AssetConfig->filterConfig($name, $values);
+				$assetConfig->filterConfig($name, $values);
 
 			} else {
 				$lastDot = strrpos($section, '.') + 1;
 				$extension = substr($section, $lastDot);
 				$key = $section;
 
-				// Is there a prefix? Chop it off.
-				if (strpos($section, $extension . '_') !== false) {
-					$key = substr($key, strlen($extension) + 1);
-				}
-
 				// must be a build target.
-				$AssetConfig->addTarget($prefix . $key, $values);
+				$assetConfig->addTarget($prefix . $key, $values);
 			}
 		}
 	}
