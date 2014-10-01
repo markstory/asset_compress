@@ -59,7 +59,7 @@ class AssetCompiler {
 			$content = $this->_FilterCollection->input($file, $content);
 			$output .= $content . "\n";
 		}
-		if (Configure::read('debug') < 2 || php_sapi_name() === 'cli') {
+		if (!Configure::read('debug') || php_sapi_name() === 'cli') {
 			$output = $this->_FilterCollection->output($build, $output);
 		}
 		return trim($output);

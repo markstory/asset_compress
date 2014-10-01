@@ -54,7 +54,18 @@ class AssetsCompressorTest extends TestCase {
  * @return void
  */
 	public function testBuildFile() {
-		$this->markTestIncomplete('Not done');
+		$this->response
+			->expects($this->once())->method('type')
+			->with($this->equalTo('js'));
+
+		$this->request->url = 'cache_js/libs.js';
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new Event('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
+
+		$this->assertRegExp('/var BaseClass = new Class/', $this->response->body());
+		$this->assertRegExp('/var Template = new Class/', $this->response->body());
+		$this->assertTrue($event->isStopped());
 	}
 
 /**
