@@ -53,16 +53,6 @@ class AssetCompressHelper extends Helper {
 	);
 
 /**
- * A list of build files added during the helper runtime.
- *
- * @var array
- */
-	protected $_runtime = array(
-		'js' => array(),
-		'css' => array()
-	);
-
-/**
  * Disable autoInclusion of view js files.
  *
  * @var string
@@ -154,108 +144,6 @@ class AssetCompressHelper extends Helper {
 				);
 			}
 		}
-	}
-
-/**
- * Used to include runtime defined build files. To include build files defined in your
- * ini file use script() or css().
- *
- * Calling this method will clear the asset caches.
- *
- * @return string Empty string or string containing asset link tags.
- */
-	public function includeAssets($raw = null) {
-		if ($raw !== null) {
-			$css = $this->includeCss(array('raw' => true));
-			$js = $this->includeJs(array('raw' => true));
-		} else {
-			$css = $this->includeCss();
-			$js = $this->includeJs();
-		}
-		return $css . "\n" . $js;
-	}
-
-/**
- * Include the CSS files that were defined at runtime with
- * the helper.
- *
- * ### Usage
- *
- * #### Include one destination file:
- * `$this->AssetCompress->includeCss('default');`
- *
- * #### Include multiple files:
- * `$this->AssetCompress->includeCss('default', 'reset', 'themed');`
- *
- * #### Include all the files:
- * `$this->AssetCompress->includeCss();`
- *
- * @param string $name Name of the destination file to include. You can pass any number of strings in to
- *    include multiple files. Leave null to include all files.
- * @return string A string containing the link tags
- */
-	public function includeCss() {
-		$args = func_get_args();
-		return $this->_genericInclude($args, 'css');
-	}
-
-/**
- * Include the Javascript files that were defined at runtime with
- * the helper.
- *
- * ### Usage
- *
- * #### Include one runtime destination file:
- * `$this->AssetCompress->includeJs('default');`
- *
- * #### Include multiple runtime files:
- * `$this->AssetCompress->includeJs('default', 'reset', 'themed');`
- *
- * #### Include all the runtime files:
- * `$this->AssetCompress->includeJs();`
- *
- * @param string $name Name of the destination file to include. You can pass any number of strings in to
- *    include multiple files. Leave null to include all files.
- * @return string A string containing the script tags.
- */
-	public function includeJs() {
-		$args = func_get_args();
-		return $this->_genericInclude($args, 'js');
-	}
-
-/**
- * The generic version of includeCss and includeJs
- *
- * @param array $files Array of destination/build files to include
- * @param string $ext The extension builds must have.
- * @return string A string containing asset tags.
- */
-	protected function _genericInclude($files, $ext) {
-		$numArgs = count($files);
-		$options = array();
-		if (isset($files[$numArgs - 1]) && is_array($files[$numArgs - 1])) {
-			$options = array_pop($files);
-			$numArgs -= 1;
-		}
-		if ($numArgs <= 0) {
-			$files = array_keys($this->_runtime[$ext]);
-		}
-		foreach ($files as &$file) {
-			$file = $this->_addExt($file, '.' . $ext);
-		}
-		$output = array();
-		foreach ($files as $build) {
-			if (empty($this->_runtime[$ext][$build])) {
-				continue;
-			}
-			if ($ext === 'js') {
-				$output[] = $this->script($build, $options);
-			} elseif ($ext === 'css') {
-				$output[] = $this->css($build, $options);
-			}
-			unset($this->_runtime[$ext][$build]);
-		}
-		return implode("\n", $output);
 	}
 
 /**
@@ -420,10 +308,6 @@ class AssetCompressHelper extends Helper {
 	protected function _getBuildName($build) {
 		$config = $this->assetConfig();
 		$ext = $config->getExt($build);
-		$hash = $this->_getHashName($build, $ext);
-		if ($hash) {
-			$build = $hash;
-		}
 		$config->theme($this->theme);
 		return $this->_AssetCache->buildFileName($build);
 	}
@@ -446,66 +330,11 @@ class AssetCompressHelper extends Helper {
 			$query['theme'] = $this->theme;
 		}
 
-		if (isset($this->_runtime[$ext][$file])) {
-			$hash = $this->_getHashName($file, $ext);
-			$components = $config->files($file);
-			if ($hash) {
-				$file = $hash;
-			}
-			$query['file'] = $components;
-		}
 		if (substr($base, -1) !== DS && DS !== '\\') {
 			$base .= '/';
 		}
 		$query = empty($query) ? '' : '?' . http_build_query($query);
 		return $base . $file . $query;
-	}
-
-/**
- * Check if a build file is a magic hash and get the hash name for it.
- *
- * @param string $build The name of the build to check.
- * @param string $ext The extension
- * @return mixed Either false or the string name of the hash.
- */
-	protected function _getHashName($build, $ext) {
-		if (strpos($build, ':hash') === 0) {
-			$buildFiles = $this->assetConfig()->files($build);
-			return md5(implode('_', $buildFiles)) . '.' . $ext;
-		}
-		return false;
-	}
-
-/**
- * Add a script file to a build target, this lets you define build
- * targets without configuring them in the ini file.
- *
- * @param mixed $files Either a string or an array of files to append into the build target.
- * @param string $target The name of the build target, defaults to a hash of the filenames
- * @return void
- */
-	public function addScript($files, $target = ':hash-default.js') {
-		$target = $this->_addExt($target, '.js');
-		$this->_runtime['js'][$target] = true;
-		$config = $this->assetConfig();
-		$defined = $config->files($target);
-		$config->files($target, array_merge($defined, (array)$files));
-	}
-
-/**
- * Add a stylesheet file to a build target, this lets you define build
- * targets without configuring them in the ini file.
- *
- * @param mixed $files Either a string or an array of files to append into the build target.
- * @param string $target The name of the build target, defaults to a hash of the filenames
- * @return void
- */
-	public function addCss($files, $target = ':hash-default.css') {
-		$target = $this->_addExt($target, '.css');
-		$this->_runtime['css'][$target] = true;
-		$config = $this->assetConfig();
-		$defined = $config->files($target);
-		$config->files($target, array_merge($defined, (array)$files));
 	}
 
 /**

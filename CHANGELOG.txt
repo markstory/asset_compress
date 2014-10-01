@@ -1,4 +1,11 @@
-0.17.0 Changes
+3.0.0 Changes
+
+### Breaking Changes
+
+* Dynamic build files and all features related to them have been removed.
+  Dynamic build files presented a few challenges around maintenance and went
+  against my goals of creating a fast and simple way to integrate all your
+  asset pipeline features into one plugin.
 
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.

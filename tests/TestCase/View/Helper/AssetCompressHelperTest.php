@@ -58,243 +58,9 @@ class AssetCompressHelperTest extends TestCase {
 	}
 
 /**
- * test that assets only have one base path attached
- *
- * @return void
- */
-	public function testIncludeAssets() {
-		Router::setRequestInfo(array(
-			array('controller' => 'posts', 'action' => 'index', 'plugin' => null),
-			array('base' => '/some/dir', 'webroot' => '/some/dir/', 'here' => '/some/dir/posts')
-		));
-		$this->Helper->request->webroot = '/some/dir/';
-
-		$this->Helper->addScript('one.js');
-		$result = $this->Helper->includeAssets();
-		$this->assertRegExp('#"/some/dir/cache_js/*#', $result, 'double dir set %s');
-	}
-
-/**
- * test that setting $compress = false echos original scripts
- *
- * @return void
- */
-	public function testNoCompression() {
-		$config = $this->Helper->assetConfig();
-		$config->paths('css', null, array(
-			$this->_testFiles . 'css' . DS
-		));
-		$config->paths('js', null, array(
-			$this->_testFiles . 'js' . DS
-		));
-
-		$this->Helper->addCss('background.css', 'lib');
-		$this->Helper->addCss('nav.css');
-		$this->Helper->addScript('library_file.js');
-		$this->Helper->addScript('classes/base_class.js');
-
-		$result = $this->Helper->includeAssets(true);
-		$expected = array(
-			array(
-				'link' => array(
-					'rel' => 'stylesheet',
-					'href' => 'preg:/.*css\/background\.css/'
-				)
-			),
-			array(
-				'link' => array(
-					'rel' => 'stylesheet',
-					'href' => 'preg:/.*css\/nav\.css/'
-				)
-			),
-			array(
-				'script' => array(
-					'src' => 'preg:/.*js\/library_file\.js/'
-				)
-			),
-			'/script',
-			array(
-				'script' => array(
-					'src' => 'preg:/.*js\/classes\/base_class\.js/'
-				)
-			),
-			'/script'
-		);
-		$this->assertTags($result, $expected, true);
-	}
-
-/**
- * test css addition
- *
- * @return void
- */
-	public function testCssOrderPreserving() {
-		$this->Helper->addCss('base');
-		$this->Helper->addCss('reset');
-
-		$hash = md5('base_reset');
-
-		$result = $this->Helper->includeAssets();
-		$expected = array(
-			'link' => array(
-				'rel' => 'stylesheet',
-				'href' => '/cache_css/' . $hash . '.css?file%5B0%5D=base&amp;file%5B1%5D=reset'
-			)
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test script addition
- *
- * @return void
- */
-	public function testScriptOrderPreserving() {
-		$this->Helper->addScript('libraries');
-		$this->Helper->addScript('thing');
-
-		$hash = md5('libraries_thing');
-
-		$result = $this->Helper->includeAssets();
-		$expected = array(
-			'script' => array(
-				'src' => '/cache_js/' . $hash . '.js?file%5B0%5D=libraries&amp;file%5B1%5D=thing'
-			),
-			'/script'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that magic slug builds work.
- *
- * @return void
- */
-	public function testScriptMagicSlugs() {
-		$this->Helper->addScript('libraries', ':hash-default');
-		$this->Helper->addScript('thing', ':hash-default');
-		$this->Helper->addScript('jquery.js', ':hash-jquery');
-		$this->Helper->addScript('jquery-ui.js', ':hash-jquery');
-
-		$hashOne = md5('libraries_thing');
-		$hashTwo = md5('jquery.js_jquery-ui.js');
-
-		$result = $this->Helper->includeAssets();
-		$expected = array(
-			array('script' => array(
-				'src' => '/cache_js/' . $hashOne . '.js?file%5B0%5D=libraries&amp;file%5B1%5D=thing'
-			)),
-			'/script',
-			array('script' => array(
-				'src' => '/cache_js/' . $hashTwo . '.js?file%5B0%5D=jquery.js&amp;file%5B1%5D=jquery-ui.js'
-			)),
-			'/script'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test generating two script files.
- *
- * @return void
- */
-	public function testMultipleScriptFiles() {
-		$this->Helper->addScript('libraries', 'default');
-		$this->Helper->addScript('thing', 'second');
-
-		$result = $this->Helper->includeAssets();
-		$expected = array(
-			array('script' => array(
-				'src' => '/cache_js/default.js?file%5B0%5D=libraries'
-			)),
-			'/script',
-			array('script' => array(
-				'src' => '/cache_js/second.js?file%5B0%5D=thing'
-			)),
-			'/script'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test includeJs() with multiple destination files.
- *
- * @return void
- */
-	public function testIncludeJsMultipleDestination() {
-		$this->Helper->addScript('libraries', 'default');
-		$this->Helper->addScript('thing', 'second');
-		$this->Helper->addScript('other', 'third');
-
-		$result = $this->Helper->includeJs('default');
-		$expected = array(
-			array('script' => array(
-				'src' => '/cache_js/default.js?file%5B0%5D=libraries'
-			)),
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Helper->includeJs('second', 'third');
-		$expected = array(
-			array('script' => array(
-				'src' => '/cache_js/second.js?file%5B0%5D=thing'
-			)),
-			'/script',
-			array('script' => array(
-				'src' => '/cache_js/third.js?file%5B0%5D=other'
-			)),
-			'/script'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test includeCss() with multiple destination files.
- *
- * @return void
- */
-	public function testIncludeCssMultipleDestination() {
-		$this->Helper->addCss('libraries', 'default');
-		$this->Helper->addCss('thing', 'second');
-		$this->Helper->addCss('other', 'third');
-
-		$result = $this->Helper->includeCss('second', 'default');
-		$expected = array(
-			array('link' => array(
-				'rel' => 'stylesheet',
-				'href' => '/cache_css/second.css?file%5B0%5D=thing'
-			)),
-			array('link' => array(
-				'rel' => 'stylesheet',
-				'href' => '/cache_css/default.css?file%5B0%5D=libraries'
-			)),
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that including assets removes them from the list of files to be included.
- *
- * @return void
- */
-	public function testIncludingFilesRemovesFromQueue() {
-		$this->Helper->addCss('libraries', 'default');
-		$result = $this->Helper->includeCss('default');
-		$expected = array(
-			'link' => array(
-				'rel' => 'stylesheet',
-				'href' => '/cache_css/default.css?file%5B0%5D=libraries'
-			)
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Helper->includeCss('default');
-		$this->assertEquals('', $result);
-	}
-
-/**
  * Test that generated elements can have attributes added.
  *
+ * @return void
  */
 	public function testAttributesOnElements() {
 		$result = $this->Helper->script('libs.js', array('defer' => true));
@@ -324,7 +90,7 @@ class AssetCompressHelperTest extends TestCase {
  * @return void
  */
 	public function testBaseUrl() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$config = $this->Helper->assetConfig();
 		$config->set('js.baseUrl', 'http://cdn.example.com/js/');
 		$config->set('js.timestamp', false);
@@ -396,6 +162,11 @@ class AssetCompressHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test raw assets from plugins.
+ *
+ * @return void
+ */
 	public function testRawAssetsPlugin() {
 		Plugin::load('TestAsset');
 
@@ -436,6 +207,11 @@ class AssetCompressHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test compiled builds with themes.
+ *
+ * @return void
+ */
 	public function testCompiledBuildWithThemes() {
 		Configure::write('debug', false);
 		$config = $this->Helper->assetConfig();
@@ -453,6 +229,11 @@ class AssetCompressHelperTest extends TestCase {
 		$this->assertContains('blue-asset_test.js', $result);
 	}
 
+/**
+ * Test basic URL generation.
+ *
+ * @return void
+ */
 	public function testUrlBasic() {
 		$url = $this->Helper->url('all.css');
 		$this->assertEquals('/cache_css/all.css', $url);
@@ -461,6 +242,11 @@ class AssetCompressHelperTest extends TestCase {
 		$this->assertEquals('/cache_js/libs.js', $url);
 	}
 
+/**
+ * Test URL generation in production mode.
+ *
+ * @return void
+ */
 	public function testUrlProductionMode() {
 		Configure::write('debug', false);
 		$this->Helper->assetConfig()->set('js.timestamp', false);
@@ -469,6 +255,11 @@ class AssetCompressHelperTest extends TestCase {
 		$this->assertEquals('/cache_js/libs.js', $result);
 	}
 
+/**
+ * Test URL generation with full base option.
+ *
+ * @return void
+ */
 	public function testUrlFullOption() {
 		$result = $this->Helper->url('libs.js', array('full' => true));
 		$this->assertEquals(

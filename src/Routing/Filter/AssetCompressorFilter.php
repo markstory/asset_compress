@@ -49,16 +49,6 @@ class AssetCompressorFilter extends DispatcherFilter {
 			$Config->theme($event->data['request']->query['theme']);
 		}
 
-		// Dynamically defined build file. Disabled in production for
-		// hopefully obvious reasons.
-		if ($Config->files($build) === array()) {
-			$files = array();
-			if (isset($event->data['request']->query['file'])) {
-				$files = $event->data['request']->query['file'];
-			}
-			$Config->files($build, $files);
-		}
-
 		try {
 			$Compiler = new AssetCompiler($Config);
 			$mtime = $Compiler->getLastModified($build);

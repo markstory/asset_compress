@@ -38,23 +38,9 @@ class AssetCompressShell extends Shell {
 	public function build() {
 		$this->out('Building files defined in the ini file');
 		$this->hr();
-		$this->build_ini();
 
-		$this->out();
-		$this->out('Building files in views');
-		$this->hr();
-		$this->build_dynamic();
-	}
-
-	public function build_ini() {
 		$this->AssetBuild->setConfig($this->_Config);
 		$this->AssetBuild->buildIni();
-	}
-
-	public function build_dynamic() {
-		$this->AssetBuild->setConfig($this->_Config);
-		$viewpaths = App::path('View');
-		$this->AssetBuild->buildDynamic($viewpaths);
 	}
 
 /**
@@ -178,11 +164,7 @@ class AssetCompressShell extends Shell {
 		))->addSubcommand('clear', array(
 			'help' => 'Clears all builds defined in the ini file.'
 		))->addSubcommand('build', array(
-			'help' => 'Generate all builds defined in the ini and view files.'
-		))->addSubcommand('build_ini', array(
-			'help' => 'Generate only build files defined in the ini file.'
-		))->addSubcommand('build_dynamic', array(
-			'help' => 'Build build files defined in view files.'
+			'help' => 'Generate all builds defined in the ini files.'
 		))->addOption('config', array(
 			'help' => 'Choose the config file to use.',
 			'short' => 'c',
