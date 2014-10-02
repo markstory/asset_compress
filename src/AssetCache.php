@@ -13,9 +13,25 @@ use RuntimeException;
  */
 class AssetCache {
 
+/**
+ * Config instance.
+ *
+ * @var \AssetCompress\AssetCache
+ */
 	protected $_config = null;
+
+/**
+ * An array of invalidated output files.
+ *
+ * @var array
+ */
 	protected $_invalidated = null;
 
+/**
+ * Constructor.
+ *
+ * @param \AssetCompress\AssetConfig $config The config instance.
+ */
 	public function __construct(AssetConfig $config) {
 		$this->_config = $config;
 	}

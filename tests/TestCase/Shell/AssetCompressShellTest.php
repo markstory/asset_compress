@@ -3,7 +3,9 @@ namespace AssetCompress\Test\TestCase\Shell;
 
 use AssetCompress\Shell\AssetCompressShell;
 use AssetCompress\AssetConfig;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Folder;
 
 /**
  * AssetBuildTask test case.
@@ -22,12 +24,16 @@ class AssetBuildTaskTest extends TestCase {
 		$this->Shell = new AssetCompressShell($io);
 		$this->Shell->initialize();
 
-		$this->testConfig = APP . 'config' . DS . 'config.ini';
+		$this->testConfig = APP . 'config' . DS;
 
 		AssetConfig::clearAllCachedKeys();
-		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
+		$this->config = AssetConfig::buildFromIniFile(
+			$this->testConfig . 'integration.ini',
+			['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+		);
 		$this->Shell->setConfig($this->config);
-		$this->Shell->AssetBuild->setConfig($this->config);
+		mkdir(TMP . 'cache_js');
+		mkdir(TMP . 'cache_css');
 	}
 
 /**
@@ -38,6 +44,10 @@ class AssetBuildTaskTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Shell);
+		$dir = new Folder(TMP . 'cache_js');
+		$dir->delete();
+		$dir = new Folder(TMP . 'cache_css');
+		$dir->delete();
 	}
 
 /**
@@ -47,6 +57,10 @@ class AssetBuildTaskTest extends TestCase {
  */
 	public function testBuildFiles() {
 		$this->Shell->build();
+
+		$this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'all.css'), 'Css build missing');
+		$this->assertTrue(file_exists(TMP . 'cache_js' . DS . 'libs.js'), 'Js build missing');
+		$this->assertTrue(file_exists(TMP . 'cache_js' . DS . 'foo.bar.js'), 'Js build missing');
 	}
 
 /**
@@ -55,7 +69,19 @@ class AssetBuildTaskTest extends TestCase {
  * @return void
  */
 	public function testBuildFilesWithTheme() {
-		$this->markTestIncomplete('Not done');
+		Plugin::load('Red');
+		Plugin::load('Blue');
+		$config = AssetConfig::buildFromIniFile(
+			$this->testConfig . 'themed.ini',
+			['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+		);
+		$this->Shell->setConfig($config);
+		$this->Shell->build();
+
+		$this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'blue-themed.css'), 'Css build missing');
+		$this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'red-themed.css'), 'Css build missing');
+		$this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'blue-combined.css'), 'Css build missing');
+		$this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'red-combined.css'), 'Css build missing');
 	}
 
 }

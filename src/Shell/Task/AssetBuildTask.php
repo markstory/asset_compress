@@ -12,8 +12,6 @@ class AssetBuildTask extends Shell {
 
 	protected $_config;
 
-	protected $_themes = array();
-
 	protected $_files = array();
 
 /**
@@ -26,16 +24,6 @@ class AssetBuildTask extends Shell {
 		$this->_config = $Config;
 		$this->Compiler = new AssetCompiler($this->_config);
 		$this->Cacher = new AssetCache($this->_config);
-	}
-
-/**
- * Set the themes to scan.
- *
- * @param array
- * @return void
- */
-	public function setThemes($themes) {
-		$this->_themes = (array)$themes;
 	}
 
 /**
@@ -62,7 +50,8 @@ class AssetBuildTask extends Shell {
  */
 	protected function _buildTarget($build) {
 		if ($this->_config->isThemed($build)) {
-			foreach ($this->_themes as $theme) {
+			$themes = $this->_config->general('themes');
+			foreach ($themes as $theme) {
 				$this->_config->theme($theme);
 				$this->_generateFile($build);
 			}

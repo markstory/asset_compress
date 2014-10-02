@@ -147,7 +147,7 @@ class AssetCompiler {
 	protected function _findFile($object) {
 		$filename = $this->_scanner->find($object);
 		if (!$filename) {
-			throw new Exception(sprintf('Could not locate file "%s"', $object));
+			throw new RuntimeException(sprintf('Could not locate file "%s"', $object));
 		}
 		return $filename;
 	}
