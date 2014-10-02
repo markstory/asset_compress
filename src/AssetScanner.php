@@ -34,6 +34,12 @@ class AssetScanner {
 	const THEME_PATTERN = '/^(?:t|theme)\:/';
 	const PLUGIN_PATTERN = '/^(?:p|plugin)\:(.*)\:(.*)$/';
 
+/**
+ * Constructor.
+ *
+ * @param array $paths The paths to scan.
+ * @param string $theme The current theme.
+ */
 	public function __construct(array $paths, $theme = null) {
 		$this->_theme = $theme;
 		$this->_paths = $paths;
@@ -59,6 +65,7 @@ class AssetScanner {
 
 /**
  * Normalize a file path to the specified Directory Separator ($ds)
+ *
  * @param string $name Path to normalize
  * @param type $ds Directory Separator to be used
  * @return string Normalized path

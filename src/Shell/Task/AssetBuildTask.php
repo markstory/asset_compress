@@ -10,7 +10,7 @@ use Cake\Utility\Folder;
 
 class AssetBuildTask extends Shell {
 
-	protected $_Config;
+	protected $_config;
 
 	protected $_themes = array();
 
@@ -19,16 +19,23 @@ class AssetBuildTask extends Shell {
 /**
  * Set the Configuration object that will be used.
  *
+ * @param \AssetCompress\AssetConfig $config The config object.
  * @return void
  */
 	public function setConfig(AssetConfig $Config) {
-		$this->_Config = $Config;
-		$this->Compiler = new AssetCompiler($this->_Config);
-		$this->Cacher = new AssetCache($this->_Config);
+		$this->_config = $Config;
+		$this->Compiler = new AssetCompiler($this->_config);
+		$this->Cacher = new AssetCache($this->_config);
 	}
 
+/**
+ * Set the themes to scan.
+ *
+ * @param array
+ * @return void
+ */
 	public function setThemes($themes) {
-		$this->_themes = $themes;
+		$this->_themes = (array)$themes;
 	}
 
 /**
@@ -37,11 +44,11 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	public function buildIni() {
-		$targets = $this->_Config->targets('js');
+		$targets = $this->_config->targets('js');
 		foreach ($targets as $t) {
 			$this->_buildTarget($t);
 		}
-		$targets = $this->_Config->targets('css');
+		$targets = $this->_config->targets('css');
 		foreach ($targets as $t) {
 			$this->_buildTarget($t);
 		}
@@ -54,9 +61,9 @@ class AssetBuildTask extends Shell {
  * @return void
  */
 	protected function _buildTarget($build) {
-		if ($this->_Config->isThemed($build)) {
+		if ($this->_config->isThemed($build)) {
 			foreach ($this->_themes as $theme) {
-				$this->_Config->theme($theme);
+				$this->_config->theme($theme);
 				$this->_generateFile($build);
 			}
 		} else {

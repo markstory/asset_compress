@@ -1,10 +1,10 @@
 <?php
 namespace AssetCompress\Shell;
 
-use App\Console\Command\AppShell;
 use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use Cake\Console\Shell;
 use Cake\Utility\Folder;
 
 /**
@@ -17,6 +17,8 @@ class AssetCompressShell extends Shell {
 
 	public $tasks = array('AssetCompress.AssetBuild');
 
+	protected $_config;
+
 /**
  * Create the configuration object used in other classes.
  *
@@ -25,9 +27,20 @@ class AssetCompressShell extends Shell {
 		parent::startup();
 
 		AssetConfig::clearAllCachedKeys();
-		$this->_Config = AssetConfig::buildFromIniFile($this->params['config']);
-		$this->AssetBuild->setThemes($this->_findThemes());
+		$this->_config = AssetConfig::buildFromIniFile($this->params['config']);
+		$this->AssetBuild->setThemes($this->_config->general('themes'));
 		$this->out();
+	}
+
+/**
+ * Set the config object.
+ *
+ * @var \AssetCompress\AssetConfig $config The config instance.
+ * @return void
+ */
+	public function setConfig($config) {
+		$this->_config = $config;
+		$this->AssetBuild->setConfig($config);
 	}
 
 /**
@@ -36,10 +49,10 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
-		$this->out('Building files defined in the ini file');
+		$this->out('Building files...');
 		$this->hr();
 
-		$this->AssetBuild->setConfig($this->_Config);
+		$this->AssetBuild->setConfig($this->_config);
 		$this->AssetBuild->buildIni();
 	}
 
@@ -94,17 +107,17 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	protected function _clearBuilds($ext) {
-		$themes = $this->_findThemes();
-		$targets = $this->_Config->targets($ext);
+		$targets = $this->_config->targets($ext);
 		if (empty($targets)) {
 			$this->err('No ' . $ext . ' build files defined, skipping');
 			return;
 		}
-		$path = $this->_Config->cachePath($ext);
+		$path = $this->_config->cachePath($ext);
 		if (!file_exists($path)) {
 			$this->err('Build directory ' . $path . ' for ' . $ext . ' does not exist.');
 			return;
 		}
+		$themes = (array)$this->_config->general('themes');
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
 			$name = $base = $file->getFilename();
@@ -128,25 +141,6 @@ class AssetCompressShell extends Shell {
 				continue;
 			}
 		}
-	}
-
-/**
- * Find all the themes in an application.
- * This is used to generate theme asset builds.
- *
- * @return array Array of theme names.
- */
-	protected function _findThemes() {
-		$viewpaths = App::path('View');
-		$themes = array();
-		foreach ($viewpaths as $path) {
-			if (is_dir($path . 'Themed')) {
-				$Folder = new Folder($path . 'Themed');
-				list($dirs, $files) = $Folder->read(false, true);
-				$themes = array_merge($themes, $dirs);
-			}
-		}
-		return $themes;
 	}
 
 /**
@@ -175,4 +169,5 @@ class AssetCompressShell extends Shell {
 			'boolean' => true
 		));
 	}
+
 }

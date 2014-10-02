@@ -1,17 +1,38 @@
 <?php
+namespace AssetCompress;
+
 /**
  * Thin wrapper around proc_open() so Filters
  * don't have to directly fiddle with that API.
  */
-namespace AssetCompress;
 class AssetProcess {
 
+/**
+ * Environment variables for the sub process.
+ *
+ * @var array
+ */
 	protected $_env = null;
 
+/**
+ * The command that is being run.
+ *
+ * @var string
+ */
 	protected $_command = '';
 
+/**
+ * The stderr output.
+ *
+ * @var string
+ */
 	protected $_error;
 
+/**
+ * The stdout output.
+ *
+ * @var string
+ */
 	protected $_output;
 
 /**

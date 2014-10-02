@@ -12,8 +12,18 @@ use RuntimeException;
  */
 class AssetFilterCollection {
 
+/**
+ * Config object.
+ *
+ * @var \AssetCompress\AssetConfig
+ */
 	protected $_config = array();
 
+/**
+ * An array of filters.
+ *
+ * @var array
+ */
 	protected $_filters = array();
 
 /**

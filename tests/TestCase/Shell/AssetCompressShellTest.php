@@ -1,10 +1,8 @@
 <?php
-namespace AssetCompress\Test\TestCase\Shell\Task;
+namespace AssetCompress\Test\TestCase\Shell;
 
-use AssetCompress\Shell\Task\AssetBuildTask;
+use AssetCompress\Shell\AssetCompressShell;
 use AssetCompress\AssetConfig;
-use Cake\Console\Shell;
-use Cake\Console\ShellDispatcher;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -21,17 +19,15 @@ class AssetBuildTaskTest extends TestCase {
 		parent::setUp();
 		$io = $this->getMock('Cake\Console\ConsoleIo', array(), array(), '', false);
 
-		$this->Task = $this->getMock('AssetCompress\Shell\Task\AssetBuildTask',
-			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array($io)
-		);
+		$this->Shell = new AssetCompressShell($io);
+		$this->Shell->initialize();
 
-		$this->testFilePath = APP . 'Template/Parse/';
 		$this->testConfig = APP . 'config' . DS . 'config.ini';
 
 		AssetConfig::clearAllCachedKeys();
 		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
-		$this->Task->setConfig($this->config);
+		$this->Shell->setConfig($this->config);
+		$this->Shell->AssetBuild->setConfig($this->config);
 	}
 
 /**
@@ -41,7 +37,7 @@ class AssetBuildTaskTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task);
+		unset($this->Shell);
 	}
 
 /**
@@ -50,6 +46,15 @@ class AssetBuildTaskTest extends TestCase {
  * @return void
  */
 	public function testBuildFiles() {
+		$this->Shell->build();
+	}
+
+/**
+ * Test building files from the config file.
+ *
+ * @return void
+ */
+	public function testBuildFilesWithTheme() {
 		$this->markTestIncomplete('Not done');
 	}
 
