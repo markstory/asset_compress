@@ -181,7 +181,9 @@ class AssetCompressHelper extends Helper {
 		$config = $this->assetConfig();
 		$buildFiles = $config->files($file);
 		if (!$buildFiles) {
-			throw new RuntimeException('Cannot create a stylesheet tag for a build that does not exist.');
+			throw new RuntimeException(
+				"Cannot create a stylesheet tag for a '$file'. That build is not defined."
+			);
 		}
 		$output = '';
 		if (!empty($options['raw'])) {
@@ -221,7 +223,9 @@ class AssetCompressHelper extends Helper {
 		$config = $this->assetConfig();
 		$buildFiles = $config->files($file);
 		if (!$buildFiles) {
-			throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
+			throw new RuntimeException(
+				"Cannot create a script tag for a '$file'. That build is not defined."
+			);
 		}
 		if (!empty($options['raw'])) {
 			$output = '';
