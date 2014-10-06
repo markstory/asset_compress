@@ -3,6 +3,7 @@ namespace AssetCompress;
 
 use AssetCompress\AssetProcess;
 use AssetCompress\AssetFilterInterface;
+use RuntimeException;
 
 
 /**

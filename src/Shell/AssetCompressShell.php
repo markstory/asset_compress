@@ -28,7 +28,6 @@ class AssetCompressShell extends Shell {
 
 		AssetConfig::clearAllCachedKeys();
 		$this->_config = AssetConfig::buildFromIniFile($this->params['config']);
-		$this->AssetBuild->setThemes($this->_config->general('themes'));
 		$this->out();
 	}
 
