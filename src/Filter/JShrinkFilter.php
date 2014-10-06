@@ -2,10 +2,12 @@
 namespace AssetCompress\Filter;
 
 use AssetCompress\AssetFilter;
+use JShrink\Minifier;
+
 /**
  * JShrink filter.
  *
- * Allows you to minify Javascript files through JShrink.  
+ * Allows you to minify Javascript files through JShrink.
  * JShrink can be downloaded at https://github.com/tedivm/JShrink.
  * You need to put Minifier.php in your vendors jshrink folder.
  *
@@ -17,10 +19,10 @@ class JShrinkFilter extends AssetFilter {
  *
  * @var array
  */
-    protected $_settings = array(
-        'path' => 'jshrink/Minifier.php',
-        'flaggedComments' => true,
-    );
+	protected $_settings = array(
+		'path' => 'jshrink/Minifier.php',
+		'flaggedComments' => true,
+	);
 
 /**
  * Apply JShrink to $content.
@@ -30,13 +32,11 @@ class JShrinkFilter extends AssetFilter {
  * @throws Exception
  * @return string
  */
-    public function output($filename, $content) {
-        App::import('Vendor', 'Minifier', array('file' => $this->_settings['path']));
-        if (!class_exists('JShrink\Minifier')) {
-            throw new Exception(sprintf('Cannot not load filter class "%s".', 'JShrink\Minifier'));
-        }
-        return JShrink\Minifier::minify($content, array('flaggedComments' => $this->_settings['flaggedComments']));
-    }
+	public function output($filename, $content) {
+		if (!class_exists('JShrink\Minifier')) {
+			throw new Exception(sprintf('Cannot not load filter class "%s".', 'JShrink\Minifier'));
+		}
+		return Minifier::minify($content, array('flaggedComments' => $this->_settings['flaggedComments']));
+	}
 
 }
-

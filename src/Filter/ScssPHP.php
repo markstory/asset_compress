@@ -1,14 +1,13 @@
 <?php
-
 namespace AssetCompress\Filter;
+
+use scssc;
 
 use AssetCompress\AssetFilter;
 /**
  * Pre-processing filter that adds support for SCSS files.
  *
- * Requires scssphp to be installed.
- *
- * eg. git submodule add https://github.com/leafo/scssphp.git app/Vendor/scssphp
+ * Requires scssphp to be installed via composer.
  *
  * @see http://leafo.net/scssphp
  */
@@ -16,7 +15,6 @@ class ScssPHP extends AssetFilter {
 
 	protected $_settings = array(
 		'ext' => '.scss',
-		'path' => 'scssphp/scss.inc.php',
 	);
 
 /**
@@ -31,7 +29,6 @@ class ScssPHP extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
-		App::import('Vendor', 'scssc', array('file' => $this->_settings['path']));
 		if (!class_exists('scssc')) {
 			throw new Exception(sprintf('Cannot not load filter class "%s".', 'scssc'));
 		}

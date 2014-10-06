@@ -34,6 +34,10 @@
 		}
 	},
 	"suggest": {
-		"natxet/CssMin": "For using the CssMinFilter."
+		"natxet/CssMin": "For using the CssMin filter.",
+		"tedivm/jshrink": "For using the JShrink filter.",
+		"linkorb/jsmin-php": "For using the JSMin filter.",
+		"leafo/scssphp": "For using the ScssPHP filter.",
+		"leafo/lessphp": "For using the LessPHP filter."
 	}
 }

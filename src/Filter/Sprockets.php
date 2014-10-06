@@ -4,6 +4,7 @@ namespace AssetCompress\Filter;
 use AssetCompress\AssetFilter;
 use AssetCompress\AssetScanner;
 use Cake\Utility\Hash;
+
 /**
  * Implements directive replacement similar to sprockets <http://getsprockets.org>
  * Does not implement the //= provides syntax.

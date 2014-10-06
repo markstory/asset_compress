@@ -1,14 +1,13 @@
 <?php
-
 namespace AssetCompress\Filter;
+
+use lessc;
 
 use AssetCompress\AssetFilter;
 /**
  * Pre-processing filter that adds support for LESS.css files.
  *
- * Requires lessphp to be installed.
- *
- * eg. git submodule add https://github.com/leafo/lessphp.git app/Vendor/lessphp
+ * Requires lessphp to be installed via composer.
  *
  * @see http://leafo.net/lessphp
  */
@@ -16,7 +15,6 @@ class LessPHP extends AssetFilter {
 
 	protected $_settings = array(
 		'ext' => '.less',
-		'path' => 'lessphp/lessc.inc.php',
 	);
 
 /**
@@ -31,7 +29,6 @@ class LessPHP extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
-		App::import('Vendor', 'lessc', array('file' => $this->_settings['path']));
 		if (!class_exists('lessc')) {
 			throw new Exception(sprintf('Cannot not load filter class "%s".', 'lessc'));
 		}
