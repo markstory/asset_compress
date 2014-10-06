@@ -32,5 +32,8 @@
 		"psr-4": {
 			"AssetCompress\\Test\\": "tests"
 		}
+	},
+	"suggest": {
+		"natxet/CssMin": "For using the CssMinFilter."
 	}
 }
