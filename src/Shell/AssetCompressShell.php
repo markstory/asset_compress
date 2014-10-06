@@ -162,7 +162,7 @@ class AssetCompressShell extends Shell {
 		))->addOption('config', array(
 			'help' => 'Choose the config file to use.',
 			'short' => 'c',
-			'default' => APP . 'Config' . DS . 'asset_compress.ini'
+			'default' => CONFIG . 'asset_compress.ini'
 		))->addOption('force', array(
 			'help' => 'Force assets to rebuild. Ignores timestamp rules.',
 			'short' => 'f',
