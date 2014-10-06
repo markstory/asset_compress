@@ -136,7 +136,7 @@ class AssetCompressHelper extends Helper {
 		);
 
 		foreach ($files as $file) {
-			$includeFile = JS . $this->options['autoIncludePath'] . DS . $file;
+			$includeFile = Configure::read('App.jsBaseUrl') . $this->options['autoIncludePath'] . DS . $file;
 			if (file_exists($includeFile)) {
 				$this->Html->script(
 					str_replace(DS, '/', $this->options['autoIncludePath'] . '/' . $file),
