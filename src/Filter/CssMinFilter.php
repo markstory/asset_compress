@@ -2,22 +2,14 @@
 namespace AssetCompress\Filter;
 
 use AssetCompress\AssetFilter;
+use CssMin;
+
 /**
  * CssMin filter.
  *
- * Allows you to filter Css files through CssMin. You need to put CssMin in your application's
- * vendors directories. You can get it from http://code.google.com/p/cssmin/
+ * Allows you to filter Css files through CssMin. You need to install CssMin with composer.
  */
 class CssMinFilter extends AssetFilter {
-
-/**
- * Where CssMin can be found.
- *
- * @var array
- */
-	protected $_settings = array(
-		'path' => 'cssmin/CssMin.php'
-	);
 
 /**
  * Apply CssMin to $content.
@@ -28,7 +20,6 @@ class CssMinFilter extends AssetFilter {
  * @return string
  */
 	public function output($filename, $content) {
-		require_once APP . 'vendor' . DS . $this->_settings['path'];
 		if (!class_exists('CssMin')) {
 			throw new Exception(sprintf('Cannot not load filter class "%s".', 'CssMin'));
 		}
