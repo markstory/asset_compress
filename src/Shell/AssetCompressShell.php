@@ -49,9 +49,6 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	public function build() {
-		$this->out('Building files...');
-		$this->hr();
-
 		$this->AssetBuild->setConfig($this->_config);
 		$this->AssetBuild->build();
 	}
@@ -64,16 +61,13 @@ class AssetCompressShell extends Shell {
 	public function clear() {
 		$this->clear_build_ts();
 
-		$this->out('Clearing Javascript build files:');
-		$this->hr();
+		$this->verbose('Clearing Javascript build files:');
 		$this->_clearBuilds('js');
 
-		$this->out('');
-		$this->out('Clearing CSS build files:');
-		$this->hr();
+		$this->verbose('Clearing CSS build files:');
 		$this->_clearBuilds('css');
 
-		$this->out();
+		$this->verbose();
 		$this->out('<success>Complete</success>');
 	}
 
@@ -96,8 +90,7 @@ class AssetCompressShell extends Shell {
  * build timestamp file is only created when build() is run from this shell
  */
 	public function clear_build_ts() {
-		$this->out('Clearing build timestamp.');
-		$this->out();
+		$this->verbose('Clearing build timestamp.');
 		AssetConfig::clearBuildTimeStamp();
 	}
 
@@ -136,7 +129,7 @@ class AssetCompressShell extends Shell {
 				}
 			}
 			if (in_array($base, $targets)) {
-				$this->out(' - Deleting ' . $path . $name);
+				$this->verbose(' - Deleting ' . $path . $name);
 				unlink($path . $name);
 				continue;
 			}
