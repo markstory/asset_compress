@@ -84,4 +84,60 @@ class AssetBuildTaskTest extends TestCase {
 		$this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'red-combined.css'), 'Css build missing');
 	}
 
+/**
+ * Test clearing build files.
+ *
+ * @return void
+ */
+	public function testClear() {
+		$config = AssetConfig::buildFromIniFile(
+			$this->testConfig . 'integration.ini',
+			['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+		);
+		$this->Shell->setConfig($config);
+
+		$files = [
+			TMP . 'cache_css/all.css',
+			TMP . 'cache_css/all.v12354.css',
+			TMP . 'cache_js/libs.js',
+			TMP . 'cache_js/libs.v12354.js'
+		];
+		foreach ($files as $file) {
+			touch($file);
+		}
+
+		$this->Shell->clear();
+
+		foreach ($files as $file) {
+			$this->assertFalse(file_exists($file), "$file was not cleared");
+		}
+	}
+
+/**
+ * Test clearing build files doesn't nuke unknown files.
+ *
+ * @return void
+ */
+	public function testClearIgnoreUnmanagedFiles() {
+		$config = AssetConfig::buildFromIniFile(
+			$this->testConfig . 'integration.ini',
+			['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+		);
+		$this->Shell->setConfig($config);
+
+		$files = [
+			TMP . 'cache_js/nope.js',
+			TMP . 'cache_js/nope.v12354.js'
+		];
+		foreach ($files as $file) {
+			touch($file);
+		}
+
+		$this->Shell->clear();
+
+		foreach ($files as $file) {
+			$this->assertTrue(file_exists($file), "$file should not be cleared");
+		}
+	}
+
 }
