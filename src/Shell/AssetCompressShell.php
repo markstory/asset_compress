@@ -6,6 +6,7 @@ use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
+use DirectoryIterator;
 
 /**
  * Asset Compress Shell
@@ -52,7 +53,7 @@ class AssetCompressShell extends Shell {
 		$this->hr();
 
 		$this->AssetBuild->setConfig($this->_config);
-		$this->AssetBuild->buildIni();
+		$this->AssetBuild->build();
 	}
 
 /**

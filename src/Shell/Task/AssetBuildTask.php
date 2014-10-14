@@ -31,7 +31,7 @@ class AssetBuildTask extends Shell {
  *
  * @return void
  */
-	public function buildIni() {
+	public function build() {
 		$targets = $this->_config->targets('js');
 		foreach ($targets as $t) {
 			$this->_buildTarget($t);
