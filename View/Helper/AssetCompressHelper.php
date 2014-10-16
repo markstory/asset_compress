@@ -381,12 +381,13 @@ class AssetCompressHelper extends AppHelper {
 			return $baseUrl . $this->_getBuildName($file);
 		}
 
-		if (!$devMode) {
+		$allow_build = $config->general('alwaysAllowBuildFiles');
+		$enable_ctrl = $config->general('alwaysEnableController');
+		if ((!$devMode && !$enable_ctrl) || ($devMode && $allow_build)) {
 			$path = str_replace(WWW_ROOT, '/', $path);
 			$path = rtrim($path, '/') . '/';
 			$route = $path . $this->_getBuildName($file);
-		}
-		if ($devMode || $config->general('alwaysEnableController')) {
+		} else {
 			$baseUrl = str_replace(WWW_ROOT, '/', $path);
 			$route = $this->_getRoute($file, $baseUrl);
 		}
