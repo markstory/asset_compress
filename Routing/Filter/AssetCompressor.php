@@ -30,9 +30,9 @@ class AssetCompressor extends DispatcherFilter {
  */
 	public function beforeDispatch(CakeEvent $event) {
 		$url = $event->data['request']->url;
-		$Config = $this->_getConfig();
+		$config = $this->_getConfig();
 		$production = !Configure::read('debug');
-		if ($production && !$Config->general('alwaysEnableController')) {
+		if ($production && !$config->general('alwaysEnableController')) {
 			return;
 		}
 
@@ -42,33 +42,37 @@ class AssetCompressor extends DispatcherFilter {
 		}
 
 		if (isset($event->data['request']->query['theme'])) {
-			$Config->theme($event->data['request']->query['theme']);
+			$config->theme($event->data['request']->query['theme']);
 		}
 
 		// Dynamically defined build file. Disabled in production for
 		// hopefully obvious reasons.
-		if ($Config->files($build) === array()) {
+		if ($config->files($build) === array()) {
 			$files = array();
 			if (isset($event->data['request']->query['file'])) {
 				$files = $event->data['request']->query['file'];
 			}
-			$Config->files($build, $files);
+			$config->files($build, $files);
 		}
 
+		// Use the TMP dir for dev builds.
+		// This is to avoid permissions issues with the configured paths.
+		$ext = $config->getExt($build);
+		$config->cachePath($ext, TMP);
+
 		try {
-			$Compiler = new AssetCompiler($Config);
-			$mtime = $Compiler->getLastModified($build);
-			$event->data['response']->modified($mtime);
-			if ($event->data['response']->checkNotModified($event->data['request'])) {
-				$event->stopPropagation();
-				return $event->data['response'];
+			$compiler = new AssetCompiler($config);
+			$cache = new AssetCache($config);
+			if ($cache->isFresh($build)) {
+				$contents = file_get_contents(TMP . $build);
+			} else {
+				$contents = $compiler->generate($build);
 			}
-			$contents = $Compiler->generate($build);
 		} catch (Exception $e) {
 			throw new NotFoundException($e->getMessage());
 		}
 
-		$event->data['response']->type($Config->getExt($build));
+		$event->data['response']->type($config->getExt($build));
 		$event->data['response']->body($contents);
 		$event->stopPropagation();
 		return $event->data['response'];
