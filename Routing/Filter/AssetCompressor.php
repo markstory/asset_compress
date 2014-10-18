@@ -29,7 +29,9 @@ class AssetCompressor extends DispatcherFilter {
  * @return CakeResponse if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch(CakeEvent $event) {
-		$url = $event->data['request']->url;
+		$request = $event->data['request'];
+		$response = $event->data['response'];
+		$url = $request->url;
 		$config = $this->_getConfig();
 		$production = !Configure::read('debug');
 		if ($production && !$config->general('alwaysEnableController')) {
@@ -41,7 +43,7 @@ class AssetCompressor extends DispatcherFilter {
 			return;
 		}
 
-		if (isset($event->data['request']->query['theme'])) {
+		if (isset($request->query['theme'])) {
 			$config->theme($event->data['request']->query['theme']);
 		}
 
@@ -49,8 +51,8 @@ class AssetCompressor extends DispatcherFilter {
 		// hopefully obvious reasons.
 		if ($config->files($build) === array()) {
 			$files = array();
-			if (isset($event->data['request']->query['file'])) {
-				$files = $event->data['request']->query['file'];
+			if (isset($request->query['file'])) {
+				$files = $request->query['file'];
 			}
 			$config->files($build, $files);
 		}
@@ -72,10 +74,10 @@ class AssetCompressor extends DispatcherFilter {
 			throw new NotFoundException($e->getMessage());
 		}
 
-		$event->data['response']->type($config->getExt($build));
-		$event->data['response']->body($contents);
+		$response->type($config->getExt($build));
+		$response->body($contents);
 		$event->stopPropagation();
-		return $event->data['response'];
+		return $response;
 	}
 
 /**
