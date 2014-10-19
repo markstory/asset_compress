@@ -1,4 +1,8 @@
 0.17.0 Changes
 
+* New `inlineCss` and `inlineScript` methods were added to the
+  AssetCompressHelper. These new methods allow you to inline js/css
+  on the page. Note that the assets will be rebuilt on each page request.
+
 See [github releases](https://github.com/markstory/asset_compress/releases)
 for changelogs on previous releases.
