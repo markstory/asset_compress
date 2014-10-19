@@ -70,20 +70,39 @@ class AssetsCompressorTest extends CakeTestCase {
 		$this->assertTrue($event->isStopped());
 	}
 
-	public function testDynamicBuildFileCheckNotModified() {
-		$this->response
-			->expects($this->once())->method('checkNotModified')
-			->with($this->request)
-			->will($this->returnValue(true));
+/**
+ * test that predefined builds get cached to disk.
+ *
+ * @return void
+ */
+	public function testBuildFileIsCached() {
+		$this->request->url = 'cache_js/libs.js';
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
+		$this->assertContains('BaseClass', $this->response->body());
+		$this->assertTrue($event->isStopped());
+		$this->assertTrue(file_exists(TMP . 'libs.js'), 'Cache file was created.');
+		unlink(TMP . 'libs.js');
+	}
+
+/**
+ * test that dynamic builds get cached to disk.
+ *
+ * @return void
+ */
+	public function testDynamicBuildFileIsCached() {
 		$this->request->url = 'cache_js/dynamic.js';
 		$this->request->query['file'] = array('library_file.js', 'lots_of_comments.js');
 		$data = array('request' => $this->request, 'response' => $this->response);
 		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
 		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
-		$this->assertEquals('', $this->response->body());
+		$this->assertNotEquals('', $this->response->body());
 		$this->assertTrue($event->isStopped());
+		$this->assertTrue(file_exists(TMP . 'dynamic.js'), 'Cache file was created.');
+		unlink(TMP . 'dynamic.js');
 	}
 
 /**
