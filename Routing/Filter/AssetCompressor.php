@@ -69,6 +69,7 @@ class AssetCompressor extends DispatcherFilter {
 				$contents = file_get_contents(TMP . $build);
 			} else {
 				$contents = $compiler->generate($build);
+				$cache->write($build, $contents);
 			}
 		} catch (Exception $e) {
 			throw new NotFoundException($e->getMessage());
