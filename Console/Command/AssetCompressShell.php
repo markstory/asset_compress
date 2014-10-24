@@ -125,9 +125,8 @@ class AssetCompressShell extends AppShell {
 				continue;
 			}
 			// timestampped files.
-			if (preg_match('/^.*\.v\d+\.[a-z]+$/', $name)) {
-				list($base, $v, $ext) = explode('.', $name, 3);
-				$base = $base . '.' . $ext;
+			if (preg_match('/^(.*)\.v\d+(\.[a-z]+)$/', $name, $matches)) {
+				$base = $matches[1] . $matches[2];
 			}
 			// themed files
 			foreach ($themes as $theme) {
