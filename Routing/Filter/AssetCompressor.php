@@ -4,6 +4,7 @@ App::uses('DispatcherFilter', 'Routing');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('Folder', 'Utility');
 
 class AssetCompressor extends DispatcherFilter {
 
@@ -59,14 +60,19 @@ class AssetCompressor extends DispatcherFilter {
 
 		// Use the TMP dir for dev builds.
 		// This is to avoid permissions issues with the configured paths.
+		$cachePath = CACHE . 'asset_compress' . DS;
+		$folder = new Folder($cachePath, true);
+		$folder->chmod($cachePath, 0777);
+
 		$ext = $config->getExt($build);
-		$config->cachePath($ext, TMP);
+		$config->cachePath($ext, $cachePath);
+		$config->set("$ext.timestamp", false);
 
 		try {
 			$compiler = new AssetCompiler($config);
 			$cache = new AssetCache($config);
 			if ($cache->isFresh($build)) {
-				$contents = file_get_contents(TMP . $build);
+				$contents = file_get_contents($cachePath . $build);
 			} else {
 				$contents = $compiler->generate($build);
 				$cache->write($build, $contents);

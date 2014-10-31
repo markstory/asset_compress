@@ -83,8 +83,8 @@ class AssetsCompressorTest extends CakeTestCase {
 
 		$this->assertContains('BaseClass', $this->response->body());
 		$this->assertTrue($event->isStopped());
-		$this->assertTrue(file_exists(TMP . 'libs.js'), 'Cache file was created.');
-		unlink(TMP . 'libs.js');
+		$this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
+		unlink(CACHE . 'asset_compress' . DS . 'libs.js');
 	}
 
 /**
@@ -101,8 +101,8 @@ class AssetsCompressorTest extends CakeTestCase {
 
 		$this->assertNotEquals('', $this->response->body());
 		$this->assertTrue($event->isStopped());
-		$this->assertTrue(file_exists(TMP . 'dynamic.js'), 'Cache file was created.');
-		unlink(TMP . 'dynamic.js');
+		$this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'dynamic.js'), 'Cache file was created.');
+		unlink(CACHE . 'asset_compress' . DS . 'dynamic.js');
 	}
 
 /**
