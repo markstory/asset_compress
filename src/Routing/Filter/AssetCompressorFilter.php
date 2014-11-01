@@ -34,7 +34,9 @@ class AssetCompressorFilter extends DispatcherFilter {
  * @return Response if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch(Event $event) {
-		$url = $event->data['request']->url;
+		$request = $event->data['request'];
+		$response = $event->data['response'];
+		$url = $request->url;
 		$config = $this->_getConfig();
 		$production = !Configure::read('debug');
 		if ($production && !$config->general('alwaysEnableController')) {
@@ -47,7 +49,7 @@ class AssetCompressorFilter extends DispatcherFilter {
 		}
 
 		if (isset($request->query['theme'])) {
-			$config->theme($event->data['request']->query['theme']);
+			$config->theme($request->query['theme']);
 		}
 
 		// Use the CACHE dir for dev builds.

@@ -2,6 +2,7 @@
 namespace AssetCompress\View\Helper;
 
 use AssetCompress\AssetCache;
+use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
 use AssetCompress\AssetScanner;
 use Cake\Core\Configure;
@@ -352,54 +353,57 @@ class AssetCompressHelper extends Helper {
 	}
 
 /**
-  * Create a CSS file. Will generate inline style tags
-  * in production, or reference the dynamic build file in development
-  *
-  * To create build files without configuration use addCss()
-  *
-  * Options:
-  *
-  * - All options supported by HtmlHelper::css() are supported.
-  *
-  * @param string $file A build target to include.
-  * @throws RuntimeException
-  * @return string style tag
-  */
-    public function inlineCss($file) {
-        $buildFiles = $this->config()->files($file);
-        if (!$buildFiles) {
-            throw new RuntimeException('Cannot create a stylesheet for a build that does not exist.');
-        }
+ * Create a CSS file. Will generate inline style tags
+ * in production, or reference the dynamic build file in development
+ *
+ * To create build files without configuration use addCss()
+ *
+ * Options:
+ *
+ * - All options supported by HtmlHelper::css() are supported.
+ *
+ * @param string $file A build target to include.
+ * @throws RuntimeException
+ * @return string style tag
+ */
+	public function inlineCss($file) {
+		$config = $this->assetConfig();
+		$buildFiles = $config->files($file);
+		if (!$buildFiles) {
+			throw new RuntimeException('Cannot create a stylesheet for a build that does not exist.');
+		}
 
-        $compiler = new AssetCompiler($this->config());
-        $results = $compiler->generate($file);
+		$compiler = new AssetCompiler($config);
+		$results = $compiler->generate($file);
 
-        return $this->Html->tag('style', $results, array('type' => 'text/css'));
-    }
+		return $this->Html->tag('style', $results, array('type' => 'text/css'));
+	}
 
 /**
-  * Create an inline script tag for a script asset. Will generate inline script tags
-  * in production, or reference the dynamic build file in development.
-  *
-  * To create build files without configuration use addScript()
-  *
-  * Options:
-  *
-  * - All options supported by HtmlHelper::css() are supported.
-  *
-  * @param string $file A build target to include.
-  * @throws RuntimeException
-  * @return string script tag
-  */
-    public function inlineScript($file) {
-        $buildFiles = $this->config()->files($file);
-        if (!$buildFiles) {
-            throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
-        }
+ * Create an inline script tag for a script asset. Will generate inline script tags
+ * in production, or reference the dynamic build file in development.
+ *
+ * To create build files without configuration use addScript()
+ *
+ * Options:
+ *
+ * - All options supported by HtmlHelper::css() are supported.
+ *
+ * @param string $file A build target to include.
+ * @throws RuntimeException
+ * @return string script tag
+ */
+	public function inlineScript($file) {
+		$config = $this->assetConfig();
+		$buildFiles = $config->files($file);
+		if (!$buildFiles) {
+			throw new RuntimeException('Cannot create a script tag for a build that does not exist.');
+		}
 
-        $compiler = new AssetCompiler($this->config());
-        $results = $compiler->generate($file);
+		$compiler = new AssetCompiler($config);
+		$results = $compiler->generate($file);
 
-        return $this->Html->tag('script', $results);
-    }
+		return $this->Html->tag('script', $results);
+	}
+
 }

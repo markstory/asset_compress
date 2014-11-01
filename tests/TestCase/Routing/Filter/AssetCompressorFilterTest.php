@@ -12,6 +12,11 @@ use Cake\TestSuite\TestCase;
 
 class AssetsCompressorTest extends TestCase {
 
+/**
+ * Setup method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$this->testConfig = APP . 'config' . DS . 'integration.ini';
@@ -88,6 +93,23 @@ class AssetsCompressorTest extends TestCase {
 		$this->assertRegExp('/var BaseClass = new Class/', $this->response->body());
 		$this->assertRegExp('/var Template = new Class/', $this->response->body());
 		$this->assertTrue($event->isStopped());
+	}
+
+/**
+ * test that predefined builds get cached to disk.
+ *
+ * @return void
+ */
+	public function testBuildFileIsCached() {
+		$this->request->url = 'cache_js/libs.js';
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new Event('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
+
+		$this->assertContains('BaseClass', $this->response->body());
+		$this->assertTrue($event->isStopped());
+		$this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
+		unlink(CACHE . 'asset_compress' . DS . 'libs.js');
 	}
 
 }
