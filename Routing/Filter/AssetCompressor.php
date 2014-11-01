@@ -4,6 +4,7 @@ App::uses('DispatcherFilter', 'Routing');
 App::uses('AssetConfig', 'AssetCompress.Lib');
 App::uses('AssetCompiler', 'AssetCompress.Lib');
 App::uses('AssetCache', 'AssetCompress.Lib');
+App::uses('Folder', 'Utility');
 
 class AssetCompressor extends DispatcherFilter {
 
@@ -29,10 +30,12 @@ class AssetCompressor extends DispatcherFilter {
  * @return CakeResponse if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch(CakeEvent $event) {
-		$url = $event->data['request']->url;
-		$Config = $this->_getConfig();
+		$request = $event->data['request'];
+		$response = $event->data['response'];
+		$url = $request->url;
+		$config = $this->_getConfig();
 		$production = !Configure::read('debug');
-		if ($production && !$Config->general('alwaysEnableController')) {
+		if ($production && !$config->general('alwaysEnableController')) {
 			return;
 		}
 
@@ -41,37 +44,47 @@ class AssetCompressor extends DispatcherFilter {
 			return;
 		}
 
-		if (isset($event->data['request']->query['theme'])) {
-			$Config->theme($event->data['request']->query['theme']);
+		if (isset($request->query['theme'])) {
+			$config->theme($event->data['request']->query['theme']);
 		}
 
 		// Dynamically defined build file. Disabled in production for
 		// hopefully obvious reasons.
-		if ($Config->files($build) === array()) {
+		if ($config->files($build) === array()) {
 			$files = array();
-			if (isset($event->data['request']->query['file'])) {
-				$files = $event->data['request']->query['file'];
+			if (isset($request->query['file'])) {
+				$files = $request->query['file'];
 			}
-			$Config->files($build, $files);
+			$config->files($build, $files);
 		}
 
+		// Use the TMP dir for dev builds.
+		// This is to avoid permissions issues with the configured paths.
+		$cachePath = CACHE . 'asset_compress' . DS;
+		$folder = new Folder($cachePath, true);
+		$folder->chmod($cachePath, 0777);
+
+		$ext = $config->getExt($build);
+		$config->cachePath($ext, $cachePath);
+		$config->set("$ext.timestamp", false);
+
 		try {
-			$Compiler = new AssetCompiler($Config);
-			$mtime = $Compiler->getLastModified($build);
-			$event->data['response']->modified($mtime);
-			if ($event->data['response']->checkNotModified($event->data['request'])) {
-				$event->stopPropagation();
-				return $event->data['response'];
+			$compiler = new AssetCompiler($config);
+			$cache = new AssetCache($config);
+			if ($cache->isFresh($build)) {
+				$contents = file_get_contents($cachePath . $build);
+			} else {
+				$contents = $compiler->generate($build);
+				$cache->write($build, $contents);
 			}
-			$contents = $Compiler->generate($build);
 		} catch (Exception $e) {
 			throw new NotFoundException($e->getMessage());
 		}
 
-		$event->data['response']->type($Config->getExt($build));
-		$event->data['response']->body($contents);
+		$response->type($config->getExt($build));
+		$response->body($contents);
 		$event->stopPropagation();
-		return $event->data['response'];
+		return $response;
 	}
 
 /**
