@@ -113,7 +113,7 @@ class AssetCompressShell extends AppShell {
 			$this->err('No ' . $ext . ' build files defined, skipping');
 			return;
 		}
-		$this->_clearPath(TMP, $themes, $targets);
+		$this->_clearPath(CACHE . 'asset_compress', $themes, $targets);
 
 		$path = $this->_Config->cachePath($ext);
 		if (!file_exists($path)) {
