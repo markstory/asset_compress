@@ -7,6 +7,7 @@ use AssetCompress\AssetConfig;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
+use Cake\Utility\Folder;
 use RuntimeException;
 
 class AssetCompressorFilter extends DispatcherFilter {
@@ -34,9 +35,9 @@ class AssetCompressorFilter extends DispatcherFilter {
  */
 	public function beforeDispatch(Event $event) {
 		$url = $event->data['request']->url;
-		$Config = $this->_getConfig();
+		$config = $this->_getConfig();
 		$production = !Configure::read('debug');
-		if ($production && !$Config->general('alwaysEnableController')) {
+		if ($production && !$config->general('alwaysEnableController')) {
 			return;
 		}
 
@@ -45,27 +46,37 @@ class AssetCompressorFilter extends DispatcherFilter {
 			return;
 		}
 
-		if (isset($event->data['request']->query['theme'])) {
-			$Config->theme($event->data['request']->query['theme']);
+		if (isset($request->query['theme'])) {
+			$config->theme($event->data['request']->query['theme']);
 		}
 
+		// Use the CACHE dir for dev builds.
+		// This is to avoid permissions issues with the configured paths.
+		$cachePath = CACHE . 'asset_compress' . DS;
+		$folder = new Folder($cachePath, true);
+		$folder->chmod($cachePath, 0777);
+
+		$ext = $config->getExt($build);
+		$config->cachePath($ext, $cachePath);
+		$config->set("$ext.timestamp", false);
+
 		try {
-			$Compiler = new AssetCompiler($Config);
-			$mtime = $Compiler->getLastModified($build);
-			$event->data['response']->modified($mtime);
-			if ($event->data['response']->checkNotModified($event->data['request'])) {
-				$event->stopPropagation();
-				return $event->data['response'];
+			$compiler = new AssetCompiler($config);
+			$cache = new AssetCache($config);
+			if ($cache->isFresh($build)) {
+				$contents = file_get_contents($cachePath . $build);
+			} else {
+				$contents = $compiler->generate($build);
+				$cache->write($build, $contents);
 			}
-			$contents = $Compiler->generate($build);
 		} catch (Exception $e) {
 			throw new NotFoundException($e->getMessage());
 		}
 
-		$event->data['response']->type($Config->getExt($build));
-		$event->data['response']->body($contents);
+		$response->type($config->getExt($build));
+		$response->body($contents);
 		$event->stopPropagation();
-		return $event->data['response'];
+		return $response;
 	}
 
 /**
