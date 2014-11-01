@@ -61,8 +61,7 @@ class AssetCompressor extends DispatcherFilter {
 		// Use the TMP dir for dev builds.
 		// This is to avoid permissions issues with the configured paths.
 		$cachePath = CACHE . 'asset_compress' . DS;
-		$folder = new Folder($cachePath, true);
-		$folder->chmod($cachePath, 0777);
+		$folder = new Folder($cachePath, true, 0777);
 
 		$ext = $config->getExt($build);
 		$config->cachePath($ext, $cachePath);
