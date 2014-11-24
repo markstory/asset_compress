@@ -223,7 +223,7 @@ class AssetConfig {
 		}
 
 		if ($assetConfig->general('cacheConfig')) {
-			$this->_writeCache(self::CACHE_ASSET_CONFIG_KEY, $assetConfig);
+			self::_writeCache(self::CACHE_ASSET_CONFIG_KEY, $assetConfig);
 		}
 
 		return $assetConfig;
