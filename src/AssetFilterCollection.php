@@ -51,9 +51,10 @@ class AssetFilterCollection {
 			if (!class_exists($className)) {
 				throw new Exception(sprintf('Cannot not load filter "%s".', $name));
 			}
-			$config = array_merge($this->_config, isset($settings[$className]) ? $settings[$className] : array());
 			$filter = new $className();
 			$this->addFilter($filter);
+			$className = join('', array_slice(explode('\\', $className), -1));
+			$config = array_merge($this->_config, isset($settings[$className]) ? $settings[$className] : array());
 			$filter->settings($config);
 		}
 	}
