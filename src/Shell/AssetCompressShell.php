@@ -126,6 +126,10 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	protected function _clearPath($path, $themes, $targets) {
+		if (!file_exists($path)) {
+			return;
+		}
+		
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
 			$name = $base = $file->getFilename();
