@@ -7,7 +7,7 @@ use AssetCompress\AssetConfig;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
-use Cake\Utility\Folder;
+use Cake\Filesystem\Folder;
 use RuntimeException;
 
 class AssetCompressorFilter extends DispatcherFilter {

@@ -106,7 +106,7 @@ class AssetCompressShell extends Shell {
 			return;
 		}
 		$themes = (array)$this->_config->general('themes');
-		$this->_clearPath(CACHE . 'asset_compress', $themes, $targets);
+		$this->_clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
 		$path = $this->_config->cachePath($ext);
 
 		$path = $this->_config->cachePath($ext);
@@ -126,6 +126,10 @@ class AssetCompressShell extends Shell {
  * @return void
  */
 	protected function _clearPath($path, $themes, $targets) {
+		if (!file_exists($path)) {
+			return;
+		}
+		
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $file) {
 			$name = $base = $file->getFilename();

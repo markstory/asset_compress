@@ -23,7 +23,7 @@ class AssetFilterCollectionTest extends TestCase {
 			__NAMESPACE__ . '\TestFilterTwo'
 		);
 		$settings = array(
-			__NAMESPACE__ . '\TestFilterOne' => array(
+			'TestFilterOne' => array(
 				'key' => 'value'
 			)
 		);
