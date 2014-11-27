@@ -30,7 +30,7 @@ class LessPHP extends AssetFilter {
 			return $input;
 		}
 		if (!class_exists('lessc')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'lessc'));
+			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'lessc'));
 		}
 		$lc = new lessc($filename);
 		return $lc->parse();
