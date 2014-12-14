@@ -1,9 +1,9 @@
 <?php
 namespace AssetCompress\Filter;
 
-use JsMin;
-
+use JSMin;
 use AssetCompress\AssetFilter;
+
 /**
  * JsMin filter.
  *
@@ -22,9 +22,9 @@ class JsMinFilter extends AssetFilter {
  * @return string
  */
 	public function output($filename, $content) {
-		if (!class_exists('JsMin')) {
+		if (!class_exists('JSMin')) {
 			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'JsMin'));
 		}
-		return JsMin::minify($content);
+		return JSMin::minify($content);
 	}
 }
