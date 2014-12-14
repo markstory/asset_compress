@@ -30,7 +30,7 @@ class ScssPHP extends AssetFilter {
 			return $input;
 		}
 		if (!class_exists('scssc')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'scssc'));
+			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'scssc'));
 		}
 		$sc = new scssc();
 		$sc->addImportPath(dirname($filename));

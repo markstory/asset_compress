@@ -34,7 +34,7 @@ class JShrinkFilter extends AssetFilter {
  */
 	public function output($filename, $content) {
 		if (!class_exists('JShrink\Minifier')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'JShrink\Minifier'));
+			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'JShrink\Minifier'));
 		}
 		return Minifier::minify($content, array('flaggedComments' => $this->_settings['flaggedComments']));
 	}

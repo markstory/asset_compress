@@ -110,6 +110,6 @@ class Sprockets extends AssetFilter {
 		if ($file) {
 			return $file;
 		}
-		throw new Exception('Sprockets - Could not locate file "' . $filename . '"');
+		throw new \Exception('Sprockets - Could not locate file "' . $filename . '"');
 	}
 }

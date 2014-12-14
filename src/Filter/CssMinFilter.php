@@ -21,7 +21,7 @@ class CssMinFilter extends AssetFilter {
  */
 	public function output($filename, $content) {
 		if (!class_exists('CssMin')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'CssMin'));
+			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'CssMin'));
 		}
 		return CssMin::minify($content);
 	}

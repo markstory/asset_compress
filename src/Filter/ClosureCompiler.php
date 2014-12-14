@@ -63,7 +63,7 @@ class ClosureCompiler extends AssetFilter {
 
 		$errors = $this->_query($content, array('output_info' => 'errors'));
 		if (!empty($errors)) {
-			throw new Exception(sprintf("%s:\n%s\n", 'Errors', $errors));
+			throw new \Exception(sprintf("%s:\n%s\n", 'Errors', $errors));
 		}
 
 		$output = $this->_query($content, array('output_info' => 'compiled_code'));
@@ -100,7 +100,7 @@ class ClosureCompiler extends AssetFilter {
  */
 	protected function _query($content, $args = array()) {
 		if (!extension_loaded('curl')) {
-			throw new Exception('Missing the `curl` extension.');
+			throw new \Exception('Missing the `curl` extension.');
 		}
 
 		$args = array_merge($this->_defaults, $args);
@@ -127,7 +127,7 @@ class ClosureCompiler extends AssetFilter {
 		$output = curl_exec($ch);
 
 		if (false === $output) {
-			throw new Exception('Curl error: ' . curl_error($ch));
+			throw new \Exception('Curl error: ' . curl_error($ch));
 		}
 
 		curl_close($ch);

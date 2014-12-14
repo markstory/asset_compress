@@ -23,7 +23,7 @@ class JsMinFilter extends AssetFilter {
  */
 	public function output($filename, $content) {
 		if (!class_exists('JsMin')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'JsMin'));
+			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'JsMin'));
 		}
 		return JsMin::minify($content);
 	}
