@@ -2,13 +2,13 @@
 App::uses('AssetFilter', 'AssetCompress.Lib');
 
 /**
- * JSMin filter.
+ * JsMin filter.
  *
  * Allows you to filter Javascript files through JSMin. You need to put JSMin in your application's
  * vendors directories. You can get it from http://github.com/rgrove/jsmin-php/
  *
  */
-class JSMinFilter extends AssetFilter {
+class JsMinFilter extends AssetFilter {
 
 /**
  * Where JSMin can be found.
