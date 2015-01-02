@@ -5,7 +5,7 @@ use AssetCompress\Shell\AssetCompressShell;
 use AssetCompress\AssetConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Folder;
+use Cake\Filesystem\Folder;
 
 /**
  * AssetBuildTask test case.

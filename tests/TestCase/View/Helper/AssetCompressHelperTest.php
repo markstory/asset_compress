@@ -71,7 +71,7 @@ class AssetCompressHelperTest extends TestCase {
 				'src' => '/cache_js/libs.js'
 			))
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Helper->css('all.css', array('test' => 'value'));
 		$expected = array(
@@ -81,7 +81,7 @@ class AssetCompressHelperTest extends TestCase {
 				'href' => '/cache_css/all.css'
 			)
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -101,7 +101,7 @@ class AssetCompressHelperTest extends TestCase {
 				'src' => 'http://cdn.example.com/js/libs.js'
 			))
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		Configure::write('debug', 1);
 		$result = $this->Helper->script('libs.js');
@@ -110,7 +110,7 @@ class AssetCompressHelperTest extends TestCase {
 				'src' => '/cache_js/libs.js'
 			))
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -132,7 +132,7 @@ class AssetCompressHelperTest extends TestCase {
 				'src' => '/cache_js/themed.js?theme=blue'
 			))
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 	public function testRawAssets() {
@@ -159,7 +159,7 @@ class AssetCompressHelperTest extends TestCase {
 			),
 			'/script',
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
@@ -194,7 +194,7 @@ class AssetCompressHelperTest extends TestCase {
 				)
 			),
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 
 		$result = $this->Helper->script('plugins.js', array('raw' => true));
 		$expected = array(
@@ -204,7 +204,7 @@ class AssetCompressHelperTest extends TestCase {
 				)
 			)
 		);
-		$this->assertHtml($result, $expected);
+		$this->assertHtml($expected, $result);
 	}
 
 /**
