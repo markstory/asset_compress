@@ -69,7 +69,7 @@ class AssetCompressHelperPluginIniTest extends TestCase {
 				'src' => '/cache_js/TestAssetIni.libs.js'
 			))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertHtml($result, $expected);
 	}
 
 }
