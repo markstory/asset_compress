@@ -5,20 +5,23 @@ use AssetCompress\Filter\TimestampImage;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
-class TimestampImageTest extends TestCase {
+class TimestampImageTest extends TestCase
+{
 
-	public function setUp() {
-		parent::setUp();
-		$this->_testPath = APP . 'css/';
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_testPath = APP . 'css/';
 
-		$this->filter = new TimestampImage();
-	}
+        $this->filter = new TimestampImage();
+    }
 
-	public function testReplacement() {
-		$path = $this->_testPath . 'background.css';
-		$content = file_get_contents($path);
-		$result = $this->filter->input($path, $content);
-		$expected = <<<TEXT
+    public function testReplacement()
+    {
+        $path = $this->_testPath . 'background.css';
+        $content = file_get_contents($path);
+        $result = $this->filter->input($path, $content);
+        $expected = <<<TEXT
 .single {
 	background: url('img/test.gif?t=[TIMESTAMP]') left top no-repeat;
 }
@@ -37,8 +40,7 @@ class TimestampImageTest extends TestCase {
 }
 
 TEXT;
-		$result = preg_replace('/(t\=)([0-9]+)/', '$1[TIMESTAMP]', $result);
-		$this->assertEquals($expected, $result);
-	}
-
+        $result = preg_replace('/(t\=)([0-9]+)/', '$1[TIMESTAMP]', $result);
+        $this->assertEquals($expected, $result);
+    }
 }

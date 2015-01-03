@@ -20,11 +20,11 @@ here
 /******
 multi line comments
 */
-	/* should be erased */
+    /* should be erased */
 /*
 None of these
 */
-	/** Should *****/
+    /** Should *****/
 /*
 be
 here

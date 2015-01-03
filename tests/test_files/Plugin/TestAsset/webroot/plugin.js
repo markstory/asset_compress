@@ -1,3 +1,5 @@
-var Plugin = new Class({
+var Plugin = new Class(
+    {
 
-});
+    }
+);

@@ -5,28 +5,30 @@ use AssetCompress\Filter\Hogan;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
-class HoganTest extends TestCase {
+class HoganTest extends TestCase
+{
 
-	public function setUp() {
-		parent::setUp();
-		$this->_path = APP . '/hogan/';
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_path = APP . '/hogan/';
 
-		$this->filter = new Hogan();
-		$settings = array(
-			'node' => trim(`which node`),
-			'node_path' => getenv('NODE_PATH')
-		);
-		$this->filter->settings($settings);
+        $this->filter = new Hogan();
+        $settings = array(
+        'node' => trim(`which node`),
+        'node_path' => getenv('NODE_PATH')
+        );
+        $this->filter->settings($settings);
 
-		$hasHogan = `which hulk`;
-		$this->skipIf(empty($hasHogan), 'Nodejs and Hogan.js to be installed');
-	}
+        $hasHogan = `which hulk`;
+        $this->skipIf(empty($hasHogan), 'Nodejs and Hogan.js to be installed');
+    }
 
-	public function testInput() {
-		$content = file_get_contents($this->_path . 'test.mustache');
-		$result = $this->filter->input($this->_path . 'test.mustache', $content);
-		$this->assertContains('window.JST["test"] = ', $result, 'Missing window.JST');
-		$this->assertContains('function(c,p,i)', $result, 'Missing hogan output');
-	}
-
+    public function testInput()
+    {
+        $content = file_get_contents($this->_path . 'test.mustache');
+        $result = $this->filter->input($this->_path . 'test.mustache', $content);
+        $this->assertContains('window.JST["test"] = ', $result, 'Missing window.JST');
+        $this->assertContains('function(c,p,i)', $result, 'Missing hogan output');
+    }
 }

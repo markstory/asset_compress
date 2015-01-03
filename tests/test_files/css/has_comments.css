@@ -20,13 +20,13 @@ Two
 *
 */
 /* Comment three    */
-	/*commment four*/
+    /*commment four*/
 body {
-	color:#000;
+    color:#000;
 }
 #match-timeline {
-	clear:both;
-	padding-top:10px;
+    clear:both;
+    padding-top:10px;
 /*	margin:0 auto;
 	width: 650px;*/
 }

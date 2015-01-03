@@ -6,285 +6,312 @@ use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
-class AssetConfigTest extends TestCase {
+class AssetConfigTest extends TestCase
+{
 
-/**
- * setup method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Cache::drop(AssetConfig::CACHE_CONFIG);
-		Cache::config(AssetConfig::CACHE_CONFIG, array(
-			'engine' => 'File'
-		));
+    /**
+     * setup method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        Cache::drop(AssetConfig::CACHE_CONFIG);
+        Cache::config(AssetConfig::CACHE_CONFIG, array(
+        'engine' => 'File'
+        ));
 
-		$this->_testFiles = APP;
-		$this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
-		$this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
+        $this->_testFiles = APP;
+        $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
+        $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
-		AssetConfig::clearAllCachedKeys();
-		$this->config = AssetConfig::buildFromIniFile($this->testConfig);
-	}
+        AssetConfig::clearAllCachedKeys();
+        $this->config = AssetConfig::buildFromIniFile($this->testConfig);
+    }
 
-/**
- * Test local configuration files.
- *
- * @return void
- */
-	public function testLocalConfig() {
-		$ini = dirname($this->testConfig) . DS . 'overridable.ini';
-		$config = AssetConfig::buildFromIniFile($ini);
+    /**
+     * Test local configuration files.
+     *
+     * @return void
+     */
+    public function testLocalConfig()
+    {
+        $ini = dirname($this->testConfig) . DS . 'overridable.ini';
+        $config = AssetConfig::buildFromIniFile($ini);
 
-		$this->assertEquals('', $config->general('cacheConfig'));
-		$this->assertEquals(1, $config->general('alwaysUseController'));
+        $this->assertEquals('', $config->general('cacheConfig'));
+        $this->assertEquals(1, $config->general('alwaysUseController'));
 
-		$this->assertEquals('', $config->get('js.timestamp'));
+        $this->assertEquals('', $config->get('js.timestamp'));
 
-		$result = $config->paths('js');
-		$result = str_replace('/', DS, $result);
-		$expectedJsPaths = array(WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*');
-		$this->assertEquals($expectedJsPaths, $result);
+        $result = $config->paths('js');
+        $result = str_replace('/', DS, $result);
+        $expectedJsPaths = array(WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*');
+        $this->assertEquals($expectedJsPaths, $result);
 
-		$this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
+        $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
 
-		$result = $config->filters('js');
-		$expectedJsFilters = array('sprockets', 'jsyuicompressor', 'mylocalfilter');
-		$this->assertEquals($expectedJsFilters, $result);
+        $result = $config->filters('js');
+        $expectedJsFilters = array('sprockets', 'jsyuicompressor', 'mylocalfilter');
+        $this->assertEquals($expectedJsFilters, $result);
 
-		$result = $config->filterConfig('jsyuicompressor');
-		$this->assertEquals(array('path' => '/path/to/local/yuicompressor'), $result);
+        $result = $config->filterConfig('jsyuicompressor');
+        $this->assertEquals(array('path' => '/path/to/local/yuicompressor'), $result);
 
-		$result = $config->filterConfig('uglify');
-		$this->assertEquals(array('path' => '/path/to/uglify-js'), $result);
+        $result = $config->filterConfig('uglify');
+        $this->assertEquals(array('path' => '/path/to/uglify-js'), $result);
 
-		$result = $config->paths('js', 'libs.js');
-		$result = str_replace('/', DS, $result);
-		$expectedJsPaths[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
-		$this->assertEquals($expectedJsPaths, $result);
+        $result = $config->paths('js', 'libs.js');
+        $result = str_replace('/', DS, $result);
+        $expectedJsPaths[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
+        $this->assertEquals($expectedJsPaths, $result);
 
-		$result = $config->files('libs.js');
-		$expected = array('jquery.js', 'mootools.js', 'class.js');
-		$this->assertEquals($expected, $result);
+        $result = $config->files('libs.js');
+        $expected = array('jquery.js', 'mootools.js', 'class.js');
+        $this->assertEquals($expected, $result);
 
-		$result = $config->filters('js', 'libs.js');
-		$expectedJsFilters[] = 'uglify';
-		$expectedJsFilters[] = 'anotherlocalfilter';
-		$this->assertEquals($expectedJsFilters, $result);
-	}
+        $result = $config->filters('js', 'libs.js');
+        $expectedJsFilters[] = 'uglify';
+        $expectedJsFilters[] = 'anotherlocalfilter';
+        $this->assertEquals($expectedJsFilters, $result);
+    }
 
-	public function testBuildFromIniFile() {
-		$config = AssetConfig::buildFromIniFile($this->testConfig);
-		$this->assertEquals(1, $config->get('js.timestamp'));
-		$this->assertEquals(1, $config->general('writeCache'));
-	}
+    public function testBuildFromIniFile()
+    {
+        $config = AssetConfig::buildFromIniFile($this->testConfig);
+        $this->assertEquals(1, $config->get('js.timestamp'));
+        $this->assertEquals(1, $config->general('writeCache'));
+    }
 
-	public function testExceptionOnBogusFile() {
-		try {
-			$config = AssetConfig::buildFromIniFile('/bogus');
-			$this->assertFalse(true, 'Exception not thrown.');
-		} catch (\RuntimeException $e) {
-			$this->assertEquals('Configuration file "/bogus" was not found.', $e->getMessage());
-		}
-	}
+    public function testExceptionOnBogusFile()
+    {
+        try {
+            $config = AssetConfig::buildFromIniFile('/bogus');
+            $this->assertFalse(true, 'Exception not thrown.');
+        } catch (\RuntimeException $e) {
+            $this->assertEquals('Configuration file "/bogus" was not found.', $e->getMessage());
+        }
+    }
 
-	public function testFilters() {
-		$result = $this->config->filters('js');
-		$this->assertEquals(array('sprockets', 'jsyuicompressor'), $result);
+    public function testFilters()
+    {
+        $result = $this->config->filters('js');
+        $this->assertEquals(array('sprockets', 'jsyuicompressor'), $result);
 
-		$result = $this->config->filters('js', 'libs.js');
-		$this->assertEquals(array('sprockets', 'jsyuicompressor', 'uglify'), $result);
+        $result = $this->config->filters('js', 'libs.js');
+        $this->assertEquals(array('sprockets', 'jsyuicompressor', 'uglify'), $result);
 
-		$this->assertEquals(array(), $this->config->filters('nothing'));
-	}
+        $this->assertEquals(array(), $this->config->filters('nothing'));
+    }
 
-	public function testSettingFilters() {
-		$this->config->filters('js', null, array('uglify'));
-		$this->assertEquals(array('uglify'), $this->config->filters('js'));
-		$this->assertEquals(array('uglify'), $this->config->filters('js', 'libs.js'));
+    public function testSettingFilters()
+    {
+        $this->config->filters('js', null, array('uglify'));
+        $this->assertEquals(array('uglify'), $this->config->filters('js'));
+        $this->assertEquals(array('uglify'), $this->config->filters('js', 'libs.js'));
 
-		$this->config->filters('js', 'libs.js', array('sprockets'));
-		$this->assertEquals(array('uglify'), $this->config->filters('js'));
-		$this->assertEquals(array('uglify', 'sprockets'), $this->config->filters('js', 'libs.js'));
-	}
+        $this->config->filters('js', 'libs.js', array('sprockets'));
+        $this->assertEquals(array('uglify'), $this->config->filters('js'));
+        $this->assertEquals(array('uglify', 'sprockets'), $this->config->filters('js', 'libs.js'));
+    }
 
-	public function testFiles() {
-		$result = $this->config->files('libs.js');
-		$expected = array('jquery.js', 'mootools.js', 'class.js');
-		$this->assertEquals($expected, $result);
+    public function testFiles()
+    {
+        $result = $this->config->files('libs.js');
+        $expected = array('jquery.js', 'mootools.js', 'class.js');
+        $this->assertEquals($expected, $result);
 
-		$result = $this->config->files('foo.bar.js');
-		$expected = array('test.js');
-		$this->assertEquals($expected, $result);
+        $result = $this->config->files('foo.bar.js');
+        $expected = array('test.js');
+        $this->assertEquals($expected, $result);
 
-		$this->assertEquals(array(), $this->config->files('nothing here'));
-	}
+        $this->assertEquals(array(), $this->config->files('nothing here'));
+    }
 
-	public function testSettingFiles() {
-		$this->config->files('new_build.js', array('one.js', 'two.js'));
+    public function testSettingFiles()
+    {
+        $this->config->files('new_build.js', array('one.js', 'two.js'));
 
-		$this->assertEquals(array('one.js', 'two.js'), $this->config->files('new_build.js'));
-	}
+        $this->assertEquals(array('one.js', 'two.js'), $this->config->files('new_build.js'));
+    }
 
-	public function testPathConstantReplacement() {
-		$result = $this->config->paths('css');
-		$result = str_replace('/', DS, $result);
-		$this->assertEquals(array(WWW_ROOT . 'css' . DS), $result);
-		$this->assertEquals(array(), $this->config->paths('nothing'));
-	}
+    public function testPathConstantReplacement()
+    {
+        $result = $this->config->paths('css');
+        $result = str_replace('/', DS, $result);
+        $this->assertEquals(array(WWW_ROOT . 'css' . DS), $result);
+        $this->assertEquals(array(), $this->config->paths('nothing'));
+    }
 
-	public function testPaths() {
-		$this->config->paths('js', null, array('/path/to/files', 'WEBROOT/js'));
-		$result = $this->config->paths('js');
-		$result = str_replace('/', DS, $result);
-		$expected = array(DS . 'path' . DS . 'to' . DS . 'files', WWW_ROOT . 'js');
-		$this->assertEquals($expected, $result);
+    public function testPaths()
+    {
+        $this->config->paths('js', null, array('/path/to/files', 'WEBROOT/js'));
+        $result = $this->config->paths('js');
+        $result = str_replace('/', DS, $result);
+        $expected = array(DS . 'path' . DS . 'to' . DS . 'files', WWW_ROOT . 'js');
+        $this->assertEquals($expected, $result);
 
-		$result = $this->config->paths('js', 'libs.js');
-		$result = str_replace('/', DS, $result);
-		$expected[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
-		$this->assertEquals($expected, $result);
-	}
+        $result = $this->config->paths('js', 'libs.js');
+        $result = str_replace('/', DS, $result);
+        $expected[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
+        $this->assertEquals($expected, $result);
+    }
 
-	public function testAddTarget() {
-		$this->config->addTarget('testing.js', array('one.js', 'two.js'));
-		$this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing.js'));
+    public function testAddTarget()
+    {
+        $this->config->addTarget('testing.js', array('one.js', 'two.js'));
+        $this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing.js'));
 
-		$this->config->addTarget('testing-two.js', array(
-			'files' => array('one.js', 'two.js'),
-			'filters' => array('uglify'),
-			'theme' => true
-		));
-		$this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing-two.js'));
-	}
+        $this->config->addTarget('testing-two.js', array(
+        'files' => array('one.js', 'two.js'),
+        'filters' => array('uglify'),
+        'theme' => true
+        ));
+        $this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing-two.js'));
+    }
 
-	public function testGetExt() {
-		$this->assertEquals('js', $this->config->getExt('foo.bar.js'));
-		$this->assertEquals('css', $this->config->getExt('something.less.css'));
-	}
+    public function testGetExt()
+    {
+        $this->assertEquals('js', $this->config->getExt('foo.bar.js'));
+        $this->assertEquals('css', $this->config->getExt('something.less.css'));
+    }
 
-	public function testCachePath() {
-		$this->config->cachePath('js', 'WEBROOT/css_build');
-		$this->assertEquals(WWW_ROOT . 'css_build/', $this->config->cachePath('js'));
+    public function testCachePath()
+    {
+        $this->config->cachePath('js', 'WEBROOT/css_build');
+        $this->assertEquals(WWW_ROOT . 'css_build/', $this->config->cachePath('js'));
 
-		$this->config->cachePath('js', 'WEBROOT/css_build/');
-		$this->assertEquals(WWW_ROOT . 'css_build/', $this->config->cachePath('js'));
-	}
+        $this->config->cachePath('js', 'WEBROOT/css_build/');
+        $this->assertEquals(WWW_ROOT . 'css_build/', $this->config->cachePath('js'));
+    }
 
-	public function testFilterConfig() {
-		$result = $this->config->filterConfig('uglify');
-		$expected = array('path' => '/path/to/uglify-js');
-		$this->assertEquals($expected, $result);
+    public function testFilterConfig()
+    {
+        $result = $this->config->filterConfig('uglify');
+        $expected = array('path' => '/path/to/uglify-js');
+        $this->assertEquals($expected, $result);
 
-		$this->config->filterConfig('sprockets', array('some' => 'value'));
-		$this->assertEquals(array('some' => 'value'), $this->config->filterConfig('sprockets'));
+        $this->config->filterConfig('sprockets', array('some' => 'value'));
+        $this->assertEquals(array('some' => 'value'), $this->config->filterConfig('sprockets'));
 
-		$this->assertEquals(array(), $this->config->filterConfig('imaginary'));
-	}
+        $this->assertEquals(array(), $this->config->filterConfig('imaginary'));
+    }
 
-	public function testFilterConfigArray() {
-		$this->config->filterConfig('sprockets', array('some' => 'value'));
+    public function testFilterConfigArray()
+    {
+        $this->config->filterConfig('sprockets', array('some' => 'value'));
 
-		$result = $this->config->filterConfig(array('uglify', 'sprockets'));
-		$expected = array(
-			'sprockets' => array(
-				'some' => 'value'
-			),
-			'uglify' => array(
-				'path' => '/path/to/uglify-js'
-			)
-		);
-		$this->assertEquals($expected, $result);
-	}
+        $result = $this->config->filterConfig(array('uglify', 'sprockets'));
+        $expected = array(
+        'sprockets' => array(
+        'some' => 'value'
+        ),
+        'uglify' => array(
+        'path' => '/path/to/uglify-js'
+        )
+        );
+        $this->assertEquals($expected, $result);
+    }
 
-	public function testTargets() {
-		$this->assertEquals(array(), $this->config->targets('fake'));
-		$expected = array('libs.js', 'foo.bar.js', 'new_file.js');
-		$result = $this->config->targets('js');
-		$this->assertEquals($expected, $result);
+    public function testTargets()
+    {
+        $this->assertEquals(array(), $this->config->targets('fake'));
+        $expected = array('libs.js', 'foo.bar.js', 'new_file.js');
+        $result = $this->config->targets('js');
+        $this->assertEquals($expected, $result);
 
-		$expected = array('all.css', 'pink.css');
-		$result = $this->config->targets('css');
-		$this->assertEquals($expected, $result);
-	}
+        $expected = array('all.css', 'pink.css');
+        $result = $this->config->targets('css');
+        $this->assertEquals($expected, $result);
+    }
 
-	public function testGet() {
-		$result = $this->config->get('js.cachePath');
-		$this->assertEquals(WWW_ROOT . 'cache_js/', $result);
+    public function testGet()
+    {
+        $result = $this->config->get('js.cachePath');
+        $this->assertEquals(WWW_ROOT . 'cache_js/', $result);
 
-		$this->assertNull($this->config->get('Bogus.poop'));
-	}
+        $this->assertNull($this->config->get('Bogus.poop'));
+    }
 
-	public function testSet() {
-		$this->assertNull($this->config->get('Bogus.poop'));
-		$this->config->set('Bogus.poop', 'smelly');
-		$this->assertEquals('smelly', $this->config->get('Bogus.poop'));
-	}
+    public function testSet()
+    {
+        $this->assertNull($this->config->get('Bogus.poop'));
+        $this->config->set('Bogus.poop', 'smelly');
+        $this->assertEquals('smelly', $this->config->get('Bogus.poop'));
+    }
 
-	public function testSetLimit() {
-		try {
-			$this->config->set('only.two.allowed', 'smelly');
-			$this->assertFalse(true, 'No exception');
-		} catch (\RuntimeException $e) {
-			$this->assertTrue(true, 'Exception was raised.');
-		}
-	}
+    public function testSetLimit()
+    {
+        try {
+            $this->config->set('only.two.allowed', 'smelly');
+            $this->assertFalse(true, 'No exception');
+        } catch (\RuntimeException $e) {
+            $this->assertTrue(true, 'Exception was raised.');
+        }
+    }
 
-	public function testExtensions() {
-		$result = $this->config->extensions();
-		$this->assertEquals(array('js', 'css'), $result);
-	}
+    public function testExtensions()
+    {
+        $result = $this->config->extensions();
+        $this->assertEquals(array('js', 'css'), $result);
+    }
 
-	public function testGeneral() {
-		$this->config->set('general.cacheConfig', true);
-		$result = $this->config->general('cacheConfig');
-		$this->assertTrue($result);
+    public function testGeneral()
+    {
+        $this->config->set('general.cacheConfig', true);
+        $result = $this->config->general('cacheConfig');
+        $this->assertTrue($result);
 
-		$result = $this->config->general('non-existant');
-		$this->assertNull($result);
-	}
+        $result = $this->config->general('non-existant');
+        $this->assertNull($result);
+    }
 
-/**
- * Test that the default paths work.
- *
- */
-	public function testDefaultConventions() {
-		$ini = dirname($this->testConfig) . DS . 'bare.ini';
-		$config = AssetConfig::buildFromIniFile($ini);
+    /**
+     * Test that the default paths work.
+     *
+     */
+    public function testDefaultConventions()
+    {
+        $ini = dirname($this->testConfig) . DS . 'bare.ini';
+        $config = AssetConfig::buildFromIniFile($ini);
 
-		$result = $config->paths('js');
-		$this->assertEquals(array(WWW_ROOT . 'js/**'), $result);
+        $result = $config->paths('js');
+        $this->assertEquals(array(WWW_ROOT . 'js/**'), $result);
 
-		$result = $config->paths('css');
-		$this->assertEquals(array(WWW_ROOT . 'css/**'), $result);
-	}
+        $result = $config->paths('css');
+        $this->assertEquals(array(WWW_ROOT . 'css/**'), $result);
+    }
 
-	public function testTheme() {
-		$result = $this->config->theme();
-		$this->assertEquals('', $result);
+    public function testTheme()
+    {
+        $result = $this->config->theme();
+        $this->assertEquals('', $result);
 
-		$result = $this->config->theme('red');
-		$this->assertEquals('', $result);
+        $result = $this->config->theme('red');
+        $this->assertEquals('', $result);
 
-		$result = $this->config->theme();
-		$this->assertEquals('Red', $result);
-	}
+        $result = $this->config->theme();
+        $this->assertEquals('Red', $result);
+    }
 
-	public function testIsThemed() {
-		$this->assertFalse($this->config->isThemed('libs.js'));
+    public function testIsThemed()
+    {
+        $this->assertFalse($this->config->isThemed('libs.js'));
 
-		$config = AssetConfig::buildFromIniFile($this->_themeConfig);
-		$this->assertTrue($config->isThemed('themed.css'));
-	}
+        $config = AssetConfig::buildFromIniFile($this->_themeConfig);
+        $this->assertTrue($config->isThemed('themed.css'));
+    }
 
-	public function testExists() {
-		$this->assertTrue($this->config->exists('libs.js'));
-		$this->assertFalse($this->config->exists('derped.js'));
-	}
+    public function testExists()
+    {
+        $this->assertTrue($this->config->exists('libs.js'));
+        $this->assertFalse($this->config->exists('derped.js'));
+    }
 
-	public function testModifiedTime() {
-		$this->assertInternalType('integer', $this->config->modifiedTime());
-		$this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
-	}
+    public function testModifiedTime()
+    {
+        $this->assertInternalType('integer', $this->config->modifiedTime());
+        $this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
+    }
 }

@@ -7,12 +7,12 @@ MORE*/
 
 //     	 COMMENT
 function something() {
-	return 1 + 1;
+    return 1 + 1;
 }
-		   	/*
+               /*
 the next
 valid
 close */
 function two() {
-	return 1 + 1;
+    return 1 + 1;
 }

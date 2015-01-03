@@ -1,3 +1,5 @@
-var ThemeInclude = new Class({
+var ThemeInclude = new Class(
+    {
 
-});
+    }
+);

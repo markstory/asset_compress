@@ -11,20 +11,22 @@ use AssetCompress\AssetFilter;
  * vendors directories. You can get it from http://github.com/rgrove/jsmin-php/
  *
  */
-class JsMinFilter extends AssetFilter {
+class JsMinFilter extends AssetFilter
+{
 
-/**
- * Apply JsMin to $content.
- *
- * @param string $filename
- * @param string $content Content to filter.
- * @throws Exception
- * @return string
- */
-	public function output($filename, $content) {
-		if (!class_exists('JSMin')) {
-			throw new \Exception(sprintf('Cannot not load filter class "%s".', 'JsMin'));
-		}
-		return JSMin::minify($content);
-	}
+    /**
+     * Apply JsMin to $content.
+     *
+     * @param string $filename
+     * @param string $content Content to filter.
+     * @throws Exception
+     * @return string
+     */
+    public function output($filename, $content)
+    {
+        if (!class_exists('JSMin')) {
+            throw new \Exception(sprintf('Cannot not load filter class "%s".', 'JsMin'));
+        }
+        return JSMin::minify($content);
+    }
 }
