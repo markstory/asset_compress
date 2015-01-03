@@ -14,7 +14,6 @@ use Cake\I18n\I18n;
 require_once 'vendor/autoload.php';
 
 // Path constants to a few helpful things.
-define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__) . DS);
 define('CAKE_CORE_INCLUDE_PATH', ROOT . 'vendor' . DS . 'cakephp' . DS . 'cakephp');
 define('CORE_PATH', ROOT . 'vendor' . DS . 'cakephp' . DS . 'cakephp' . DS);
