@@ -22,12 +22,12 @@ class AssetCompilerTest extends TestCase
         AssetConfig::clearAllCachedKeys();
         $this->config = AssetConfig::buildFromIniFile($testFile);
         $this->config->paths('js', null, array(
-        $this->_testFiles . 'js' . DS,
-        $this->_testFiles . 'js' . DS . '*',
+            $this->_testFiles . 'js' . DS,
+            $this->_testFiles . 'js' . DS . '*',
         ));
         $this->config->paths('css', null, array(
-        $this->_testFiles . 'css' . DS,
-        $this->_testFiles . 'css' . DS . '*',
+            $this->_testFiles . 'css' . DS,
+            $this->_testFiles . 'css' . DS . '*',
         ));
         $this->Compiler = new AssetCompiler($this->config);
     }
@@ -41,6 +41,7 @@ class AssetCompilerTest extends TestCase
 var BaseClass = new Class({
 
 });
+
 //= require "base_class"
 var Template = new Class({
 
@@ -56,12 +57,12 @@ TEXT;
         $result = $this->Compiler->generate('all.css');
         $expected = <<<TEXT
 * {
-	margin:0;
-	padding:0;
+    margin:0;
+    padding:0;
 }
 @import url("reset/reset.css");
 #nav {
-	width:100%;
+    width:100%;
 }
 TEXT;
         $this->assertEquals($expected, $result);
@@ -74,11 +75,11 @@ TEXT;
         $result = $this->Compiler->generate('all.css');
         $expected = <<<TEXT
 #footer
-	color: blue;
+    color: blue;
 
 @import url("reset/reset.css");
 #nav {
-	width:100%;
+    width:100%;
 }
 TEXT;
         $this->assertEquals($expected, $result);
@@ -98,7 +99,7 @@ TEXT;
         $result = $Compiler->generate('themed.css');
         $expected = <<<TEXT
 body {
-	color: blue !important;
+    color: blue !important;
 }
 TEXT;
         $this->assertEquals($expected, $result);
@@ -122,7 +123,7 @@ TEXT;
         $result = $Compiler->generate('themed.css');
         $expected = <<<TEXT
 body {
-	color: red !important;
+    color: red !important;
 }
 TEXT;
         $this->assertEquals($expected, $result, 'red should not contain blue.');
@@ -142,11 +143,11 @@ TEXT;
         $expected = <<<TEXT
 @import url("reset/reset.css");
 #nav {
-	width:100%;
+    width:100%;
 }
 
 body {
-	color: red !important;
+    color: red !important;
 }
 TEXT;
         $this->assertEquals($expected, $result);
@@ -166,11 +167,11 @@ TEXT;
         $expected = <<<TEXT
 @import url("reset/reset.css");
 #nav {
-	width:100%;
+    width:100%;
 }
 
 .plugin-box {
-	color: orange;
+    color: orange;
 }
 TEXT;
         $this->assertEquals($expected, $result);

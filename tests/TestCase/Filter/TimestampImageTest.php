@@ -23,20 +23,20 @@ class TimestampImageTest extends TestCase
         $result = $this->filter->input($path, $content);
         $expected = <<<TEXT
 .single {
-	background: url('img/test.gif?t=[TIMESTAMP]') left top no-repeat;
+    background: url('img/test.gif?t=[TIMESTAMP]') left top no-repeat;
 }
 .double {
-	background: url("../css/img/test.gif?t=[TIMESTAMP]") left top no-repeat;
+    background: url("../css/img/test.gif?t=[TIMESTAMP]") left top no-repeat;
 }
 .bare {
-	background: url(img/test.gif?t=[TIMESTAMP]) 10px 10px repeat-x;
+    background: url(img/test.gif?t=[TIMESTAMP]) 10px 10px repeat-x;
 }
 .bk-image {
-	background-image: url(../css/img/test.gif?t=[TIMESTAMP]);
+    background-image: url(../css/img/test.gif?t=[TIMESTAMP]);
 }
 .inline { background: url(img/test.gif?t=[TIMESTAMP]); }
 .no-change {
-	background: url(/images/foobar.htc);
+    background: url(/images/foobar.htc);
 }
 
 TEXT;

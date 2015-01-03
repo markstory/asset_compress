@@ -5,7 +5,7 @@ MORE
 MORE*/
 (function($){function Foo(){this.bar = [];}})
 
-//     	 COMMENT
+//    COMMENT
 function something() {
     return 1 + 1;
 }

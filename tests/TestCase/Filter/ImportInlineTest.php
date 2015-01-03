@@ -14,10 +14,10 @@ class ImportInlineTest extends TestCase
         Plugin::load('Red');
         $this->filter = new ImportInline();
         $settings = array(
-        'paths' => array(
-        APP . 'css/'
-        ),
-        'theme' => 'Red',
+            'paths' => array(
+                APP . 'css/'
+            ),
+            'theme' => 'Red',
         );
         $this->filter->settings($settings);
     }
@@ -28,11 +28,11 @@ class ImportInlineTest extends TestCase
         $result = $this->filter->input('nav.css', $content);
         $expected = <<<TEXT
 * {
-	margin:0;
-	padding:0;
+    margin:0;
+    padding:0;
 }
 #nav {
-	width:100%;
+    width:100%;
 }
 
 TEXT;
@@ -45,20 +45,20 @@ TEXT;
         $result = $this->filter->input('has_import.css', $content);
         $expected = <<<TEXT
 * {
-	margin:0;
-	padding:0;
+    margin:0;
+    padding:0;
 }
 #nav {
-	width:100%;
+    width:100%;
 }
 
 body {
-	color: red !important;
+    color: red !important;
 }
 
 body {
-	color:#f00;
-	background:#000;
+    color:#f00;
+    background:#000;
 }
 
 TEXT;

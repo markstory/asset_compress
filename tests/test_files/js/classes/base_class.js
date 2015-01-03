@@ -1,5 +1,3 @@
-var BaseClass = new Class(
-    {
+var BaseClass = new Class({
 
-    }
-);
+});

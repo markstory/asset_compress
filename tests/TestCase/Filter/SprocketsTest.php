@@ -17,10 +17,10 @@ class SprocketsTest extends TestCase
 
         $this->filter = new Sprockets();
         $settings = array(
-        'paths' => array(
-        $this->_jsDir,
-        $this->_jsDir . 'classes' . DS,
-        )
+            'paths' => array(
+                $this->_jsDir,
+                $this->_jsDir . 'classes' . DS,
+            )
         );
         $this->filter->settings($settings);
     }
@@ -34,6 +34,7 @@ class SprocketsTest extends TestCase
 var BaseClass = new Class({
 
 });
+
 var Template = new Class({
 
 });
@@ -50,14 +51,17 @@ TEXT;
 var BaseClass = new Class({
 
 });
+
 var BaseClassTwo = BaseClass.extend({
 
 });
+
 // Remove me
 // remove me too
 var NestedClass = BaseClassTwo.extend({
 
 });
+
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
@@ -70,12 +74,15 @@ TEXT;
 var BaseClass = new Class({
 
 });
+
 var BaseClassTwo = BaseClass.extend({
 
 });
+
 var DoubleInclusion = new Class({
 
 });
+
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
@@ -128,17 +135,19 @@ TEXT;
 */
 // this comment should be removed
 function test(thing) {
-	/* this comment will be removed */
-	// I'm gone
-	thing.doStuff(); //I get to stay
-	return thing;
+    /* this comment will be removed */
+    // I'm gone
+    thing.doStuff(); //I get to stay
+    return thing;
 }
 var AnotherClass = Class.extend({
 
 });
+
 var Slideshow = new Class({
 
 });
+
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
@@ -159,15 +168,18 @@ TEXT;
 var BaseClass = new Class({
 
 });
+
 var Template = new Class({
 
 });
 var BaseClassTwo = BaseClass.extend({
 
 });
+
 var DoubleInclusion = new Class({
 
 });
+
 TEXT;
         $this->assertTextEquals($expected, $result);
     }
