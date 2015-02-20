@@ -17,7 +17,7 @@ class Remote implements FileInterface
 
     public function name()
     {
-        return basename($this->path);
+        return $this->url;
     }
 
     public function contents()
