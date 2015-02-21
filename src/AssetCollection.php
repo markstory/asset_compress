@@ -2,14 +2,15 @@
 namespace AssetCompress;
 
 use ArrayIterator;
-use AssetCompress\File\FileInterface;
-use Iterator;
+use AssetCompress\AssetTarget;
+use Countable;
+use IteratorIterator;
 use InvalidArgumentException;
 
 /**
  * A collection of AssetTargets.
  */
-class AssetCollection extends IteratorIterator
+class AssetCollection extends IteratorIterator implements Countable
 {
     protected $indexed = [];
 
@@ -23,15 +24,15 @@ class AssetCollection extends IteratorIterator
     {
         $items = new ArrayIterator($items);
         foreach ($items as $i => $item) {
-            if (!($item instanceof FileInterface)) {
-                throw new InvalidArgumentException("The item at $i does not implement FileInterface.");
+            if (!($item instanceof AssetTarget)) {
+                throw new InvalidArgumentException("The item at $i is not an AssetTarget.");
             }
             $this->indexed[$item->name()] = $item;
         }
         parent::__construct($items);
     }
 
-    public function append(FileInterface $target)
+    public function append(AssetTarget $target)
     {
         $this->indexed[$target->name()] = $target;
         $this->getInnerIterator()->append($target);
@@ -52,6 +53,22 @@ class AssetCollection extends IteratorIterator
 
     public function remove($name)
     {
+        if (!isset($this->indexed[$name])) {
+            return;
+        }
+        $asset = $this->indexed[$name];
         unset($this->indexed[$name]);
+
+        $iterator = $this->getInnerIterator();
+        foreach ($iterator as $i => $v) {
+            if ($v === $asset) {
+                unset($iterator[$i]);
+            }
+        }
+    }
+
+    public function count()
+    {
+        return count($this->indexed);
     }
 }

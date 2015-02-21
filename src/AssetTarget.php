@@ -20,7 +20,7 @@ class AssetTarget
      * @param array $filters An array of filter names for this target.
      * @param bool $themed Whether or not this file should be themed.
      */
-    public function __construct($path, $files, $filters, $themed)
+    public function __construct($path, $files = [], $filters = [], $themed = false)
     {
         $this->path = $path;
         $this->files = $files;
