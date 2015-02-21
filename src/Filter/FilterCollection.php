@@ -17,6 +17,16 @@ class FilterCollection implements Countable
     }
 
     /**
+     * Get the filters in the collection.
+     *
+     * @return array
+     */
+    public function filters()
+    {
+        return $this->filters;
+    }
+
+    /**
      * Apply all the input filters in sequence to the file and content.
      *
      * @param string $file Filename being processed.
