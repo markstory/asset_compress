@@ -9,9 +9,16 @@ use InvalidArgumentException;
 
 /**
  * A collection of AssetTargets.
+ *
+ * Provides ways to query which assets exist and iterate them.
  */
 class AssetCollection extends IteratorIterator implements Countable
 {
+    /**
+     * The assets indexed by name.
+     *
+     * @var array
+     */
     protected $indexed = [];
 
     /**
@@ -32,12 +39,24 @@ class AssetCollection extends IteratorIterator implements Countable
         parent::__construct($items);
     }
 
+    /**
+     * Append an asset to the collection.
+     *
+     * @param AssetTarget $target The target to append
+     * @return void
+     */
     public function append(AssetTarget $target)
     {
         $this->indexed[$target->name()] = $target;
         $this->getInnerIterator()->append($target);
     }
 
+    /**
+     * Get an asset from the collection
+     *
+     * @param string $name The name of the asset you want.
+     * @return null|AssetTarget Either null or the asset target.
+     */
     public function get($name)
     {
         if (isset($this->indexed[$name])) {
@@ -46,11 +65,23 @@ class AssetCollection extends IteratorIterator implements Countable
         return null;
     }
 
+    /**
+     * Check whether or not the collection contains the named asset.
+     *
+     * @param string $name The name of the asset you want.
+     * @return bool
+     */
     public function contains($name)
     {
         return isset($this->indexed[$name]);
     }
 
+    /**
+     * Remove an asset from the collection
+     *
+     * @param string $name The name of the asset you want to remove
+     * @return void
+     */
     public function remove($name)
     {
         if (!isset($this->indexed[$name])) {
@@ -67,6 +98,11 @@ class AssetCollection extends IteratorIterator implements Countable
         }
     }
 
+    /**
+     * Get the length of the collection.
+     *
+     * @return int
+     */
     public function count()
     {
         return count($this->indexed);
