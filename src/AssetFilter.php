@@ -11,7 +11,6 @@ use RuntimeException;
  */
 class AssetFilter implements AssetFilterInterface
 {
-
     /**
      * Settings
      *
@@ -24,10 +23,14 @@ class AssetFilter implements AssetFilterInterface
      * key which points at paths available for the type of asset being generated.
      *
      * @param array $settings Array of settings.
+     * @return array Array of updated settings.
      */
-    public function settings($settings)
+    public function settings(array $settings = null)
     {
-        $this->_settings = array_merge($this->_settings, $settings);
+        if ($settings) {
+            $this->_settings = array_merge($this->_settings, $settings);
+        }
+        return $this->_settings;
     }
 
     /**
