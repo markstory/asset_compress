@@ -434,6 +434,29 @@ class AssetConfig
     }
 
     /**
+     * Get configuration for all filters.
+     *
+     * Useful for building FilterRegistry objects
+     *
+     * @return array Config data related to all filters.
+     */
+    public function allFilters()
+    {
+        $filters = [];
+        foreach ($this->extensions() as $ext) {
+            if (isset($this->_data[$ext][self::FILTERS])) {
+                $filters = array_merge($filters, $this->_data[$ext][self::FILTERS]);
+            }
+            foreach ($this->_data[$ext][self::TARGETS] as $target) {
+                if (!empty($target[self::FILTERS])) {
+                    $filters = array_merge($filters, $target[self::FILTERS]);
+                }
+            }
+        }
+        return array_unique($filters);
+    }
+
+    /**
      * Get/Set filter Settings.
      *
      * @param string $filter The filter name

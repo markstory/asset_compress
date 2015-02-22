@@ -19,7 +19,7 @@ class AssetConfigTest extends TestCase
         parent::setUp();
         Cache::drop(AssetConfig::CACHE_CONFIG);
         Cache::config(AssetConfig::CACHE_CONFIG, array(
-        'engine' => 'File'
+            'engine' => 'File'
         ));
 
         $this->_testFiles = APP;
