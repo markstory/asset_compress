@@ -13,7 +13,7 @@ use Cake\Utility\Hash;
 class Sprockets extends AssetFilter
 {
 
-    protected $_Scanner;
+    protected $_scanner;
 
     /**
      * Regex pattern for finding //= require <file> and //= require "file" style inclusions
@@ -42,10 +42,19 @@ class Sprockets extends AssetFilter
      * @param array $settings.
      * @return void
      */
-    public function settings($settings)
+    public function settings(array $settings = null)
     {
-        parent::settings($settings);
-        $this->_Scanner = new AssetScanner($settings['paths'], Hash::get($settings, 'theme'));
+        $return = parent::settings($settings);
+        return $return;
+    }
+
+    protected function _scanner()
+    {
+        if (isset($this->_scanner)) {
+            return $this->_scanner;
+        }
+        $this->_scanner = new AssetScanner($this->_settings['paths'], Hash::get($this->_settings, 'theme'));
+        return $this->_scanner;
     }
 
     /**
@@ -111,7 +120,7 @@ class Sprockets extends AssetFilter
         if ($path && file_exists($path . $filename)) {
             return $path . $filename;
         }
-        $file = $this->_Scanner->find($filename);
+        $file = $this->_scanner()->find($filename);
         if ($file) {
             return $file;
         }
