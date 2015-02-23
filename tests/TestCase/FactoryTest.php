@@ -23,5 +23,19 @@ class FactoryTest extends TestCase
         $this->assertTrue($registry->contains('Sprockets'));
         $this->assertTrue($registry->contains('YuiJs'));
         $this->assertTrue($registry->contains('CssMinFilter'));
+
+        $filter = $registry->get('UglifyJs');
+        $this->assertEquals('/path/to/uglify-js', $filter->settings()['path']);
+    }
+
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Cannot load filter "Derp"
+     */
+    public function testFilterRegistryMissingFilter()
+    {
+        $this->config->filterConfig('Derp', ['path' => '/test']);
+        $factory = new Factory($this->config);
+        $factory->filterRegistry();
     }
 }

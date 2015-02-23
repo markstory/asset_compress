@@ -41,7 +41,7 @@ class Factory
             $className = App::className('AssetCompress.' . $name, 'Filter');
         }
         if (!class_exists($className)) {
-            throw new RuntimeException(sprintf('Cannot not load filter "%s".', $name));
+            throw new RuntimeException(sprintf('Cannot load filter "%s".', $name));
         }
         $filter = new $className();
         $filter->settings($config);

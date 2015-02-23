@@ -443,10 +443,10 @@ class AssetConfig
     public function allFilters()
     {
         $filters = [];
+        if (isset($this->_data[self::FILTERS])) {
+            $filters = array_keys($this->_data[self::FILTERS]);
+        }
         foreach ($this->extensions() as $ext) {
-            if (isset($this->_data[$ext][self::FILTERS])) {
-                $filters = array_merge($filters, $this->_data[$ext][self::FILTERS]);
-            }
             foreach ($this->_data[$ext][self::TARGETS] as $target) {
                 if (!empty($target[self::FILTERS])) {
                     $filters = array_merge($filters, $target[self::FILTERS]);
