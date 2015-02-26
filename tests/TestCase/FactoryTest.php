@@ -14,6 +14,8 @@ class FactoryTest extends TestCase
         AssetConfig::clearAllCachedKeys();
         $testConfig = APP . 'config' . DS . 'config.ini';
         $this->config = AssetConfig::buildFromIniFile($testConfig);
+
+        $this->integrationFile = APP . 'config' . DS . 'integration.ini';
     }
 
     public function testFilterRegistry()
@@ -37,5 +39,29 @@ class FactoryTest extends TestCase
         $this->config->filterConfig('Derp', ['path' => '/test']);
         $factory = new Factory($this->config);
         $factory->filterRegistry();
+    }
+
+    public function testAssetCollection()
+    {
+        $config = AssetConfig::buildFromIniFile($this->integrationFile, [
+            'TEST_FILES' => APP
+        ]);
+        $factory = new Factory($config);
+        $collection = $factory->assetCollection();
+
+        $this->assertCount(3, $collection);
+        $this->assertTrue($collection->contains('libs.js'));
+        $this->assertTrue($collection->contains('foo.bar.js'));
+        $this->assertTrue($collection->contains('all.css'));
+
+        $asset = $collection->get('libs.js');
+        $this->assertCount(2, $asset->files(), 'Not enough files');
+        $paths = [
+            APP . '/js',
+            APP . '/js/**'
+        ];
+        $this->assertEquals($paths, $asset->paths(), 'Paths are incorrect');
+        $this->assertEquals(['UglifyJs'], $asset->filterNames(), 'Filters are incorrect');
+        $this->assertFalse($asset->isThemed(), 'Themed is wrong');
     }
 }
