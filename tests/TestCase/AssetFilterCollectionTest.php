@@ -73,7 +73,7 @@ TEXT;
 class TestFilterOne extends AssetFilter
 {
 
-    public function settings($settings)
+    public function settings(array $settings = null)
     {
         $this->settings = $settings;
     }

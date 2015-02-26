@@ -20,10 +20,11 @@ class ImportInline extends AssetFilter
 
     protected $_loaded = array();
 
-    public function settings($settings)
+    public function settings(array $settings = null)
     {
         parent::settings($settings);
-        $this->_Scanner = new AssetScanner($settings['paths'], Hash::get($settings, 'theme'));
+        $this->_Scanner = new AssetScanner($this->_settings['paths'], Hash::get($this->_settings, 'theme'));
+        return $this->_settings;
     }
 
     /**

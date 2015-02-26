@@ -97,23 +97,23 @@ class AssetConfigTest extends TestCase
     public function testFilters()
     {
         $result = $this->config->filters('js');
-        $this->assertEquals(array('sprockets', 'jsyuicompressor'), $result);
+        $this->assertEquals(array('Sprockets', 'YuiJs'), $result);
 
         $result = $this->config->filters('js', 'libs.js');
-        $this->assertEquals(array('sprockets', 'jsyuicompressor', 'uglify'), $result);
+        $this->assertEquals(array('Sprockets', 'YuiJs', 'UglifyJs'), $result);
 
         $this->assertEquals(array(), $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
     {
-        $this->config->filters('js', null, array('uglify'));
-        $this->assertEquals(array('uglify'), $this->config->filters('js'));
-        $this->assertEquals(array('uglify'), $this->config->filters('js', 'libs.js'));
+        $this->config->filters('js', null, array('UglifyJs'));
+        $this->assertEquals(array('UglifyJs'), $this->config->filters('js'));
+        $this->assertEquals(array('UglifyJs'), $this->config->filters('js', 'libs.js'));
 
-        $this->config->filters('js', 'libs.js', array('sprockets'));
-        $this->assertEquals(array('uglify'), $this->config->filters('js'));
-        $this->assertEquals(array('uglify', 'sprockets'), $this->config->filters('js', 'libs.js'));
+        $this->config->filters('js', 'libs.js', array('Sprockets'));
+        $this->assertEquals(array('UglifyJs'), $this->config->filters('js'));
+        $this->assertEquals(array('UglifyJs', 'Sprockets'), $this->config->filters('js', 'libs.js'));
     }
 
     public function testFiles()
@@ -188,28 +188,28 @@ class AssetConfigTest extends TestCase
 
     public function testFilterConfig()
     {
-        $result = $this->config->filterConfig('uglify');
+        $result = $this->config->filterConfig('UglifyJs');
         $expected = array('path' => '/path/to/uglify-js');
         $this->assertEquals($expected, $result);
 
-        $this->config->filterConfig('sprockets', array('some' => 'value'));
-        $this->assertEquals(array('some' => 'value'), $this->config->filterConfig('sprockets'));
+        $this->config->filterConfig('Sprockets', array('some' => 'value'));
+        $this->assertEquals(array('some' => 'value'), $this->config->filterConfig('Sprockets'));
 
         $this->assertEquals(array(), $this->config->filterConfig('imaginary'));
     }
 
     public function testFilterConfigArray()
     {
-        $this->config->filterConfig('sprockets', array('some' => 'value'));
+        $this->config->filterConfig('Sprockets', array('some' => 'value'));
 
-        $result = $this->config->filterConfig(array('uglify', 'sprockets'));
+        $result = $this->config->filterConfig(array('UglifyJs', 'Sprockets'));
         $expected = array(
-        'sprockets' => array(
-        'some' => 'value'
-        ),
-        'uglify' => array(
-        'path' => '/path/to/uglify-js'
-        )
+            'Sprockets' => array(
+                'some' => 'value'
+            ),
+            'UglifyJs' => array(
+                'path' => '/path/to/uglify-js'
+            )
         );
         $this->assertEquals($expected, $result);
     }

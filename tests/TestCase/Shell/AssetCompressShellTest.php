@@ -8,9 +8,9 @@ use Cake\TestSuite\TestCase;
 use Cake\Filesystem\Folder;
 
 /**
- * AssetBuildTask test case.
+ * AssetCompressShell test case.
  */
-class AssetBuildTaskTest extends TestCase
+class AssetCompressShellTest extends TestCase
 {
 
     /**

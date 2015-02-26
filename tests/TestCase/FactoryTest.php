@@ -61,7 +61,7 @@ class FactoryTest extends TestCase
             APP . '/js/**'
         ];
         $this->assertEquals($paths, $asset->paths(), 'Paths are incorrect');
-        $this->assertEquals(['UglifyJs'], $asset->filterNames(), 'Filters are incorrect');
+        $this->assertEquals(['Sprockets'], $asset->filterNames(), 'Filters are incorrect');
         $this->assertFalse($asset->isThemed(), 'Themed is wrong');
     }
 }
