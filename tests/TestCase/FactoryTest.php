@@ -65,6 +65,7 @@ class FactoryTest extends TestCase
         $this->assertEquals(['Sprockets'], $asset->filterNames(), 'Filters are incorrect');
         $this->assertFalse($asset->isThemed(), 'Themed is wrong');
         $this->assertEquals('libs.js', $asset->name(), 'Asset name is wrong');
+        $this->assertEquals('js', $asset->ext(), 'Asset ext is wrong');
         $this->assertEquals(TMP . 'cache_js', $asset->outputDir(), 'Asset path is wrong');
         $this->assertEquals(TMP . 'cache_js/libs.js', $asset->path(), 'Asset path is wrong');
     }

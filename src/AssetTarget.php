@@ -62,6 +62,12 @@ class AssetTarget
         return basename($this->path);
     }
 
+    public function ext()
+    {
+        $parts = explode('.', $this->name());
+        return array_pop($parts);
+    }
+
     public function filterNames()
     {
         return $this->filters;
