@@ -4,6 +4,7 @@ namespace AssetCompress;
 use AssetCompress\AssetConfig;
 use AssetCompress\AssetCollection;
 use AssetCompress\AssetTarget;
+use AssetCompress\AssetWriter;
 use AssetCompress\Filter\FilterRegistry;
 use AssetCompress\File\Remote;
 use AssetCompress\File\Local;
@@ -25,9 +26,13 @@ class Factory
         $this->config = $config;
     }
 
-    public function cacher()
+    public function writer()
     {
-        return new AssetCache();
+        $timestamp = [
+            'js' => $this->config->get('js.timestamp'),
+            'css' => $this->config->get('css.timestamp'),
+        ];
+        return new AssetWriter($timestamp, TMP, $this->config->theme());
     }
 
     public function assetCollection()

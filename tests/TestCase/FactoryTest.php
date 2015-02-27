@@ -70,7 +70,25 @@ class FactoryTest extends TestCase
         $this->assertEquals(TMP . 'cache_js/libs.js', $asset->path(), 'Asset path is wrong');
     }
 
-    public function testCacher()
+    public function testWriter()
     {
+        $config = AssetConfig::buildFromIniFile($this->integrationFile, [
+            'TEST_FILES/' => APP,
+            'WEBROOT/' => TMP
+        ]);
+        $config->theme('Red');
+        $config->set('js.timestamp', true);
+        $factory = new Factory($config);
+        $writer = $factory->writer();
+
+        $expected = [
+            'timestamp' => [
+                'js' => true,
+                'css' => false
+            ],
+            'path' => TMP,
+            'theme' => 'Red'
+        ];
+        $this->assertEquals($expected, $writer->config());
     }
 }
