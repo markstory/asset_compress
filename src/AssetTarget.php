@@ -47,6 +47,11 @@ class AssetTarget
         return $this->files;
     }
 
+    public function path()
+    {
+        return $this->path;
+    }
+
     public function outputDir()
     {
         return dirname($this->path);

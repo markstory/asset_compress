@@ -25,6 +25,11 @@ class Factory
         $this->config = $config;
     }
 
+    public function cacher()
+    {
+        return new AssetCache();
+    }
+
     public function assetCollection()
     {
         $assets = [];
@@ -43,6 +48,7 @@ class Factory
         $filters = $this->config->filters($ext, $name);
         $paths = $this->config->paths($ext, $name);
         $themed = $this->config->isThemed($name);
+        $target = $this->config->cachePath($ext) . $name;
 
         $files = [];
         $scanner = new AssetScanner($paths, $this->config->theme());
@@ -57,7 +63,7 @@ class Factory
                 $files[] = new Local($path);
             }
         }
-        return new AssetTarget($name, $files, $filters, $paths, $themed);
+        return new AssetTarget($target, $files, $filters, $paths, $themed);
     }
 
     public function filterRegistry()

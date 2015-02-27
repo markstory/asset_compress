@@ -44,7 +44,8 @@ class FactoryTest extends TestCase
     public function testAssetCollection()
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
-            'TEST_FILES' => APP
+            'TEST_FILES/' => APP,
+            'WEBROOT/' => TMP
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -57,11 +58,18 @@ class FactoryTest extends TestCase
         $asset = $collection->get('libs.js');
         $this->assertCount(2, $asset->files(), 'Not enough files');
         $paths = [
-            APP . '/js',
-            APP . '/js/**'
+            APP . 'js',
+            APP . 'js/**'
         ];
         $this->assertEquals($paths, $asset->paths(), 'Paths are incorrect');
         $this->assertEquals(['Sprockets'], $asset->filterNames(), 'Filters are incorrect');
         $this->assertFalse($asset->isThemed(), 'Themed is wrong');
+        $this->assertEquals('libs.js', $asset->name(), 'Asset name is wrong');
+        $this->assertEquals(TMP . 'cache_js', $asset->outputDir(), 'Asset path is wrong');
+        $this->assertEquals(TMP . 'cache_js/libs.js', $asset->path(), 'Asset path is wrong');
+    }
+
+    public function testCacher()
+    {
     }
 }
