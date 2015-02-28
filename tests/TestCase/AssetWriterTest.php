@@ -100,37 +100,34 @@ class AssetWriterTest extends TestCase
 
     public function testTimestampFromCache()
     {
-        $this->config->general('cacheConfig', true);
-        $this->config->set('js.timestamp', true);
+        $writer = new AssetWriter(['js' => true, 'css' => false], TMP);
 
         $time = time();
-        $this->cache->buildFilename('libs.js');
+        $writer->buildFilename($this->target);
 
          // delete the file so we know we hit the cache.
         unlink(TMP . AssetWriter::BUILD_TIME_FILE);
 
-        $result = $this->cache->buildFilename('libs.js');
-        $this->assertEquals('libs.v' . $time . '.js', $result);
+        $result = $writer->buildFilename($this->target);
+        $this->assertEquals('test.v' . $time . '.js', $result);
     }
-    
+
     public function testInvalidateAndFinalizeBuildTimestamp()
     {
-        $this->markTestIncomplete();
-        $this->config->general('cacheConfig', true);
-        $this->config->set('js.timestamp', true);
-        
-        $cacheName = $this->cache->buildCacheName('libs.js');
-        $this->cache->invalidate('libs.js');
-        $invalidatedCacheName = $this->cache->buildCacheName('libs.js');
+        $writer = new AssetWriter(['js' => true, 'css' => false], TMP);
+
+        $cacheName = $writer->buildCacheName($this->target);
+        $writer->invalidate($this->target);
+        $invalidatedCacheName = $writer->buildCacheName($this->target);
         $this->assertNotEquals($cacheName, $invalidatedCacheName);
-        
-        $time = $this->cache->getTimestamp('libs.js');
-        
-        $this->cache->finalize('libs.js');
-        $finalizedCacheName = $this->cache->buildCacheName('libs.js');
+
+        $time = $writer->getTimestamp($this->target);
+
+        $writer->finalize($this->target);
+        $finalizedCacheName = $writer->buildCacheName($this->target);
         $this->assertEquals($cacheName, $finalizedCacheName);
-        
-        $finalizedTime = $this->cache->getTimestamp('libs.js');
+
+        $finalizedTime = $writer->getTimestamp($this->target);
         $this->assertEquals($time, $finalizedTime);
     }
 }

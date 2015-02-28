@@ -193,8 +193,8 @@ class AssetWriter
             return;
         }
         $data = $this->_readTimestamp();
-        $build = $this->buildCacheName($build);
-        $data[$build] = $time;
+        $name = $this->buildCacheName($build);
+        $data[$name] = $time;
         $this->_writeTimestamp($data);
     }
 
@@ -284,7 +284,7 @@ class AssetWriter
     public function buildCacheName($build)
     {
         $name = $this->buildFileName($build, false);
-        if ($build == $this->_invalidated) {
+        if ($build->name() == $this->_invalidated) {
             return '~' . $name;
         }
         return $name;
