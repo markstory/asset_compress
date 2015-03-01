@@ -103,42 +103,6 @@ class AssetWriter
     }
 
     /**
-     * Gets the modification time of a remote $url.
-     * Based on: http://www.php.net/manual/en/function.filemtime.php#81194
-     * @param type $url
-     * @return The last modified time of the $url file, in Unix timestamp, or false it can't be read.
-     */
-    public function getRemoteFileLastModified($url)
-    {
-        // default
-        $unixtime = 0;
-
-        // @codingStandardsIgnoreStart
-        $fp = @fopen($url, 'rb');
-        // @codingStandardsIgnoreEnd
-        if (!$fp) {
-            return false;
-        }
-
-        $metadata = stream_get_meta_data($fp);
-        foreach ($metadata['wrapper_data'] as $response) {
-            // case: redirection
-            if (substr(strtolower($response), 0, 10) === 'location: ') {
-                $newUri = substr($response, 10);
-                fclose($fp);
-                return $this->getRemoteFileLastModified($newUri);
-            } elseif (substr(strtolower($response), 0, 15) === 'last-modified: ') {
-                // case: last-modified
-                $unixtime = strtotime(substr($response, 15));
-                break;
-            }
-        }
-
-        fclose($fp);
-        return $unixtime;
-    }
-
-    /**
      * Invalidate a build before re-generating the file.
      *
      * @param string $build The build to invalidate.
