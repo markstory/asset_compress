@@ -20,18 +20,38 @@ use RuntimeException;
  */
 class Factory
 {
+    /**
+     * The config instance to make objects based on.
+     *
+     * @var AssetCompress\AssetConfig
+     */
     protected $config;
 
+    /**
+     * Constructor
+     *
+     * @param AssetCompress\AssetConfig $config
+     */
     public function __construct(AssetConfig $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * Create an AssetCompiler
+     *
+     * @return AssetCompress\AssetCompiler
+     */
     public function compiler()
     {
         return new AssetCompiler($this->filterRegistry());
     }
 
+    /**
+     * Create an AssetWriter
+     *
+     * @return AssetCompress\AssetWriter
+     */
     public function writer()
     {
         $timestamp = [
@@ -41,6 +61,11 @@ class Factory
         return new AssetWriter($timestamp, TMP, $this->config->theme());
     }
 
+    /**
+     * Create an AssetCollection with all the configured assets.
+     *
+     * @return AssetCompress\AssetCollection
+     */
     public function assetCollection()
     {
         $assets = [];
@@ -52,6 +77,12 @@ class Factory
         return new AssetCollection($assets);
     }
 
+    /**
+     * Create a single build target
+     *
+     * @param string $name The name of the target to build
+     * @return AssetCompress\AssetTarget
+     */
     protected function buildTarget($name)
     {
         $ext = $this->config->getExt($name);
@@ -77,6 +108,11 @@ class Factory
         return new AssetTarget($target, $files, $filters, $paths, $themed);
     }
 
+    /**
+     * Create a filter registry containing all the configured filters.
+     *
+     * @return AssetCompress\Filter\FilterRegistry
+     */
     public function filterRegistry()
     {
         $filters = [];
@@ -86,8 +122,16 @@ class Factory
         return new FilterRegistry($filters);
     }
 
+    /**
+     * Create a single filter
+     *
+     * @param string $name The name of the filter to build.
+     * @param array $config The configuration for the filter.
+     * @return AssetCompress\Filter\AssetFilterInterface
+     */
     protected function buildFilter($name, $config)
     {
+        // TODO remove reliance on App so the code can be extracted.
         $className = App::className($name, 'Filter');
         if (!class_exists($className)) {
             $className = App::className('AssetCompress.' . $name, 'Filter');
