@@ -3,6 +3,7 @@ namespace AssetCompress;
 
 use AssetCompress\AssetConfig;
 use AssetCompress\AssetCollection;
+use AssetCompress\AssetCompiler;
 use AssetCompress\AssetTarget;
 use AssetCompress\AssetWriter;
 use AssetCompress\Filter\FilterRegistry;
@@ -24,6 +25,11 @@ class Factory
     public function __construct(AssetConfig $config)
     {
         $this->config = $config;
+    }
+
+    public function compiler()
+    {
+        return new AssetCompiler($this->filterRegistry());
     }
 
     public function writer()

@@ -24,25 +24,22 @@ class AssetsCompressorTest extends TestCase
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
 
         $map = array(
-        'TEST_FILES/' => APP
+            'TEST_FILES/' => APP
         );
         Plugin::load('TestAssetIni');
-
         AssetConfig::clearAllCachedKeys();
 
         $config = AssetConfig::buildFromIniFile($this->testConfig, $map);
-        $config->filters('js', null, array());
         $this->Compressor = $this->getMock(
             'AssetCompress\Routing\Filter\AssetCompressorFilter',
             array('_getConfig')
         );
         $this->Compressor->expects($this->atLeastOnce())
-        ->method('_getConfig')
-        ->will($this->returnValue($config));
+            ->method('_getConfig')
+            ->will($this->returnValue($config));
 
         $this->request = new Request();
         $this->response = $this->getMock('Cake\Network\Response', array('checkNotModified', 'type', 'send'));
-        Configure::write('debug', true);
     }
 
     /**
@@ -64,8 +61,9 @@ class AssetsCompressorTest extends TestCase
     public function testBuildFile()
     {
         $this->response
-        ->expects($this->once())->method('type')
-        ->with($this->equalTo('js'));
+            ->expects($this->once())
+            ->method('type')
+            ->with($this->equalTo('js'));
 
         $this->request->url = 'cache_js/libs.js';
         $data = array('request' => $this->request, 'response' => $this->response);

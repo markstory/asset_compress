@@ -1,9 +1,10 @@
 <?php
 namespace AssetCompress\Routing\Filter;
 
-use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use AssetCompress\AssetWriter;
+use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
@@ -25,7 +26,7 @@ class AssetCompressorFilter extends DispatcherFilter
      *
      * @var AssetConfig
      */
-    protected $_Config;
+    protected $config;
 
     /**
      * Checks if request is for a compiled asset, otherwise skip any operation
@@ -38,37 +39,39 @@ class AssetCompressorFilter extends DispatcherFilter
     {
         $request = $event->data['request'];
         $response = $event->data['response'];
-        $url = $request->url;
         $config = $this->_getConfig();
         $production = !Configure::read('debug');
         if ($production && !$config->general('alwaysEnableController')) {
             return;
         }
 
-        $build = $this->_getBuild($url);
-        if ($build === false) {
-            return;
-        }
+        // Use the CACHE dir for dev builds.
+        // This is to avoid permissions issues with the configured paths.
+        $cachePath = CACHE . 'asset_compress' . DS;
+        $this->ensureDir($cachePath);
+        $targetName = $this->getName($config, $request->url);
+
+        // Reset the cache path for dev builds.
+        $ext = $config->getExt($targetName);
+        $config->cachePath($ext, $cachePath);
+        $config->set("$ext.timestamp", false);
 
         if (isset($request->query['theme'])) {
             $config->theme($request->query['theme']);
         }
+        $factory = new Factory($config);
+        $assets = $factory->assetCollection();
 
-        // Use the CACHE dir for dev builds.
-        // This is to avoid permissions issues with the configured paths.
-        $cachePath = CACHE . 'asset_compress' . DS;
-        $folder = new Folder($cachePath, true);
-        $folder->chmod($cachePath, 0777);
-
-        $ext = $config->getExt($build);
-        $config->cachePath($ext, $cachePath);
-        $config->set("$ext.timestamp", false);
+        if (!$targetName || !$assets->contains($targetName)) {
+            return;
+        }
+        $build = $assets->get($targetName);
 
         try {
-            $compiler = new AssetCompiler($config);
-            $cache = new AssetCache($config);
+            $compiler = $factory->compiler();
+            $cache = $factory->writer();
             if ($cache->isFresh($build)) {
-                $contents = file_get_contents($cachePath . $build);
+                $contents = file_get_contents($build->path());
             } else {
                 $contents = $compiler->generate($build);
                 $cache->write($build, $contents);
@@ -77,7 +80,7 @@ class AssetCompressorFilter extends DispatcherFilter
             throw new NotFoundException($e->getMessage());
         }
 
-        $response->type($config->getExt($build));
+        $response->type($build->ext());
         $response->body($contents);
         $event->stopPropagation();
         return $response;
@@ -89,14 +92,14 @@ class AssetCompressorFilter extends DispatcherFilter
      * @return boolean|string false if no build can be parsed from URL
      * with url path otherwise
      */
-    protected function _getBuild($url)
+    protected function getName($config, $url)
     {
         $parts = explode('.', $url);
         if (count($parts) < 2) {
             return false;
         }
 
-        $path = $this->_getConfig()->cachePath($parts[(count($parts) - 1)]);
+        $path = $config->cachePath($parts[(count($parts) - 1)]);
         if (empty($path)) {
             return false;
         }
@@ -113,9 +116,15 @@ class AssetCompressorFilter extends DispatcherFilter
      */
     protected function _getConfig()
     {
-        if (empty($this->_Config)) {
-            $this->_Config = AssetConfig::buildFromIniFile();
+        if (empty($this->_config)) {
+            $this->_config = AssetConfig::buildFromIniFile();
         }
-        return $this->_Config;
+        return $this->_config;
+    }
+
+    protected function ensureDir($path)
+    {
+        $folder = new Folder($path, true);
+        $folder->chmod($path, 0777);
     }
 }

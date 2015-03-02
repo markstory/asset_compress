@@ -18,6 +18,11 @@ class Local implements FileInterface
         $this->path = $path;
     }
 
+    public function path()
+    {
+        return $this->path;
+    }
+
     public function name()
     {
         return basename($this->path);

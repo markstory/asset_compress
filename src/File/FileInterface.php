@@ -23,4 +23,11 @@ interface FileInterface
      * @return int
      */
     public function modifiedTime();
+
+    /**
+     * The path to the file.
+     *
+     * @return string
+     */
+    public function path();
 }
