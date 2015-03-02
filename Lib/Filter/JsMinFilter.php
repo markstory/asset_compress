@@ -4,9 +4,12 @@ App::uses('AssetFilter', 'AssetCompress.Lib');
 /**
  * JsMin filter.
  *
- * Allows you to filter Javascript files through JSMin. You need to put JSMin in your application's
- * vendors directories. You can get it from http://github.com/rgrove/jsmin-php/
+ * Allows you to filter Javascript files through JSMin. You need either the
+ * `jsmin` PHP extension installed, or a copy of `jsmin-php` in one of your
+ * application's `vendors` directories.
  *
+ * @link https://github.com/sqmk/pecl-jsmin
+ * @link http://github.com/rgrove/jsmin-php
  */
 class JsMinFilter extends AssetFilter {
 
@@ -28,6 +31,9 @@ class JsMinFilter extends AssetFilter {
  * @return string
  */
 	public function output($filename, $content) {
+		if (function_exists('jsmin')) {
+			return jsmin($content);
+		}
 		App::import('Vendor', 'jsmin', array('file' => $this->_settings['path']));
 		if (!class_exists('JSMin')) {
 			throw new Exception(sprintf('Cannot not load filter class "%s".', 'JSMin'));
