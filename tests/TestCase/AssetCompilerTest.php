@@ -3,6 +3,9 @@ namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use AssetCompress\AssetTarget;
+use AssetCompress\Factory;
+use AssetCompress\File\Local;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -17,7 +20,7 @@ class AssetCompilerTest extends TestCase
         $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
         $this->_pluginConfig = $this->_testFiles . 'config' . DS . 'plugins.ini';
 
-        $testFile = $this->_testFiles . 'config' . DS . 'config.ini';
+        $testFile = $this->_testFiles . 'config' . DS . 'integration.ini';
 
         AssetConfig::clearAllCachedKeys();
         $this->config = AssetConfig::buildFromIniFile($testFile);
@@ -29,14 +32,23 @@ class AssetCompilerTest extends TestCase
             $this->_testFiles . 'css' . DS,
             $this->_testFiles . 'css' . DS . '*',
         ));
-        $this->Compiler = new AssetCompiler($this->config);
+    }
+
+    protected function instance()
+    {
+        $factory = new Factory($this->config);
+        return $factory->compiler();
     }
 
     public function testConcatenationJavascript()
     {
-        $this->config->filters('js', null, array());
-        $this->config->addTarget('template.js', array('classes/base_class.js', 'classes/template.js'));
-        $result = $this->Compiler->generate('template.js');
+        $files = [
+            new Local(APP . 'js/classes/base_class.js'),
+            new Local(APP . 'js/classes/template.js'),
+        ];
+        $target = new AssetTarget(TMP . 'template.js', $files);
+        $compiler = $this->instance();
+        $result = $compiler->generate($target);
         $expected = <<<TEXT
 var BaseClass = new Class({
 
@@ -52,9 +64,13 @@ TEXT;
 
     public function testConcatenationCss()
     {
-        $this->config->filters('css', null, array());
-        $this->config->addTarget('all.css', array('reset/reset.css', 'nav.css'));
-        $result = $this->Compiler->generate('all.css');
+        $files = [
+            new Local(APP . 'css/reset/reset.css'),
+            new Local(APP . 'css/nav.css'),
+        ];
+        $target = new AssetTarget(TMP . 'all.css', $files);
+        $compiler = $this->instance();
+        $result = $compiler->generate($target);
         $expected = <<<TEXT
 * {
     margin:0;
@@ -70,9 +86,13 @@ TEXT;
 
     public function testCombiningWithOtherExtensions()
     {
-        $this->config->filters('css', null, array());
-        $this->config->addTarget('all.css', array('other.less', 'nav.css'));
-        $result = $this->Compiler->generate('all.css');
+        $files = [
+            new Local(APP . 'css/other.less'),
+            new Local(APP . 'css/nav.css'),
+        ];
+        $target = new AssetTarget(TMP . 'all.css', $files);
+        $compiler = $this->instance();
+        $result = $compiler->generate($target);
         $expected = <<<TEXT
 #footer
     color: blue;
@@ -88,15 +108,15 @@ TEXT;
     public function testCombineThemeFile()
     {
         Plugin::load('Blue');
+        $this->config->theme('blue');
 
-        $Config = AssetConfig::buildFromIniFile($this->_themeConfig);
-        $Config->paths('css', null, array(
-        APP . DS . 'css' . DS . '**'
-        ));
-        $Config->theme('blue');
-        $Compiler = new AssetCompiler($Config);
+        $files = [
+            new Local(APP . 'Plugin/Blue/webroot/theme.css'),
+        ];
+        $target = new AssetTarget(TMP . 'themed.css', $files, [], [], true);
+        $compiler = $this->instance();
 
-        $result = $Compiler->generate('themed.css');
+        $result = $compiler->generate($target);
         $expected = <<<TEXT
 body {
     color: blue !important;
@@ -105,84 +125,24 @@ TEXT;
         $this->assertEquals($expected, $result);
     }
 
-    public function testMultipleThemeGeneration()
+    public function testCombineWithFilters()
     {
-        Plugin::load('Blue');
-        Plugin::load('Red');
+        $files = [
+            new Local(APP . 'js/classes/base_class_two.js'),
+        ];
+        $target = new AssetTarget(TMP . 'class.js', $files, ['Sprockets']);
+        $compiler = $this->instance();
 
-        $Config = AssetConfig::buildFromIniFile($this->_themeConfig);
-        $Config->paths('css', null, array(
-        APP . 'css' . DS . '**'
-        ));
-        $Config->theme('blue');
-        $Compiler = new AssetCompiler($Config);
-     // Generate the blue file.
-        $Compiler->generate('themed.css');
-
-        $Config->theme('red');
-        $result = $Compiler->generate('themed.css');
+        $result = $compiler->generate($target);
         $expected = <<<TEXT
-body {
-    color: red !important;
-}
-TEXT;
-        $this->assertEquals($expected, $result, 'red should not contain blue.');
-    }
+var BaseClass = new Class({
 
-    public function testCombineThemeFileWithNonTheme()
-    {
-        Plugin::load('Red');
-        $Config = AssetConfig::buildFromIniFile($this->_themeConfig);
-        $Config->paths('css', null, array(
-        APP . 'css' . DS . '**'
-        ));
-        $Config->theme('red');
-        $Compiler = new AssetCompiler($Config);
+});
 
-        $result = $Compiler->generate('combined.css');
-        $expected = <<<TEXT
-@import url("reset/reset.css");
-#nav {
-    width:100%;
-}
+var BaseClassTwo = BaseClass.extend({
 
-body {
-    color: red !important;
-}
+});
 TEXT;
         $this->assertEquals($expected, $result);
-    }
-
-    public function testCompilePluginFiles()
-    {
-        Plugin::load('TestAsset');
-
-        $Config = AssetConfig::buildFromIniFile($this->_pluginConfig);
-        $Config->paths('css', null, array(
-        APP . 'css' . DS . '**'
-        ));
-        $Compiler = new AssetCompiler($Config);
-
-        $result = $Compiler->generate('plugins.css');
-        $expected = <<<TEXT
-@import url("reset/reset.css");
-#nav {
-    width:100%;
-}
-
-.plugin-box {
-    color: orange;
-}
-TEXT;
-        $this->assertEquals($expected, $result);
-    }
-
-    public function testCompileRemoteFiles()
-    {
-        $Config = AssetConfig::buildFromIniFile($this->_testFiles . 'config' . DS . 'remote_file.ini');
-        $Compiler = new AssetCompiler($Config);
-
-        $result = $Compiler->generate('remote_file.js');
-        $this->assertContains('jQuery', $result);
     }
 }

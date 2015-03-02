@@ -70,6 +70,69 @@ class FactoryTest extends TestCase
         $this->assertEquals(TMP . 'cache_js/libs.js', $asset->path(), 'Asset path is wrong');
     }
 
+    /**
+     * Test that themed assets are built correctly.
+     *
+     * @return void
+     */
+    public function testAssetCollectionThemed()
+    {
+        $this->markTestIncomplete('Implement this');
+
+        // Sample implementation
+        Plugin::load('Red');
+        $Config = AssetConfig::buildFromIniFile($this->_themeConfig);
+        $Config->paths('css', null, array(
+            APP . 'css' . DS . '**'
+        ));
+        $Config->theme('red');
+        $Compiler = new AssetCompiler($Config);
+
+        $result = $Compiler->generate('combined.css');
+        $expected = <<<TEXT
+@import url("reset/reset.css");
+#nav {
+    width:100%;
+}
+
+body {
+    color: red !important;
+}
+TEXT;
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that plugin assets are built correctly.
+     *
+     * @return void
+     */
+    public function testAssetCollectionPlugins()
+    {
+        $this->markTestIncomplete('Implement this');
+
+        Plugin::load('TestAsset');
+
+        $Config = AssetConfig::buildFromIniFile($this->_pluginConfig);
+        $Config->paths('css', null, array(
+        APP . 'css' . DS . '**'
+        ));
+        $Compiler = new AssetCompiler($Config);
+
+        $result = $Compiler->generate('plugins.css');
+        $expected = <<<TEXT
+@import url("reset/reset.css");
+#nav {
+    width:100%;
+}
+
+.plugin-box {
+    color: orange;
+}
+TEXT;
+        $this->assertEquals($expected, $result);
+    }
+
     public function testWriter()
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [

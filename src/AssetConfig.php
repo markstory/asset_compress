@@ -447,6 +447,9 @@ class AssetConfig
             $filters = array_keys($this->_data[self::FILTERS]);
         }
         foreach ($this->extensions() as $ext) {
+            if (empty($this->_data[$ext][self::TARGETS])) {
+                continue;
+            }
             foreach ($this->_data[$ext][self::TARGETS] as $target) {
                 if (!empty($target[self::FILTERS])) {
                     $filters = array_merge($filters, $target[self::FILTERS]);
