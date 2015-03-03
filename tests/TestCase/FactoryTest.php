@@ -3,6 +3,7 @@ namespace AssetCompress;
 
 use AssetCompress\AssetConfig;
 use AssetCompress\Factory;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class FactoryTest extends TestCase
@@ -16,6 +17,8 @@ class FactoryTest extends TestCase
         $this->config = AssetConfig::buildFromIniFile($testConfig);
 
         $this->integrationFile = APP . 'config' . DS . 'integration.ini';
+        $this->themedFile = APP . 'config' . DS . 'themed.ini';
+        $this->pluginFile = APP . 'config' . DS . 'plugins.ini';
     }
 
     public function testFilterRegistry()
@@ -77,29 +80,24 @@ class FactoryTest extends TestCase
      */
     public function testAssetCollectionThemed()
     {
-        $this->markTestIncomplete('Implement this');
-
-        // Sample implementation
         Plugin::load('Red');
-        $Config = AssetConfig::buildFromIniFile($this->_themeConfig);
-        $Config->paths('css', null, array(
-            APP . 'css' . DS . '**'
-        ));
-        $Config->theme('red');
-        $Compiler = new AssetCompiler($Config);
+        $config = AssetConfig::buildFromIniFile($this->themedFile, [
+            'TEST_FILES/' => APP,
+            'WEBROOT/' => TMP
+        ]);
+        $config->theme('red');
 
-        $result = $Compiler->generate('combined.css');
-        $expected = <<<TEXT
-@import url("reset/reset.css");
-#nav {
-    width:100%;
-}
+        $factory = new Factory($config);
+        $collection = $factory->assetCollection();
 
-body {
-    color: red !important;
-}
-TEXT;
-        $this->assertEquals($expected, $result);
+        $this->assertTrue($collection->contains('themed.css'));
+        $asset = $collection->get('themed.css');
+
+        $this->assertTrue($asset->isThemed());
+
+        $files = $asset->files();
+        $this->assertCount(1, $files);
+        $this->assertEquals(APP . 'Plugin/Red/webroot/theme.css', $files[0]->path());
     }
 
     /**
@@ -109,28 +107,31 @@ TEXT;
      */
     public function testAssetCollectionPlugins()
     {
-        $this->markTestIncomplete('Implement this');
-
         Plugin::load('TestAsset');
+        $config = AssetConfig::buildFromIniFile($this->pluginFile, [
+            'TEST_FILES/' => APP,
+            'WEBROOT/' => TMP
+        ]);
+        $factory = new Factory($config);
+        $collection = $factory->assetCollection();
 
-        $Config = AssetConfig::buildFromIniFile($this->_pluginConfig);
-        $Config->paths('css', null, array(
-        APP . 'css' . DS . '**'
-        ));
-        $Compiler = new AssetCompiler($Config);
+        $this->assertTrue($collection->contains('plugins.js'));
+        $this->assertTrue($collection->contains('plugins.css'));
 
-        $result = $Compiler->generate('plugins.css');
-        $expected = <<<TEXT
-@import url("reset/reset.css");
-#nav {
-    width:100%;
-}
+        $asset = $collection->get('plugins.js');
+        $this->assertCount(1, $asset->files());
+        $this->assertEquals(
+            APP . 'Plugin/TestAsset/webroot/plugin.js',
+            $asset->files()[0]->path()
+        );
 
-.plugin-box {
-    color: orange;
-}
-TEXT;
-        $this->assertEquals($expected, $result);
+        $asset = $collection->get('plugins.css');
+        $files = $asset->files();
+        $this->assertCount(2, $files);
+        $this->assertEquals(
+            APP . 'css/nav.css',
+            $asset->files()[0]->path()
+        );
     }
 
     public function testWriter()
