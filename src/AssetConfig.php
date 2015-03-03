@@ -630,7 +630,7 @@ class AssetConfig
         if ($theme === null) {
             return isset($this->_data['theme']) ? $this->_data['theme'] : '';
         }
-        $this->_data['theme'] = Inflector::camelize($theme);
+        $this->_data['theme'] = $theme;
     }
 
     /**

@@ -22,9 +22,9 @@ define('TESTS', ROOT . 'tests');
 define('APP', ROOT . 'tests' . DS . 'test_files' . DS);
 define('APP_DIR', 'test_files');
 define('WEBROOT_DIR', 'webroot');
-define('WWW_ROOT', ROOT . 'webroot' . DS);
 define('TMP', sys_get_temp_dir() . DS);
 define('CONFIG', APP . 'config' . DS);
+define('WWW_ROOT', TMP);
 define('CACHE', TMP);
 define('LOGS', TMP);
 

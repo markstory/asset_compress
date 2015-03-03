@@ -23,15 +23,15 @@ class AssetCompressHelperTest extends TestCase
     {
         parent::setUp();
         $this->_testFiles = APP;
-        $testFile = APP . 'config' . DS . 'config.ini';
+        $testFile = APP . 'config' . DS . 'integration.ini';
 
         AssetConfig::clearAllCachedKeys();
 
         Cache::drop(AssetConfig::CACHE_CONFIG);
         Cache::config(AssetConfig::CACHE_CONFIG, array(
-        'path' => TMP,
-        'prefix' => 'asset_compress_test_',
-        'engine' => 'File'
+            'path' => TMP,
+            'prefix' => 'asset_compress_test_',
+            'engine' => 'File'
         ));
 
         $controller = null;
@@ -40,8 +40,11 @@ class AssetCompressHelperTest extends TestCase
         $view = new View($controller);
         $view->request = $request;
         $this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
-        $Config = AssetConfig::buildFromIniFile($testFile);
-        $this->Helper->assetConfig($Config);
+        $config = AssetConfig::buildFromIniFile($testFile, [
+            'TEST_FILES/' => APP,
+            'WEBROOT/' => TMP
+        ]);
+        $this->Helper->assetConfig($config);
 
         Router::reload();
     }
@@ -130,7 +133,7 @@ class AssetCompressHelperTest extends TestCase
         $config = $this->Helper->assetConfig();
         $config->addTarget('themed.js', array(
             'theme' => true,
-            'files' => array('libraries.js')
+            'files' => array('base.js')
         ));
         $result = $this->Helper->script('themed.js');
         $expected = array(
@@ -224,11 +227,9 @@ class AssetCompressHelperTest extends TestCase
     {
         Configure::write('debug', false);
         $config = $this->Helper->assetConfig();
-        $config->general('writeCache', true);
-        $config->set('js.timestamp', false);
         $config->cachePath('js', TMP);
         $config->addTarget('asset_test.js', array(
-            'files' => array('one.js'),
+            'files' => array('base.js'),
             'theme' => true
         ));
 
@@ -297,14 +298,10 @@ class AssetCompressHelperTest extends TestCase
         $config = $this->Helper->assetConfig();
         $config->set('js.baseUrl', 'http://cdn.example.com/js/');
         $config->set('js.timestamp', true);
-        $config->general('cacheConfig', true);
-
-        // populate the cache.
-        Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, array('libs.js' => 1234), AssetConfig::CACHE_CONFIG);
 
         $result = $this->Helper->url('libs.js');
-        $expected = 'http://cdn.example.com/js/libs.v1234.js';
-        $this->assertEquals($expected, $result);
+        $expected = '#^http://cdn\.example\.com/js/libs\.v\d+\.js$#';
+        $this->assertRegExp($expected, $result);
     }
 
     /**
@@ -417,22 +414,19 @@ EOF;
      */
     public function testInlineScriptDevelopment()
     {
-        $config = $this->Helper->assetConfig();
-        $config->set('js.filters', array());
-
-        $config->paths('js', null, array(
-            $this->_testFiles . 'js' . DS . 'classes'
-        ));
-
-        $config->addTarget('all.js', array(
-            'files' => array('base_class.js')
-        ));
-
         Configure::write('debug', 1);
-        $results = $this->Helper->inlineScript('all.js');
+        $results = $this->Helper->inlineScript('libs.js');
 
         $expected = <<<EOF
 <script>var BaseClass = new Class({
+
+});
+
+var BaseClass = new Class({
+
+});
+
+var Template = new Class({
 
 });</script>
 EOF;
@@ -447,45 +441,6 @@ EOF;
      */
     public function testInlineScript()
     {
-        $config = $this->Helper->assetConfig();
-        $config->set('js.filters', array());
-        $config->paths('js', null, array(
-            $this->_testFiles . 'js' . DS . 'classes'
-        ));
-
-        $config->addTarget('all.js', array(
-            'files' => array('base_class.js')
-        ));
-
-        Configure::write('debug', 0);
-
-        $expected = <<<EOF
-<script>var BaseClass = new Class({
-
-});</script>
-EOF;
-
-        $result = $this->Helper->inlineScript('all.js');
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * test inline javascript for multiple files is generated
-     *
-     * @return void
-     */
-    public function testInlineScriptMultiple()
-    {
-        $config = $this->Helper->assetConfig();
-        $config->set('js.filters', array());
-        $config->paths('js', null, array(
-            $this->_testFiles . 'js' . DS . 'classes'
-        ));
-
-        $config->addTarget('all.js', array(
-            'files' => array('base_class.js', 'base_class_two.js')
-        ));
-
         Configure::write('debug', 0);
 
         $expected = <<<EOF
@@ -493,13 +448,16 @@ EOF;
 
 });
 
-//= require "base_class"
-var BaseClassTwo = BaseClass.extend({
+var BaseClass = new Class({
+
+});
+
+var Template = new Class({
 
 });</script>
 EOF;
 
-        $result = $this->Helper->inlineScript('all.js');
+        $result = $this->Helper->inlineScript('libs.js');
         $this->assertEquals($expected, $result);
     }
 }
