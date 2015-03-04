@@ -42,7 +42,7 @@ class AssetCompressHelperTest extends TestCase
         $this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
         $config = AssetConfig::buildFromIniFile($testFile, [
             'TEST_FILES/' => APP,
-            'WEBROOT/' => TMP
+            'WEBROOT/' => WWW_ROOT
         ]);
         $this->Helper->assetConfig($config);
 
@@ -150,21 +150,18 @@ class AssetCompressHelperTest extends TestCase
         $config->addTarget('raw.js', array(
             'files' => array('classes/base_class.js', 'classes/base_class_two.js')
         ));
-        $config->paths('js', null, array(
-            $this->_testFiles . 'js' . DS
-        ));
 
         $result = $this->Helper->script('raw.js', array('raw' => true));
         $expected = array(
             array(
                 'script' => array(
-                    'src' => 'js/classes/base_class.js'
+                    'src' => '/js/classes/base_class.js'
                 ),
             ),
             '/script',
             array(
                 'script' => array(
-                    'src' => 'js/classes/base_class_two.js'
+                    'src' => '/js/classes/base_class_two.js'
                 ),
             ),
             '/script',

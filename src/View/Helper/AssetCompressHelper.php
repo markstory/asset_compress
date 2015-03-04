@@ -5,8 +5,9 @@ use AssetCompress\AssetConfig;
 use AssetCompress\AssetTarget;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Routing\Router;
-use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\View;
 use RuntimeException;
@@ -229,8 +230,7 @@ class AssetCompressHelper extends Helper
         if (!empty($options['raw'])) {
             unset($options['raw']);
             foreach ($target->files() as $part) {
-                $path = str_replace(WWW_ROOT, '', $part->path());
-                $path = str_replace(DS, '/', $path);
+                $path = $this->_relativizePath($part->path());
                 $output .= $this->Html->css($path, $options);
             }
             return $output;
@@ -270,8 +270,7 @@ class AssetCompressHelper extends Helper
         if (!empty($options['raw'])) {
             unset($options['raw']);
             foreach ($target->files() as $part) {
-                $path = str_replace(WWW_ROOT, '', $part->path());
-                $path = str_replace(DS, '/', $path);
+                $path = $this->_relativizePath($part->path());
                 $output .= $this->Html->script($path, $options);
             }
             return $output;
@@ -281,6 +280,29 @@ class AssetCompressHelper extends Helper
         unset($options['full']);
 
         return $this->Html->script($url, $options);
+    }
+
+    /**
+     * Converts an absolute path into a web relative one.
+     *
+     * @param string $path The path to convert
+     * @return string A webroot relative string.
+     */
+    protected function _relativizePath($path)
+    {
+        $plugins = Plugin::loaded();
+        $index = array_search('AssetCompress', $plugins);
+        unset($plugins[$index]);
+
+        if ($plugins) {
+            $pattern = '/(' . implode('|', $plugins) . ')/';
+            if (preg_match($pattern, $path, $matches)) {
+                $pluginPath = Plugin::path($matches[1]) . 'webroot';
+                return str_replace($pluginPath, '/' . Inflector::underscore($matches[1]), $path);
+            }
+        }
+        $path = str_replace(WWW_ROOT, '/', $path);
+        return str_replace(DS, '/', $path);
     }
 
     /**

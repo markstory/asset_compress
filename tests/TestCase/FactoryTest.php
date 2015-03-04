@@ -134,6 +134,12 @@ class FactoryTest extends TestCase
         );
     }
 
+    public function testAssetCreationWithAdditionalPath()
+    {
+        // Ensure that targets with specific additional paths work.
+        $this->markTestIncomplete('not done');
+    }
+
     public function testWriter()
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [

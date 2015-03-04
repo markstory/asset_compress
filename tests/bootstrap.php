@@ -24,7 +24,7 @@ define('APP_DIR', 'test_files');
 define('WEBROOT_DIR', 'webroot');
 define('TMP', sys_get_temp_dir() . DS);
 define('CONFIG', APP . 'config' . DS);
-define('WWW_ROOT', TMP);
+define('WWW_ROOT', APP);
 define('CACHE', TMP);
 define('LOGS', TMP);
 
