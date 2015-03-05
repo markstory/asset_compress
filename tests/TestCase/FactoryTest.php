@@ -85,7 +85,7 @@ class FactoryTest extends TestCase
             'TEST_FILES/' => APP,
             'WEBROOT/' => TMP
         ]);
-        $config->theme('red');
+        $config->theme('Red');
 
         $factory = new Factory($config);
         $collection = $factory->assetCollection();

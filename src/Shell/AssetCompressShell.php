@@ -4,6 +4,7 @@ namespace AssetCompress\Shell;
 use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use AssetCompress\Factory;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
 use DirectoryIterator;
@@ -19,7 +20,8 @@ class AssetCompressShell extends Shell
 
     public $tasks = array('AssetCompress.AssetBuild');
 
-    protected $_config;
+    protected $config;
+    protected $factory;
 
     /**
      * Create the configuration object used in other classes.
@@ -30,7 +32,7 @@ class AssetCompressShell extends Shell
         parent::startup();
 
         AssetConfig::clearAllCachedKeys();
-        $this->_config = AssetConfig::buildFromIniFile($this->params['config']);
+        $this->setConfig(AssetConfig::buildFromIniFile($this->params['config']));
         $this->out();
     }
 
@@ -42,7 +44,8 @@ class AssetCompressShell extends Shell
      */
     public function setConfig($config)
     {
-        $this->_config = $config;
+        $this->config = $config;
+        $this->factory = new Factory($config);
         $this->AssetBuild->setConfig($config);
     }
 
@@ -53,7 +56,7 @@ class AssetCompressShell extends Shell
      */
     public function build()
     {
-        $this->AssetBuild->setConfig($this->_config);
+        $this->AssetBuild->setConfig($this->config);
         $this->AssetBuild->build();
     }
 
@@ -66,11 +69,8 @@ class AssetCompressShell extends Shell
     {
         $this->clear_build_ts();
 
-        $this->_io->verbose('Clearing Javascript build files:');
-        $this->_clearBuilds('js');
-
-        $this->_io->verbose('Clearing CSS build files:');
-        $this->_clearBuilds('css');
+        $this->_io->verbose('Clearing build files:');
+        $this->_clearBuilds();
 
         $this->_io->verbose('');
         $this->out('<success>Complete</success>');
@@ -106,29 +106,28 @@ class AssetCompressShell extends Shell
      *
      * @return void
      */
-    protected function _clearBuilds($ext)
+    protected function _clearBuilds()
     {
-        $targets = $this->_config->targets($ext);
-        if (empty($targets)) {
-            $this->err('No ' . $ext . ' build files defined, skipping');
+        $assets = $this->factory->assetCollection();
+        if (count($assets) === 0) {
+            $this->err('No build targets defined, skipping');
             return;
         }
-        $themes = (array)$this->_config->general('themes');
-        $this->_clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
-        $path = $this->_config->cachePath($ext);
+        $targets = array_map(function ($target) {
+            return $target->name();
+        }, iterator_to_array($assets));
 
-        $path = $this->_config->cachePath($ext);
-        if (!file_exists($path)) {
-            $this->err('Build directory ' . $path . ' for ' . $ext . ' does not exist.');
-            return;
-        }
-        $this->_clearPath($path, $themes, $targets);
+        $themes = (array)$this->config->general('themes');
+
+        $this->_clearPath(CACHE . 'asset_compress' .DS, $themes, $targets);
+        $this->_clearPath($this->config->cachePath('js'), $themes, $targets);
+        $this->_clearPath($this->config->cachePath('css'), $themes, $targets);
     }
 
     /**
      * Clear a path of build targets.
      *
-     * @param string $path The path to clear.
+     * @param string $path The root path to clear.
      * @param array $themes The themes to clear.
      * @param array $targets The build targets to clear.
      * @return void

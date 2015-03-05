@@ -103,10 +103,10 @@ class AssetCompressShellTest extends TestCase
         $this->Shell->setConfig($config);
 
         $files = [
-        TMP . 'cache_css/all.css',
-        TMP . 'cache_css/all.v12354.css',
-        TMP . 'cache_js/libs.js',
-        TMP . 'cache_js/libs.v12354.js'
+            TMP . 'cache_css/all.css',
+            TMP . 'cache_css/all.v12354.css',
+            TMP . 'cache_js/libs.js',
+            TMP . 'cache_js/libs.v12354.js'
         ];
         foreach ($files as $file) {
             touch($file);

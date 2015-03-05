@@ -5,15 +5,16 @@ use App\Console\Command\AppShell;
 use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
 use AssetCompress\AssetConfig;
+use AssetCompress\AssetTarget;
+use AssetCompress\Factory;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
 
 class AssetBuildTask extends Shell
 {
 
-    protected $_config;
-
-    protected $_files = array();
+    protected $config;
+    protected $factory;
 
     /**
      * Set the Configuration object that will be used.
@@ -21,11 +22,10 @@ class AssetBuildTask extends Shell
      * @param \AssetCompress\AssetConfig $config The config object.
      * @return void
      */
-    public function setConfig(AssetConfig $Config)
+    public function setConfig(AssetConfig $config)
     {
-        $this->_config = $Config;
-        $this->Compiler = new AssetCompiler($this->_config);
-        $this->Cacher = new AssetCache($this->_config);
+        $this->config = $config;
+        $this->factory = new Factory($config);
     }
 
     /**
@@ -35,56 +35,41 @@ class AssetBuildTask extends Shell
      */
     public function build()
     {
-        $targets = $this->_config->targets('js');
-        foreach ($targets as $t) {
-            $this->_buildTarget($t);
+        $themes = (array)$this->config->general('themes');
+        foreach ($themes as $theme) {
+            $this->config->theme($theme);
+            foreach ($this->factory->assetCollection() as $target) {
+                $this->_buildTarget($target);
+            }
         }
-        $targets = $this->_config->targets('css');
-        foreach ($targets as $t) {
-            $this->_buildTarget($t);
+        foreach ($this->factory->assetCollection() as $target) {
+            $this->_buildTarget($target);
         }
     }
 
     /**
      * Generate and save the cached file for a build target.
      *
-     * @param string $build The build to generate.
+     * @param AssetTarget $build The build to generate.
      * @return void
      */
-    protected function _buildTarget($build)
+    protected function _buildTarget(AssetTarget $build)
     {
-        if ($this->_config->isThemed($build)) {
-            $themes = $this->_config->general('themes');
-            foreach ($themes as $theme) {
-                $this->_config->theme($theme);
-                $this->_generateFile($build);
-            }
-        } else {
-            $this->_generateFile($build);
-        }
-    }
+        $writer = $this->factory->writer();
+        $compiler = $this->factory->compiler();
 
-    /**
-     * Generate a build file.
-     *
-     * @param string $build The build name to generate.
-     * @return void
-     */
-    protected function _generateFile($build)
-    {
-        $name = $this->Cacher->buildFileName($build);
-        if ($this->Cacher->isFresh($build) && empty($this->params['force'])) {
+        $name = $writer->buildFileName($build);
+        if ($writer->isFresh($build) && empty($this->params['force'])) {
             $this->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
             return;
         }
 
-        $this->Cacher->invalidate($build);
-
-        $name = $this->Cacher->buildFileName($build);
+        $writer->invalidate($build);
+        $name = $writer->buildFileName($build);
         try {
             $this->out('<success>Saving file</success> for ' . $name);
-            $contents = $this->Compiler->generate($build);
-            $this->Cacher->write($build, $contents);
+            $contents = $compiler->generate($build);
+            $writer->write($build, $contents);
         } catch (Exception $e) {
             $this->err('Error: ' . $e->getMessage());
         }
