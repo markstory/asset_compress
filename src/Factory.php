@@ -100,7 +100,7 @@ class Factory
             } else {
                 $path = $scanner->find($file);
                 if ($path === false) {
-                    throw new RuntimeException("Could not locate $file in any configured path.");
+                    throw new RuntimeException("Could not locate $file for $name in any configured path.");
                 }
                 $files[] = new Local($path);
             }

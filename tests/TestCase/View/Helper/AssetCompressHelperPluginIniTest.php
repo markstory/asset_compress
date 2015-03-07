@@ -23,7 +23,7 @@ class AssetCompressHelperPluginIniTest extends TestCase
     {
         parent::setUp();
         $this->_testFiles = APP;
-        $testFile = $this->_testFiles . 'config' . DS . 'config.ini';
+        $testFile = $this->_testFiles . 'config' . DS . 'integration.ini';
 
         Plugin::load('TestAssetIni');
 
@@ -31,9 +31,9 @@ class AssetCompressHelperPluginIniTest extends TestCase
 
         Cache::drop(AssetConfig::CACHE_CONFIG);
         Cache::config(AssetConfig::CACHE_CONFIG, array(
-        'path' => TMP,
-        'prefix' => 'asset_compress_test_',
-        'engine' => 'File'
+            'path' => TMP,
+            'prefix' => 'asset_compress_test_',
+            'engine' => 'File'
         ));
 
         $controller = null;
@@ -42,8 +42,11 @@ class AssetCompressHelperPluginIniTest extends TestCase
         $view = new View($controller);
         $view->request = $request;
         $this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
-        $Config = AssetConfig::buildFromIniFile($testFile);
-        $this->Helper->assetConfig($Config);
+        $config = AssetConfig::buildFromIniFile($testFile, [
+            'TEST_FILES/' => APP,
+            'WEBROOT/' => WWW_ROOT
+        ]);
+        $this->Helper->assetConfig($config);
 
         Router::reload();
     }
@@ -69,9 +72,9 @@ class AssetCompressHelperPluginIniTest extends TestCase
 
         $result = $this->Helper->script('TestAssetIni.libs.js');
         $expected = array(
-        array('script' => array(
-        'src' => '/cache_js/TestAssetIni.libs.js'
-        ))
+            array('script' => array(
+                'src' => '/cache_js/TestAssetIni.libs.js'
+            ))
         );
         $this->assertHtml($expected, $result);
     }

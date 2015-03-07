@@ -54,32 +54,32 @@ class AssetConfigPluginIniTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = $this->config->files('TestAssetIni.foo.bar.js');
-        $expected = array('test.js');
+        $expected = array('bad_comments.js');
         $this->assertEquals($expected, $result);
 
         $result = $this->config->files('TestAssetIni.all.css');
-        $expected = array('layout.css');
+        $expected = array('background.css');
         $this->assertEquals($expected, $result);
     }
 
     public function testIniTargets()
     {
         $expected = array(
-        'libs.js',
-        'foo.bar.js',
-        'new_file.js',
-        'TestAssetIni.libs.js',
-        'TestAssetIni.foo.bar.js',
-        'TestAssetIni.overridable_scripts.js'
+            'libs.js',
+            'foo.bar.js',
+            'new_file.js',
+            'TestAssetIni.libs.js',
+            'TestAssetIni.foo.bar.js',
+            'TestAssetIni.overridable_scripts.js'
         );
         $result = $this->config->targets('js');
         $this->assertEquals($expected, $result);
 
         $expected = array(
-        'all.css',
-        'pink.css',
-        'TestAssetIni.all.css',
-        'TestAssetIni.overridable_styles.css'
+            'all.css',
+            'pink.css',
+            'TestAssetIni.all.css',
+            'TestAssetIni.overridable_styles.css'
         );
         $result = $this->config->targets('css');
         $this->assertEquals($expected, $result);
