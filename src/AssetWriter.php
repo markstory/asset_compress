@@ -254,6 +254,19 @@ class AssetWriter
     }
 
     /**
+     * Clear timestamps for assets.
+     *
+     * @return void
+     */
+    public function clearTimestamps()
+    {
+        $path = $this->path . static::BUILD_TIME_FILE;
+        if (file_exists($path)) {
+            unlink($this->path . static::BUILD_TIME_FILE);
+        }
+    }
+
+    /**
      * Modify a file name and append in the timestamp
      *
      * @param string $file The filename.

@@ -31,7 +31,6 @@ class AssetCompressShell extends Shell
     {
         parent::startup();
 
-        AssetConfig::clearAllCachedKeys();
         $this->setConfig(AssetConfig::buildFromIniFile($this->params['config']));
         $this->out();
     }
@@ -67,7 +66,7 @@ class AssetCompressShell extends Shell
      */
     public function clear()
     {
-        $this->clear_build_ts();
+        $this->clearBuildTs();
 
         $this->_io->verbose('Clearing build files:');
         $this->_clearBuilds();
@@ -77,28 +76,16 @@ class AssetCompressShell extends Shell
     }
 
     /**
-     * Clears out all the cache keys associated with asset_compress.
-     *
-     * Note: method really does nothing here because keys are cleared in startup.
-     * This method exists for times when you just want to clear the cache keys
-     * associated with asset_compress
-     */
-    public function clear_cache()
-    {
-        $this->out('Clearing all cache keys:');
-        $this->hr();
-    }
-
-    /**
      * Clears the build timestamp. Try to clear it out even if they do not have ts file enabled in
      * the INI.
      *
      * build timestamp file is only created when build() is run from this shell
      */
-    public function clear_build_ts()
+    public function clearBuildTs()
     {
         $this->_io->verbose('Clearing build timestamp.');
-        AssetConfig::clearBuildTimeStamp();
+        $writer = $this->factory->writer();
+        $writer->clearTimestamps();
     }
 
     /**

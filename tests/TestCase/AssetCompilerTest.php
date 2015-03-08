@@ -22,7 +22,6 @@ class AssetCompilerTest extends TestCase
 
         $testFile = $this->_testFiles . 'config' . DS . 'integration.ini';
 
-        AssetConfig::clearAllCachedKeys();
         $this->config = AssetConfig::buildFromIniFile($testFile);
         $this->config->paths('js', null, array(
             $this->_testFiles . 'js' . DS,

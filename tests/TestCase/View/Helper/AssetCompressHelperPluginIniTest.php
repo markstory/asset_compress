@@ -3,7 +3,6 @@ namespace AssetCompress\Test\TestCase\View\Helper;
 
 use AssetCompress\AssetConfig;
 use AssetCompress\View\Helper\AssetCompressHelper;
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
@@ -26,15 +25,6 @@ class AssetCompressHelperPluginIniTest extends TestCase
         $testFile = $this->_testFiles . 'config' . DS . 'integration.ini';
 
         Plugin::load('TestAssetIni');
-
-        AssetConfig::clearAllCachedKeys();
-
-        Cache::drop(AssetConfig::CACHE_CONFIG);
-        Cache::config(AssetConfig::CACHE_CONFIG, array(
-            'path' => TMP,
-            'prefix' => 'asset_compress_test_',
-            'engine' => 'File'
-        ));
 
         $controller = null;
         $request = new Request();
@@ -61,7 +51,6 @@ class AssetCompressHelperPluginIniTest extends TestCase
         parent::tearDown();
         unset($this->Helper);
 
-        AssetConfig::clearAllCachedKeys();
         Plugin::unload('TestAssetIni');
     }
 

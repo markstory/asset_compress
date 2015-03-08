@@ -27,7 +27,6 @@ class AssetsCompressorTest extends TestCase
             'TEST_FILES/' => APP
         );
         Plugin::load('TestAssetIni');
-        AssetConfig::clearAllCachedKeys();
 
         $config = AssetConfig::buildFromIniFile($this->testConfig, $map);
         $this->Compressor = $this->getMock(

@@ -12,7 +12,6 @@ class FactoryTest extends TestCase
     {
         parent::setUp();
 
-        AssetConfig::clearAllCachedKeys();
         $testConfig = APP . 'config' . DS . 'config.ini';
         $this->config = AssetConfig::buildFromIniFile($testConfig);
 

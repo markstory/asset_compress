@@ -28,7 +28,6 @@ class AssetCompressShellTest extends TestCase
 
         $this->testConfig = APP . 'config' . DS;
 
-        AssetConfig::clearAllCachedKeys();
         $this->config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'integration.ini',
             ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]

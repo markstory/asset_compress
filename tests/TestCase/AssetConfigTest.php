@@ -2,7 +2,6 @@
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetConfig;
-use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -17,16 +16,10 @@ class AssetConfigTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Cache::drop(AssetConfig::CACHE_CONFIG);
-        Cache::config(AssetConfig::CACHE_CONFIG, array(
-            'engine' => 'File'
-        ));
-
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
         $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
-        AssetConfig::clearAllCachedKeys();
         $this->config = AssetConfig::buildFromIniFile($this->testConfig);
     }
 

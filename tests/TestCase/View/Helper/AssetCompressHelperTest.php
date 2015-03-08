@@ -25,15 +25,6 @@ class AssetCompressHelperTest extends TestCase
         $this->_testFiles = APP;
         $testFile = APP . 'config' . DS . 'integration.ini';
 
-        AssetConfig::clearAllCachedKeys();
-
-        Cache::drop(AssetConfig::CACHE_CONFIG);
-        Cache::config(AssetConfig::CACHE_CONFIG, array(
-            'path' => TMP,
-            'prefix' => 'asset_compress_test_',
-            'engine' => 'File'
-        ));
-
         $controller = null;
         $request = new Request();
 
@@ -58,9 +49,6 @@ class AssetCompressHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->Helper);
-
-        AssetConfig::clearAllCachedKeys();
-        Cache::drop(AssetConfig::CACHE_CONFIG);
     }
 
     /**
