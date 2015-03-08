@@ -83,10 +83,10 @@ class AssetCompressShellTest extends TestCase
         $this->Shell->setConfig($config);
         $this->Shell->build();
 
-        $this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'blue-themed.css'), 'Css build missing');
-        $this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'red-themed.css'), 'Css build missing');
-        $this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'blue-combined.css'), 'Css build missing');
-        $this->assertTrue(file_exists(TMP . 'cache_css' . DS . 'red-combined.css'), 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'blue-themed.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'red-themed.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'blue-combined.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'red-combined.css', 'Css build missing');
     }
 
     /**
@@ -115,7 +115,35 @@ class AssetCompressShellTest extends TestCase
         $this->Shell->clear();
 
         foreach ($files as $file) {
-            $this->assertFalse(file_exists($file), "$file was not cleared");
+            $this->assertFileNotExists($file, "$file was not cleared");
+        }
+    }
+
+    /**
+     * Test building files from the config file.
+     *
+     * @return void
+     */
+    public function testClearFilesWithTheme()
+    {
+        Plugin::load('Red');
+        Plugin::load('Blue');
+        $files = [
+            TMP . 'cache_css/Blue-themed.css',
+            TMP . 'cache_css/Red-themed.css',
+        ];
+        foreach ($files as $file) {
+            touch($file);
+        }
+
+        $config = AssetConfig::buildFromIniFile(
+            $this->testConfig . 'themed.ini',
+            ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+        );
+        $this->Shell->setConfig($config);
+        $this->Shell->clear();
+        foreach ($files as $file) {
+            $this->assertFileNotExists($file);
         }
     }
 
@@ -133,8 +161,8 @@ class AssetCompressShellTest extends TestCase
         $this->Shell->setConfig($config);
 
         $files = [
-        TMP . 'cache_js/nope.js',
-        TMP . 'cache_js/nope.v12354.js'
+            TMP . 'cache_js/nope.js',
+            TMP . 'cache_js/nope.v12354.js'
         ];
         foreach ($files as $file) {
             touch($file);

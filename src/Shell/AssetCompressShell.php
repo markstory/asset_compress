@@ -108,6 +108,10 @@ class AssetCompressShell extends Shell
      */
     protected function _clearBuilds()
     {
+        $themes = (array)$this->config->general('themes');
+        if ($themes) {
+            $this->config->theme($themes[0]);
+        }
         $assets = $this->factory->assetCollection();
         if (count($assets) === 0) {
             $this->err('No build targets defined, skipping');
@@ -117,7 +121,6 @@ class AssetCompressShell extends Shell
             return $target->name();
         }, iterator_to_array($assets));
 
-        $themes = (array)$this->config->general('themes');
 
         $this->_clearPath(CACHE . 'asset_compress' .DS, $themes, $targets);
         $this->_clearPath($this->config->cachePath('js'), $themes, $targets);
@@ -150,7 +153,7 @@ class AssetCompressShell extends Shell
             }
             // themed files
             foreach ($themes as $theme) {
-                if (strpos($base, $theme) === 0) {
+                if (strpos($base, $theme) === 0 && strpos($base, '-') !== false) {
                     list($themePrefix, $base) = explode('-', $base);
                 }
             }
