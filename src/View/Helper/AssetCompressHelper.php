@@ -225,10 +225,10 @@ class AssetCompressHelper extends Helper
                 "Cannot create a stylesheet tag for a '$file'. That build is not defined."
             );
         }
-        $target = $this->collection()->get($file);
         $output = '';
         if (!empty($options['raw'])) {
             unset($options['raw']);
+            $target = $this->collection()->get($file);
             foreach ($target->files() as $part) {
                 $path = $this->_relativizePath($part->path());
                 $output .= $this->Html->css($path, $options);
@@ -266,9 +266,9 @@ class AssetCompressHelper extends Helper
             );
         }
         $output = '';
-        $target = $this->collection()->get($file);
         if (!empty($options['raw'])) {
             unset($options['raw']);
+            $target = $this->collection()->get($file);
             foreach ($target->files() as $part) {
                 $path = $this->_relativizePath($part->path());
                 $output .= $this->Html->script($path, $options);
