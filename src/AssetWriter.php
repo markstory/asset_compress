@@ -84,7 +84,6 @@ class AssetWriter
      */
     public function isFresh(AssetTarget $target)
     {
-        $ext = $target->ext();
         $buildName = $this->buildFileName($target);
         $buildFile = $target->outputDir() . DS . $buildName;
 

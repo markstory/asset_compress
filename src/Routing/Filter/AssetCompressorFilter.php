@@ -8,7 +8,6 @@ use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Routing\DispatcherFilter;
-use Cake\Filesystem\Folder;
 use RuntimeException;
 
 class AssetCompressorFilter extends DispatcherFilter
@@ -51,16 +50,6 @@ class AssetCompressorFilter extends DispatcherFilter
             return;
         }
 
-        // Use the CACHE dir for dev builds.
-        // This is to avoid permissions issues with the configured paths.
-        $cachePath = CACHE . 'asset_compress' . DS;
-        $this->ensureDir($cachePath);
-
-        // Reset the cache path for dev builds.
-        $ext = $config->getExt($targetName);
-        $config->cachePath($ext, $cachePath);
-        $config->set("$ext.timestamp", false);
-
         if (isset($request->query['theme'])) {
             $config->theme($request->query['theme']);
         }
@@ -73,12 +62,12 @@ class AssetCompressorFilter extends DispatcherFilter
 
         try {
             $compiler = $factory->compiler();
-            $cache = $factory->writer();
-            if ($cache->isFresh($build)) {
-                $contents = file_get_contents($build->path());
+            $cacher = $factory->cacher();
+            if ($cacher->isFresh($build)) {
+                $contents = $cacher->read($build);
             } else {
                 $contents = $compiler->generate($build);
-                $cache->write($build, $contents);
+                $cacher->write($build, $contents);
             }
         } catch (Exception $e) {
             throw new NotFoundException($e->getMessage());
@@ -126,9 +115,4 @@ class AssetCompressorFilter extends DispatcherFilter
         return $this->config;
     }
 
-    protected function ensureDir($path)
-    {
-        $folder = new Folder($path, true);
-        $folder->chmod($path, 0777);
-    }
 }

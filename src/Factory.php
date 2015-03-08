@@ -1,6 +1,7 @@
 <?php
 namespace AssetCompress;
 
+use AssetCompress\AssetCacher;
 use AssetCompress\AssetConfig;
 use AssetCompress\AssetCollection;
 use AssetCompress\AssetCompiler;
@@ -59,6 +60,16 @@ class Factory
             'css' => $this->config->get('css.timestamp'),
         ];
         return new AssetWriter($timestamp, TMP, $this->config->theme());
+    }
+
+    /**
+     * Create an AssetCacher
+     *
+     * @return AssetCompress\AssetCacher
+     */
+    public function cacher()
+    {
+        return new AssetCacher(CACHE . 'asset_compress' . DS, $this->config->theme());
     }
 
     /**
