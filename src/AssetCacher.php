@@ -22,7 +22,7 @@ class AssetCacher
         $this->theme = $theme;
     }
 
-    protected function buildFileName($target)
+    public function buildFileName($target)
     {
         $file = $target->name();
         if ($target->isThemed() && $this->theme) {
