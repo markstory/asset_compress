@@ -15,8 +15,8 @@ class AssetScannerTest extends TestCase
         parent::setUp();
         $this->_testFiles = APP;
         $paths = array(
-        $this->_testFiles . 'js' . DS,
-        $this->_testFiles . 'js' . DS . 'classes' . DS
+            $this->_testFiles . 'js' . DS,
+            $this->_testFiles . 'js' . DS . 'classes' . DS
         );
         $this->Scanner = new AssetScanner($paths);
     }
@@ -27,16 +27,13 @@ class AssetScannerTest extends TestCase
         $expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Scanner->find('base_class.js', false);
-        $this->assertEquals('base_class.js', $result, 'No WWW_ROOT replacement as it is a test file.');
-
         $this->assertFalse($this->Scanner->find('does not exist'));
     }
 
     public function testFindOtherExtension()
     {
         $paths = array(
-        $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS
         );
         $scanner = new AssetScanner($paths);
         $result = $scanner->find('other.less');
@@ -48,7 +45,7 @@ class AssetScannerTest extends TestCase
     {
         Plugin::load('Blue');
         $paths = array(
-        $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS
         );
         $scanner = new AssetScanner($paths, 'Blue');
         $result = $scanner->find('t:theme.css');
@@ -57,13 +54,6 @@ class AssetScannerTest extends TestCase
 
         $result = $scanner->find('theme:theme.css');
         $this->assertEquals($expected, $result);
-
-        $result = $scanner->find('t:theme.css', false);
-        $expected = DS . 'theme' . DS . 'blue' . DS . 'theme.css';
-        $this->assertEquals($expected, $result);
-
-        $result = $scanner->find('theme:theme.css', false);
-        $this->assertEquals($expected, $result);
     }
 
     public function testFindResolvePluginPaths()
@@ -71,7 +61,7 @@ class AssetScannerTest extends TestCase
         Plugin::load('TestAsset');
 
         $paths = array(
-        $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS
         );
         $scanner = new AssetScanner($paths);
         $result = $scanner->find('p:TestAsset:plugin.css');
@@ -80,20 +70,13 @@ class AssetScannerTest extends TestCase
 
         $result = $scanner->find('plugin:TestAsset:plugin.css');
         $this->assertEquals($expected, $result);
-
-        $expected = DS . 'test_asset' . DS . 'plugin.css';
-        $result = $scanner->find('plugin:TestAsset:plugin.css', false);
-        $this->assertEquals($expected, $result);
-
-        $result = $scanner->find('p:TestAsset:plugin.css', false);
-        $this->assertEquals($expected, $result);
     }
 
     public function testNormalizePaths()
     {
         $paths = array(
-        $this->_testFiles . 'js',
-        $this->_testFiles . 'js' . DS . 'classes'
+            $this->_testFiles . 'js',
+            $this->_testFiles . 'js' . DS . 'classes'
         );
         $scanner = new AssetScanner($paths);
 
@@ -105,15 +88,15 @@ class AssetScannerTest extends TestCase
     public function testExpandStarStar()
     {
         $paths = array(
-        $this->_testFiles . 'js' . DS . '**',
+            $this->_testFiles . 'js' . DS . '**',
         );
         $scanner = new AssetScanner($paths);
 
         $result = $scanner->paths();
         $expected = array(
-        $this->_testFiles . 'js' . DS,
-        $this->_testFiles . 'js' . DS . 'classes' . DS,
-        $this->_testFiles . 'js' . DS . 'secondary' . DS
+            $this->_testFiles . 'js' . DS,
+            $this->_testFiles . 'js' . DS . 'classes' . DS,
+            $this->_testFiles . 'js' . DS . 'secondary' . DS
         );
         $this->assertEquals($expected, $result);
 
@@ -129,8 +112,8 @@ class AssetScannerTest extends TestCase
     public function testExpandGlob()
     {
         $paths = array(
-        $this->_testFiles . 'js' . DS,
-        $this->_testFiles . 'js' . DS . '*'
+            $this->_testFiles . 'js' . DS,
+            $this->_testFiles . 'js' . DS . '*'
         );
         $scanner = new AssetScanner($paths);
 
