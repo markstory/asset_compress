@@ -59,9 +59,6 @@ class AssetScanner
     {
         foreach ($this->_paths as &$path) {
             $ds = DS;
-            if ($this->isRemote($path)) {
-                $ds = '/';
-            }
             $path = $this->_normalizePath($path, $ds);
             $path = rtrim($path, $ds) . $ds;
         }
@@ -88,10 +85,7 @@ class AssetScanner
     {
         $expanded = array();
         foreach ($this->_paths as $path) {
-            if ($this->isRemote($path)) {
-                // Remote path. Not expandable!
-                $expanded[] = $path;
-            } elseif (preg_match('/[*.\[\]]/', $path)) {
+            if (preg_match('/[*.\[\]]/', $path)) {
                 $tree = $this->_generateTree($path);
                 $expanded = array_merge($expanded, $tree);
             } else {
@@ -134,31 +128,17 @@ class AssetScanner
         }
 
         foreach ($this->_paths as $path) {
-            if ($this->isRemote($path)) {
-                $file = $this->_normalizePath($file, '/');
-                $fullPath = $path . $file;
-                // Opens and closes the remote file, just to
-                // check for its existance. Its contents will be read elsewhere.
-                // @codingStandardsIgnoreStart
-                $handle = @fopen($fullPath, 'rb');
-                // @codingStandardsIgnoreEnd
-                if ($handle) {
-                    fclose($handle);
-                    return $fullPath;
-                }
-            } else {
-                $file = $this->_normalizePath($file, DS);
-                $fullPath = $path . $file;
+            $file = $this->_normalizePath($file, DS);
+            $fullPath = $path . $file;
 
-                $exists = file_exists($fullPath);
+            $exists = file_exists($fullPath);
 
-                if ($absolute === false && $exists) {
-                    $expanded['relative'] = str_replace(WWW_ROOT, '/', $expanded['relative']);
-                }
-                if ($exists) {
-                    $expanded['absolute'] = $fullPath;
-                    break;
-                }
+            if ($absolute === false && $exists) {
+                $expanded['relative'] = str_replace(WWW_ROOT, '/', $expanded['relative']);
+            }
+            if ($exists) {
+                $expanded['absolute'] = $fullPath;
+                break;
             }
         }
 
@@ -235,28 +215,5 @@ class AssetScanner
     public function paths()
     {
         return $this->_paths;
-    }
-
-    /**
-     * Checks if a string represents a remote file
-     *
-     * @param string $target
-     * @return boolean If $target is a handable remote resource.:
-     */
-    public function isRemote($target)
-    {
-        // Patterns for matching readable remote resources
-        // Make sure that any included pattern will
-        // be accepted by fopen() as well.
-        $remotePatterns = array(
-            '/^https?:\/\//i'
-        );
-        $matches = array();
-        foreach ($remotePatterns as $pattern) {
-            if (preg_match($pattern, $target, $matches)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -142,15 +142,4 @@ class AssetScannerTest extends TestCase
         $expected = $this->_testFiles . 'js' . DS . 'classes' . DS . 'base_class.js';
         $this->assertEquals($expected, $result);
     }
-
-    public function testIsRemote()
-    {
-        $paths = array(
-        $this->_testFiles . 'css' . DS
-        );
-        $scanner = new AssetScanner($paths);
-        $this->assertFalse($scanner->isRemote('/Users/markstory/cakephp'));
-        $this->assertFalse($scanner->isRemote('C:\\Project\\cakephp'));
-        $this->assertTrue($scanner->isRemote('http://example.com'));
-    }
 }
