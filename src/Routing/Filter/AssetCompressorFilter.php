@@ -45,11 +45,16 @@ class AssetCompressorFilter extends DispatcherFilter
             return;
         }
 
+        // Make sure the request looks like an asset.
+        $targetName = $this->getName($config, $request->url);
+        if (!$targetName) {
+            return;
+        }
+
         // Use the CACHE dir for dev builds.
         // This is to avoid permissions issues with the configured paths.
         $cachePath = CACHE . 'asset_compress' . DS;
         $this->ensureDir($cachePath);
-        $targetName = $this->getName($config, $request->url);
 
         // Reset the cache path for dev builds.
         $ext = $config->getExt($targetName);
@@ -61,8 +66,7 @@ class AssetCompressorFilter extends DispatcherFilter
         }
         $factory = new Factory($config);
         $assets = $factory->assetCollection();
-
-        if (!$targetName || !$assets->contains($targetName)) {
+        if (!$assets->contains($targetName)) {
             return;
         }
         $build = $assets->get($targetName);
@@ -116,10 +120,10 @@ class AssetCompressorFilter extends DispatcherFilter
      */
     protected function _getConfig()
     {
-        if (empty($this->_config)) {
-            $this->_config = AssetConfig::buildFromIniFile();
+        if (empty($this->config)) {
+            $this->config = AssetConfig::buildFromIniFile();
         }
-        return $this->_config;
+        return $this->config;
     }
 
     protected function ensureDir($path)
