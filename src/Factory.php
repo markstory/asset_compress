@@ -69,7 +69,10 @@ class Factory
      */
     public function cacher()
     {
-        return new AssetCacher(CACHE . 'asset_compress' . DS, $this->config->theme());
+        return new AssetCacher(
+            CACHE . 'asset_compress' . DS,
+            $this->config->theme()
+        );
     }
 
     /**
@@ -81,11 +84,9 @@ class Factory
     {
         $assets = [];
         foreach ($this->config->extensions() as $ext) {
-            foreach ($this->config->targets($ext) as $targetName) {
-                $assets[] = $this->buildTarget($targetName);
-            }
+            $assets = array_merge($assets, $this->config->targets($ext));
         }
-        return new AssetCollection($assets);
+        return new AssetCollection($assets, $this);
     }
 
     /**
@@ -94,7 +95,7 @@ class Factory
      * @param string $name The name of the target to build
      * @return AssetCompress\AssetTarget
      */
-    protected function buildTarget($name)
+    public function target($name)
     {
         $ext = $this->config->getExt($name);
 

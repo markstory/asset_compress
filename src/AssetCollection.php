@@ -1,18 +1,21 @@
 <?php
 namespace AssetCompress;
 
-use ArrayIterator;
+use AssetCompress\AssetConfig;
 use AssetCompress\AssetTarget;
+use AssetCompress\Factory;
 use Countable;
-use IteratorIterator;
+use Iterator;
 use InvalidArgumentException;
 
 /**
  * A collection of AssetTargets.
  *
- * Provides ways to query which assets exist and iterate them.
+ * Asset targets are lazily evaluated as they are fetched from the collection
+ * By using get() an AssetTarget and its dependent files will be created
+ * and verified.
  */
-class AssetCollection extends IteratorIterator implements Countable
+class AssetCollection implements Countable, Iterator
 {
     /**
      * The assets indexed by name.
@@ -22,21 +25,39 @@ class AssetCollection extends IteratorIterator implements Countable
     protected $indexed = [];
 
     /**
+     * The assets indexed numerically.
+     *
+     * @var array
+     */
+    protected $items = [];
+
+    /**
+     * The current position.
+     *
+     * @var int
+     */
+    protected $index = 0;
+
+    /**
+     * A factory instance that can be used to lazily build targets.
+     *
+     * @var AssetCompress\Factory
+     */
+    protected $factory;
+
+    /**
      * Constructor. You can provide an array or any traversable object
      *
      * @param array $items Items.
      * @throws InvalidArgumentException If passed incorrect type for items.
      */
-    public function __construct(array $items)
+    public function __construct(array $targets, Factory $factory)
     {
-        $items = new ArrayIterator($items);
-        foreach ($items as $i => $item) {
-            if (!($item instanceof AssetTarget)) {
-                throw new InvalidArgumentException("The item at $i is not an AssetTarget.");
-            }
-            $this->indexed[$item->name()] = $item;
+        $this->factory = $factory;
+        foreach ($targets as $item) {
+            $this->indexed[$item] = false;
         }
-        parent::__construct($items);
+        $this->items = $targets;
     }
 
     /**
@@ -47,8 +68,9 @@ class AssetCollection extends IteratorIterator implements Countable
      */
     public function append(AssetTarget $target)
     {
-        $this->indexed[$target->name()] = $target;
-        $this->getInnerIterator()->append($target);
+        $name = $target->name();
+        $this->indexed[$name] = $target;
+        $this->items[] = $name;
     }
 
     /**
@@ -59,10 +81,13 @@ class AssetCollection extends IteratorIterator implements Countable
      */
     public function get($name)
     {
-        if (isset($this->indexed[$name])) {
-            return $this->indexed[$name];
+        if (!isset($this->indexed[$name])) {
+            return null;
         }
-        return null;
+        if (empty($this->indexed[$name])) {
+            $this->indexed[$name] = $this->factory->target($name);
+        }
+        return $this->indexed[$name];
     }
 
     /**
@@ -87,13 +112,11 @@ class AssetCollection extends IteratorIterator implements Countable
         if (!isset($this->indexed[$name])) {
             return;
         }
-        $asset = $this->indexed[$name];
         unset($this->indexed[$name]);
 
-        $iterator = $this->getInnerIterator();
-        foreach ($iterator as $i => $v) {
-            if ($v === $asset) {
-                unset($iterator[$i]);
+        foreach ($this->items as $i => $v) {
+            if ($v === $name) {
+                unset($this->items[$i]);
             }
         }
     }
@@ -106,5 +129,31 @@ class AssetCollection extends IteratorIterator implements Countable
     public function count()
     {
         return count($this->indexed);
+    }
+
+    public function rewind()
+    {
+        $this->index = 0;
+    }
+
+    public function next()
+    {
+        $this->index++;
+    }
+
+    public function key()
+    {
+        return $this->index;
+    }
+
+    public function valid()
+    {
+        return isset($this->items[$this->index]);
+    }
+
+    public function current()
+    {
+        $current = $this->items[$this->index];
+        return $this->get($current);
     }
 }
