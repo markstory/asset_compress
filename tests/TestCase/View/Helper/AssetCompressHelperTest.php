@@ -158,6 +158,37 @@ class AssetCompressHelperTest extends TestCase
     }
 
     /**
+     * Test creating production URLs with plugin assets.
+     *
+     * @return void
+     */
+    public function testUrlGenerationProductionModePluginIni()
+    {
+        Configure::write('debug', false);
+
+        $config = new AssetConfig([], [
+            'WEBROOT/' => WWW_ROOT
+        ]);
+        $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.ini', 'TestAssetIni.');
+        $config->paths('css', null, array(
+            $this->_testFiles . 'css' . DS
+        ));
+        $config->paths('js', null, array(
+            $this->_testFiles . 'js' . DS
+        ));
+        $config->cachePath('js', '/cache_js/');
+        $this->Helper->assetConfig($config);
+
+        $result = $this->Helper->script('TestAssetIni.libs.js');
+        $expected = array(
+            array('script' => array(
+                'src' => '/cache_js/TestAssetIni.libs.js'
+            ))
+        );
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test raw assets from plugins.
      *
      * @return void

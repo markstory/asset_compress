@@ -3,7 +3,7 @@ namespace AssetCompress\Shell;
 
 use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
-use AssetCompress\AssetConfig;
+use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
@@ -21,6 +21,7 @@ class AssetCompressShell extends Shell
     public $tasks = array('AssetCompress.AssetBuild');
 
     protected $config;
+
     protected $factory;
 
     /**
@@ -30,8 +31,8 @@ class AssetCompressShell extends Shell
     public function startup()
     {
         parent::startup();
-
-        $this->setConfig(AssetConfig::buildFromIniFile($this->params['config']));
+        $configFinder = new ConfigFinder();
+        $this->setConfig($configFinder->loadAll());
         $this->out();
     }
 
@@ -169,10 +170,6 @@ class AssetCompressShell extends Shell
             'help' => 'Clears all builds defined in the ini file.'
         ))->addSubcommand('build', array(
             'help' => 'Generate all builds defined in the ini files.'
-        ))->addOption('config', array(
-            'help' => 'Choose the config file to use.',
-            'short' => 'c',
-            'default' => CONFIG . 'asset_compress.ini'
         ))->addOption('force', array(
             'help' => 'Force assets to rebuild. Ignores timestamp rules.',
             'short' => 'f',

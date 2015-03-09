@@ -28,7 +28,11 @@ class AssetsCompressorTest extends TestCase
         );
         Plugin::load('TestAssetIni');
 
-        $config = AssetConfig::buildFromIniFile($this->testConfig, $map);
+        $config = new AssetConfig([], $map);
+        $config->load($this->testConfig);
+        $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.ini', 'TestAssetIni.');
+        $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.local.ini', 'TestAssetIni.');
+
         $this->Compressor = $this->getMock(
             'AssetCompress\Routing\Filter\AssetCompressorFilter',
             array('_getConfig')
@@ -84,8 +88,8 @@ class AssetsCompressorTest extends TestCase
         Plugin::load('TestAssetIni');
 
         $this->response
-        ->expects($this->once())->method('type')
-        ->with($this->equalTo('js'));
+            ->expects($this->once())->method('type')
+            ->with($this->equalTo('js'));
 
         $this->request->url = 'cache_js/TestAssetIni.libs.js';
         $data = array('request' => $this->request, 'response' => $this->response);

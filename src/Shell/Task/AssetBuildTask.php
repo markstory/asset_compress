@@ -37,11 +37,15 @@ class AssetBuildTask extends Shell
     {
         $themes = (array)$this->config->general('themes');
         foreach ($themes as $theme) {
+            $this->_io->verbose('Building with theme = ' . $theme);
             $this->config->theme($theme);
             foreach ($this->factory->assetCollection() as $target) {
-                $this->_buildTarget($target);
+                if ($target->isThemed()) {
+                    $this->_buildTarget($target);
+                }
             }
         }
+        $this->_io->verbose('Building un-themed targets.');
         foreach ($this->factory->assetCollection() as $target) {
             $this->_buildTarget($target);
         }

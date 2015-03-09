@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\View\Helper;
 
-use AssetCompress\AssetConfig;
 use AssetCompress\AssetTarget;
+use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -34,7 +34,7 @@ class AssetCompressHelper extends Helper
      *
      * @var AssetConfig
      */
-    protected $_Config;
+    protected $config;
 
     /**
      * Factory for other AssetCompress objects.
@@ -84,8 +84,8 @@ class AssetCompressHelper extends Helper
     {
         parent::__construct($View, $settings);
         if (empty($settings['noconfig'])) {
-            $config = AssetConfig::buildFromIniFile();
-            $this->assetConfig($config);
+            $configFinder = new ConfigFinder();
+            $this->assetConfig($configFinder->loadAll());
         }
     }
 
@@ -99,9 +99,9 @@ class AssetCompressHelper extends Helper
     public function assetConfig($config = null)
     {
         if ($config === null) {
-            return $this->_Config;
+            return $this->config;
         }
-        $this->_Config = $config;
+        $this->config = $config;
     }
 
     /**
@@ -112,8 +112,8 @@ class AssetCompressHelper extends Helper
     protected function factory()
     {
         if (empty($this->factory)) {
-            $this->_Config->theme($this->theme);
-            $this->factory = new Factory($this->_Config);
+            $this->config->theme($this->theme);
+            $this->factory = new Factory($this->config);
         }
         return $this->factory;
     }

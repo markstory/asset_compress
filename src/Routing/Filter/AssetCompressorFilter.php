@@ -2,7 +2,7 @@
 namespace AssetCompress\Routing\Filter;
 
 use AssetCompress\AssetCompiler;
-use AssetCompress\AssetConfig;
+use AssetCompress\Config\ConfigFinder;
 use AssetCompress\AssetWriter;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
@@ -110,7 +110,8 @@ class AssetCompressorFilter extends DispatcherFilter
     protected function _getConfig()
     {
         if (empty($this->config)) {
-            $this->config = AssetConfig::buildFromIniFile();
+            $configFinder = new ConfigFinder();
+            $this->config = $configFinder->loadAll();
         }
         return $this->config;
     }
