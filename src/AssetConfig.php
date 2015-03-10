@@ -1,15 +1,12 @@
 <?php
+namespace AssetCompress;
+
+use RuntimeException;
+
 /**
  * Parses the ini files AssetCompress uses into arrays that
  * other objects can use.
  */
-namespace AssetCompress;
-
-use Cake\Cache\Cache;
-use Cake\Core\Plugin;
-use Cake\Utility\Inflector;
-use RuntimeException;
-
 class AssetConfig
 {
 
@@ -59,10 +56,6 @@ class AssetConfig
     const FILTERS = 'filters';
     const FILTER_PREFIX = 'filter_';
     const TARGETS = 'targets';
-    const CACHE_ASSET_CONFIG_KEY = 'cakephp_asset_config_parsed';
-    const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
-    const CACHE_CONFIG = 'asset_compress';
-    const BUILD_TIME_FILE = 'asset_compress_build_time';
     const GENERAL = 'general';
 
     /**
@@ -71,16 +64,11 @@ class AssetConfig
      * @param array $data Initial data set for the object.
      * @param array $additionalConstants  Additional constants that will be translated
      *    when parsing paths.
-     * @param int $modifiedTime The time configuration data changed.
      */
-    public function __construct(array $data = array(), array $additionalConstants = array(), $modifiedTime = null)
+    public function __construct(array $data = array(), array $additionalConstants = array())
     {
         $this->_data = $data ?: static::$_defaults;
         $this->constantMap = array_merge($this->constantMap, $additionalConstants);
-        if (!$modifiedTime) {
-            $modifiedTime = time();
-        }
-        $this->_modifiedTime = $modifiedTime;
     }
 
     /**
