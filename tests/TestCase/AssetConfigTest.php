@@ -46,20 +46,20 @@ class AssetConfigTest extends TestCase
         $this->assertEquals(array('Sprockets', 'YuiJs'), $result);
 
         $result = $this->config->filters('js', 'libs.js');
-        $this->assertEquals(array('Sprockets', 'YuiJs', 'UglifyJs'), $result);
+        $this->assertEquals(array('Sprockets', 'YuiJs', 'Uglifyjs'), $result);
 
         $this->assertEquals(array(), $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
     {
-        $this->config->filters('js', null, array('UglifyJs'));
-        $this->assertEquals(array('UglifyJs'), $this->config->filters('js'));
-        $this->assertEquals(array('UglifyJs'), $this->config->filters('js', 'libs.js'));
+        $this->config->filters('js', null, array('Uglifyjs'));
+        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
+        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js', 'libs.js'));
 
         $this->config->filters('js', 'libs.js', array('Sprockets'));
-        $this->assertEquals(array('UglifyJs'), $this->config->filters('js'));
-        $this->assertEquals(array('UglifyJs', 'Sprockets'), $this->config->filters('js', 'libs.js'));
+        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
+        $this->assertEquals(array('Uglifyjs', 'Sprockets'), $this->config->filters('js', 'libs.js'));
     }
 
     public function testFiles()
@@ -134,7 +134,7 @@ class AssetConfigTest extends TestCase
 
     public function testFilterConfig()
     {
-        $result = $this->config->filterConfig('UglifyJs');
+        $result = $this->config->filterConfig('Uglifyjs');
         $expected = array('path' => '/path/to/uglify-js');
         $this->assertEquals($expected, $result);
 
@@ -148,12 +148,12 @@ class AssetConfigTest extends TestCase
     {
         $this->config->filterConfig('Sprockets', array('some' => 'value'));
 
-        $result = $this->config->filterConfig(array('UglifyJs', 'Sprockets'));
+        $result = $this->config->filterConfig(array('Uglifyjs', 'Sprockets'));
         $expected = array(
             'Sprockets' => array(
                 'some' => 'value'
             ),
-            'UglifyJs' => array(
+            'Uglifyjs' => array(
                 'path' => '/path/to/uglify-js'
             )
         );

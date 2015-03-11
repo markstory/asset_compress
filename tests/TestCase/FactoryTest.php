@@ -28,7 +28,7 @@ class FactoryTest extends TestCase
         $this->assertTrue($registry->contains('YuiJs'));
         $this->assertTrue($registry->contains('CssMinFilter'));
 
-        $filter = $registry->get('UglifyJs');
+        $filter = $registry->get('Uglifyjs');
         $this->assertEquals('/path/to/uglify-js', $filter->settings()['path']);
     }
 
