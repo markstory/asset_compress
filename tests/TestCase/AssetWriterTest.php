@@ -61,8 +61,9 @@ class AssetWriterTest extends TestCase
         $writer = new AssetWriter(['js' => false, 'css' => false], TMP, 'blue');
 
         $writer->write($this->target, 'theme file.');
-        $contents = file_get_contents(TMP . 'blue-themed.css');
+        $contents = file_get_contents(TMP . 'blue-test.js');
         $this->assertEquals('theme file.', $contents);
+        unlink(TMP . 'blue-test.js');
     }
 
     public function testGetSetTimestamp()

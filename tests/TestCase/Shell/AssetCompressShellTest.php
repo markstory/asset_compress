@@ -82,10 +82,10 @@ class AssetCompressShellTest extends TestCase
         $this->Shell->setConfig($config);
         $this->Shell->build();
 
-        $this->assertFileExists(TMP . 'cache_css' . DS . 'blue-themed.css', 'Css build missing');
-        $this->assertFileExists(TMP . 'cache_css' . DS . 'red-themed.css', 'Css build missing');
-        $this->assertFileExists(TMP . 'cache_css' . DS . 'blue-combined.css', 'Css build missing');
-        $this->assertFileExists(TMP . 'cache_css' . DS . 'red-combined.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'Blue-themed.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'Red-themed.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'Blue-combined.css', 'Css build missing');
+        $this->assertFileExists(TMP . 'cache_css' . DS . 'Red-combined.css', 'Css build missing');
     }
 
     /**
