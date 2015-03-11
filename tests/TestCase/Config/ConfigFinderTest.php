@@ -120,27 +120,26 @@ class ConfigFinderTest extends TestCase
         $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
 
         $result = $config->filters('js');
-        $expectedJsFilters = array('sprockets', 'jsyuicompressor', 'mylocalfilter');
+        $expectedJsFilters = array('Sprockets', 'YuiJs');
         $this->assertEquals($expectedJsFilters, $result);
 
-        $result = $config->filterConfig('jsyuicompressor');
+        $result = $config->filterConfig('YuiJs');
         $this->assertEquals(array('path' => '/path/to/local/yuicompressor'), $result);
 
-        $result = $config->filterConfig('uglify');
+        $result = $config->filterConfig('Uglifyjs');
         $this->assertEquals(array('path' => '/path/to/uglify-js'), $result);
 
         $result = $config->paths('js', 'libs.js');
         $result = str_replace('/', DS, $result);
-        $expectedJsPaths[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
+        $expectedJsPaths[] = WWW_ROOT . 'js' . DS . 'classes' . DS . '*';
         $this->assertEquals($expectedJsPaths, $result);
 
         $result = $config->files('libs.js');
-        $expected = array('jquery.js', 'mootools.js', 'class.js');
+        $expected = array('base.js', 'library_file.js', 'base_class.js');
         $this->assertEquals($expected, $result);
 
         $result = $config->filters('js', 'libs.js');
-        $expectedJsFilters[] = 'uglify';
-        $expectedJsFilters[] = 'anotherlocalfilter';
+        $expectedJsFilters[] = 'Uglifyjs';
         $this->assertEquals($expectedJsFilters, $result);
     }
 
