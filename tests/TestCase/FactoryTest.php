@@ -18,6 +18,7 @@ class FactoryTest extends TestCase
         $this->integrationFile = APP . 'config' . DS . 'integration.ini';
         $this->themedFile = APP . 'config' . DS . 'themed.ini';
         $this->pluginFile = APP . 'config' . DS . 'plugins.ini';
+        $this->overrideFile = APP . 'config' . DS . 'overridable.local.ini';
     }
 
     public function testFilterRegistry()
@@ -135,8 +136,27 @@ class FactoryTest extends TestCase
 
     public function testAssetCreationWithAdditionalPath()
     {
-        // Ensure that targets with specific additional paths work.
-        $this->markTestIncomplete('not done');
+        $config = AssetConfig::buildFromIniFile($this->overrideFile, [
+            'WEBROOT/' => APP
+        ]);
+        $factory = new Factory($config);
+        $collection = $factory->assetCollection();
+        $asset = $collection->get('libs.js');
+
+        $files = $asset->files();
+        $this->assertCount(3, $files);
+        $this->assertEquals(
+            APP . 'js/base.js',
+            $files[0]->path()
+        );
+        $this->assertEquals(
+            APP . 'js/library_file.js',
+            $files[1]->path()
+        );
+        $this->assertEquals(
+            APP . 'js/classes/base_class.js',
+            $files[2]->path()
+        );
     }
 
     public function testWriter()
