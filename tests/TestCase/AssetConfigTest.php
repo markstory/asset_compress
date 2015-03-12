@@ -2,7 +2,6 @@
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetConfig;
-use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -17,64 +16,11 @@ class AssetConfigTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Cache::drop(AssetConfig::CACHE_CONFIG);
-        Cache::config(AssetConfig::CACHE_CONFIG, array(
-        'engine' => 'File'
-        ));
-
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
         $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
-        AssetConfig::clearAllCachedKeys();
         $this->config = AssetConfig::buildFromIniFile($this->testConfig);
-    }
-
-    /**
-     * Test local configuration files.
-     *
-     * @return void
-     */
-    public function testLocalConfig()
-    {
-        $ini = dirname($this->testConfig) . DS . 'overridable.ini';
-        $config = AssetConfig::buildFromIniFile($ini);
-
-        $this->assertEquals('', $config->general('cacheConfig'));
-        $this->assertEquals(1, $config->general('alwaysUseController'));
-
-        $this->assertEquals('', $config->get('js.timestamp'));
-
-        $result = $config->paths('js');
-        $result = str_replace('/', DS, $result);
-        $expectedJsPaths = array(WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*');
-        $this->assertEquals($expectedJsPaths, $result);
-
-        $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
-
-        $result = $config->filters('js');
-        $expectedJsFilters = array('sprockets', 'jsyuicompressor', 'mylocalfilter');
-        $this->assertEquals($expectedJsFilters, $result);
-
-        $result = $config->filterConfig('jsyuicompressor');
-        $this->assertEquals(array('path' => '/path/to/local/yuicompressor'), $result);
-
-        $result = $config->filterConfig('uglify');
-        $this->assertEquals(array('path' => '/path/to/uglify-js'), $result);
-
-        $result = $config->paths('js', 'libs.js');
-        $result = str_replace('/', DS, $result);
-        $expectedJsPaths[] = WWW_ROOT . 'js' . DS . 'libs' . DS . '*';
-        $this->assertEquals($expectedJsPaths, $result);
-
-        $result = $config->files('libs.js');
-        $expected = array('jquery.js', 'mootools.js', 'class.js');
-        $this->assertEquals($expected, $result);
-
-        $result = $config->filters('js', 'libs.js');
-        $expectedJsFilters[] = 'uglify';
-        $expectedJsFilters[] = 'anotherlocalfilter';
-        $this->assertEquals($expectedJsFilters, $result);
     }
 
     public function testBuildFromIniFile()
@@ -97,23 +43,23 @@ class AssetConfigTest extends TestCase
     public function testFilters()
     {
         $result = $this->config->filters('js');
-        $this->assertEquals(array('sprockets', 'jsyuicompressor'), $result);
+        $this->assertEquals(array('Sprockets', 'YuiJs'), $result);
 
         $result = $this->config->filters('js', 'libs.js');
-        $this->assertEquals(array('sprockets', 'jsyuicompressor', 'uglify'), $result);
+        $this->assertEquals(array('Sprockets', 'YuiJs', 'Uglifyjs'), $result);
 
         $this->assertEquals(array(), $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
     {
-        $this->config->filters('js', null, array('uglify'));
-        $this->assertEquals(array('uglify'), $this->config->filters('js'));
-        $this->assertEquals(array('uglify'), $this->config->filters('js', 'libs.js'));
+        $this->config->filters('js', null, array('Uglifyjs'));
+        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
+        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js', 'libs.js'));
 
-        $this->config->filters('js', 'libs.js', array('sprockets'));
-        $this->assertEquals(array('uglify'), $this->config->filters('js'));
-        $this->assertEquals(array('uglify', 'sprockets'), $this->config->filters('js', 'libs.js'));
+        $this->config->filters('js', 'libs.js', array('Sprockets'));
+        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
+        $this->assertEquals(array('Uglifyjs', 'Sprockets'), $this->config->filters('js', 'libs.js'));
     }
 
     public function testFiles()
@@ -188,28 +134,28 @@ class AssetConfigTest extends TestCase
 
     public function testFilterConfig()
     {
-        $result = $this->config->filterConfig('uglify');
+        $result = $this->config->filterConfig('Uglifyjs');
         $expected = array('path' => '/path/to/uglify-js');
         $this->assertEquals($expected, $result);
 
-        $this->config->filterConfig('sprockets', array('some' => 'value'));
-        $this->assertEquals(array('some' => 'value'), $this->config->filterConfig('sprockets'));
+        $this->config->filterConfig('Sprockets', array('some' => 'value'));
+        $this->assertEquals(array('some' => 'value'), $this->config->filterConfig('Sprockets'));
 
         $this->assertEquals(array(), $this->config->filterConfig('imaginary'));
     }
 
     public function testFilterConfigArray()
     {
-        $this->config->filterConfig('sprockets', array('some' => 'value'));
+        $this->config->filterConfig('Sprockets', array('some' => 'value'));
 
-        $result = $this->config->filterConfig(array('uglify', 'sprockets'));
+        $result = $this->config->filterConfig(array('Uglifyjs', 'Sprockets'));
         $expected = array(
-        'sprockets' => array(
-        'some' => 'value'
-        ),
-        'uglify' => array(
-        'path' => '/path/to/uglify-js'
-        )
+            'Sprockets' => array(
+                'some' => 'value'
+            ),
+            'Uglifyjs' => array(
+                'path' => '/path/to/uglify-js'
+            )
         );
         $this->assertEquals($expected, $result);
     }
@@ -292,7 +238,7 @@ class AssetConfigTest extends TestCase
         $this->assertEquals('', $result);
 
         $result = $this->config->theme();
-        $this->assertEquals('Red', $result);
+        $this->assertEquals('red', $result);
     }
 
     public function testIsThemed()
@@ -307,11 +253,5 @@ class AssetConfigTest extends TestCase
     {
         $this->assertTrue($this->config->exists('libs.js'));
         $this->assertFalse($this->config->exists('derped.js'));
-    }
-
-    public function testModifiedTime()
-    {
-        $this->assertInternalType('integer', $this->config->modifiedTime());
-        $this->assertEquals(filemtime($this->testConfig), $this->config->modifiedTime());
     }
 }

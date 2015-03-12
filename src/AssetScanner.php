@@ -59,9 +59,6 @@ class AssetScanner
     {
         foreach ($this->_paths as &$path) {
             $ds = DS;
-            if ($this->isRemote($path)) {
-                $ds = '/';
-            }
             $path = $this->_normalizePath($path, $ds);
             $path = rtrim($path, $ds) . $ds;
         }
@@ -88,10 +85,7 @@ class AssetScanner
     {
         $expanded = array();
         foreach ($this->_paths as $path) {
-            if ($this->isRemote($path)) {
-                // Remote path. Not expandable!
-                $expanded[] = $path;
-            } elseif (preg_match('/[*.\[\]]/', $path)) {
+            if (preg_match('/[*.\[\]]/', $path)) {
                 $tree = $this->_generateTree($path);
                 $expanded = array_merge($expanded, $tree);
             } else {
@@ -121,53 +115,25 @@ class AssetScanner
      * Find a file in the connected paths, and check for its existance.
      *
      * @param string $file The file you want to find.
-     * @param bool $absolute Set to false to get relative URL compatible paths.
      * @return mixed Either false on a miss, or the full path of the file.
      */
-    public function find($file, $absolute = true)
+    public function find($file)
     {
+        $found = false;
         $expanded = $this->_expandPrefix($file);
-
-        if (isset($expanded['absolute']) && file_exists($expanded['absolute'])) {
-            $key = $absolute ? 'absolute' : 'relative';
-            return $expanded[$key];
+        if (file_exists($expanded)) {
+            return $expanded;
         }
-
         foreach ($this->_paths as $path) {
-            if ($this->isRemote($path)) {
-                $file = $this->_normalizePath($file, '/');
-                $fullPath = $path . $file;
-                // Opens and closes the remote file, just to
-                // check for its existance. Its contents will be read elsewhere.
-                // @codingStandardsIgnoreStart
-                $handle = @fopen($fullPath, 'rb');
-                // @codingStandardsIgnoreEnd
-                if ($handle) {
-                    fclose($handle);
-                    return $fullPath;
-                }
-            } else {
-                $file = $this->_normalizePath($file, DS);
-                $fullPath = $path . $file;
+            $file = $this->_normalizePath($file, DS);
+            $fullPath = $path . $file;
 
-                $exists = file_exists($fullPath);
-
-                if ($absolute === false && $exists) {
-                    $expanded['relative'] = str_replace(WWW_ROOT, '/', $expanded['relative']);
-                }
-                if ($exists) {
-                    $expanded['absolute'] = $fullPath;
-                    break;
-                }
+            if (file_exists($fullPath)) {
+                $found = $fullPath;
+                break;
             }
         }
-
-        // Could not find absolute file path.
-        if (empty($expanded['absolute'])) {
-            return false;
-        }
-        $key = $absolute ? 'absolute' : 'relative';
-        return $expanded[$key];
+        return $found;
     }
 
     /**
@@ -185,7 +151,7 @@ class AssetScanner
         if ($this->_theme && preg_match(self::THEME_PATTERN, $path)) {
             return $this->_expandTheme($path);
         }
-        return array('relative' => $path);
+        return $path;
     }
 
     /**
@@ -193,15 +159,12 @@ class AssetScanner
      * current theme's path.
      *
      * @param string $file The theme file to find.
-     * @return array An array of the relative and absolute paths.
+     * @return string The expanded path
      */
     protected function _expandTheme($file)
     {
         $file = preg_replace(self::THEME_PATTERN, '', $file);
-        return array(
-            'absolute' => Plugin::path($this->_theme) . 'webroot' . DS . $file,
-            'relative' => DS . 'theme' . DS . Inflector::underscore($this->_theme) . DS . $file,
-        );
+        return Plugin::path($this->_theme) . 'webroot' . DS . $file;
     }
 
     /**
@@ -209,7 +172,7 @@ class AssetScanner
      *
      * @param string $file The theme file to find.
      * @throws RuntimeException when plugins are missing.
-     * @return array An array of the relative and absolute paths.
+     * @return string The expanded path
      */
     protected function _expandPlugin($file)
     {
@@ -221,10 +184,7 @@ class AssetScanner
             throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
         }
         $path = Plugin::path($matches[1]);
-        return array(
-            'absolute' => $path . 'webroot' . DS . $matches[2],
-            'relative' => DS . Inflector::underscore($matches[1]) . DS . $matches[2],
-        );
+        return $path . 'webroot' . DS . $matches[2];
     }
 
     /**
@@ -235,28 +195,5 @@ class AssetScanner
     public function paths()
     {
         return $this->_paths;
-    }
-
-    /**
-     * Checks if a string represents a remote file
-     *
-     * @param string $target
-     * @return boolean If $target is a handable remote resource.:
-     */
-    public function isRemote($target)
-    {
-        // Patterns for matching readable remote resources
-        // Make sure that any included pattern will
-        // be accepted by fopen() as well.
-        $remotePatterns = array(
-            '/^https?:\/\//i'
-        );
-        $matches = array();
-        foreach ($remotePatterns as $pattern) {
-            if (preg_match($pattern, $target, $matches)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

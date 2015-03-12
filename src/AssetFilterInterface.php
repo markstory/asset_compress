@@ -31,6 +31,7 @@ interface AssetFilterInterface
      * key which points at paths available for the type of asset being generated.
      *
      * @param array $settings Array of settings.
+     * @return array Updated Settings.
      */
-    public function settings($settings);
+    public function settings(array $settings = null);
 }

@@ -1,25 +1,22 @@
 <?php
 namespace AssetCompress;
 
-use AssetCompress\AssetScanner;
-use Cake\Cache\Cache;
-use Cake\Utility\Inflector;
+use AssetCompress\AssetTarget;
 use RuntimeException;
 
 /**
  * Writes compiled assets to the filesystem
  * with optional timestamps.
- *
  */
-class AssetCache
+class AssetWriter
 {
+    const BUILD_TIME_FILE = 'asset_compress_build_time';
 
-    /**
-     * Config instance.
-     *
-     * @var \AssetCompress\AssetCache
-     */
-    protected $_config = null;
+    protected $timestamp = [];
+
+    protected $theme;
+
+    protected $path;
 
     /**
      * An array of invalidated output files.
@@ -31,30 +28,48 @@ class AssetCache
     /**
      * Constructor.
      *
-     * @param \AssetCompress\AssetConfig $config The config instance.
+     * @param array $timestamp The map of extensions and timestamps
+     * @param string $timestampPath The path to the timestamp file for assets.
+     * @param string $theme The the theme being assets are being built for.
      */
-    public function __construct(AssetConfig $config)
+    public function __construct(array $timestamp, $timestampPath, $theme = null)
     {
-        $this->_config = $config;
+        $this->timestamp = $timestamp;
+        $this->path = $timestampPath;
+        $this->theme = $theme;
+    }
+
+    /**
+     * Get the config options this object is using.
+     *
+     * @return array
+     */
+    public function config()
+    {
+        return [
+            'theme' => $this->theme,
+            'timestamp' => $this->timestamp,
+            'path' => $this->path
+        ];
     }
 
     /**
      * Writes content into a file
      *
-     * @param string $build The filename to write.
+     * @param AssetTarget $build The filename to write.
      * @param string $content The contents to write.
      * @throws RuntimeException
      */
-    public function write($build, $content)
+    public function write(AssetTarget $build, $content)
     {
-        $ext = $this->_config->getExt($build);
-        $path = $this->_config->cachePath($ext);
+        $ext = $build->ext();
+        $path = $build->outputDir();
 
         if (!is_writable($path)) {
             throw new RuntimeException('Cannot write cache file. Unable to write to ' . $path);
         }
         $filename = $this->buildFileName($build);
-        $success = file_put_contents($path . $filename, $content) !== false;
+        $success = file_put_contents($path . DS . $filename, $content) !== false;
         $this->finalize($build);
         return $success;
     }
@@ -64,38 +79,21 @@ class AssetCache
      * Fresh cached files have timestamps newer than all of the component
      * files.
      *
-     * @param string $target The target file being built.
+     * @param AssetTarget $target The target file being built.
      * @return boolean
      */
-    public function isFresh($target)
+    public function isFresh(AssetTarget $target)
     {
-        $ext = $this->_config->getExt($target);
-        $files = $this->_config->files($target);
-
-        $theme = $this->_config->theme();
-        $target = $this->buildFileName($target);
-
-        $buildFile = $this->_config->cachePath($ext) . $target;
+        $buildName = $this->buildFileName($target);
+        $buildFile = $target->outputDir() . DS . $buildName;
 
         if (!file_exists($buildFile)) {
             return false;
         }
-        $configTime = $this->_config->modifiedTime();
         $buildTime = filemtime($buildFile);
 
-        if ($configTime >= $buildTime) {
-            return false;
-        }
-
-        $scanner = new AssetScanner($this->_config->paths($ext, $target), $theme);
-
-        foreach ($files as $file) {
-            $path = $scanner->find($file);
-            if ($scanner->isRemote($path)) {
-                $time = $this->getRemoteFileLastModified($path);
-            } else {
-                $time = filemtime($path);
-            }
+        foreach ($target->files() as $file) {
+            $time = $file->modifiedTime();
             if ($time === false || $time >= $buildTime) {
                 return false;
             }
@@ -104,67 +102,31 @@ class AssetCache
     }
 
     /**
-     * Gets the modification time of a remote $url.
-     * Based on: http://www.php.net/manual/en/function.filemtime.php#81194
-     * @param type $url
-     * @return The last modified time of the $url file, in Unix timestamp, or false it can't be read.
-     */
-    public function getRemoteFileLastModified($url)
-    {
-        // default
-        $unixtime = 0;
-
-        // @codingStandardsIgnoreStart
-        $fp = @fopen($url, 'rb');
-        // @codingStandardsIgnoreEnd
-        if (!$fp) {
-            return false;
-        }
-
-        $metadata = stream_get_meta_data($fp);
-        foreach ($metadata['wrapper_data'] as $response) {
-            // case: redirection
-            if (substr(strtolower($response), 0, 10) === 'location: ') {
-                $newUri = substr($response, 10);
-                fclose($fp);
-                return $this->getRemoteFileLastModified($newUri);
-            } elseif (substr(strtolower($response), 0, 15) === 'last-modified: ') {
-                // case: last-modified
-                $unixtime = strtotime(substr($response, 15));
-                break;
-            }
-        }
-
-        fclose($fp);
-        return $unixtime;
-    }
-
-    /**
      * Invalidate a build before re-generating the file.
      *
      * @param string $build The build to invalidate.
      * @return void
      */
-    public function invalidate($build)
+    public function invalidate(AssetTarget $build)
     {
-        $ext = $this->_config->getExt($build);
-        if (!$this->_config->get($ext . '.timestamp')) {
+        $ext = $build->ext();
+        if (empty($this->timestamp[$ext])) {
             return false;
         }
-        $this->_invalidated = $build;
+        $this->_invalidated = $build->name();
         $this->setTimestamp($build, 0);
     }
 
     /**
      * Finalize a build after written to filesystem.
      *
-     * @param string $build The build to finalize.
+     * @param AssetTarget $build The build to finalize.
      * @return void
      */
-    public function finalize($build)
+    public function finalize(AssetTarget $build)
     {
-        $ext = $this->_config->getExt($build);
-        if (!$this->_config->get($ext . '.timestamp')) {
+        $ext = $build->ext();
+        if (empty($this->timestamp[$ext])) {
             return;
         }
         $data = $this->_readTimestamp();
@@ -183,19 +145,19 @@ class AssetCache
     /**
      * Set the timestamp for a build file.
      *
-     * @param string $build The name of the build to set a timestamp for.
+     * @param AssetTarget $build The name of the build to set a timestamp for.
      * @param int $time The timestamp.
      * @return void
      */
-    public function setTimestamp($build, $time)
+    public function setTimestamp(AssetTarget $build, $time)
     {
-        $ext = $this->_config->getExt($build);
-        if (!$this->_config->get($ext . '.timestamp')) {
+        $ext = $build->ext();
+        if (empty($this->timestamp[$ext])) {
             return;
         }
         $data = $this->_readTimestamp();
-        $build = $this->buildCacheName($build);
-        $data[$build] = $time;
+        $name = $this->buildCacheName($build);
+        $data[$name] = $time;
         $this->_writeTimestamp($data);
     }
 
@@ -207,13 +169,13 @@ class AssetCache
      *
      * If timestamps are disabled, false will be returned.
      *
-     * @param string $build The build to get a timestamp for.
+     * @param AssetTarget $build The build to get a timestamp for.
      * @return mixed The last build time, or false.
      */
-    public function getTimestamp($build)
+    public function getTimestamp(AssetTarget $build)
     {
-        $ext = $this->_config->getExt($build);
-        if (!$this->_config->get($ext . '.timestamp')) {
+        $ext = $build->ext();
+        if (empty($this->timestamp[$ext])) {
             return false;
         }
         $data = $this->_readTimestamp();
@@ -234,12 +196,8 @@ class AssetCache
     protected function _readTimestamp()
     {
         $data = array();
-        $cachedConfig = $this->_config->general('cacheConfig');
-        if ($cachedConfig) {
-            $data = Cache::read(AssetConfig::CACHE_BUILD_TIME_KEY, AssetConfig::CACHE_CONFIG);
-        }
-        if (empty($data) && file_exists(TMP . AssetConfig::BUILD_TIME_FILE)) {
-            $data = file_get_contents(TMP . AssetConfig::BUILD_TIME_FILE);
+        if (empty($data) && file_exists($this->path . static::BUILD_TIME_FILE)) {
+            $data = file_get_contents($this->path . static::BUILD_TIME_FILE);
             if ($data) {
                 $data = unserialize($data);
             }
@@ -255,26 +213,23 @@ class AssetCache
      */
     protected function _writeTimestamp($data)
     {
-        if ($this->_config->general('cacheConfig')) {
-            Cache::write(AssetConfig::CACHE_BUILD_TIME_KEY, $data, AssetConfig::CACHE_CONFIG);
-        }
         $data = serialize($data);
-        file_put_contents(TMP . AssetConfig::BUILD_TIME_FILE, $data);
-        chmod(TMP . AssetConfig::BUILD_TIME_FILE, 0644);
+        file_put_contents($this->path . static::BUILD_TIME_FILE, $data);
+        chmod($this->path . static::BUILD_TIME_FILE, 0644);
     }
 
     /**
      * Get the final filename for a build. Resolves
      * theme prefixes and timestamps.
      *
-     * @param string $target The build target name.
+     * @param AssetTarget $target The build target name.
      * @return string The build filename to cache on disk.
      */
-    public function buildFileName($target, $timestamp = true)
+    public function buildFileName(AssetTarget $target, $timestamp = true)
     {
-        $file = $target;
-        if ($this->_config->isThemed($target)) {
-            $file = Inflector::underscore($this->_config->theme()) . '-' . $target;
+        $file = $target->name();
+        if ($target->isThemed() && $this->theme) {
+            $file = $this->theme . '-' . $file;
         }
         if ($timestamp) {
             $time = $this->getTimestamp($target);
@@ -292,10 +247,23 @@ class AssetCache
     public function buildCacheName($build)
     {
         $name = $this->buildFileName($build, false);
-        if ($build == $this->_invalidated) {
+        if ($build->name() == $this->_invalidated) {
             return '~' . $name;
         }
         return $name;
+    }
+
+    /**
+     * Clear timestamps for assets.
+     *
+     * @return void
+     */
+    public function clearTimestamps()
+    {
+        $path = $this->path . static::BUILD_TIME_FILE;
+        if (file_exists($path)) {
+            unlink($this->path . static::BUILD_TIME_FILE);
+        }
     }
 
     /**

@@ -1,15 +1,12 @@
 <?php
+namespace AssetCompress;
+
+use RuntimeException;
+
 /**
  * Parses the ini files AssetCompress uses into arrays that
  * other objects can use.
  */
-namespace AssetCompress;
-
-use Cake\Cache\Cache;
-use Cake\Core\Plugin;
-use Cake\Utility\Inflector;
-use RuntimeException;
-
 class AssetConfig
 {
 
@@ -46,13 +43,6 @@ class AssetConfig
     );
 
     /**
-     * The timestamp that configuration changed.
-     *
-     * @var integer
-     */
-    protected $_modifiedTime;
-
-    /**
      * A hash of constants that can be expanded when reading ini files.
      *
      * @var array
@@ -66,10 +56,6 @@ class AssetConfig
     const FILTERS = 'filters';
     const FILTER_PREFIX = 'filter_';
     const TARGETS = 'targets';
-    const CACHE_ASSET_CONFIG_KEY = 'cakephp_asset_config_parsed';
-    const CACHE_BUILD_TIME_KEY = 'cakephp_asset_config_ts';
-    const CACHE_CONFIG = 'asset_compress';
-    const BUILD_TIME_FILE = 'asset_compress_build_time';
     const GENERAL = 'general';
 
     /**
@@ -78,114 +64,69 @@ class AssetConfig
      * @param array $data Initial data set for the object.
      * @param array $additionalConstants  Additional constants that will be translated
      *    when parsing paths.
-     * @param int $modifiedTime The time configuration data changed.
      */
-    public function __construct(array $data = array(), array $additionalConstants = array(), $modifiedTime = null)
+    public function __construct(array $data = array(), array $additionalConstants = array())
     {
-        $this->_data = $data;
+        $this->_data = $data ?: static::$_defaults;
         $this->constantMap = array_merge($this->constantMap, $additionalConstants);
-        if (!$modifiedTime) {
-            $modifiedTime = time();
-        }
-        $this->_modifiedTime = $modifiedTime;
     }
 
     /**
-     * Constructor
+     * Factory method
      *
      * @param string $iniFile File path for the ini file to parse.
      * @param array $additionalConstants  Additional constants that will be translated
      *    when parsing paths.
+     * @deprecated Use ConfigFinder::loadAll() instead.
      */
     public static function buildFromIniFile($iniFile = null, $constants = array())
     {
         if (empty($iniFile)) {
             $iniFile = CONFIG . 'asset_compress.ini';
         }
-
-        // If the AssetConfig is in cache, means that user had General.cacheConfig in their ini.
-        $parsedConfig = static::_readCache(static::CACHE_ASSET_CONFIG_KEY);
-        if ($parsedConfig) {
-            return $parsedConfig;
-        }
-        return self::_parseConfig($iniFile, $constants);
+        $config = new static([], $constants);
+        return $config->load($iniFile);
     }
 
     /**
-     * Clear the build timestamp file and the associated cache entry
-     */
-    public static function clearBuildTimeStamp()
-    {
-        $buildTime = TMP . static::BUILD_TIME_FILE;
-        if (is_file($buildTime)) {
-            unlink($buildTime);
-        }
-        static::_deleteCache(static::CACHE_BUILD_TIME_KEY);
-    }
-
-    /**
-     * Helper method for clearing cache data.
+     * Load a config file into the current instance.
      *
-     * @param string $key The key to clear.
-     * @return void
+     * @param string $path The config file to load.
+     * @param string $prefix The string to prefix all targets in $path with.
+     * @return $this
      */
-    protected static function _deleteCache($key)
+    public function load($path, $prefix = '')
     {
-        try {
-            Cache::delete($key, self::CACHE_CONFIG);
-        } catch (\InvalidArgumentException $e) {
-            // Do nothing cache config probably doesn't exist.
+        $config = $this->_readConfig($path);
+
+        foreach ($config as $section => $values) {
+            if (in_array($section, self::$_extensionTypes)) {
+                // extension section, merge in the defaults.
+                $defaults = $this->get($section);
+                if ($defaults) {
+                    $values = array_merge($defaults, $values);
+                }
+                $this->addExtension($section, $values);
+
+            } elseif (strtolower($section) === self::GENERAL) {
+                $this->set(self::GENERAL, $values);
+
+            } elseif (strpos($section, self::FILTER_PREFIX) === 0) {
+                // filter section.
+                $name = str_replace(self::FILTER_PREFIX, '', $section);
+                $this->filterConfig($name, $values);
+
+            } else {
+                $lastDot = strrpos($section, '.') + 1;
+                $extension = substr($section, $lastDot);
+                $key = $section;
+
+                // must be a build target.
+                $this->addTarget($prefix . $key, $values);
+            }
         }
-    }
 
-    /**
-     * Write a cache value safely.
-     *
-     * @param $key The key to write.
-     * @param $value The value to write.
-     * @return mixed The cache value or null
-     */
-    protected static function _writeCache($key, $value)
-    {
-        try {
-            return Cache::write($key, $value, self::CACHE_CONFIG);
-        } catch (\InvalidArgumentException $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Read a cache value safely.
-     *
-     * @param $key The key to read
-     * @return mixed The cache value or null
-     */
-    protected static function _readCache($key)
-    {
-        try {
-            return Cache::read($key, static::CACHE_CONFIG);
-        } catch (\InvalidArgumentException $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Clear the stored config object from cache
-     *
-     * @return void
-     */
-    public static function clearCachedAssetConfig()
-    {
-        static::_deleteCache(static::CACHE_ASSET_CONFIG_KEY);
-    }
-
-    /**
-     * Clear all the cached keys associated with AssetConfig
-     */
-    public static function clearAllCachedKeys()
-    {
-        self::clearBuildTimeStamp();
-        self::clearCachedAssetConfig();
+        return $this;
     }
 
     /**
@@ -195,7 +136,7 @@ class AssetConfig
      * @return array Inifile contents
      * @throws RuntimeException
      */
-    protected static function _readConfig($filename)
+    protected function _readConfig($filename)
     {
         if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
             throw new RuntimeException(sprintf('Configuration file "%s" was not found.', $filename));
@@ -205,96 +146,6 @@ class AssetConfig
             return parse_ini_file($filename, true);
         } else {
             return parse_ini_string(file_get_contents($filename), true);
-        }
-    }
-
-    /**
-     * Transforms the config data into a more structured form
-     *
-     * @param array $contents Contents to build a config object from.
-     * @param array $constants Array of constants that will be mapped.
-     * @param int $modifiedTime The modified time of the config data.
-     * @return AssetConfig
-     */
-    protected static function _parseConfig($baseFile, $constants, $modifiedTime = null)
-    {
-        if (!$modifiedTime && file_exists($baseFile)) {
-            $modifiedTime = filemtime($baseFile);
-        }
-
-        $assetConfig = new AssetConfig(self::$_defaults, $constants, $modifiedTime);
-        self::_parseConfigFileLocal($baseFile, $assetConfig);
-
-        $plugins = Plugin::loaded();
-        foreach ($plugins as $plugin) {
-            $pluginConfig = Plugin::path($plugin) . 'config' . DS . 'asset_compress.ini';
-            if (file_exists($pluginConfig)) {
-                self::_parseConfigFileLocal($pluginConfig, $assetConfig, $plugin . '.');
-            }
-        }
-
-        if ($assetConfig->general('cacheConfig')) {
-            self::_writeCache(self::CACHE_ASSET_CONFIG_KEY, $assetConfig);
-        }
-
-        return $assetConfig;
-    }
-
-    /**
-     * Parse a file and optionally the .local version of the file.
-     *
-     * @param string $file The file to parse.
-     * @param AssetConfig $assetConfig The config object to add data to.
-     * @param null|string $prefix The prefix to append to build targets.
-     * @return void
-     */
-    protected static function _parseConfigFileLocal($file, $assetConfig, $prefix = null)
-    {
-        self::_parseConfigFile($file, $assetConfig, $prefix);
-
-        // Load related .local.ini file if exists
-        $localConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $file);
-        if (file_exists($localConfig)) {
-            self::_parseConfigFile($localConfig, $assetConfig, $prefix);
-        }
-    }
-
-    /**
-     * Reads a config file and applies it to the given config instance
-     *
-     * @param string $iniFile Contents to apply to the config instance.
-     * @param AssetConfig $assetConfig The config instance instance we're applying this config file to.
-     * @param string $prefix Prefix for the target key
-     */
-    protected static function _parseConfigFile($iniFile, $assetConfig, $prefix = '')
-    {
-        $config = self::_readConfig($iniFile);
-
-        foreach ($config as $section => $values) {
-            if (in_array($section, self::$_extensionTypes)) {
-                // extension section, merge in the defaults.
-                $defaults = $assetConfig->get($section);
-                if ($defaults) {
-                    $values = array_merge($defaults, $values);
-                }
-                $assetConfig->addExtension($section, $values);
-
-            } elseif (strtolower($section) === self::GENERAL) {
-                $assetConfig->set(self::GENERAL, $values);
-
-            } elseif (strpos($section, self::FILTER_PREFIX) === 0) {
-                // filter section.
-                $name = str_replace(self::FILTER_PREFIX, '', $section);
-                $assetConfig->filterConfig($name, $values);
-
-            } else {
-                $lastDot = strrpos($section, '.') + 1;
-                $extension = substr($section, $lastDot);
-                $key = $section;
-
-                // must be a build target.
-                $assetConfig->addTarget($prefix . $key, $values);
-            }
         }
     }
 
@@ -431,6 +282,32 @@ class AssetConfig
         } else {
             $this->_data[$ext][self::TARGETS][$target][self::FILTERS] = $filters;
         }
+    }
+
+    /**
+     * Get configuration for all filters.
+     *
+     * Useful for building FilterRegistry objects
+     *
+     * @return array Config data related to all filters.
+     */
+    public function allFilters()
+    {
+        $filters = [];
+        if (isset($this->_data[self::FILTERS])) {
+            $filters = array_keys($this->_data[self::FILTERS]);
+        }
+        foreach ($this->extensions() as $ext) {
+            if (empty($this->_data[$ext][self::TARGETS])) {
+                continue;
+            }
+            foreach ($this->_data[$ext][self::TARGETS] as $target) {
+                if (!empty($target[self::FILTERS])) {
+                    $filters = array_merge($filters, $target[self::FILTERS]);
+                }
+            }
+        }
+        return array_unique($filters);
     }
 
     /**
@@ -604,7 +481,7 @@ class AssetConfig
         if ($theme === null) {
             return isset($this->_data['theme']) ? $this->_data['theme'] : '';
         }
-        $this->_data['theme'] = Inflector::camelize($theme);
+        $this->_data['theme'] = $theme;
     }
 
     /**
@@ -641,15 +518,5 @@ class AssetConfig
     {
         $ext = $this->getExt($target);
         return !empty($this->_data[$ext][self::TARGETS][$target]);
-    }
-
-    /**
-     * Get the modified time of the config object.
-     *
-     * @return integer
-     */
-    public function modifiedTime()
-    {
-        return $this->_modifiedTime;
     }
 }

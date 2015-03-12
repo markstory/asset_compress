@@ -9,21 +9,24 @@ use RuntimeException;
 /**
  * A preprocessor that inlines files referenced by
  * @import() statements in css files.
- *
  */
 class ImportInline extends AssetFilter
 {
 
     protected $_pattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)));/m';
 
-    protected $_Scanner = null;
+    protected $scanner = null;
 
     protected $_loaded = array();
 
-    public function settings($settings)
+    public function settings(array $settings = null)
     {
         parent::settings($settings);
-        $this->_Scanner = new AssetScanner($settings['paths'], Hash::get($settings, 'theme'));
+        $this->scanner = new AssetScanner(
+            (array)Hash::get($this->_settings, 'paths'),
+            Hash::get($this->_settings, 'theme')
+        );
+        return $this->_settings;
     }
 
     /**
@@ -51,7 +54,7 @@ class ImportInline extends AssetFilter
     protected function _replace($matches)
     {
         $required = empty($matches[2]) ? $matches[4] : $matches[2];
-        $filename = $this->_Scanner->find($required);
+        $filename = $this->scanner->find($required);
         if (!$filename) {
             throw new \RuntimeException(sprintf('Could not find dependency "%s"', $required));
         }

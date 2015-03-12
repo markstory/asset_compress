@@ -3,7 +3,8 @@ namespace AssetCompress\Shell;
 
 use AssetCompress\AssetCache;
 use AssetCompress\AssetCompiler;
-use AssetCompress\AssetConfig;
+use AssetCompress\Config\ConfigFinder;
+use AssetCompress\Factory;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
 use DirectoryIterator;
@@ -19,7 +20,9 @@ class AssetCompressShell extends Shell
 
     public $tasks = array('AssetCompress.AssetBuild');
 
-    protected $_config;
+    protected $config;
+
+    protected $factory;
 
     /**
      * Create the configuration object used in other classes.
@@ -28,9 +31,8 @@ class AssetCompressShell extends Shell
     public function startup()
     {
         parent::startup();
-
-        AssetConfig::clearAllCachedKeys();
-        $this->_config = AssetConfig::buildFromIniFile($this->params['config']);
+        $configFinder = new ConfigFinder();
+        $this->setConfig($configFinder->loadAll());
         $this->out();
     }
 
@@ -42,7 +44,8 @@ class AssetCompressShell extends Shell
      */
     public function setConfig($config)
     {
-        $this->_config = $config;
+        $this->config = $config;
+        $this->factory = new Factory($config);
         $this->AssetBuild->setConfig($config);
     }
 
@@ -53,7 +56,7 @@ class AssetCompressShell extends Shell
      */
     public function build()
     {
-        $this->AssetBuild->setConfig($this->_config);
+        $this->AssetBuild->setConfig($this->config);
         $this->AssetBuild->build();
     }
 
@@ -64,29 +67,13 @@ class AssetCompressShell extends Shell
      */
     public function clear()
     {
-        $this->clear_build_ts();
+        $this->clearBuildTs();
 
-        $this->_io->verbose('Clearing Javascript build files:');
-        $this->_clearBuilds('js');
-
-        $this->_io->verbose('Clearing CSS build files:');
-        $this->_clearBuilds('css');
+        $this->_io->verbose('Clearing build files:');
+        $this->_clearBuilds();
 
         $this->_io->verbose('');
         $this->out('<success>Complete</success>');
-    }
-
-    /**
-     * Clears out all the cache keys associated with asset_compress.
-     *
-     * Note: method really does nothing here because keys are cleared in startup.
-     * This method exists for times when you just want to clear the cache keys
-     * associated with asset_compress
-     */
-    public function clear_cache()
-    {
-        $this->out('Clearing all cache keys:');
-        $this->hr();
     }
 
     /**
@@ -95,10 +82,11 @@ class AssetCompressShell extends Shell
      *
      * build timestamp file is only created when build() is run from this shell
      */
-    public function clear_build_ts()
+    public function clearBuildTs()
     {
         $this->_io->verbose('Clearing build timestamp.');
-        AssetConfig::clearBuildTimeStamp();
+        $writer = $this->factory->writer();
+        $writer->clearTimestamps();
     }
 
     /**
@@ -106,29 +94,31 @@ class AssetCompressShell extends Shell
      *
      * @return void
      */
-    protected function _clearBuilds($ext)
+    protected function _clearBuilds()
     {
-        $targets = $this->_config->targets($ext);
-        if (empty($targets)) {
-            $this->err('No ' . $ext . ' build files defined, skipping');
+        $themes = (array)$this->config->general('themes');
+        if ($themes) {
+            $this->config->theme($themes[0]);
+        }
+        $assets = $this->factory->assetCollection();
+        if (count($assets) === 0) {
+            $this->err('No build targets defined, skipping');
             return;
         }
-        $themes = (array)$this->_config->general('themes');
-        $this->_clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
-        $path = $this->_config->cachePath($ext);
+        $targets = array_map(function ($target) {
+            return $target->name();
+        }, iterator_to_array($assets));
 
-        $path = $this->_config->cachePath($ext);
-        if (!file_exists($path)) {
-            $this->err('Build directory ' . $path . ' for ' . $ext . ' does not exist.');
-            return;
-        }
-        $this->_clearPath($path, $themes, $targets);
+
+        $this->_clearPath(CACHE . 'asset_compress' .DS, $themes, $targets);
+        $this->_clearPath($this->config->cachePath('js'), $themes, $targets);
+        $this->_clearPath($this->config->cachePath('css'), $themes, $targets);
     }
 
     /**
      * Clear a path of build targets.
      *
-     * @param string $path The path to clear.
+     * @param string $path The root path to clear.
      * @param array $themes The themes to clear.
      * @param array $targets The build targets to clear.
      * @return void
@@ -151,7 +141,7 @@ class AssetCompressShell extends Shell
             }
             // themed files
             foreach ($themes as $theme) {
-                if (strpos($base, $theme) === 0) {
+                if (strpos($base, $theme) === 0 && strpos($base, '-') !== false) {
                     list($themePrefix, $base) = explode('-', $base);
                 }
             }
@@ -180,10 +170,6 @@ class AssetCompressShell extends Shell
             'help' => 'Clears all builds defined in the ini file.'
         ))->addSubcommand('build', array(
             'help' => 'Generate all builds defined in the ini files.'
-        ))->addOption('config', array(
-            'help' => 'Choose the config file to use.',
-            'short' => 'c',
-            'default' => CONFIG . 'asset_compress.ini'
         ))->addOption('force', array(
             'help' => 'Force assets to rebuild. Ignores timestamp rules.',
             'short' => 'f',
