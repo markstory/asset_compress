@@ -42,13 +42,14 @@ class AssetConfigTest extends TestCase
 
     public function testFilters()
     {
+        $expected = ['Sprockets', 'YuiJs', 'Uglifyjs'];
         $result = $this->config->filters('js');
-        $this->assertEquals(array('Sprockets', 'YuiJs'), $result);
+        $this->assertEquals($expected, $result);
 
         $result = $this->config->filters('js', 'libs.js');
-        $this->assertEquals(array('Sprockets', 'YuiJs', 'Uglifyjs'), $result);
+        $this->assertEquals($expected, $result);
 
-        $this->assertEquals(array(), $this->config->filters('nothing'));
+        $this->assertEquals($expected, $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
@@ -162,13 +163,14 @@ class AssetConfigTest extends TestCase
 
     public function testTargets()
     {
-        $this->assertEquals(array(), $this->config->targets('fake'));
-        $expected = array('libs.js', 'foo.bar.js', 'new_file.js');
-        $result = $this->config->targets('js');
-        $this->assertEquals($expected, $result);
-
-        $expected = array('all.css', 'pink.css');
-        $result = $this->config->targets('css');
+        $expected = array(
+            'libs.js',
+            'foo.bar.js',
+            'new_file.js',
+            'all.css',
+            'pink.css'
+        );
+        $result = $this->config->targets();
         $this->assertEquals($expected, $result);
     }
 
@@ -200,7 +202,7 @@ class AssetConfigTest extends TestCase
     public function testExtensions()
     {
         $result = $this->config->extensions();
-        $this->assertEquals(array('js', 'css'), $result);
+        $this->assertEquals(array('css', 'js'), $result);
     }
 
     public function testGeneral()

@@ -15,7 +15,21 @@ class AssetConfig
      *
      * @var array
      */
-    protected $_data = array();
+    protected $_data = [];
+
+    /**
+     * Filter configuration
+     *
+     * @var array
+     */
+    protected $_filters = [];
+
+    /**
+     * Target configuration
+     *
+     * @var array
+     */
+    protected $_targets = [];
 
     /**
      * Defaults and conventions for configuration.
@@ -158,14 +172,16 @@ class AssetConfig
      */
     public function addExtension($ext, array $config)
     {
-        $this->_data[$ext] = $this->_parseExtensionDef($config);
-        if (!empty($this->_data[$ext][self::FILTERS])) {
-            foreach ($this->_data[$ext][self::FILTERS] as $filter) {
-                if (empty($this->_data[self::FILTERS][$filter])) {
-                    $this->_data[self::FILTERS][$filter] = array();
+        $data = $this->_parseExtensionDef($config);
+        if (!empty($data[self::FILTERS])) {
+            foreach ($data[self::FILTERS] as $filter) {
+                if (empty($this->_filters[$filter])) {
+                    $this->_filters[$filter] = [];
                 }
             }
+            unset($data[self::FILTERS]);
         }
+        $this->_data[$ext] = $data;
     }
 
     /**
@@ -197,8 +213,7 @@ class AssetConfig
      */
     protected function _replacePathConstants($path)
     {
-        $result = strtr($path, $this->constantMap);
-        return $result;
+        return strtr($path, $this->constantMap);
     }
 
     /**
@@ -261,26 +276,25 @@ class AssetConfig
     public function filters($ext, $target = null, $filters = null)
     {
         if ($filters === null) {
-            if (!isset($this->_data[$ext][self::FILTERS])) {
-                $filters = array();
-            } else {
-                $filters = (array)$this->_data[$ext][self::FILTERS];
+            $filters = [];
+            if (isset($this->_filters)) {
+                $filters = array_keys($this->_filters);
             }
-            if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
-                $buildFilters = $this->_data[$ext][self::TARGETS][$target][self::FILTERS];
+            if ($target !== null && !empty($this->_targets[$target][self::FILTERS])) {
+                $buildFilters = $this->_targets[$target][self::FILTERS];
                 $filters = array_merge($filters, $buildFilters);
             }
             return array_unique($filters);
         }
         if ($target === null) {
-            $this->_data[$ext][self::FILTERS] = $filters;
+            $this->_filters = [];
             foreach ($filters as $f) {
-                if (empty($this->_data[self::FILTERS][$f])) {
-                    $this->_data[self::FILTERS][$f] = array();
+                if (empty($this->_filters[$f])) {
+                    $this->_filters[$f] = [];
                 }
             }
         } else {
-            $this->_data[$ext][self::TARGETS][$target][self::FILTERS] = $filters;
+            $this->_targets[$target][self::FILTERS] = $filters;
         }
     }
 
@@ -294,17 +308,12 @@ class AssetConfig
     public function allFilters()
     {
         $filters = [];
-        if (isset($this->_data[self::FILTERS])) {
-            $filters = array_keys($this->_data[self::FILTERS]);
+        if (isset($this->_filters)) {
+            $filters = array_keys($this->_filters);
         }
-        foreach ($this->extensions() as $ext) {
-            if (empty($this->_data[$ext][self::TARGETS])) {
-                continue;
-            }
-            foreach ($this->_data[$ext][self::TARGETS] as $target) {
-                if (!empty($target[self::FILTERS])) {
-                    $filters = array_merge($filters, $target[self::FILTERS]);
-                }
+        foreach ($this->_targets as $target) {
+            if (!empty($target[self::FILTERS])) {
+                $filters = array_merge($filters, $target[self::FILTERS]);
             }
         }
         return array_unique($filters);
@@ -321,7 +330,7 @@ class AssetConfig
     {
         if ($settings === null) {
             if (is_string($filter)) {
-                return isset($this->_data[self::FILTERS][$filter]) ? $this->_data[self::FILTERS][$filter] : array();
+                return isset($this->_filters[$filter]) ? $this->_filters[$filter] : array();
             }
             if (is_array($filter)) {
                 $result = array();
@@ -331,7 +340,7 @@ class AssetConfig
                 return $result;
             }
         }
-        $this->_data[self::FILTERS][$filter] = $settings;
+        $this->_filters[$filter] = $settings;
     }
 
     /**
@@ -344,12 +353,12 @@ class AssetConfig
     {
         $ext = $this->getExt($target);
         if ($files === null) {
-            if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
-                return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
+            if (isset($this->_targets[$target]['files'])) {
+                return (array)$this->_targets[$target]['files'];
             }
-            return array();
+            return [];
         }
-        $this->_data[$ext][self::TARGETS][$target]['files'] = $files;
+        $this->_targets[$target]['files'] = $files;
     }
 
     /**
@@ -381,8 +390,8 @@ class AssetConfig
             } else {
                 $paths = (array)$this->_data[$ext]['paths'];
             }
-            if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target]['paths'])) {
-                $buildPaths = $this->_data[$ext][self::TARGETS][$target]['paths'];
+            if ($target !== null && !empty($this->_targets[$target]['paths'])) {
+                $buildPaths = $this->_targets[$target]['paths'];
                 $paths = array_merge($paths, $buildPaths);
             }
             return array_unique($paths);
@@ -392,7 +401,7 @@ class AssetConfig
         if ($target === null) {
             $this->_data[$ext]['paths'] = $paths;
         } else {
-            $this->_data[$ext][self::TARGETS][$target]['paths'] = $paths;
+            $this->_targets[$target]['paths'] = $paths;
         }
     }
 
@@ -432,17 +441,16 @@ class AssetConfig
     }
 
     /**
-     * Get the build targets for an extension.
+     * Get the build targets.
      *
-     * @param string $ext The extension you want targets for.
-     * @return array An array of build targets for the extension.
+     * @return array An array of build targets.
      */
-    public function targets($ext)
+    public function targets()
     {
-        if (empty($this->_data[$ext][self::TARGETS])) {
+        if (empty($this->_targets)) {
             return array();
         }
-        return array_keys($this->_data[$ext][self::TARGETS]);
+        return array_keys($this->_targets);
     }
 
     /**
@@ -467,7 +475,7 @@ class AssetConfig
         if (!empty($config['paths'])) {
             $config['paths'] = array_map(array($this, '_replacePathConstants'), (array)$config['paths']);
         }
-        $this->_data[$ext][self::TARGETS][$target] = $config;
+        $this->_targets[$target] = $config;
     }
 
     /**
@@ -492,8 +500,7 @@ class AssetConfig
      */
     public function isThemed($target)
     {
-        $ext = $this->getExt($target);
-        return !empty($this->_data[$ext][self::TARGETS][$target]['theme']);
+        return !empty($this->_targets[$target]['theme']);
     }
 
     /**
@@ -503,9 +510,7 @@ class AssetConfig
      */
     public function extensions()
     {
-        $exts = array_flip(array_keys($this->_data));
-        unset($exts[self::FILTERS], $exts[self::GENERAL]);
-        return array_keys($exts);
+        return ['css', 'js'];
     }
 
     /**
@@ -516,7 +521,6 @@ class AssetConfig
      */
     public function exists($target)
     {
-        $ext = $this->getExt($target);
-        return !empty($this->_data[$ext][self::TARGETS][$target]);
+        return !empty($this->_targets[$target]);
     }
 }
