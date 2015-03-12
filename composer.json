@@ -18,6 +18,7 @@
 	},
 	"require": {
 		"php": ">=5.3.0",
-		"composer/installers": "*"
+		"composer/installers": "*",
+		"cakephp/cakephp": ">=2.4"
 	}
 }

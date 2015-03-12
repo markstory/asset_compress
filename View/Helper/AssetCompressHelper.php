@@ -304,7 +304,7 @@ class AssetCompressHelper extends AppHelper {
 
 		$url = $this->url($file, $options);
 		unset($options['full']);
-		return $this->Html->css($url, null, $options);
+		return $this->Html->css($url, $options);
 	}
 
 /**
