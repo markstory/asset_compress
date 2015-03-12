@@ -172,16 +172,7 @@ class AssetConfig
      */
     public function addExtension($ext, array $config)
     {
-        $data = $this->_parseExtensionDef($config);
-        if (!empty($data[self::FILTERS])) {
-            foreach ($data[self::FILTERS] as $filter) {
-                if (empty($this->_filters[$filter])) {
-                    $this->_filters[$filter] = [];
-                }
-            }
-            unset($data[self::FILTERS]);
-        }
-        $this->_data[$ext] = $data;
+        $this->_data[$ext] = $this->_parseExtensionDef($config);
     }
 
     /**
@@ -277,8 +268,8 @@ class AssetConfig
     {
         if ($filters === null) {
             $filters = [];
-            if (isset($this->_filters)) {
-                $filters = array_keys($this->_filters);
+            if (isset($this->_data[$ext][self::FILTERS])) {
+                $filters = $this->_data[$ext][self::FILTERS];
             }
             if ($target !== null && !empty($this->_targets[$target][self::FILTERS])) {
                 $buildFilters = $this->_targets[$target][self::FILTERS];
@@ -287,12 +278,7 @@ class AssetConfig
             return array_unique($filters);
         }
         if ($target === null) {
-            $this->_filters = [];
-            foreach ($filters as $f) {
-                if (empty($this->_filters[$f])) {
-                    $this->_filters[$f] = [];
-                }
-            }
+            $this->_data[$ext][self::FILTERS] = $filters;
         } else {
             $this->_targets[$target][self::FILTERS] = $filters;
         }
@@ -330,7 +316,7 @@ class AssetConfig
     {
         if ($settings === null) {
             if (is_string($filter)) {
-                return isset($this->_filters[$filter]) ? $this->_filters[$filter] : array();
+                return isset($this->_filters[$filter]) ? $this->_filters[$filter] : [];
             }
             if (is_array($filter)) {
                 $result = array();

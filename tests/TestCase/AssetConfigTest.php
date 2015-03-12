@@ -42,14 +42,15 @@ class AssetConfigTest extends TestCase
 
     public function testFilters()
     {
-        $expected = ['Sprockets', 'YuiJs', 'Uglifyjs'];
+        $expected = ['Sprockets', 'YuiJs'];
         $result = $this->config->filters('js');
         $this->assertEquals($expected, $result);
 
         $result = $this->config->filters('js', 'libs.js');
+        $expected = ['Sprockets', 'YuiJs', 'Uglifyjs'];
         $this->assertEquals($expected, $result);
 
-        $this->assertEquals($expected, $this->config->filters('nothing'));
+        $this->assertEquals([], $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
