@@ -46,22 +46,21 @@ class AssetConfigTest extends TestCase
         $result = $this->config->filters('js');
         $this->assertEquals($expected, $result);
 
-        $result = $this->config->filters('js', 'libs.js');
-        $expected = ['Sprockets', 'YuiJs', 'Uglifyjs'];
-        $this->assertEquals($expected, $result);
-
         $this->assertEquals([], $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
     {
-        $this->config->filters('js', null, array('Uglifyjs'));
+        $this->config->filters('js', array('Uglifyjs'));
         $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
-        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js', 'libs.js'));
+    }
 
-        $this->config->filters('js', 'libs.js', array('Sprockets'));
-        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
-        $this->assertEquals(array('Uglifyjs', 'Sprockets'), $this->config->filters('js', 'libs.js'));
+    public function testTargetFilters()
+    {
+        $this->config->addTarget('libs.js', [
+            'filters' => ['Uglifyjs']
+        ]);
+        $this->assertEquals(['Sprockets', 'YuiJs', 'Uglifyjs'], $this->config->targetFilters('libs.js'));
     }
 
     public function testFiles()
@@ -75,13 +74,6 @@ class AssetConfigTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $this->assertEquals(array(), $this->config->files('nothing here'));
-    }
-
-    public function testSettingFiles()
-    {
-        $this->config->files('new_build.js', array('one.js', 'two.js'));
-
-        $this->assertEquals(array('one.js', 'two.js'), $this->config->files('new_build.js'));
     }
 
     public function testPathConstantReplacement()
@@ -108,13 +100,15 @@ class AssetConfigTest extends TestCase
 
     public function testAddTarget()
     {
-        $this->config->addTarget('testing.js', array('one.js', 'two.js'));
+        $this->config->addTarget('testing.js', [
+            'files' => ['one.js', 'two.js']
+        ]);
         $this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing.js'));
 
         $this->config->addTarget('testing-two.js', array(
-        'files' => array('one.js', 'two.js'),
-        'filters' => array('uglify'),
-        'theme' => true
+            'files' => array('one.js', 'two.js'),
+            'filters' => array('uglify'),
+            'theme' => true
         ));
         $this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing-two.js'));
     }

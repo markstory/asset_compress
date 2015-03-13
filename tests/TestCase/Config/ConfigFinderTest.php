@@ -133,7 +133,7 @@ class ConfigFinderTest extends TestCase
         $expected = array('base.js', 'library_file.js', 'base_class.js');
         $this->assertEquals($expected, $result);
 
-        $result = $config->filters('js', 'libs.js');
+        $result = $config->targetFilters('libs.js');
         $expectedJsFilters[] = 'Uglifyjs';
         $this->assertEquals($expectedJsFilters, $result);
     }

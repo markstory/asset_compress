@@ -99,9 +99,9 @@ class Factory
     {
         $ext = $this->config->getExt($name);
 
-        $filters = $this->config->filters($ext, $name);
         $paths = $this->config->paths($ext, $name);
         $themed = $this->config->isThemed($name);
+        $filters = $this->config->targetFilters($name);
         $target = $this->config->cachePath($ext) . $name;
 
         $files = [];

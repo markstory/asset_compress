@@ -256,32 +256,41 @@ class AssetConfig
     }
 
     /**
-     * Get/set filters for an extension/build file
+     * Get/set filters for an extension
      *
      * @param string $ext Name of an extension
-     * @param string $target A build target. If provided the target's filters (if any) will also be
-     *     returned.
      * @param array $filters Filters to replace either the global or per target filters.
-     * @return array Filters for that extension.
+     * @return array Filters for extension.
      */
-    public function filters($ext, $target = null, $filters = null)
+    public function filters($ext, $filters = null)
     {
         if ($filters === null) {
-            $filters = [];
             if (isset($this->_data[$ext][self::FILTERS])) {
-                $filters = $this->_data[$ext][self::FILTERS];
+                return $this->_data[$ext][self::FILTERS];
             }
-            if ($target !== null && !empty($this->_targets[$target][self::FILTERS])) {
-                $buildFilters = $this->_targets[$target][self::FILTERS];
-                $filters = array_merge($filters, $buildFilters);
-            }
-            return array_unique($filters);
+            return [];
         }
-        if ($target === null) {
-            $this->_data[$ext][self::FILTERS] = $filters;
-        } else {
-            $this->_targets[$target][self::FILTERS] = $filters;
+        $this->_data[$ext][self::FILTERS] = $filters;
+    }
+
+    /**
+     * Get the filters for a build target.
+     *
+     * @param string $name The build target to get filters for.
+     * @return array
+     */
+    public function targetFilters($name)
+    {
+        $ext = $this->getExt($name);
+        $filters = [];
+        if (isset($this->_data[$ext][self::FILTERS])) {
+            $filters = $this->_data[$ext][self::FILTERS];
         }
+        if (!empty($this->_targets[$name][self::FILTERS])) {
+            $buildFilters = $this->_targets[$name][self::FILTERS];
+            $filters = array_merge($filters, $buildFilters);
+        }
+        return array_unique($filters);
     }
 
     /**
@@ -294,13 +303,17 @@ class AssetConfig
     public function allFilters()
     {
         $filters = [];
-        if (isset($this->_filters)) {
-            $filters = array_keys($this->_filters);
+        foreach ($this->extensions() as $ext) {
+            if (empty($this->_data[$ext][self::FILTERS])) {
+                continue;
+            }
+            $filters = array_merge($filters, $this->_data[$ext][self::FILTERS]);
         }
         foreach ($this->_targets as $target) {
-            if (!empty($target[self::FILTERS])) {
-                $filters = array_merge($filters, $target[self::FILTERS]);
+            if (empty($target[self::FILTERS])) {
+                continue;
             }
+            $filters = array_merge($filters, $target[self::FILTERS]);
         }
         return array_unique($filters);
     }
@@ -319,7 +332,7 @@ class AssetConfig
                 return isset($this->_filters[$filter]) ? $this->_filters[$filter] : [];
             }
             if (is_array($filter)) {
-                $result = array();
+                $result = [];
                 foreach ($filter as $f) {
                     $result[$f] = $this->filterConfig($f);
                 }
@@ -335,16 +348,12 @@ class AssetConfig
      * @param string $target The build file with extension.
      * @return array An array of files for the chosen build.
      */
-    public function files($target, $files = null)
+    public function files($target)
     {
-        $ext = $this->getExt($target);
-        if ($files === null) {
-            if (isset($this->_targets[$target]['files'])) {
-                return (array)$this->_targets[$target]['files'];
-            }
-            return [];
+        if (isset($this->_targets[$target]['files'])) {
+            return (array)$this->_targets[$target]['files'];
         }
-        $this->_targets[$target]['files'] = $files;
+        return [];
     }
 
     /**
@@ -444,20 +453,15 @@ class AssetConfig
      *
      * @param string $target Name of the target file. The extension will be inferred based on the last extension.
      * @param array $config Config data for the target. Should contain files, filters and theme key.
-     * @param array $filters The filters for the build (deprecated)
      */
-    public function addTarget($target, array $config, $filters = array())
+    public function addTarget($target, array $config)
     {
         $ext = $this->getExt($target);
-
-        if (!empty($filters) || !isset($config['files'])) {
-             // old method behavior.
-            $config = array(
-                'files' => $config,
-                'filters' => $filters,
-                'theme' => false
-            );
-        }
+        $config += [
+            'files' => [],
+            'filters' => [],
+            'theme' => false,
+        ];
         if (!empty($config['paths'])) {
             $config['paths'] = array_map(array($this, '_replacePathConstants'), (array)$config['paths']);
         }
