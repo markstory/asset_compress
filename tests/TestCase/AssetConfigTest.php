@@ -245,10 +245,4 @@ class AssetConfigTest extends TestCase
         $config = AssetConfig::buildFromIniFile($this->_themeConfig);
         $this->assertTrue($config->isThemed('themed.css'));
     }
-
-    public function testExists()
-    {
-        $this->assertTrue($this->config->exists('libs.js'));
-        $this->assertFalse($this->config->exists('derped.js'));
-    }
 }

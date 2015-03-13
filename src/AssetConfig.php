@@ -502,15 +502,4 @@ class AssetConfig
     {
         return ['css', 'js'];
     }
-
-    /**
-     * Check if a build target exists.
-     *
-     * @param string $file Name of the build file to check.
-     * @return boolean Exists
-     */
-    public function exists($target)
-    {
-        return !empty($this->_targets[$target]);
-    }
 }
