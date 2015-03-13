@@ -218,20 +218,17 @@ class AssetConfig
     public function set($path, $value)
     {
         $parts = explode('.', $path);
-        if (count($parts) > 2) {
-            throw new RuntimeException('Only depth of two can be written to.');
-        }
-        $stack =& $this->_data;
-        while (!empty($parts)) {
-            $key = array_shift($parts);
-            if (empty($stack[$key]) && !empty($parts)) {
-                $stack[$key] = array();
-            }
-            if (!empty($parts)) {
-                $stack =& $stack[$key];
-            } else {
-                $stack[$key] = $value;
-            }
+        switch (count($parts)) {
+            case 2:
+                $this->_data[$parts[0]][$parts[1]] = $value;
+                break;
+            case 1:
+                $this->_data[$parts[0]] = $value;
+                break;
+            case 0:
+                throw new RuntimeException('Path was empty.');
+            default:
+                throw new RuntimeException('Too many parts in path.');
         }
     }
 
@@ -239,19 +236,26 @@ class AssetConfig
      * Get values from the config data.
      *
      * @param string $path The path you want.
+     * @throws RuntimeException On invalid paths.
      */
     public function get($path)
     {
         $parts = explode('.', $path);
-        $stack =& $this->_data;
-        while (!empty($parts)) {
-            $key = array_shift($parts);
-            $moreKeys = !empty($parts);
-            if (isset($stack[$key]) && $moreKeys) {
-                $stack =& $stack[$key];
-            } elseif (!$moreKeys) {
-                return isset($stack[$key]) ? $stack[$key] : null;
-            }
+        switch (count($parts)) {
+            case 2:
+                if (isset($this->_data[$parts[0]][$parts[1]])) {
+                    return $this->_data[$parts[0]][$parts[1]];
+                }
+                break;
+            case 1:
+                if (isset($this->_data[$parts[0]])) {
+                    return $this->_data[$parts[0]];
+                }
+                break;
+            case 0:
+                throw new RuntimeException('Path was empty.');
+            default:
+                throw new RuntimeException('Too many parts in path.');
         }
     }
 
