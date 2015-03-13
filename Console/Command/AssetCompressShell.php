@@ -149,9 +149,12 @@ class AssetCompressShell extends AppShell {
 				}
 			}
 			if (in_array($base, $targets)) {
-				$this->out(' - Deleting ' . $path . $name);
-				unlink($path . $name);
-				continue;
+				$filepath = realpath($path . DS . $name);
+				if (!$filepath) {
+					continue;
+				}
+				$this->out(' - Deleting ' . $filepath);
+				unlink($filepath);
 			}
 		}
 	}
