@@ -61,11 +61,7 @@ class AssetConfig
      *
      * @var array
      */
-    public $constantMap = array(
-        'APP/' => APP,
-        'WEBROOT/' => WWW_ROOT,
-        'ROOT' => ROOT
-    );
+    public $constantMap = [];
 
     const FILTERS = 'filters';
     const FILTER_PREFIX = 'filter_';
@@ -79,10 +75,10 @@ class AssetConfig
      * @param array $additionalConstants  Additional constants that will be translated
      *    when parsing paths.
      */
-    public function __construct(array $data = array(), array $additionalConstants = array())
+    public function __construct(array $data = [], array $constants = [])
     {
         $this->_data = $data ?: static::$_defaults;
-        $this->constantMap = array_merge($this->constantMap, $additionalConstants);
+        $this->constantMap = $constants;
     }
 
     /**

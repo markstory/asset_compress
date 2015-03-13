@@ -24,6 +24,9 @@ class AssetsCompressorTest extends TestCase
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
 
         $map = array(
+            'APP/' => APP,
+            'WEBROOT/' => WWW_ROOT,
+            'ROOT' => ROOT,
             'TEST_FILES/' => APP
         );
         Plugin::load('TestAssetIni');

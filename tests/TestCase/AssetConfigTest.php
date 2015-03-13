@@ -20,7 +20,11 @@ class AssetConfigTest extends TestCase
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
         $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
-        $this->config = AssetConfig::buildFromIniFile($this->testConfig);
+        $this->config = AssetConfig::buildFromIniFile($this->testConfig, [
+            'APP/' => APP,
+            'WEBROOT/' => WWW_ROOT,
+            'ROOT' => ROOT
+        ]);
     }
 
     public function testBuildFromIniFile()
@@ -217,7 +221,11 @@ class AssetConfigTest extends TestCase
     public function testDefaultConventions()
     {
         $ini = dirname($this->testConfig) . DS . 'bare.ini';
-        $config = AssetConfig::buildFromIniFile($ini);
+        $config = AssetConfig::buildFromIniFile($ini, [
+            'APP/' => APP,
+            'WEBROOT/' => WWW_ROOT,
+            'ROOT' => ROOT
+        ]);
 
         $result = $config->paths('js');
         $this->assertEquals(array(WWW_ROOT . 'js/**'), $result);
