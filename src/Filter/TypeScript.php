@@ -1,13 +1,15 @@
 <?php
-App::uses('AssetFilter', 'AssetCompress.Lib');
+namespace AssetCompress\Filter;
+
+use AssetCompress\AssetFilter;
 
 /**
  * Pre-processing filter that adds support for TypeScript files.
  *
  * Requires both nodejs and TypeScript to be installed.
- *
  */
 class TypeScript extends AssetFilter {
+
     protected $_settings = array(
         'ext' => '.ts',
         'typescript' => '/usr/local/bin/tsc',
@@ -26,11 +28,10 @@ class TypeScript extends AssetFilter {
         }
 
         $tmpFile = tempnam(TMP, 'TYPESCRIPT');
-        $cmd = $this->_settings['typescript']." ".$filename." --out ".$tmpFile;
+        $cmd = $this->_settings['typescript'] . " " . escapeshellarg($filename) . " --out " . $tmpFile;
         $this->_runCmd($cmd, null);
         $output = file_get_contents($tmpFile);
-        unlink ($tmpFile);
+        unlink($tmpFile);
         return $output;
     }
 }
-
