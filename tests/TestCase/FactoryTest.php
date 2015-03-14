@@ -39,6 +39,7 @@ class FactoryTest extends TestCase
      */
     public function testFilterRegistryMissingFilter()
     {
+        $this->config->filters('js', ['Derp']);
         $this->config->filterConfig('Derp', ['path' => '/test']);
         $factory = new Factory($this->config);
         $factory->filterRegistry();

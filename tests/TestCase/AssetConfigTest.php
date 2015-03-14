@@ -20,7 +20,11 @@ class AssetConfigTest extends TestCase
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
         $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
-        $this->config = AssetConfig::buildFromIniFile($this->testConfig);
+        $this->config = AssetConfig::buildFromIniFile($this->testConfig, [
+            'APP/' => APP,
+            'WEBROOT/' => WWW_ROOT,
+            'ROOT' => ROOT
+        ]);
     }
 
     public function testBuildFromIniFile()
@@ -42,24 +46,25 @@ class AssetConfigTest extends TestCase
 
     public function testFilters()
     {
+        $expected = ['Sprockets', 'YuiJs'];
         $result = $this->config->filters('js');
-        $this->assertEquals(array('Sprockets', 'YuiJs'), $result);
+        $this->assertEquals($expected, $result);
 
-        $result = $this->config->filters('js', 'libs.js');
-        $this->assertEquals(array('Sprockets', 'YuiJs', 'Uglifyjs'), $result);
-
-        $this->assertEquals(array(), $this->config->filters('nothing'));
+        $this->assertEquals([], $this->config->filters('nothing'));
     }
 
     public function testSettingFilters()
     {
-        $this->config->filters('js', null, array('Uglifyjs'));
+        $this->config->filters('js', array('Uglifyjs'));
         $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
-        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js', 'libs.js'));
+    }
 
-        $this->config->filters('js', 'libs.js', array('Sprockets'));
-        $this->assertEquals(array('Uglifyjs'), $this->config->filters('js'));
-        $this->assertEquals(array('Uglifyjs', 'Sprockets'), $this->config->filters('js', 'libs.js'));
+    public function testTargetFilters()
+    {
+        $this->config->addTarget('libs.js', [
+            'filters' => ['Uglifyjs']
+        ]);
+        $this->assertEquals(['Sprockets', 'YuiJs', 'Uglifyjs'], $this->config->targetFilters('libs.js'));
     }
 
     public function testFiles()
@@ -73,13 +78,6 @@ class AssetConfigTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $this->assertEquals(array(), $this->config->files('nothing here'));
-    }
-
-    public function testSettingFiles()
-    {
-        $this->config->files('new_build.js', array('one.js', 'two.js'));
-
-        $this->assertEquals(array('one.js', 'two.js'), $this->config->files('new_build.js'));
     }
 
     public function testPathConstantReplacement()
@@ -106,13 +104,15 @@ class AssetConfigTest extends TestCase
 
     public function testAddTarget()
     {
-        $this->config->addTarget('testing.js', array('one.js', 'two.js'));
+        $this->config->addTarget('testing.js', [
+            'files' => ['one.js', 'two.js']
+        ]);
         $this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing.js'));
 
         $this->config->addTarget('testing-two.js', array(
-        'files' => array('one.js', 'two.js'),
-        'filters' => array('uglify'),
-        'theme' => true
+            'files' => array('one.js', 'two.js'),
+            'filters' => array('uglify'),
+            'theme' => true
         ));
         $this->assertEquals(array('one.js', 'two.js'), $this->config->files('testing-two.js'));
     }
@@ -162,13 +162,14 @@ class AssetConfigTest extends TestCase
 
     public function testTargets()
     {
-        $this->assertEquals(array(), $this->config->targets('fake'));
-        $expected = array('libs.js', 'foo.bar.js', 'new_file.js');
-        $result = $this->config->targets('js');
-        $this->assertEquals($expected, $result);
-
-        $expected = array('all.css', 'pink.css');
-        $result = $this->config->targets('css');
+        $expected = array(
+            'libs.js',
+            'foo.bar.js',
+            'new_file.js',
+            'all.css',
+            'pink.css'
+        );
+        $result = $this->config->targets();
         $this->assertEquals($expected, $result);
     }
 
@@ -200,7 +201,7 @@ class AssetConfigTest extends TestCase
     public function testExtensions()
     {
         $result = $this->config->extensions();
-        $this->assertEquals(array('js', 'css'), $result);
+        $this->assertEquals(array('css', 'js'), $result);
     }
 
     public function testGeneral()
@@ -220,7 +221,11 @@ class AssetConfigTest extends TestCase
     public function testDefaultConventions()
     {
         $ini = dirname($this->testConfig) . DS . 'bare.ini';
-        $config = AssetConfig::buildFromIniFile($ini);
+        $config = AssetConfig::buildFromIniFile($ini, [
+            'APP/' => APP,
+            'WEBROOT/' => WWW_ROOT,
+            'ROOT' => ROOT
+        ]);
 
         $result = $config->paths('js');
         $this->assertEquals(array(WWW_ROOT . 'js/**'), $result);
@@ -247,11 +252,5 @@ class AssetConfigTest extends TestCase
 
         $config = AssetConfig::buildFromIniFile($this->_themeConfig);
         $this->assertTrue($config->isThemed('themed.css'));
-    }
-
-    public function testExists()
-    {
-        $this->assertTrue($this->config->exists('libs.js'));
-        $this->assertFalse($this->config->exists('derped.js'));
     }
 }

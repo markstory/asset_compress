@@ -65,20 +65,15 @@ class ConfigFinderTest extends TestCase
             'libs.js',
             'foo.bar.js',
             'new_file.js',
-            'TestAssetIni.libs.js',
-            'TestAssetIni.foo.bar.js',
-            'TestAssetIni.overridable_scripts.js'
-        );
-        $result = $config->targets('js');
-        $this->assertEquals($expected, $result);
-
-        $expected = array(
             'all.css',
             'pink.css',
+            'TestAssetIni.libs.js',
+            'TestAssetIni.foo.bar.js',
             'TestAssetIni.all.css',
+            'TestAssetIni.overridable_scripts.js',
             'TestAssetIni.overridable_styles.css'
         );
-        $result = $config->targets('css');
+        $result = $config->targets();
         $this->assertEquals($expected, $result);
     }
 
@@ -138,7 +133,7 @@ class ConfigFinderTest extends TestCase
         $expected = array('base.js', 'library_file.js', 'base_class.js');
         $this->assertEquals($expected, $result);
 
-        $result = $config->filters('js', 'libs.js');
+        $result = $config->targetFilters('libs.js');
         $expectedJsFilters[] = 'Uglifyjs';
         $this->assertEquals($expectedJsFilters, $result);
     }

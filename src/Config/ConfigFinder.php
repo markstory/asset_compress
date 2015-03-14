@@ -21,7 +21,11 @@ class ConfigFinder
         if (!$path) {
             $path = CONFIG . 'asset_compress.ini';
         }
-        $config = new AssetConfig();
+        $config = new AssetConfig([], [
+            'APP/' => APP,
+            'WEBROOT/' => WWW_ROOT,
+            'ROOT' => ROOT
+        ]);
         $this->_load($config, $path);
 
         $plugins = Plugin::loaded();

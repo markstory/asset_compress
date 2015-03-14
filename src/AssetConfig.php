@@ -15,7 +15,21 @@ class AssetConfig
      *
      * @var array
      */
-    protected $_data = array();
+    protected $_data = [];
+
+    /**
+     * Filter configuration
+     *
+     * @var array
+     */
+    protected $_filters = [];
+
+    /**
+     * Target configuration
+     *
+     * @var array
+     */
+    protected $_targets = [];
 
     /**
      * Defaults and conventions for configuration.
@@ -47,11 +61,7 @@ class AssetConfig
      *
      * @var array
      */
-    public $constantMap = array(
-        'APP/' => APP,
-        'WEBROOT/' => WWW_ROOT,
-        'ROOT' => ROOT
-    );
+    public $constantMap = [];
 
     const FILTERS = 'filters';
     const FILTER_PREFIX = 'filter_';
@@ -65,10 +75,10 @@ class AssetConfig
      * @param array $additionalConstants  Additional constants that will be translated
      *    when parsing paths.
      */
-    public function __construct(array $data = array(), array $additionalConstants = array())
+    public function __construct(array $data = [], array $constants = [])
     {
         $this->_data = $data ?: static::$_defaults;
-        $this->constantMap = array_merge($this->constantMap, $additionalConstants);
+        $this->constantMap = $constants;
     }
 
     /**
@@ -159,13 +169,6 @@ class AssetConfig
     public function addExtension($ext, array $config)
     {
         $this->_data[$ext] = $this->_parseExtensionDef($config);
-        if (!empty($this->_data[$ext][self::FILTERS])) {
-            foreach ($this->_data[$ext][self::FILTERS] as $filter) {
-                if (empty($this->_data[self::FILTERS][$filter])) {
-                    $this->_data[self::FILTERS][$filter] = array();
-                }
-            }
-        }
     }
 
     /**
@@ -197,8 +200,7 @@ class AssetConfig
      */
     protected function _replacePathConstants($path)
     {
-        $result = strtr($path, $this->constantMap);
-        return $result;
+        return strtr($path, $this->constantMap);
     }
 
     /**
@@ -212,20 +214,17 @@ class AssetConfig
     public function set($path, $value)
     {
         $parts = explode('.', $path);
-        if (count($parts) > 2) {
-            throw new RuntimeException('Only depth of two can be written to.');
-        }
-        $stack =& $this->_data;
-        while (!empty($parts)) {
-            $key = array_shift($parts);
-            if (empty($stack[$key]) && !empty($parts)) {
-                $stack[$key] = array();
-            }
-            if (!empty($parts)) {
-                $stack =& $stack[$key];
-            } else {
-                $stack[$key] = $value;
-            }
+        switch (count($parts)) {
+            case 2:
+                $this->_data[$parts[0]][$parts[1]] = $value;
+                break;
+            case 1:
+                $this->_data[$parts[0]] = $value;
+                break;
+            case 0:
+                throw new RuntimeException('Path was empty.');
+            default:
+                throw new RuntimeException('Too many parts in path.');
         }
     }
 
@@ -233,55 +232,65 @@ class AssetConfig
      * Get values from the config data.
      *
      * @param string $path The path you want.
+     * @throws RuntimeException On invalid paths.
      */
     public function get($path)
     {
         $parts = explode('.', $path);
-        $stack =& $this->_data;
-        while (!empty($parts)) {
-            $key = array_shift($parts);
-            $moreKeys = !empty($parts);
-            if (isset($stack[$key]) && $moreKeys) {
-                $stack =& $stack[$key];
-            } elseif (!$moreKeys) {
-                return isset($stack[$key]) ? $stack[$key] : null;
-            }
+        switch (count($parts)) {
+            case 2:
+                if (isset($this->_data[$parts[0]][$parts[1]])) {
+                    return $this->_data[$parts[0]][$parts[1]];
+                }
+                break;
+            case 1:
+                if (isset($this->_data[$parts[0]])) {
+                    return $this->_data[$parts[0]];
+                }
+                break;
+            case 0:
+                throw new RuntimeException('Path was empty.');
+            default:
+                throw new RuntimeException('Too many parts in path.');
         }
     }
 
     /**
-     * Get/set filters for an extension/build file
+     * Get/set filters for an extension
      *
      * @param string $ext Name of an extension
-     * @param string $target A build target. If provided the target's filters (if any) will also be
-     *     returned.
      * @param array $filters Filters to replace either the global or per target filters.
-     * @return array Filters for that extension.
+     * @return array Filters for extension.
      */
-    public function filters($ext, $target = null, $filters = null)
+    public function filters($ext, $filters = null)
     {
         if ($filters === null) {
-            if (!isset($this->_data[$ext][self::FILTERS])) {
-                $filters = array();
-            } else {
-                $filters = (array)$this->_data[$ext][self::FILTERS];
+            if (isset($this->_data[$ext][self::FILTERS])) {
+                return $this->_data[$ext][self::FILTERS];
             }
-            if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target][self::FILTERS])) {
-                $buildFilters = $this->_data[$ext][self::TARGETS][$target][self::FILTERS];
-                $filters = array_merge($filters, $buildFilters);
-            }
-            return array_unique($filters);
+            return [];
         }
-        if ($target === null) {
-            $this->_data[$ext][self::FILTERS] = $filters;
-            foreach ($filters as $f) {
-                if (empty($this->_data[self::FILTERS][$f])) {
-                    $this->_data[self::FILTERS][$f] = array();
-                }
-            }
-        } else {
-            $this->_data[$ext][self::TARGETS][$target][self::FILTERS] = $filters;
+        $this->_data[$ext][self::FILTERS] = $filters;
+    }
+
+    /**
+     * Get the filters for a build target.
+     *
+     * @param string $name The build target to get filters for.
+     * @return array
+     */
+    public function targetFilters($name)
+    {
+        $ext = $this->getExt($name);
+        $filters = [];
+        if (isset($this->_data[$ext][self::FILTERS])) {
+            $filters = $this->_data[$ext][self::FILTERS];
         }
+        if (!empty($this->_targets[$name][self::FILTERS])) {
+            $buildFilters = $this->_targets[$name][self::FILTERS];
+            $filters = array_merge($filters, $buildFilters);
+        }
+        return array_unique($filters);
     }
 
     /**
@@ -294,18 +303,17 @@ class AssetConfig
     public function allFilters()
     {
         $filters = [];
-        if (isset($this->_data[self::FILTERS])) {
-            $filters = array_keys($this->_data[self::FILTERS]);
-        }
         foreach ($this->extensions() as $ext) {
-            if (empty($this->_data[$ext][self::TARGETS])) {
+            if (empty($this->_data[$ext][self::FILTERS])) {
                 continue;
             }
-            foreach ($this->_data[$ext][self::TARGETS] as $target) {
-                if (!empty($target[self::FILTERS])) {
-                    $filters = array_merge($filters, $target[self::FILTERS]);
-                }
+            $filters = array_merge($filters, $this->_data[$ext][self::FILTERS]);
+        }
+        foreach ($this->_targets as $target) {
+            if (empty($target[self::FILTERS])) {
+                continue;
             }
+            $filters = array_merge($filters, $target[self::FILTERS]);
         }
         return array_unique($filters);
     }
@@ -321,17 +329,17 @@ class AssetConfig
     {
         if ($settings === null) {
             if (is_string($filter)) {
-                return isset($this->_data[self::FILTERS][$filter]) ? $this->_data[self::FILTERS][$filter] : array();
+                return isset($this->_filters[$filter]) ? $this->_filters[$filter] : [];
             }
             if (is_array($filter)) {
-                $result = array();
+                $result = [];
                 foreach ($filter as $f) {
                     $result[$f] = $this->filterConfig($f);
                 }
                 return $result;
             }
         }
-        $this->_data[self::FILTERS][$filter] = $settings;
+        $this->_filters[$filter] = $settings;
     }
 
     /**
@@ -340,16 +348,12 @@ class AssetConfig
      * @param string $target The build file with extension.
      * @return array An array of files for the chosen build.
      */
-    public function files($target, $files = null)
+    public function files($target)
     {
-        $ext = $this->getExt($target);
-        if ($files === null) {
-            if (isset($this->_data[$ext][self::TARGETS][$target]['files'])) {
-                return (array)$this->_data[$ext][self::TARGETS][$target]['files'];
-            }
-            return array();
+        if (isset($this->_targets[$target]['files'])) {
+            return (array)$this->_targets[$target]['files'];
         }
-        $this->_data[$ext][self::TARGETS][$target]['files'] = $files;
+        return [];
     }
 
     /**
@@ -381,8 +385,8 @@ class AssetConfig
             } else {
                 $paths = (array)$this->_data[$ext]['paths'];
             }
-            if ($target !== null && !empty($this->_data[$ext][self::TARGETS][$target]['paths'])) {
-                $buildPaths = $this->_data[$ext][self::TARGETS][$target]['paths'];
+            if ($target !== null && !empty($this->_targets[$target]['paths'])) {
+                $buildPaths = $this->_targets[$target]['paths'];
                 $paths = array_merge($paths, $buildPaths);
             }
             return array_unique($paths);
@@ -392,7 +396,7 @@ class AssetConfig
         if ($target === null) {
             $this->_data[$ext]['paths'] = $paths;
         } else {
-            $this->_data[$ext][self::TARGETS][$target]['paths'] = $paths;
+            $this->_targets[$target]['paths'] = $paths;
         }
     }
 
@@ -432,17 +436,16 @@ class AssetConfig
     }
 
     /**
-     * Get the build targets for an extension.
+     * Get the build targets.
      *
-     * @param string $ext The extension you want targets for.
-     * @return array An array of build targets for the extension.
+     * @return array An array of build targets.
      */
-    public function targets($ext)
+    public function targets()
     {
-        if (empty($this->_data[$ext][self::TARGETS])) {
+        if (empty($this->_targets)) {
             return array();
         }
-        return array_keys($this->_data[$ext][self::TARGETS]);
+        return array_keys($this->_targets);
     }
 
     /**
@@ -450,24 +453,19 @@ class AssetConfig
      *
      * @param string $target Name of the target file. The extension will be inferred based on the last extension.
      * @param array $config Config data for the target. Should contain files, filters and theme key.
-     * @param array $filters The filters for the build (deprecated)
      */
-    public function addTarget($target, array $config, $filters = array())
+    public function addTarget($target, array $config)
     {
         $ext = $this->getExt($target);
-
-        if (!empty($filters) || !isset($config['files'])) {
-             // old method behavior.
-            $config = array(
-                'files' => $config,
-                'filters' => $filters,
-                'theme' => false
-            );
-        }
+        $config += [
+            'files' => [],
+            'filters' => [],
+            'theme' => false,
+        ];
         if (!empty($config['paths'])) {
             $config['paths'] = array_map(array($this, '_replacePathConstants'), (array)$config['paths']);
         }
-        $this->_data[$ext][self::TARGETS][$target] = $config;
+        $this->_targets[$target] = $config;
     }
 
     /**
@@ -492,8 +490,7 @@ class AssetConfig
      */
     public function isThemed($target)
     {
-        $ext = $this->getExt($target);
-        return !empty($this->_data[$ext][self::TARGETS][$target]['theme']);
+        return !empty($this->_targets[$target]['theme']);
     }
 
     /**
@@ -503,20 +500,6 @@ class AssetConfig
      */
     public function extensions()
     {
-        $exts = array_flip(array_keys($this->_data));
-        unset($exts[self::FILTERS], $exts[self::GENERAL]);
-        return array_keys($exts);
-    }
-
-    /**
-     * Check if a build target exists.
-     *
-     * @param string $file Name of the build file to check.
-     * @return boolean Exists
-     */
-    public function exists($target)
-    {
-        $ext = $this->getExt($target);
-        return !empty($this->_data[$ext][self::TARGETS][$target]);
+        return ['css', 'js'];
     }
 }
