@@ -1,5 +1,5 @@
 <?php
-namespace AssetCompress;
+namespace AssetCompress\Output;
 
 use AssetCompress\AssetTarget;
 use RuntimeException;

@@ -1,7 +1,7 @@
 <?php
-namespace AssetCompress\Test\TestCase;
+namespace AssetCompress\Test\TestCase\Output;
 
-use AssetCompress\AssetWriter;
+use AssetCompress\Output\AssetWriter;
 use AssetCompress\AssetTarget;
 use AssetCompress\File\Local;
 use Cake\TestSuite\TestCase;

@@ -1,15 +1,15 @@
 <?php
 namespace AssetCompress;
 
-use AssetCompress\AssetCacher;
-use AssetCompress\AssetConfig;
 use AssetCompress\AssetCollection;
 use AssetCompress\AssetCompiler;
+use AssetCompress\AssetConfig;
 use AssetCompress\AssetTarget;
-use AssetCompress\AssetWriter;
-use AssetCompress\Filter\FilterRegistry;
-use AssetCompress\File\Remote;
 use AssetCompress\File\Local;
+use AssetCompress\File\Remote;
+use AssetCompress\Filter\FilterRegistry;
+use AssetCompress\Output\AssetCacher;
+use AssetCompress\Output\AssetWriter;
 use Cake\Core\App;
 use RuntimeException;
 

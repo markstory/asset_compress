@@ -1,9 +1,7 @@
 <?php
 namespace AssetCompress\Routing\Filter;
 
-use AssetCompress\AssetCompiler;
 use AssetCompress\Config\ConfigFinder;
-use AssetCompress\AssetWriter;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Event\Event;
