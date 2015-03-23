@@ -17,7 +17,7 @@
 		"source": "https://github.com/markstory/asset_compress"
 	},
 	"require": {
-		"cakephp/cakephp": "3.0.*-dev"
+		"cakephp/cakephp": "~3.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "4.1.*"
