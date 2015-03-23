@@ -59,7 +59,9 @@ class Factory
             'js' => $this->config->get('js.timestamp'),
             'css' => $this->config->get('css.timestamp'),
         ];
-        return new AssetWriter($timestamp, TMP, $this->config->theme());
+        $writer = new AssetWriter($timestamp, TMP, $this->config->theme());
+        $writer->configTimestamp($this->config->modifiedTime());
+        return $writer;
     }
 
     /**
@@ -69,10 +71,12 @@ class Factory
      */
     public function cacher()
     {
-        return new AssetCacher(
+        $cache = new AssetCacher(
             CACHE . 'asset_compress' . DS,
             $this->config->theme()
         );
+        $cache->configTimestamp($this->config->modifiedTime());
+        return $cache;
     }
 
     /**
