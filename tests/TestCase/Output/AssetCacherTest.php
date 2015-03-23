@@ -27,6 +27,15 @@ class AssetCacherTest extends TestCase
         $this->themed = new AssetCacher(TMP, 'Modern');
     }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+        $path = TMP . 'Modern-template.js';
+        if (file_exists($path)) {
+            unlink($path);
+        }
+    }
+
     public function testBuildFileName()
     {
         $result = $this->cacher->buildFileName($this->target);
@@ -76,4 +85,10 @@ class AssetCacherTest extends TestCase
         $this->assertFalse($this->themed->isFresh($this->target));
     }
 
+    public function testIsFreshConfigOld()
+    {
+        file_put_contents(TMP . 'Modern-template.js', 'contents');
+        $this->themed->configTimestamp(time() + 10);
+        $this->assertFalse($this->themed->isFresh($this->target));
+    }
 }

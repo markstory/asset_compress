@@ -56,6 +56,14 @@ class AssetWriterTest extends TestCase
         unlink(TMP . '/test.js');
     }
 
+    public function testIsFreshConfigOld()
+    {
+        file_put_contents(TMP . '/test.js', 'contents');
+        $this->writer->configTimestamp(time() + 10);
+        $this->assertFalse($this->writer->isFresh($this->target));
+        unlink(TMP . '/test.js');
+    }
+
     public function testThemeFileSaving()
     {
         $writer = new AssetWriter(['js' => false, 'css' => false], TMP, 'blue');

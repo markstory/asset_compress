@@ -2,6 +2,7 @@
 namespace AssetCompress\Output;
 
 use AssetCompress\AssetTarget;
+use AssetCompress\Output\FreshTrait;
 use RuntimeException;
 
 /**
@@ -10,6 +11,8 @@ use RuntimeException;
  */
 class AssetWriter
 {
+    use FreshTrait;
+
     const BUILD_TIME_FILE = 'asset_compress_build_time';
 
     protected $timestamp = [];
@@ -72,33 +75,6 @@ class AssetWriter
         $success = file_put_contents($path . DS . $filename, $content) !== false;
         $this->finalize($build);
         return $success;
-    }
-
-    /**
-     * Check to see if a cached build file is 'fresh'.
-     * Fresh cached files have timestamps newer than all of the component
-     * files.
-     *
-     * @param AssetTarget $target The target file being built.
-     * @return boolean
-     */
-    public function isFresh(AssetTarget $target)
-    {
-        $buildName = $this->buildFileName($target);
-        $buildFile = $target->outputDir() . DS . $buildName;
-
-        if (!file_exists($buildFile)) {
-            return false;
-        }
-        $buildTime = filemtime($buildFile);
-
-        foreach ($target->files() as $file) {
-            $time = $file->modifiedTime();
-            if ($time === false || $time >= $buildTime) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

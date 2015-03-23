@@ -2,6 +2,7 @@
 namespace AssetCompress\Output;
 
 use AssetCompress\AssetTarget;
+use AssetCompress\Output\FreshTrait;
 use Cake\Filesystem\Folder;
 
 /**
@@ -13,7 +14,20 @@ use Cake\Filesystem\Folder;
  */
 class AssetCacher
 {
+    use FreshTrait;
+
+    /**
+     * The output path
+     *
+     * @var string
+     */
     protected $path;
+
+    /**
+     * The theme currently being built.
+     *
+     * @var string
+     */
     protected $theme;
 
     public function __construct($path, $theme = null)
@@ -22,32 +36,19 @@ class AssetCacher
         $this->theme = $theme;
     }
 
-    public function buildFileName($target)
+    /**
+     * Get the final build file name for a target.
+     *
+     * @param AssetTarget $target The target to get a name for.
+     * @return string
+     */
+    public function buildFileName(AssetTarget $target)
     {
         $file = $target->name();
         if ($target->isThemed() && $this->theme) {
             $file = $this->theme . '-' . $file;
         }
         return $file;
-    }
-
-    public function isFresh(AssetTarget $target)
-    {
-        $buildName = $this->buildFileName($target);
-        $buildFile = $this->path . $buildName;
-
-        if (!file_exists($buildFile)) {
-            return false;
-        }
-        $buildTime = filemtime($buildFile);
-
-        foreach ($target->files() as $file) {
-            $time = $file->modifiedTime();
-            if ($time === false || $time >= $buildTime) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public function write(AssetTarget $target, $contents)
@@ -57,12 +58,23 @@ class AssetCacher
         file_put_contents($this->path . $buildName, $contents);
     }
 
+    /**
+     * Create the output directory if it doesn't already exist.
+     *
+     * @return void
+     */
     public function ensureDir()
     {
         $folder = new Folder($this->path, true);
         $folder->chmod($this->path, 0777);
     }
 
+    /**
+     * Get the cached result for a build target.
+     *
+     * @param AssetTarget $target The target to get content for.
+     * @return string
+     */
     public function read(AssetTarget $target)
     {
         $buildName = $this->buildFileName($target);
