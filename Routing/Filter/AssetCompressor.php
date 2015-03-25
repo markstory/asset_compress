@@ -115,7 +115,8 @@ class AssetCompressor extends DispatcherFilter {
  */
 	protected function _getConfig() {
 		if (empty($this->_Config)) {
-			$this->_Config = AssetConfig::buildFromIniFile();
+			$settings = (array)Configure::read('AssetCompress');
+			$this->_Config = AssetConfig::buildFromIniFile(!empty($settings['iniFile']) ? $settings['iniFile'] : null);
 		}
 		return $this->_Config;
 	}
