@@ -1,15 +1,15 @@
 <?php
 namespace AssetCompress;
 
-use AssetCompress\AssetCacher;
-use AssetCompress\AssetConfig;
 use AssetCompress\AssetCollection;
 use AssetCompress\AssetCompiler;
+use AssetCompress\AssetConfig;
 use AssetCompress\AssetTarget;
-use AssetCompress\AssetWriter;
-use AssetCompress\Filter\FilterRegistry;
-use AssetCompress\File\Remote;
 use AssetCompress\File\Local;
+use AssetCompress\File\Remote;
+use AssetCompress\Filter\FilterRegistry;
+use AssetCompress\Output\AssetCacher;
+use AssetCompress\Output\AssetWriter;
 use Cake\Core\App;
 use RuntimeException;
 
@@ -59,7 +59,9 @@ class Factory
             'js' => $this->config->get('js.timestamp'),
             'css' => $this->config->get('css.timestamp'),
         ];
-        return new AssetWriter($timestamp, TMP, $this->config->theme());
+        $writer = new AssetWriter($timestamp, TMP, $this->config->theme());
+        $writer->configTimestamp($this->config->modifiedTime());
+        return $writer;
     }
 
     /**
@@ -69,10 +71,12 @@ class Factory
      */
     public function cacher()
     {
-        return new AssetCacher(
+        $cache = new AssetCacher(
             CACHE . 'asset_compress' . DS,
             $this->config->theme()
         );
+        $cache->configTimestamp($this->config->modifiedTime());
+        return $cache;
     }
 
     /**

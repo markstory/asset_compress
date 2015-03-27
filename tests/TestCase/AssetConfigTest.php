@@ -32,6 +32,16 @@ class AssetConfigTest extends TestCase
         $config = AssetConfig::buildFromIniFile($this->testConfig);
         $this->assertEquals(1, $config->get('js.timestamp'));
         $this->assertEquals(1, $config->general('writeCache'));
+        $this->assertEquals(filemtime($this->testConfig), $config->modifiedTime());
+    }
+
+    public function testLoadUpdatesModifiedTime()
+    {
+        $config = AssetConfig::buildFromIniFile($this->testConfig);
+        $this->assertEquals(filemtime($this->testConfig), $config->modifiedTime());
+
+        $config->load($this->_themeConfig);
+        $this->assertEquals(filemtime($this->_themeConfig), $config->modifiedTime());
     }
 
     public function testExceptionOnBogusFile()

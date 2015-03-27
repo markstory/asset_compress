@@ -1,7 +1,7 @@
 <?php
-namespace AssetCompress\Test\TestCase;
+namespace AssetCompress\Test\TestCase\Output;
 
-use AssetCompress\AssetCacher;
+use AssetCompress\Output\AssetCacher;
 use AssetCompress\AssetTarget;
 use AssetCompress\File\Local;
 use Cake\TestSuite\TestCase;
@@ -25,6 +25,15 @@ class AssetCacherTest extends TestCase
         );
         $this->cacher = new AssetCacher(TMP);
         $this->themed = new AssetCacher(TMP, 'Modern');
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $path = TMP . 'Modern-template.js';
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
     public function testBuildFileName()
@@ -76,4 +85,10 @@ class AssetCacherTest extends TestCase
         $this->assertFalse($this->themed->isFresh($this->target));
     }
 
+    public function testIsFreshConfigOld()
+    {
+        file_put_contents(TMP . 'Modern-template.js', 'contents');
+        $this->themed->configTimestamp(time() + 10);
+        $this->assertFalse($this->themed->isFresh($this->target));
+    }
 }

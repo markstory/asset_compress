@@ -57,6 +57,13 @@ class AssetConfig
     );
 
     /**
+     * The max modified time of all the config files loaded.
+     *
+     * @var int
+     */
+    protected $_modifiedTime = 0;
+
+    /**
      * A hash of constants that can be expanded when reading ini files.
      *
      * @var array
@@ -151,6 +158,7 @@ class AssetConfig
         if (empty($filename) || !is_string($filename) || !file_exists($filename)) {
             throw new RuntimeException(sprintf('Configuration file "%s" was not found.', $filename));
         }
+        $this->_modifiedTime = max($this->_modifiedTime, filemtime($filename));
 
         if (function_exists('parse_ini_file')) {
             return parse_ini_file($filename, true);
@@ -501,5 +509,15 @@ class AssetConfig
     public function extensions()
     {
         return ['css', 'js'];
+    }
+
+    /**
+     * Get the modified time of the loaded configuration files.
+     *
+     * @return int
+     */
+    public function modifiedTime()
+    {
+        return $this->_modifiedTime;
     }
 }

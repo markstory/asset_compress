@@ -1,7 +1,7 @@
 <?php
-namespace AssetCompress\Test\TestCase;
+namespace AssetCompress\Test\TestCase\Output;
 
-use AssetCompress\AssetWriter;
+use AssetCompress\Output\AssetWriter;
 use AssetCompress\AssetTarget;
 use AssetCompress\File\Local;
 use Cake\TestSuite\TestCase;
@@ -53,6 +53,14 @@ class AssetWriterTest extends TestCase
         touch(TMP . '/test.js');
 
         $this->assertTrue($this->writer->isFresh($this->target));
+        unlink(TMP . '/test.js');
+    }
+
+    public function testIsFreshConfigOld()
+    {
+        file_put_contents(TMP . '/test.js', 'contents');
+        $this->writer->configTimestamp(time() + 10);
+        $this->assertFalse($this->writer->isFresh($this->target));
         unlink(TMP . '/test.js');
     }
 
