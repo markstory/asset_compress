@@ -128,7 +128,7 @@ class AssetCollection implements Countable, Iterator
      */
     public function count()
     {
-        return count($this->indexed);
+        return count($this->items);
     }
 
     public function rewind()

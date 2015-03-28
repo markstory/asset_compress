@@ -86,10 +86,7 @@ class Factory
      */
     public function assetCollection()
     {
-        $assets = [];
-        foreach ($this->config->extensions() as $ext) {
-            $assets = array_merge($assets, $this->config->targets($ext));
-        }
+        $assets = $this->config->targets();
         return new AssetCollection($assets, $this);
     }
 
