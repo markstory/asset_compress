@@ -34,4 +34,15 @@ interface AssetFilterInterface
      * @return array Updated Settings.
      */
     public function settings(array $settings = null);
+
+    /**
+     * Find any additional filter based dependencies.
+     *
+     * Preprocessor filters can use this hook method to find a list of dependent
+     * files. For example, `import` statements in Less/Sass.
+     *
+     * @param AssetTarget $target The target to find dependencies for this filter.
+     * @return array An array of AssetCompress\File\Local objects.
+     */
+    public function getDependencies(AssetTarget $target);
 }
