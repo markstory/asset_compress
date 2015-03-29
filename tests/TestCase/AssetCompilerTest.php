@@ -93,8 +93,11 @@ TEXT;
         $compiler = $this->instance();
         $result = $compiler->generate($target);
         $expected = <<<TEXT
-#footer
+@import 'base';
+@import 'nav.css';
+#footer {
     color: blue;
+}
 
 @import url("reset/reset.css");
 #nav {
