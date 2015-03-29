@@ -16,7 +16,8 @@ class LessCss extends AssetFilter
     protected $_settings = array(
         'ext' => '.less',
         'node' => '/usr/local/bin/node',
-        'node_path' => '/usr/local/lib/node_modules'
+        'node_path' => '/usr/local/lib/node_modules',
+        'paths' => [],
     );
 
     /**
@@ -50,12 +51,12 @@ var less = require('less'),
 
 var parser = new less.Parser({ paths: %s });
 parser.parse(%s, function (e, tree) {
-	if (e) {
-		less.writeError(e);
-		process.exit(1)
-	}	
-	util.print(tree.toCSS());
-	process.exit(0);
+    if (e) {
+        less.writeError(e);
+        process.exit(1)
+    }
+    util.print(tree.toCSS());
+    process.exit(0);
 });
 JS;
         file_put_contents($file, sprintf($text, str_replace('\/*', '', json_encode($this->_settings['paths'])), json_encode($input)));
