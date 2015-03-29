@@ -2,9 +2,8 @@
 namespace AssetCompress\Filter;
 
 use AssetCompress\AssetTarget;
-use AssetCompress\File\Local;
+use AssetCompress\Filter\CssDependencyTrait;
 use AssetCompress\AssetFilter;
-use AssetCompress\Utility\CssUtils;
 
 /**
  * Pre-processing filter that adds support for LESS.css files.
@@ -15,6 +14,7 @@ use AssetCompress\Utility\CssUtils;
  */
 class LessCss extends AssetFilter
 {
+    use CssDependencyTrait;
 
     protected $_settings = array(
         'ext' => '.less',
@@ -22,61 +22,6 @@ class LessCss extends AssetFilter
         'node_path' => '/usr/local/lib/node_modules',
         'paths' => [],
     );
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies(AssetTarget $target)
-    {
-        $children = [];
-        foreach ($target->files() as $file) {
-            $imports = CssUtils::extractImports($file->contents());
-            if (empty($imports)) {
-                continue;
-            }
-
-            $lessFiles = [];
-            foreach ($imports as $name) {
-                if ('.css' === substr($name, -4)) {
-                    // skip normal css imports
-                    continue;
-                }
-                if ('.less' !== substr($name, -5)) {
-                    $name .= '.less';
-                }
-                $lessFiles[] = $name;
-            }
-            foreach ($lessFiles as $import) {
-                $path = $this->_findFile($import);
-                $file = new Local($path);
-                $newTarget = new AssetTarget('phony.css', [$file]);
-
-                $children[] = $file;
-                // Only recurse through less imports as css files are not
-                // inlined by less.
-                if ('.less' === substr($import, -5)) {
-                    $children = array_merge($children, $this->getDependencies($newTarget));
-                }
-            }
-        }
-        return $children;
-    }
-
-    /**
-     * Attempt to locate a file in the configured paths.
-     *
-     * @param string $file The file to find.
-     * @return string The resolved file.
-     */
-    protected function _findFile($file)
-    {
-        foreach ($this->_settings['paths'] as $path) {
-            if (file_exists($path . $file)) {
-                return $path . $file;
-            }
-        }
-        return $file;
-    }
 
     /**
      * Runs `lessc` against any files that match the configured extension.
