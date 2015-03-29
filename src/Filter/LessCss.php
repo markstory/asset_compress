@@ -105,7 +105,7 @@ class LessCss extends AssetFilter
     {
         $text = <<<JS
 var less = require('less'),
-	util = require('util');
+    util = require('util');
 
 var parser = new less.Parser({ paths: %s });
 parser.parse(%s, function (e, tree) {
