@@ -395,9 +395,7 @@ class AssetCompressHelper extends Helper
             $query['theme'] = $this->theme;
         }
 
-        if (substr($base, -1) !== DS && DS !== '\\') {
-            $base .= '/';
-        }
+        $base = rtrim($base, '/') . '/';
         $query = empty($query) ? '' : '?' . http_build_query($query);
         return $base . $file->name() . $query;
     }
