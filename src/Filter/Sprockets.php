@@ -3,6 +3,8 @@ namespace AssetCompress\Filter;
 
 use AssetCompress\AssetFilter;
 use AssetCompress\AssetScanner;
+use AssetCompress\AssetTarget;
+use AssetCompress\File\Local;
 use Cake\Utility\Hash;
 
 /**
@@ -125,5 +127,33 @@ class Sprockets extends AssetFilter
             return $file;
         }
         throw new \Exception('Sprockets - Could not locate file "' . $filename . '"');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDependencies(AssetTarget $target)
+    {
+        $children = [];
+        foreach ($target->files() as $file) {
+            $contents = $file->contents();
+            preg_match($this->_pattern, $contents, $matches);
+            if (empty($matches)) {
+                continue;
+            }
+
+            if ($matches[1] === '"') {
+                // Same directory include
+                $path = $this->_findFile($matches[2], dirname($file->path()) . DS);
+            } else {
+                // scan all paths
+                $path = $this->_findFile($matches[2]);
+            }
+            $dep = new Local($path);
+            $children[] = $dep;
+            $newTarget = new AssetTarget('phony.js', [$dep]);
+            $children = array_merge($children, $this->getDependencies($newTarget));
+        }
+        return $children;
     }
 }
