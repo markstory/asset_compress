@@ -22,7 +22,7 @@ class CssUtils
             return $imports;
         }
         foreach ($matches as $match) {
-            $url = empty($matches[2]) ? $match[4] : $match[2];
+            $url = empty($match[2]) ? $match[4] : $match[2];
             $imports[] = $url;
         }
         return $imports;
