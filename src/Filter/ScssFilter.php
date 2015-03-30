@@ -2,6 +2,7 @@
 namespace AssetCompress\Filter;
 
 use AssetCompress\AssetFilter;
+use AssetCompress\Filter\CssDependencyTrait;
 
 /**
  * Pre-processing filter that adds support for SCSS files.
@@ -12,11 +13,13 @@ use AssetCompress\AssetFilter;
  */
 class ScssFilter extends AssetFilter
 {
+    use CssDependencyTrait;
 
     protected $_settings = array(
         'ext' => '.scss',
         'sass' => '/usr/bin/sass',
         'path' => '/usr/bin',
+        'paths' => [],
     );
 
     /**

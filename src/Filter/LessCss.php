@@ -1,7 +1,6 @@
 <?php
 namespace AssetCompress\Filter;
 
-use AssetCompress\AssetTarget;
 use AssetCompress\Filter\CssDependencyTrait;
 use AssetCompress\AssetFilter;
 

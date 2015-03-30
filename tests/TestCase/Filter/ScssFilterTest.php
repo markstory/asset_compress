@@ -1,6 +1,8 @@
 <?php
 namespace AssetCompress\Test\TestCase\Filter;
 
+use AssetCompress\AssetTarget;
+use AssetCompress\File\Local;
 use AssetCompress\Filter\ScssFilter;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -13,6 +15,9 @@ class ScssFilterTest extends TestCase
         parent::setUp();
         $this->_cssDir = APP . 'css' . DS;
         $this->filter = new ScssFilter();
+        $this->filter->settings([
+            'paths' => [$this->_cssDir]
+        ]);
     }
 
     public function testParsing()
@@ -26,5 +31,17 @@ class ScssFilterTest extends TestCase
         $result = $this->filter->input($this->_cssDir . 'test.scss', $content);
         $expected = file_get_contents($this->_cssDir . 'compiled_scss.css');
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetDependencies()
+    {
+        $files = [
+            new Local($this->_cssDir . 'test.scss')
+        ];
+        $target = new AssetTarget('test.css', $files);
+        $result = $this->filter->getDependencies($target);
+
+        $this->assertCount(1, $result);
+        $this->assertEquals('colors.scss', $result[0]->name());
     }
 }
