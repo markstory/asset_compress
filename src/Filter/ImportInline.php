@@ -3,7 +3,6 @@ namespace AssetCompress\Filter;
 
 use AssetCompress\AssetFilter;
 use AssetCompress\AssetScanner;
-use Cake\Utility\Hash;
 use RuntimeException;
 
 /**
@@ -17,16 +16,18 @@ class ImportInline extends AssetFilter
 
     protected $scanner = null;
 
-    protected $_loaded = array();
+    protected $_loaded = [];
 
-    public function settings(array $settings = null)
+    protected function scanner()
     {
-        parent::settings($settings);
+        if (isset($this->scanner)) {
+            return $this->scanner;
+        }
         $this->scanner = new AssetScanner(
-            (array)Hash::get($this->_settings, 'paths'),
-            Hash::get($this->_settings, 'theme')
+            $this->_settings['paths'],
+            isset($this->_settings['theme']) ? $this->_settings['theme'] : null
         );
-        return $this->_settings;
+        return $this->scanner;
     }
 
     /**
@@ -54,9 +55,9 @@ class ImportInline extends AssetFilter
     protected function _replace($matches)
     {
         $required = empty($matches[2]) ? $matches[4] : $matches[2];
-        $filename = $this->scanner->find($required);
+        $filename = $this->scanner()->find($required);
         if (!$filename) {
-            throw new \RuntimeException(sprintf('Could not find dependency "%s"', $required));
+            throw new RuntimeException(sprintf('Could not find dependency "%s"', $required));
         }
         if (empty($this->_loaded[$filename])) {
             return $this->input($filename, file_get_contents($filename));

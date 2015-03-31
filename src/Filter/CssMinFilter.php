@@ -3,6 +3,7 @@ namespace AssetCompress\Filter;
 
 use AssetCompress\AssetFilter;
 use CssMin;
+use RuntimeException;
 
 /**
  * CssMin filter.
@@ -23,7 +24,7 @@ class CssMinFilter extends AssetFilter
     public function output($filename, $content)
     {
         if (!class_exists('CssMin')) {
-            throw new \Exception(sprintf('Cannot not load filter class "%s".', 'CssMin'));
+            throw new RuntimeException('Cannot not load filter class "CssMin". Ensure you have it installed.');
         }
         return CssMin::minify($content);
     }

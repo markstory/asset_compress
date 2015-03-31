@@ -29,6 +29,10 @@ class TimestampImage extends AssetFilter
 
     protected $_filename;
 
+    protected $_settings = [
+        'webroot' => ''
+    ];
+
     /**
      * Input filter. Locates CSS background images relative to the
      * filename and gets the filemtime for the images.
@@ -52,16 +56,24 @@ class TimestampImage extends AssetFilter
      * - $matches[path] -> the url with any wrapping '/'
      *
      * If the image path starts with / its assumed to be an absolute path
-     * which will be prepended with WWW_ROOT
+     * which will be prepended with settings[webroot] or WWW_ROOT
      *
      * @param array $matches Array of matches
      * @return string Replaced code.
      */
     protected function _replace($matches)
     {
+        $webroot = null;
+        if (defined('WWW_ROOT')) {
+            $webroot = WWW_ROOT;
+        }
+        if (!empty($this->_settings['webroot'])) {
+            $webroot = $this->_settings['webroot'];
+        }
+
         $path = $matches['path'];
         if ($path[0] === '/') {
-            $imagePath = WWW_ROOT . rtrim($path, '/');
+            $imagePath = $webroot . rtrim($path, '/');
         } else {
             $imagePath = realpath(dirname($this->_filename) . DS . $path);
         }

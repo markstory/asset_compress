@@ -48,7 +48,7 @@ class ClosureCompiler extends AssetFilter
      * @var array
      * @see https://developers.google.com/closure/compiler/docs/api-ref
      */
-    private $__params = array(
+    protected $_params = array(
         'js_externs',
         'externs_url',
         'exclude_default_externs',
@@ -113,7 +113,7 @@ class ClosureCompiler extends AssetFilter
         }
 
         foreach ($this->_settings as $key => $val) {
-            if (in_array($key, $this->__params)) {
+            if (in_array($key, $this->_params)) {
                 $args[$key] = $val;
             }
         }

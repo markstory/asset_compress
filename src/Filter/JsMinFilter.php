@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\Filter;
 
-use JSMin;
 use AssetCompress\AssetFilter;
+use JSMin;
 
 /**
  * JsMin filter.

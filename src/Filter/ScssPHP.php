@@ -1,9 +1,8 @@
 <?php
 namespace AssetCompress\Filter;
 
-use scssc;
-
 use AssetCompress\AssetFilter;
+use scssc;
 
 /**
  * Pre-processing filter that adds support for SCSS files.
