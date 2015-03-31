@@ -6,10 +6,26 @@ use AssetCompress\AssetTarget;
 use AssetCompress\Filter\FilterCollection;
 use RuntimeException;
 
+/**
+ * A registry/service locator for filters.
+ *
+ * Useful for holding onto loaded filters and creating collections
+ * of filters based on specific target requirements.
+ */
 class FilterRegistry
 {
+    /**
+     * The loaded filters.
+     *
+     * @var array
+     */
     protected $filters = [];
 
+    /**
+     * Constructor
+     *
+     * @param array $filters A list of filters to load.
+     */
     public function __construct(array $filters = [])
     {
         foreach ($filters as $name => $filter) {
@@ -17,16 +33,35 @@ class FilterRegistry
         }
     }
 
+    /**
+     * Check if the registry contains a named filter.
+     *
+     * @param string $name The filter name to check.
+     * @return bool
+     */
     public function contains($name)
     {
         return isset($this->filters[$name]);
     }
 
+    /**
+     * Add a filter to the registry
+     *
+     * @param string $name The filter name to load.
+     * @param AssetCompress\AssetFilterInterface $filter The filter to load.
+     * @return void
+     */
     public function add($name, AssetFilterInterface $filter)
     {
         $this->filters[$name] = $filter;
     }
 
+    /**
+     * Get a filter from the registry
+     *
+     * @param string $name The filter name to fetch.
+     * @return AssetCompress\AssetFilterInterface|null
+     */
     public function get($name)
     {
         if (!isset($this->filters[$name])) {
@@ -35,6 +70,12 @@ class FilterRegistry
         return $this->filters[$name];
     }
 
+    /**
+     * Remove a filter from the registry
+     *
+     * @param string $name The filter name to remove
+     * @return void
+     */
     public function remove($name)
     {
         unset($this->filters[$name]);
@@ -43,8 +84,8 @@ class FilterRegistry
     /**
      * Get a filter collection for a specific target.
      *
-     * @param AssetTarget $target The target to get a filter collection for.
-     * @return FilterCollection
+     * @param AssetCompress\AssetTarget $target The target to get a filter collection for.
+     * @return AssetCompress\Filter\FilterCollection
      */
     public function collection(AssetTarget $target)
     {
