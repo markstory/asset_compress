@@ -35,7 +35,7 @@ class ClosureJs extends AssetFilter
     public function output($filename, $input)
     {
         $output = null;
-        $jar = $this->_findExecutable(ROOT . 'vendor', $this->_settings['path']);
+        $jar = $this->_findExecutable([ROOT . 'vendor'], $this->_settings['path']);
 
         // Closure works better if you specify an input file. Also supress warnings by default
         $tmpFile = tempnam(TMP, 'CLOSURE');
@@ -46,7 +46,7 @@ class ClosureJs extends AssetFilter
 
         $cmd = 'java -jar "' . $jar . '"';
         foreach ($options as $key => $value) {
-            $cmd .= sprintf(' --%s=%s', $key, $value);
+            $cmd .= sprintf(' --%s="%s"', $key, $value);
         }
 
         try {
