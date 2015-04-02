@@ -2,9 +2,8 @@
 namespace AssetCompress\Filter;
 
 use AssetCompress\Filter\CssDependencyTrait;
-use scssc;
-
 use AssetCompress\AssetFilter;
+use scssc;
 
 /**
  * Pre-processing filter that adds support for SCSS files.

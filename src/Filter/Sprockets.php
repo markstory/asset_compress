@@ -5,7 +5,6 @@ use AssetCompress\AssetFilter;
 use AssetCompress\AssetScanner;
 use AssetCompress\AssetTarget;
 use AssetCompress\File\Local;
-use Cake\Utility\Hash;
 
 /**
  * Implements directive replacement similar to sprockets <http://getsprockets.org>
@@ -38,24 +37,15 @@ class Sprockets extends AssetFilter
      */
     protected $_currentFile = '';
 
-    /**
-     * Configure paths for Sprockets
-     *
-     * @param array $settings.
-     * @return void
-     */
-    public function settings(array $settings = null)
-    {
-        $return = parent::settings($settings);
-        return $return;
-    }
-
     protected function _scanner()
     {
         if (isset($this->_scanner)) {
             return $this->_scanner;
         }
-        $this->_scanner = new AssetScanner($this->_settings['paths'], Hash::get($this->_settings, 'theme'));
+        $this->_scanner = new AssetScanner(
+            $this->_settings['paths'],
+            isset($this->_settings['theme']) ? $this->_settings['theme'] : null
+        );
         return $this->_scanner;
     }
 
