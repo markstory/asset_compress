@@ -1,6 +1,7 @@
 <?php
 namespace AssetCompress\Filter;
 
+use AssetCompress\Filter\CssDependencyTrait;
 use AssetCompress\AssetFilter;
 use scssc;
 
@@ -13,6 +14,7 @@ use scssc;
  */
 class ScssPHP extends AssetFilter
 {
+    use CssDependencyTrait;
 
     protected $_settings = array(
         'ext' => '.scss',

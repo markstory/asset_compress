@@ -51,6 +51,16 @@ trait FreshTrait
                 return false;
             }
         }
+
+        foreach ($target->filterNames() as $filterName) {
+            $filter = $this->_filterRegistry->get($filterName);
+            foreach ($filter->getDependencies($target) as $child) {
+                $time = $child->modifiedTime();
+                if ($time >= $buildTime) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

@@ -1,6 +1,8 @@
 <?php
 namespace AssetCompress\Test\TestCase\Filter;
 
+use AssetCompress\AssetTarget;
+use AssetCompress\File\Local;
 use AssetCompress\Filter\Sprockets;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -182,5 +184,22 @@ var DoubleInclusion = new Class({
 
 TEXT;
         $this->assertTextEquals($expected, $result);
+    }
+
+    /**
+     * Test that getDependencies() grabs all files in the include tree.
+     *
+     * @return void
+     */
+    public function testGetDependencies()
+    {
+        $files = [
+            new Local($this->_jsDir . 'classes/nested_class.js')
+        ];
+        $target = new AssetTarget('test.js', $files);
+        $result = $this->filter->getDependencies($target);
+        $this->assertCount(2, $result, 'Should find 2 files.');
+        $this->assertEquals('base_class_two.js', $result[0]->name());
+        $this->assertEquals('base_class.js', $result[1]->name());
     }
 }

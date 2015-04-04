@@ -1,9 +1,9 @@
 <?php
 namespace AssetCompress\Filter;
 
-use lessc;
-
 use AssetCompress\AssetFilter;
+use AssetCompress\Filter\CssDependencyTrait;
+use lessc;
 
 /**
  * Pre-processing filter that adds support for LESS.css files.
@@ -14,9 +14,11 @@ use AssetCompress\AssetFilter;
  */
 class LessPHP extends AssetFilter
 {
+    use CssDependencyTrait;
 
     protected $_settings = array(
         'ext' => '.less',
+        'paths' => [],
     );
 
     /**
@@ -33,7 +35,7 @@ class LessPHP extends AssetFilter
             return $input;
         }
         if (!class_exists('lessc')) {
-            throw new \Exception(sprintf('Cannot not load filter class "%s".', 'lessc'));
+            throw new \Exception('Cannot not load "lessc" class. Make sure it is installed.');
         }
         $lc = new lessc($filename);
         return $lc->parse();

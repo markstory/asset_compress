@@ -2,6 +2,7 @@
 namespace AssetCompress;
 
 use AssetCompress\AssetProcess;
+use AssetCompress\AssetTarget;
 use AssetCompress\AssetFilterInterface;
 use RuntimeException;
 
@@ -53,6 +54,20 @@ class AssetFilter implements AssetFilterInterface
     public function output($target, $content)
     {
         return $content;
+    }
+
+    /**
+     * Overloaded in filters that are pre-processors.
+     *
+     * Preprocessor filters can use this hook method to find a list of dependent
+     * files.
+     *
+     * @param AssetTarget $target The target to find dependencies for this filter.
+     * @return array An array of AssetCompress\File\Local objects.
+     */
+    public function getDependencies(AssetTarget $file)
+    {
+        return [];
     }
 
     /**
