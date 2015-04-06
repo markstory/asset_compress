@@ -295,7 +295,7 @@ class AssetCompressHelper extends Helper
         unset($plugins[$index]);
 
         if ($plugins) {
-            $pattern = '/(' . implode('|', $plugins) . ')/';
+            $pattern = '#(' . implode('|', $plugins) . ')#';
             if (preg_match($pattern, $path, $matches)) {
                 $pluginPath = Plugin::path($matches[1]) . 'webroot';
                 return str_replace($pluginPath, '/' . Inflector::underscore($matches[1]), $path);
