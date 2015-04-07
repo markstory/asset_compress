@@ -71,7 +71,7 @@ class AssetCompressor extends DispatcherFilter {
 			$compiler = new AssetCompiler($config);
 			$cache = new AssetCache($config);
 			if ($cache->isFresh($build)) {
-				$contents = file_get_contents($cachePath . $build);
+				$contents = file_get_contents($cachePath . $cache->buildFileName($build));
 			} else {
 				$contents = $compiler->generate($build);
 				$cache->write($build, $contents);

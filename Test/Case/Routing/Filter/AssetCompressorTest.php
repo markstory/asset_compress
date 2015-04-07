@@ -25,7 +25,7 @@ class AssetsCompressorTest extends CakeTestCase {
 		$config = AssetConfig::buildFromIniFile($this->testConfig, $map);
 		$config->filters('js', null, array());
 		$this->Compressor = $this->getMock('AssetCompressor', array('_getConfig'));
-		$this->Compressor->expects($this->atLeastOnce())
+		$this->Compressor->expects($this->any())
 			->method('_getConfig')
 			->will($this->returnValue($config));
 
@@ -85,6 +85,55 @@ class AssetsCompressorTest extends CakeTestCase {
 		$this->assertTrue($event->isStopped());
 		$this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
 		unlink(CACHE . 'asset_compress' . DS . 'libs.js');
+	}
+
+/**
+ * test that predefined builds get cached to disk.
+ *
+ * @return void
+ */
+	public function testBuildFileIsReadFromCache() {
+		file_put_contents(CACHE . 'asset_compress' . DS . 'libs.js', 'Cached content');
+
+		$this->request->url = 'cache_js/libs.js';
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
+
+		$this->assertContains('Cached content', $this->response->body());
+		$this->assertTrue($event->isStopped());
+		unlink(CACHE . 'asset_compress' . DS . 'libs.js');
+	}
+
+/**
+ * test that predefined builds get cached to disk.
+ *
+ * @return void
+ */
+	public function testThemedBuildFileIsReadFromCache() {
+		App::build(array(
+			'View' => array($this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'View' . DS)
+		));
+		$config = $this->_pluginPath . 'Test' . DS . 'test_files' . DS . 'Config' . DS . 'themed.ini';
+		$config = AssetConfig::buildFromIniFile($config);
+		$config->cachePath('css', 'WEBROOT/cache_css');
+
+		$compressor = $this->getMock('AssetCompressor', array('_getConfig'));
+		$compressor->expects($this->any())
+			->method('_getConfig')
+			->will($this->returnValue($config));
+
+		file_put_contents(CACHE . 'asset_compress' . DS . 'Blue-themed.css', 'Blue cached content');
+
+		$this->request->url = 'cache_css/themed.css';
+		$this->request->query['theme'] = 'Blue';
+
+		$data = array('request' => $this->request, 'response' => $this->response);
+		$event = new CakeEvent('Dispatcher.beforeDispatch', $this, $data);
+		$this->assertSame($this->response, $compressor->beforeDispatch($event));
+
+		$this->assertContains('Blue cached content', $this->response->body());
+		unlink(CACHE . 'asset_compress' . DS . 'Blue-themed.css');
 	}
 
 /**
