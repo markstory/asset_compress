@@ -2,13 +2,11 @@
 namespace AssetCompress\Shell\Task;
 
 use App\Console\Command\AppShell;
-use AssetCompress\AssetCache;
-use AssetCompress\AssetCompiler;
-use AssetCompress\AssetConfig;
-use AssetCompress\AssetTarget;
 use AssetCompress\Factory;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
+use MiniAsset\AssetConfig;
+use MiniAsset\AssetTarget;
 
 class AssetBuildTask extends Shell
 {

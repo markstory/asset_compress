@@ -1,7 +1,6 @@
 <?php
 namespace AssetCompress\View\Helper;
 
-use AssetCompress\AssetTarget;
 use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
@@ -10,6 +9,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\View;
+use MiniAsset\AssetTarget;
 use RuntimeException;
 
 /**

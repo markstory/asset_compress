@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase\Routing\Filter;
 
-use AssetCompress\AssetConfig;
+use MiniAsset\AssetConfig;
 use AssetCompress\Routing\Filter\AssetCompressorFilter;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;

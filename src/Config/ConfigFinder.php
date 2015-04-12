@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Config;
 
-use AssetCompress\AssetConfig;
+use MiniAsset\AssetConfig;
 use Cake\Core\Plugin;
 
 /**
@@ -22,9 +22,7 @@ class ConfigFinder
             $path = CONFIG . 'asset_compress.ini';
         }
         $config = new AssetConfig([], [
-            'APP/' => APP,
             'WEBROOT/' => WWW_ROOT,
-            'ROOT' => ROOT
         ]);
         $this->_load($config, $path);
 

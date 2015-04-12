@@ -4,6 +4,7 @@ namespace AssetCompress;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
+use MiniAsset\AssetScanner as BaseScanner;
 use RuntimeException;
 
 /**
@@ -12,23 +13,8 @@ use RuntimeException;
  * those searchPaths and locate assets.
  *
  */
-class AssetScanner
+class AssetScanner extends BaseScanner
 {
-
-    /**
-     * Paths this scanner should scan.
-     *
-     * @var array
-     */
-    protected $_paths = array();
-
-    /**
-     * The active theme the scanner could find assets on.
-     *
-     * @var string
-     */
-    protected $_theme = null;
-
     /**
      * @const Pattern for various prefixes.
      */
@@ -44,96 +30,7 @@ class AssetScanner
     public function __construct(array $paths, $theme = null)
     {
         $this->_theme = $theme;
-        $this->_paths = $paths;
-        $this->_expandPaths();
-        $this->_normalizePaths();
-    }
-
-    /**
-     * Ensure all paths end in a DS and expand any APP/WEBROOT constants.
-     * Normalizes the Directory Separator as well.
-     *
-     * @return void
-     */
-    protected function _normalizePaths()
-    {
-        foreach ($this->_paths as &$path) {
-            $ds = DS;
-            $path = $this->_normalizePath($path, $ds);
-            $path = rtrim($path, $ds) . $ds;
-        }
-    }
-
-    /**
-     * Normalize a file path to the specified Directory Separator ($ds)
-     *
-     * @param string $name Path to normalize
-     * @param type $ds Directory Separator to be used
-     * @return string Normalized path
-     */
-    protected function _normalizePath($name, $ds)
-    {
-        return str_replace(array('/', '\\'), $ds, $name);
-    }
-
-    /**
-     * Expands constants and glob() patterns in the searchPaths.
-     *
-     * @return void
-     */
-    protected function _expandPaths()
-    {
-        $expanded = array();
-        foreach ($this->_paths as $path) {
-            if (preg_match('/[*.\[\]]/', $path)) {
-                $tree = $this->_generateTree($path);
-                $expanded = array_merge($expanded, $tree);
-            } else {
-                $expanded[] = $path;
-            }
-        }
-        $this->_paths = $expanded;
-    }
-
-    /**
-     * Discover all the sub directories for a given path.
-     *
-     * @param string $path The path to search
-     * @return array Array of subdirectories.
-     */
-    protected function _generateTree($path)
-    {
-        $paths = glob($path, GLOB_ONLYDIR);
-        if (!$paths) {
-            $paths = array();
-        }
-        array_unshift($paths, dirname($path));
-        return $paths;
-    }
-
-    /**
-     * Find a file in the connected paths, and check for its existance.
-     *
-     * @param string $file The file you want to find.
-     * @return mixed Either false on a miss, or the full path of the file.
-     */
-    public function find($file)
-    {
-        $found = false;
-        $expanded = $this->_expandPrefix($file);
-        if (file_exists($expanded)) {
-            return $expanded;
-        }
-        foreach ($this->_paths as $path) {
-            $file = $this->_normalizePath($file, DS);
-            $fullPath = $path . $file;
-
-            if (file_exists($fullPath)) {
-                $found = $fullPath;
-                break;
-            }
-        }
-        return $found;
+        parent::__construct($paths);
     }
 
     /**
@@ -185,15 +82,5 @@ class AssetScanner
         }
         $path = Plugin::path($matches[1]);
         return $path . 'webroot' . DS . $matches[2];
-    }
-
-    /**
-     * Accessor for paths.
-     *
-     * @return array an array of paths.
-     */
-    public function paths()
-    {
-        return $this->_paths;
     }
 }
