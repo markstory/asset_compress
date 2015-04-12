@@ -65,6 +65,7 @@ class Factory extends BaseFactory
         if (!class_exists($className)) {
             $className = App::className('AssetCompress.' . $name, 'Filter');
         }
+        $className = $className ?: $name;
         return parent::buildFilter($className, $config);
     }
 }

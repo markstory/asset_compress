@@ -32,8 +32,8 @@ class AssetCompressHelperTest extends TestCase
         $view->request = $request;
         $this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
         $config = AssetConfig::buildFromIniFile($testFile, [
-            'TEST_FILES/' => APP,
-            'WEBROOT/' => WWW_ROOT
+            'TEST_FILES' => APP,
+            'WEBROOT' => WWW_ROOT
         ]);
         $this->Helper->assetConfig($config);
 

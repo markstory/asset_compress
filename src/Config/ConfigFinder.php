@@ -22,7 +22,7 @@ class ConfigFinder
             $path = CONFIG . 'asset_compress.ini';
         }
         $config = new AssetConfig([], [
-            'WEBROOT/' => WWW_ROOT,
+            'WEBROOT' => WWW_ROOT,
         ]);
         $this->_load($config, $path);
 
