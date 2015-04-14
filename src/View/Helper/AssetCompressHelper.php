@@ -58,24 +58,6 @@ class AssetCompressHelper extends Helper
     protected $writer;
 
     /**
-     * Options for the helper
-     *
-     * - `autoIncludePath` - Path inside of webroot/js that contains autoloaded view js.
-     *
-     * @var array
-     */
-    public $options = array(
-        'autoIncludePath' => 'views'
-    );
-
-    /**
-     * Disable autoInclusion of view js files.
-     *
-     * @var string
-     */
-    public $autoInclude = true;
-
-    /**
      * Constructor - finds and parses the ini file the plugin uses.
      *
      * @return void
@@ -142,48 +124,6 @@ class AssetCompressHelper extends Helper
             $this->writer = $this->factory()->writer();
         }
         return $this->writer;
-    }
-
-    /**
-     * AfterRender callback.
-     *
-     * Adds automatic view js files if enabled.
-     * Adds css/js files that have been added to the concatenation lists.
-     *
-     * Auto file inclusion adopted from Graham Weldon's helper
-     * http://bakery.cakephp.org/articles/view/automatic-javascript-includer-helper
-     *
-     * @return void
-     */
-    public function afterRender($viewFile)
-    {
-        $this->_includeViewJs();
-    }
-
-    /**
-     * Includes the auto view js files if enabled.
-     *
-     * @return void
-     */
-    protected function _includeViewJs()
-    {
-        if (!$this->autoInclude) {
-            return;
-        }
-        $files = array(
-            $this->params['controller'] . '.js',
-            $this->params['controller'] . DS . $this->params['action'] . '.js'
-        );
-
-        foreach ($files as $file) {
-            $includeFile = Configure::read('App.jsBaseUrl') . $this->options['autoIncludePath'] . DS . $file;
-            if (file_exists($includeFile)) {
-                $this->Html->script(
-                    str_replace(DS, '/', $this->options['autoIncludePath'] . '/' . $file),
-                    array('inline' => false)
-                );
-            }
-        }
     }
 
     /**
