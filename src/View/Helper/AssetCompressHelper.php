@@ -170,17 +170,19 @@ class AssetCompressHelper extends Helper
         if (!$this->autoInclude) {
             return;
         }
+
+        $controller = Inflector::underscore($this->request->param('controller'));
         $files = array(
-            $this->params['controller'] . '.js',
-            $this->params['controller'] . DS . $this->params['action'] . '.js'
+            $controller . '.js',
+            $controller . DS . $this->request->param('action') . '.js'
         );
 
         foreach ($files as $file) {
             $includeFile = Configure::read('App.jsBaseUrl') . $this->options['autoIncludePath'] . DS . $file;
-            if (file_exists($includeFile)) {
+            if (file_exists(WWW_ROOT . $includeFile)) {
                 $this->Html->script(
                     str_replace(DS, '/', $this->options['autoIncludePath'] . '/' . $file),
-                    array('inline' => false)
+                    array('block' => true)
                 );
             }
         }
