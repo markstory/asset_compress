@@ -33,6 +33,14 @@ class FactoryTest extends TestCase
         $this->assertEquals('/path/to/uglify-js', $filter->settings()['path']);
     }
 
+    public function testFilterRegistryPreferPluginFilter()
+    {
+        $factory = new Factory($this->config);
+        $registry = $factory->filterRegistry();
+        $this->assertTrue($registry->contains('Sprockets'));
+        $this->assertInstanceOf('AssetCompress\Filter\Sprockets', $registry->get('Sprockets'));
+    }
+
     /**
      * @expectedException RuntimeException
      * @expectedExceptionMessage Cannot load filter "Derp"
