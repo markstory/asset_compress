@@ -22,6 +22,13 @@ class AssetScanner extends BaseScanner
     const PLUGIN_PATTERN = '/^(?:p|plugin)\:(.*)\:(.*)$/';
 
     /**
+     * The current theme if there is one.
+     *
+     * @var string
+     */
+    protected $theme;
+
+    /**
      * Constructor.
      *
      * @param array $paths The paths to scan.
@@ -29,7 +36,7 @@ class AssetScanner extends BaseScanner
      */
     public function __construct(array $paths, $theme = null)
     {
-        $this->_theme = $theme;
+        $this->theme = $theme;
         parent::__construct($paths);
     }
 
@@ -45,7 +52,7 @@ class AssetScanner extends BaseScanner
         if (preg_match(self::PLUGIN_PATTERN, $path)) {
             return $this->_expandPlugin($path);
         }
-        if ($this->_theme && preg_match(self::THEME_PATTERN, $path)) {
+        if ($this->theme && preg_match(self::THEME_PATTERN, $path)) {
             return $this->_expandTheme($path);
         }
         return $path;
@@ -61,7 +68,7 @@ class AssetScanner extends BaseScanner
     protected function _expandTheme($file)
     {
         $file = preg_replace(self::THEME_PATTERN, '', $file);
-        return Plugin::path($this->_theme) . 'webroot' . DS . $file;
+        return Plugin::path($this->theme) . 'webroot' . DS . $file;
     }
 
     /**
