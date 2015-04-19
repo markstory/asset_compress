@@ -1,7 +1,6 @@
 <?php
 namespace AssetCompress\Test\TestCase\View\Helper;
 
-use AssetCompress\AssetConfig;
 use AssetCompress\View\Helper\AssetCompressHelper;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
@@ -10,6 +9,7 @@ use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\View\View;
 use Cake\TestSuite\TestCase;
+use MiniAsset\AssetConfig;
 
 class AssetCompressHelperTest extends TestCase
 {
@@ -32,8 +32,8 @@ class AssetCompressHelperTest extends TestCase
         $view->request = $request;
         $this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
         $config = AssetConfig::buildFromIniFile($testFile, [
-            'TEST_FILES/' => APP,
-            'WEBROOT/' => WWW_ROOT
+            'TEST_FILES' => APP,
+            'WEBROOT' => WWW_ROOT
         ]);
         $this->Helper->assetConfig($config);
 

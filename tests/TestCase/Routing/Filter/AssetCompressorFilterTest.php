@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress\Test\TestCase\Routing\Filter;
 
-use AssetCompress\AssetConfig;
+use MiniAsset\AssetConfig;
 use AssetCompress\Routing\Filter\AssetCompressorFilter;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -24,10 +24,8 @@ class AssetsCompressorTest extends TestCase
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
 
         $map = array(
-            'APP/' => APP,
-            'WEBROOT/' => WWW_ROOT,
-            'ROOT' => ROOT,
-            'TEST_FILES/' => APP
+            'WEBROOT' => WWW_ROOT,
+            'TEST_FILES' => APP
         );
         Plugin::load('TestAssetIni');
 

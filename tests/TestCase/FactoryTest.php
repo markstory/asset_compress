@@ -1,7 +1,7 @@
 <?php
 namespace AssetCompress;
 
-use AssetCompress\AssetConfig;
+use MiniAsset\AssetConfig;
 use AssetCompress\Factory;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -33,6 +33,14 @@ class FactoryTest extends TestCase
         $this->assertEquals('/path/to/uglify-js', $filter->settings()['path']);
     }
 
+    public function testFilterRegistryPreferPluginFilter()
+    {
+        $factory = new Factory($this->config);
+        $registry = $factory->filterRegistry();
+        $this->assertTrue($registry->contains('Sprockets'));
+        $this->assertInstanceOf('AssetCompress\Filter\Sprockets', $registry->get('Sprockets'));
+    }
+
     /**
      * @expectedException RuntimeException
      * @expectedExceptionMessage Cannot load filter "Derp"
@@ -48,8 +56,8 @@ class FactoryTest extends TestCase
     public function testAssetCollection()
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
-            'TEST_FILES/' => APP,
-            'WEBROOT/' => TMP
+            'TEST_FILES' => APP,
+            'WEBROOT' => TMP
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -83,8 +91,8 @@ class FactoryTest extends TestCase
     {
         Plugin::load('Red');
         $config = AssetConfig::buildFromIniFile($this->themedFile, [
-            'TEST_FILES/' => APP,
-            'WEBROOT/' => TMP
+            'TEST_FILES' => APP,
+            'WEBROOT' => TMP
         ]);
         $config->theme('Red');
 
@@ -110,8 +118,8 @@ class FactoryTest extends TestCase
     {
         Plugin::load('TestAsset');
         $config = AssetConfig::buildFromIniFile($this->pluginFile, [
-            'TEST_FILES/' => APP,
-            'WEBROOT/' => TMP
+            'TEST_FILES' => APP,
+            'WEBROOT' => TMP
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -138,7 +146,7 @@ class FactoryTest extends TestCase
     public function testAssetCreationWithAdditionalPath()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT/' => APP
+            'WEBROOT' => APP
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -163,8 +171,8 @@ class FactoryTest extends TestCase
     public function testWriter()
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
-            'TEST_FILES/' => APP,
-            'WEBROOT/' => TMP
+            'TEST_FILES' => APP,
+            'WEBROOT' => TMP
         ]);
         $config->theme('Red');
         $config->set('js.timestamp', true);

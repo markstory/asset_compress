@@ -2,10 +2,10 @@
 namespace AssetCompress\Test\TestCase\Shell;
 
 use AssetCompress\Shell\AssetCompressShell;
-use AssetCompress\AssetConfig;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\Filesystem\Folder;
+use MiniAsset\AssetConfig;
 
 /**
  * AssetCompressShell test case.
@@ -30,7 +30,7 @@ class AssetCompressShellTest extends TestCase
 
         $this->config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'integration.ini',
-            ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+            ['TEST_FILES' => APP, 'WEBROOT' => TMP]
         );
         $this->Shell->setConfig($this->config);
         mkdir(TMP . 'cache_js');
@@ -77,7 +77,7 @@ class AssetCompressShellTest extends TestCase
         Plugin::load('Blue');
         $config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'themed.ini',
-            ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+            ['TEST_FILES' => APP, 'WEBROOT' => TMP]
         );
         $this->Shell->setConfig($config);
         $this->Shell->build();
@@ -97,7 +97,7 @@ class AssetCompressShellTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'integration.ini',
-            ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+            ['TEST_FILES' => APP, 'WEBROOT' => TMP]
         );
         $this->Shell->setConfig($config);
 
@@ -137,7 +137,7 @@ class AssetCompressShellTest extends TestCase
 
         $config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'themed.ini',
-            ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+            ['TEST_FILES' => APP, 'WEBROOT' => TMP]
         );
         $this->Shell->setConfig($config);
         $this->Shell->clear();
@@ -155,7 +155,7 @@ class AssetCompressShellTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'integration.ini',
-            ['TEST_FILES/' => APP, 'WEBROOT/' => TMP]
+            ['TEST_FILES' => APP, 'WEBROOT' => TMP]
         );
         $this->Shell->setConfig($config);
 

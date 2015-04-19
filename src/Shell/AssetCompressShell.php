@@ -1,8 +1,6 @@
 <?php
 namespace AssetCompress\Shell;
 
-use AssetCompress\AssetCache;
-use AssetCompress\AssetCompiler;
 use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Console\Shell;
