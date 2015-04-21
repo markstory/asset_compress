@@ -3,6 +3,7 @@ namespace AssetCompress;
 
 use MiniAsset\AssetConfig;
 use AssetCompress\Factory;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -188,5 +189,19 @@ class FactoryTest extends TestCase
             'theme' => 'Red'
         ];
         $this->assertEquals($expected, $writer->config());
+    }
+
+    public function testCompiler()
+    {
+        $config = AssetConfig::buildFromIniFile($this->overrideFile, [
+            'WEBROOT' => APP
+        ]);
+        $factory = new Factory($config);
+        $compiler = $factory->compiler();
+        $this->assertAttributeEquals(true, 'debug', $compiler);
+
+        Configure::write('debug', false);
+        $compiler = $factory->compiler();
+        $this->assertAttributeEquals(false, 'debug', $compiler);
     }
 }
