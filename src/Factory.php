@@ -4,6 +4,7 @@ namespace AssetCompress;
 use AssetCompress\Filter\FilterRegistry;
 use AssetCompress\AssetScanner;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use MiniAsset\AssetCollection;
 use MiniAsset\AssetCompiler;
 use MiniAsset\AssetConfig;
@@ -67,5 +68,16 @@ class Factory extends BaseFactory
         }
         $className = $className ?: $name;
         return parent::buildFilter($className, $config);
+    }
+
+    /**
+     * Create an AssetCompiler
+     *
+     * @param bool $debug Not used - Configure is used instead.
+     * @return MiniAsset\AssetCompiler
+     */
+    public function compiler($debug = false)
+    {
+        return new AssetCompiler($this->filterRegistry(), Configure::read('debug'));
     }
 }
