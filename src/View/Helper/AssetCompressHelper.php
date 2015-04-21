@@ -282,8 +282,10 @@ class AssetCompressHelper extends Helper
             return $baseUrl . $this->_getBuildName($target);
         }
 
-        $path = $target->outputDir();
-        $path = str_replace(WWW_ROOT, '/', $path);
+        $root = str_replace('\\', '/', WWW_ROOT);
+        $path = str_replace('\\', '/', $target->outputDir());
+        $path = str_replace($root, '/', $path);
+
         if (!$devMode) {
             $path = rtrim($path, '/') . '/';
             $route = $path . $this->_getBuildName($target);
