@@ -1,6 +1,7 @@
 <?php
 namespace AssetCompress\Routing\Filter;
 
+use AssetCompress\AssetCompiler;
 use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
@@ -95,7 +96,9 @@ class AssetCompressorFilter extends DispatcherFilter
             return false;
         }
 
-        $path = str_replace(WWW_ROOT, '', $path);
+        $root = str_replace('\\', '/', WWW_ROOT);
+        $path = str_replace('\\', '/', $path);
+        $path = str_replace($root, '', $path);
         if (strpos($url, $path) !== 0) {
             return false;
         }
