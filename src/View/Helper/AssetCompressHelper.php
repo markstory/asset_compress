@@ -234,11 +234,10 @@ class AssetCompressHelper extends Helper
         $index = array_search('AssetCompress', $plugins);
         unset($plugins[$index]);
 
-        if ($plugins) {
-            $pattern = '#(' . implode('|', $plugins) . ')#';
-            if (preg_match($pattern, $path, $matches)) {
-                $pluginPath = Plugin::path($matches[1]) . 'webroot';
-                return str_replace($pluginPath, '/' . Inflector::underscore($matches[1]), $path);
+        foreach ($plugins as $plugin) {
+            $pluginPath = Plugin::path($plugin) . 'webroot';
+            if (strpos($path, $pluginPath) === 0) {
+                return str_replace($pluginPath, '/' . Inflector::underscore($plugin), $path);
             }
         }
         $path = str_replace(WWW_ROOT, '/', $path);

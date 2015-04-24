@@ -476,4 +476,24 @@ EOF;
         $result = $this->Helper->inlineScript('libs.js');
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * test no conflict with plugin names
+     *
+     * @return void
+     */
+    public function testNoConflictWithPluginName()
+    {
+        Plugin::load('Blue');
+
+        $result = $this->Helper->script('blue-app.js', array('raw' => true));
+        $expected = array(
+            array(
+                'script' => array(
+                    'src' => '/js/BlueController.js'
+                )
+            )
+        );
+        $this->assertHtml($expected, $result);
+    }
 }

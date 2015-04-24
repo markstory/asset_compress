@@ -63,10 +63,11 @@ class FactoryTest extends TestCase
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
 
-        $this->assertCount(3, $collection);
+        $this->assertCount(4, $collection);
         $this->assertTrue($collection->contains('libs.js'));
         $this->assertTrue($collection->contains('foo.bar.js'));
         $this->assertTrue($collection->contains('all.css'));
+        $this->assertTrue($collection->contains('blue-app.js'));
 
         $asset = $collection->get('libs.js');
         $this->assertCount(2, $asset->files(), 'Not enough files');
