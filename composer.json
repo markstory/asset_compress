@@ -19,6 +19,6 @@
 	"require": {
 		"php": ">=5.3.0",
 		"composer/installers": "*",
-		"cakephp/cakephp": ">=2.4"
+		"cakephp/cakephp": ">=2.4 <3.0"
 	}
 }
