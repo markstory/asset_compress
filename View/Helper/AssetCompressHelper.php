@@ -70,8 +70,9 @@ class AssetCompressHelper extends AppHelper {
  * @return void
  */
 	public function __construct(View $View, $settings = array()) {
+		$settings += (array)Configure::read('AssetCompress');
 		if (empty($settings['noconfig'])) {
-			$config = AssetConfig::buildFromIniFile();
+			$config = AssetConfig::buildFromIniFile(!empty($settings['iniFile']) ? $settings['iniFile'] : null);
 			$this->config($config);
 		}
 		parent::__construct($View, $settings);
