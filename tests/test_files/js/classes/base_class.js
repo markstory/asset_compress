@@ -1,0 +1,3 @@
+var BaseClass = new Class({
+
+});

@@ -1,2 +1,4 @@
 .DS_Store
-tags
+/tags
+/vendor
+/composer.lock
