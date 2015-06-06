@@ -47,7 +47,7 @@ class ConfigFinder
             $config->load($path, $prefix);
         }
 
--       $localConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $path);
+        $localConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $path);
         if (file_exists($localConfig)) {
             $config->load($localConfig, $prefix);
         }
