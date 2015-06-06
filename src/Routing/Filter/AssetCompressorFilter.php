@@ -116,5 +116,4 @@ class AssetCompressorFilter extends DispatcherFilter
         }
         return $this->config;
     }
-
 }

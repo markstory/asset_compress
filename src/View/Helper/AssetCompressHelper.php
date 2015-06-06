@@ -27,7 +27,7 @@ class AssetCompressHelper extends Helper
      *
      * @var array
      */
-    public $helpers = array('Html');
+    public $helpers = ['Html'];
 
     /**
      * Configuration object
@@ -62,7 +62,7 @@ class AssetCompressHelper extends Helper
      *
      * @return void
      */
-    public function __construct(View $View, $settings = array())
+    public function __construct(View $View, $settings = [])
     {
         parent::__construct($View, $settings);
         if (empty($settings['noconfig'])) {
@@ -157,7 +157,7 @@ class AssetCompressHelper extends Helper
      * @throws RuntimeException
      * @return A stylesheet tag
      */
-    public function css($file, $options = array())
+    public function css($file, $options = [])
     {
         $file = $this->_addExt($file, '.css');
         if (!$this->collection()->contains($file)) {
@@ -197,7 +197,7 @@ class AssetCompressHelper extends Helper
      * @throws RuntimeException
      * @return A script tag
      */
-    public function script($file, $options = array())
+    public function script($file, $options = [])
     {
         $file = $this->_addExt($file, '.js');
         if (!$this->collection()->contains($file)) {
@@ -264,9 +264,9 @@ class AssetCompressHelper extends Helper
 
         $options = $full;
         if (!is_array($full)) {
-            $options = array('full' => $full);
+            $options = ['full' => $full];
         }
-        $options += array('full' => false);
+        $options += ['full' => false];
 
         $target = $collection->get($file);
         $type = $target->ext();
@@ -330,7 +330,7 @@ class AssetCompressHelper extends Helper
      */
     protected function _getRoute(AssetTarget $file, $base)
     {
-        $query = array();
+        $query = [];
 
         if ($file->isThemed()) {
             $query['theme'] = $this->theme;
@@ -375,7 +375,7 @@ class AssetCompressHelper extends Helper
         $compiler = $this->factory()->compiler();
         $results = $compiler->generate($collection->get($file));
 
-        return $this->Html->tag('style', $results, array('type' => 'text/css'));
+        return $this->Html->tag('style', $results, ['type' => 'text/css']);
     }
 
     /**

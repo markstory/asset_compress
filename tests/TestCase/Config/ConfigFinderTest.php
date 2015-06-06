@@ -44,15 +44,15 @@ class ConfigFinderTest extends TestCase
         $config = $configFinder->loadAll($this->testConfig);
 
         $result = $config->files('TestAssetIni.libs.js');
-        $expected = array('classes/base_class.js', 'classes/template.js');
+        $expected = ['classes/base_class.js', 'classes/template.js'];
         $this->assertEquals($expected, $result);
 
         $result = $config->files('TestAssetIni.foo.bar.js');
-        $expected = array('bad_comments.js');
+        $expected = ['bad_comments.js'];
         $this->assertEquals($expected, $result);
 
         $result = $config->files('TestAssetIni.all.css');
-        $expected = array('background.css');
+        $expected = ['background.css'];
         $this->assertEquals($expected, $result);
     }
 
@@ -61,7 +61,7 @@ class ConfigFinderTest extends TestCase
         $configFinder = new ConfigFinder();
         $config = $configFinder->loadAll($this->testConfig);
 
-        $expected = array(
+        $expected = [
             'libs.js',
             'foo.bar.js',
             'new_file.js',
@@ -72,7 +72,7 @@ class ConfigFinderTest extends TestCase
             'TestAssetIni.all.css',
             'TestAssetIni.overridable_scripts.js',
             'TestAssetIni.overridable_styles.css'
-        );
+        ];
         $result = $config->targets();
         $this->assertEquals($expected, $result);
     }
@@ -83,11 +83,11 @@ class ConfigFinderTest extends TestCase
         $config = $configFinder->loadAll($this->testConfig);
 
         $result = $config->files('TestAssetIni.overridable_scripts.js');
-        $expected = array('base.js', 'local_script.js');
+        $expected = ['base.js', 'local_script.js'];
         $this->assertEquals($expected, $result);
 
         $result = $config->files('TestAssetIni.overridable_styles.css');
-        $expected = array('local_style.css');
+        $expected = ['local_style.css'];
         $this->assertEquals($expected, $result);
     }
 
@@ -109,20 +109,20 @@ class ConfigFinderTest extends TestCase
 
         $result = $config->paths('js');
         $result = str_replace('/', DS, $result);
-        $expectedJsPaths = array(WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*');
+        $expectedJsPaths = [WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*'];
         $this->assertEquals($expectedJsPaths, $result);
 
         $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
 
         $result = $config->filters('js');
-        $expectedJsFilters = array('Sprockets', 'YuiJs');
+        $expectedJsFilters = ['Sprockets', 'YuiJs'];
         $this->assertEquals($expectedJsFilters, $result);
 
         $result = $config->filterConfig('YuiJs');
-        $this->assertEquals(array('path' => '/path/to/local/yuicompressor'), $result);
+        $this->assertEquals(['path' => '/path/to/local/yuicompressor'], $result);
 
         $result = $config->filterConfig('Uglifyjs');
-        $this->assertEquals(array('path' => '/path/to/uglify-js'), $result);
+        $this->assertEquals(['path' => '/path/to/uglify-js'], $result);
 
         $result = $config->paths('js', 'libs.js');
         $result = str_replace('/', DS, $result);
@@ -130,12 +130,11 @@ class ConfigFinderTest extends TestCase
         $this->assertEquals($expectedJsPaths, $result);
 
         $result = $config->files('libs.js');
-        $expected = array('base.js', 'library_file.js', 'base_class.js');
+        $expected = ['base.js', 'library_file.js', 'base_class.js'];
         $this->assertEquals($expected, $result);
 
         $result = $config->targetFilters('libs.js');
         $expectedJsFilters[] = 'Uglifyjs';
         $this->assertEquals($expectedJsFilters, $result);
     }
-
 }

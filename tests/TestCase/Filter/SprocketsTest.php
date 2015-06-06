@@ -16,12 +16,12 @@ class SprocketsTest extends TestCase
         $this->_jsDir = $this->_testFiles . 'js' . DS;
 
         $this->filter = new Sprockets();
-        $settings = array(
-            'paths' => array(
+        $settings = [
+            'paths' => [
                 $this->_jsDir,
                 $this->_jsDir . 'classes' . DS,
-            )
-        );
+            ]
+        ];
         $this->filter->settings($settings);
     }
 
@@ -30,10 +30,10 @@ class SprocketsTest extends TestCase
         Plugin::load('TestAsset');
         Plugin::load('Red');
 
-        $settings = array(
-            'paths' => array(),
+        $settings = [
+            'paths' => [],
             'theme' => 'Red',
-        );
+        ];
         $this->filter->settings($settings);
 
         $this->_themeDir = $this->_testFiles . 'Plugin' . DS . $settings['theme'] . DS;
