@@ -30,7 +30,7 @@ class AssetCompressHelperTest extends TestCase
 
         $view = new View($controller);
         $view->request = $request;
-        $this->Helper = new AssetCompressHelper($view, array('noconfig' => true));
+        $this->Helper = new AssetCompressHelper($view, ['noconfig' => true]);
         $config = AssetConfig::buildFromIniFile($testFile, [
             'TEST_FILES' => APP,
             'WEBROOT' => WWW_ROOT
@@ -58,24 +58,24 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testAttributesOnElements()
     {
-        $result = $this->Helper->script('libs.js', array('defer' => true));
+        $result = $this->Helper->script('libs.js', ['defer' => true]);
 
-        $expected = array(
-            array('script' => array(
+        $expected = [
+            ['script' => [
                 'defer' => 'defer',
                 'src' => '/cache_js/libs.js'
-            ))
-        );
+            ]]
+        ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Helper->css('all.css', array('test' => 'value'));
-        $expected = array(
-            'link' => array(
+        $result = $this->Helper->css('all.css', ['test' => 'value']);
+        $expected = [
+            'link' => [
                 'test' => 'value',
                 'rel' => 'stylesheet',
                 'href' => '/cache_css/all.css'
-            )
-        );
+            ]
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -92,20 +92,20 @@ class AssetCompressHelperTest extends TestCase
         $config->set('js.timestamp', false);
 
         $result = $this->Helper->script('libs.js');
-        $expected = array(
-            array('script' => array(
+        $expected = [
+            ['script' => [
                 'src' => 'http://cdn.example.com/js/libs.js'
-            ))
-        );
+            ]]
+        ];
         $this->assertHtml($expected, $result);
 
         Configure::write('debug', 1);
         $result = $this->Helper->script('libs.js');
-        $expected = array(
-            array('script' => array(
+        $expected = [
+            ['script' => [
                 'src' => '/cache_js/libs.js'
-            ))
-        );
+            ]]
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -119,41 +119,41 @@ class AssetCompressHelperTest extends TestCase
     {
         $this->Helper->theme = 'blue';
         $config = $this->Helper->assetConfig();
-        $config->addTarget('themed.js', array(
+        $config->addTarget('themed.js', [
             'theme' => true,
-            'files' => array('base.js')
-        ));
+            'files' => ['base.js']
+        ]);
         $result = $this->Helper->script('themed.js');
-        $expected = array(
-            array('script' => array(
+        $expected = [
+            ['script' => [
                 'src' => '/cache_js/themed.js?theme=blue'
-            ))
-        );
+            ]]
+        ];
         $this->assertHtml($expected, $result);
     }
 
     public function testRawAssets()
     {
         $config = $this->Helper->assetConfig();
-        $config->addTarget('raw.js', array(
-            'files' => array('classes/base_class.js', 'classes/base_class_two.js')
-        ));
+        $config->addTarget('raw.js', [
+            'files' => ['classes/base_class.js', 'classes/base_class_two.js']
+        ]);
 
-        $result = $this->Helper->script('raw.js', array('raw' => true));
-        $expected = array(
-            array(
-                'script' => array(
+        $result = $this->Helper->script('raw.js', ['raw' => true]);
+        $expected = [
+            [
+                'script' => [
                     'src' => '/js/classes/base_class.js'
-                ),
-            ),
+                ],
+            ],
             '/script',
-            array(
-                'script' => array(
+            [
+                'script' => [
                     'src' => '/js/classes/base_class_two.js'
-                ),
-            ),
+                ],
+            ],
             '/script',
-        );
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -170,21 +170,21 @@ class AssetCompressHelperTest extends TestCase
             'WEBROOT/' => WWW_ROOT
         ]);
         $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.ini', 'TestAssetIni.');
-        $config->paths('css', null, array(
+        $config->paths('css', null, [
             $this->_testFiles . 'css' . DS
-        ));
-        $config->paths('js', null, array(
+        ]);
+        $config->paths('js', null, [
             $this->_testFiles . 'js' . DS
-        ));
+        ]);
         $config->cachePath('js', '/cache_js/');
         $this->Helper->assetConfig($config);
 
         $result = $this->Helper->script('TestAssetIni.libs.js');
-        $expected = array(
-            array('script' => array(
+        $expected = [
+            ['script' => [
                 'src' => '/cache_js/TestAssetIni.libs.js'
-            ))
-        );
+            ]]
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -198,39 +198,39 @@ class AssetCompressHelperTest extends TestCase
         Plugin::load('TestAsset');
 
         $config = AssetConfig::buildFromIniFile($this->_testFiles . 'config/plugins.ini');
-        $config->paths('css', null, array(
+        $config->paths('css', null, [
             $this->_testFiles . 'css' . DS
-        ));
-        $config->paths('js', null, array(
+        ]);
+        $config->paths('js', null, [
             $this->_testFiles . 'js' . DS
-        ));
+        ]);
         $this->Helper->assetConfig($config);
 
-        $result = $this->Helper->css('plugins.css', array('raw' => true));
-        $expected = array(
-            array(
-                'link' => array(
+        $result = $this->Helper->css('plugins.css', ['raw' => true]);
+        $expected = [
+            [
+                'link' => [
                     'rel' => 'stylesheet',
                     'href' => 'preg:/.*css\/nav.css/'
-                )
-            ),
-            array(
-                'link' => array(
+                ]
+            ],
+            [
+                'link' => [
                     'rel' => 'stylesheet',
                     'href' => '/test_asset/plugin.css'
-                )
-            ),
-        );
+                ]
+            ],
+        ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Helper->script('plugins.js', array('raw' => true));
-        $expected = array(
-            array(
-                'script' => array(
+        $result = $this->Helper->script('plugins.js', ['raw' => true]);
+        $expected = [
+            [
+                'script' => [
                     'src' => '/test_asset/plugin.js'
-                )
-            )
-        );
+                ]
+            ]
+        ];
         $this->assertHtml($expected, $result);
     }
 
@@ -244,10 +244,10 @@ class AssetCompressHelperTest extends TestCase
         Configure::write('debug', false);
         $config = $this->Helper->assetConfig();
         $config->cachePath('js', TMP);
-        $config->addTarget('asset_test.js', array(
-            'files' => array('base.js'),
+        $config->addTarget('asset_test.js', [
+            'files' => ['base.js'],
             'theme' => true
-        ));
+        ]);
 
         $this->Helper->theme = 'blue';
         $result = $this->Helper->script('asset_test.js');
@@ -290,7 +290,7 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testUrlFullOption()
     {
-        $result = $this->Helper->url('libs.js', array('full' => true));
+        $result = $this->Helper->url('libs.js', ['full' => true]);
         $this->assertEquals(
             'http://localhost/cache_js/libs.js',
             $result
@@ -339,13 +339,13 @@ class AssetCompressHelperTest extends TestCase
     public function testInlineCssDevelopment()
     {
         $config = $this->Helper->assetConfig();
-        $config->paths('css', null, array(
+        $config->paths('css', null, [
             $this->_testFiles . 'css' . DS
-        ));
+        ]);
 
-        $config->addTarget('nav.css', array(
-            'files' => array('nav.css')
-        ));
+        $config->addTarget('nav.css', [
+            'files' => ['nav.css']
+        ]);
 
         Configure::write('debug', true);
         $results = $this->Helper->inlineCss('nav.css');
@@ -367,13 +367,13 @@ EOF;
     public function testInlineCss()
     {
         $config = $this->Helper->assetConfig();
-        $config->paths('css', null, array(
+        $config->paths('css', null, [
             $this->_testFiles . 'css' . DS
-        ));
+        ]);
 
-        $config->addTarget('nav.css', array(
-            'files' => array('nav.css')
-        ));
+        $config->addTarget('nav.css', [
+            'files' => ['nav.css']
+        ]);
 
         Configure::write('debug', false);
 
@@ -396,13 +396,13 @@ EOF;
     public function testInlineCssMultiple()
     {
         $config = $this->Helper->assetConfig();
-        $config->paths('css', null, array(
+        $config->paths('css', null, [
             $this->_testFiles . 'css' . DS
-        ));
+        ]);
 
-        $config->addTarget('nav.css', array(
-            'files' => array('nav.css', 'has_import.css')
-        ));
+        $config->addTarget('nav.css', [
+            'files' => ['nav.css', 'has_import.css']
+        ]);
         Configure::write('debug', false);
 
         $expected = <<<EOF
@@ -486,14 +486,14 @@ EOF;
     {
         Plugin::load('Blue');
 
-        $result = $this->Helper->script('blue-app.js', array('raw' => true));
-        $expected = array(
-            array(
-                'script' => array(
+        $result = $this->Helper->script('blue-app.js', ['raw' => true]);
+        $expected = [
+            [
+                'script' => [
                     'src' => '/js/BlueController.js'
-                )
-            )
-        );
+                ]
+            ]
+        ];
         $this->assertHtml($expected, $result);
     }
 }

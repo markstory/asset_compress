@@ -16,7 +16,7 @@ use DirectoryIterator;
 class AssetCompressShell extends Shell
 {
 
-    public $tasks = array('AssetCompress.AssetBuild');
+    public $tasks = ['AssetCompress.AssetBuild'];
 
     protected $config;
 
@@ -130,7 +130,7 @@ class AssetCompressShell extends Shell
         $dir = new DirectoryIterator($path);
         foreach ($dir as $file) {
             $name = $base = $file->getFilename();
-            if (in_array($name, array('.', '..'))) {
+            if (in_array($name, ['.', '..'])) {
                 continue;
             }
             // timestampped files.
@@ -159,19 +159,19 @@ class AssetCompressShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
-        return $parser->description(array(
+        return $parser->description([
             'Asset Compress Shell',
             '',
             'Builds and clears assets defined in your asset_compress.ini',
             'file and in your view files.'
-        ))->addSubcommand('clear', array(
+        ])->addSubcommand('clear', [
             'help' => 'Clears all builds defined in the ini file.'
-        ))->addSubcommand('build', array(
+        ])->addSubcommand('build', [
             'help' => 'Generate all builds defined in the ini files.'
-        ))->addOption('force', array(
+        ])->addOption('force', [
             'help' => 'Force assets to rebuild. Ignores timestamp rules.',
             'short' => 'f',
             'boolean' => true
-        ));
+        ]);
     }
 }

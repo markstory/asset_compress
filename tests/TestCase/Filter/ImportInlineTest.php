@@ -13,12 +13,12 @@ class ImportInlineTest extends TestCase
         parent::setUp();
         Plugin::load('Red');
         $this->filter = new ImportInline();
-        $settings = array(
-            'paths' => array(
+        $settings = [
+            'paths' => [
                 APP . 'css/'
-            ),
+            ],
             'theme' => 'Red',
-        );
+        ];
         $this->filter->settings($settings);
     }
 

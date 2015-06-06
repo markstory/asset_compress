@@ -23,10 +23,10 @@ class AssetsCompressorTest extends TestCase
         parent::setUp();
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
 
-        $map = array(
+        $map = [
             'WEBROOT' => WWW_ROOT,
             'TEST_FILES' => APP
-        );
+        ];
         Plugin::load('TestAssetIni');
 
         $config = new AssetConfig([], $map);
@@ -36,14 +36,14 @@ class AssetsCompressorTest extends TestCase
 
         $this->Compressor = $this->getMock(
             'AssetCompress\Routing\Filter\AssetCompressorFilter',
-            array('_getConfig')
+            ['_getConfig']
         );
         $this->Compressor->expects($this->atLeastOnce())
             ->method('_getConfig')
             ->will($this->returnValue($config));
 
         $this->request = new Request();
-        $this->response = $this->getMock('Cake\Network\Response', array('checkNotModified', 'type', 'send'));
+        $this->response = $this->getMock('Cake\Network\Response', ['checkNotModified', 'type', 'send']);
     }
 
     /**
@@ -70,7 +70,7 @@ class AssetsCompressorTest extends TestCase
             ->with($this->equalTo('js'));
 
         $this->request->url = 'cache_js/libs.js';
-        $data = array('request' => $this->request, 'response' => $this->response);
+        $data = ['request' => $this->request, 'response' => $this->response];
         $event = new Event('Dispatcher.beforeDispatch', $this, $data);
         $this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
@@ -93,7 +93,7 @@ class AssetsCompressorTest extends TestCase
             ->with($this->equalTo('js'));
 
         $this->request->url = 'cache_js/TestAssetIni.libs.js';
-        $data = array('request' => $this->request, 'response' => $this->response);
+        $data = ['request' => $this->request, 'response' => $this->response];
         $event = new Event('Dispatcher.beforeDispatch', $this, $data);
         $this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 
@@ -110,7 +110,7 @@ class AssetsCompressorTest extends TestCase
     public function testBuildFileIsCached()
     {
         $this->request->url = 'cache_js/libs.js';
-        $data = array('request' => $this->request, 'response' => $this->response);
+        $data = ['request' => $this->request, 'response' => $this->response];
         $event = new Event('Dispatcher.beforeDispatch', $this, $data);
         $this->assertSame($this->response, $this->Compressor->beforeDispatch($event));
 

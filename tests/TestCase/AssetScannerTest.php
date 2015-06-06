@@ -14,19 +14,19 @@ class AssetScannerTest extends TestCase
     {
         parent::setUp();
         $this->_testFiles = APP;
-        $paths = array(
+        $paths = [
             $this->_testFiles . 'js' . DS,
             $this->_testFiles . 'js' . DS . 'classes' . DS
-        );
+        ];
         $this->Scanner = new AssetScanner($paths);
     }
 
     public function testFindResolveThemePaths()
     {
         Plugin::load('Blue');
-        $paths = array(
+        $paths = [
             $this->_testFiles . 'css' . DS
-        );
+        ];
         $scanner = new AssetScanner($paths, 'Blue');
         $result = $scanner->find('t:theme.css');
         $expected = $this->_testFiles . 'Plugin' . DS . 'Blue' . DS . 'webroot' . DS . 'theme.css';
@@ -40,9 +40,9 @@ class AssetScannerTest extends TestCase
     {
         Plugin::load('TestAsset');
 
-        $paths = array(
+        $paths = [
             $this->_testFiles . 'css' . DS
-        );
+        ];
         $scanner = new AssetScanner($paths);
         $result = $scanner->find('p:TestAsset:plugin.css');
         $expected = $this->_testFiles . 'Plugin' . DS . 'TestAsset' . DS . 'webroot' . DS . 'plugin.css';
