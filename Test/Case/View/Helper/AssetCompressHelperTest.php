@@ -393,27 +393,44 @@ class AssetCompressHelperTest extends CakeTestCase {
 	}
 
 	public function testRawAssets() {
-		$config = $this->Helper->config();
+		$Config = AssetConfig::buildFromIniFile($this->_testFiles . 'Config' . DS . 'config.ini');
+
+		$paths = array(
+			$this->_testFiles . 'js' . DS
+		);
+
+		$helper = $this->getMock('AssetCompressHelper', array('_getScanner'), array(new View(), array('noconfig' => true)));
+		$helper->config($Config);
+
+		$scanner = $this->getMock('AssetScanner', array('_getWebroot'), array($paths, null));
+		$scanner
+			->expects($this->any())
+			->method('_getWebroot')
+			->will($this->returnValue($this->_testFiles));
+		$helper
+			->expects($this->any())
+			->method('_getScanner')
+			->will($this->returnValue($scanner));
+
+		$config = $helper->config();
 		$config->addTarget('raw.js', array(
 			'files' => array('classes/base_class.js', 'classes/base_class_two.js')
 		));
-		$config->paths('js', null, array(
-			$this->_testFiles . 'js' . DS
-		));
+		$config->paths('js', null, $paths);
 
-		$result = $this->Helper->script('raw.js', array('raw' => true));
+		$result = $helper->script('raw.js', array('raw' => true));
 		$expected = array(
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'js/classes/base_class.js'
+					'src' => '/js/classes/base_class.js'
 				),
 			),
 			'/script',
 			array(
 				'script' => array(
 					'type' => 'text/javascript',
-					'src' => 'js/classes/base_class_two.js'
+					'src' => '/js/classes/base_class_two.js'
 				),
 			),
 			'/script',

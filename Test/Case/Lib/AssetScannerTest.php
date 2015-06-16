@@ -11,7 +11,11 @@ class AssetScannerTest extends CakeTestCase {
 			$this->_testFiles . 'js' . DS,
 			$this->_testFiles . 'js' . DS . 'classes' . DS
 		);
-		$this->Scanner = new AssetScanner($paths);
+		$this->Scanner = $this->getMock('AssetScanner', array('_getWebroot'), array($paths));
+		$this->Scanner
+			->expects($this->any())
+			->method('_getWebroot')
+			->will($this->returnValue($this->_testFiles));
 	}
 
 	public function testFind() {
@@ -20,9 +24,29 @@ class AssetScannerTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Scanner->find('base_class.js', false);
-		$this->assertEquals('base_class.js', $result, 'No WWW_ROOT replacement as it is a test file.');
+		$this->assertEquals('/js/classes/base_class.js', $result, 'No WWW_ROOT replacement as it is a test file.');
 
 		$this->assertFalse($this->Scanner->find('does not exist'));
+	}
+
+	public function testFindRelative() {
+		$paths = array(
+			$this->_testFiles . 'css' . DS,
+			$this->_testFiles . 'vendor' . DS
+		);
+		$scanner = $this->getMock('AssetScanner', array('_getWebroot'), array($paths));
+		$scanner
+			->expects($this->any())
+			->method('_getWebroot')
+			->will($this->returnValue($this->_testFiles));
+
+		$result = $scanner->find('vendor.css', false);
+		$expected = '/vendor/vendor.css';
+		$this->assertEquals($expected, $result);
+
+		$result = $scanner->find('nav.css', false);
+		$expected = '/css/nav.css';
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testFindOtherExtension() {
