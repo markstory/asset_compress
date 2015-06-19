@@ -172,7 +172,8 @@ class AssetBuildTask extends AppShell {
 				break;
 			}
 			$token = array_shift($tokens);
-			if ($token[0] == T_ARRAY) {
+			// Both array() and [] style arrays
+			if ($token[0] == T_ARRAY || $token[0] == '[') {
 				$wasArray = true;
 				$files = $this->_parseArray($tokens);
 			}
@@ -182,6 +183,7 @@ class AssetBuildTask extends AppShell {
 				$files[] = trim($token[1], '"\'');
 			}
 		}
+		// Handle non-array for the files arg, ie addScript('file.js', 'output.js')
 		if (!$wasArray && count($files) == 2) {
 			$build = array_pop($files);
 		}
@@ -204,7 +206,7 @@ class AssetBuildTask extends AppShell {
 				$files[] = trim($token[1], '"\'');
 			}
 			// end of array
-			if ($token[0] === ')') {
+			if ($token[0] === ')' || $token[0] === ']') {
 				break;
 			}
 		}
