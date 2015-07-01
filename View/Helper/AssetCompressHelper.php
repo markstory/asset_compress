@@ -293,7 +293,8 @@ class AssetCompressHelper extends AppHelper {
 		$output = '';
 		if (!empty($options['raw'])) {
 			unset($options['raw']);
-			$scanner = new AssetScanner($config->paths('css', $file), $this->theme);
+			$scanner = $this->_getScanner($config->paths('css', $file), $this->theme);
+
 			foreach ($buildFiles as $part) {
 				$part = $scanner->find($part, false);
 				$part = str_replace(DS, '/', $part);
@@ -333,7 +334,7 @@ class AssetCompressHelper extends AppHelper {
 		if (!empty($options['raw'])) {
 			$output = '';
 			unset($options['raw']);
-			$scanner = new AssetScanner($config->paths('js', $file), $this->theme);
+			$scanner = $this->_getScanner($config->paths('js', $file), $this->theme);
 			foreach ($buildFiles as $part) {
 				$part = $scanner->find($part, false);
 				$part = str_replace(DS, '/', $part);
@@ -563,5 +564,16 @@ class AssetCompressHelper extends AppHelper {
 		$results = $compiler->generate($file);
 
 		return $this->Html->tag('script', $results);
+	}
+
+/**
+ * Gets an instance of AssetScanner
+ *
+ * @param array $paths Paths
+ * @param string $theme Theme
+ * @return AssetScanner
+ */
+	protected function _getScanner($paths, $theme) {
+		return new AssetScanner($paths, $theme);
 	}
 }

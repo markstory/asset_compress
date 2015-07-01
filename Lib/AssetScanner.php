@@ -131,7 +131,7 @@ class AssetScanner {
 				$exists = file_exists($fullPath);
 
 				if ($absolute === false && $exists) {
-					$expanded['relative'] = str_replace(WWW_ROOT, '/', $expanded['relative']);
+					$expanded['relative'] = str_replace($this->_getWebroot(), '/', $path . $expanded['relative']);
 				}
 				if ($exists) {
 					$expanded['absolute'] = $fullPath;
@@ -231,6 +231,15 @@ class AssetScanner {
 			}
 		}
 		return false;
+	}
+
+/**
+ * Gets webroot path
+ *
+ * @return string
+ */
+	protected function _getWebroot() {
+		return WWW_ROOT;
 	}
 
 }
