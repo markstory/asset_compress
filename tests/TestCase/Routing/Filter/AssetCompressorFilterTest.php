@@ -1,7 +1,6 @@
 <?php
 namespace AssetCompress\Test\TestCase\Routing\Filter;
 
-use MiniAsset\AssetConfig;
 use AssetCompress\Routing\Filter\AssetCompressorFilter;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -9,6 +8,7 @@ use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use MiniAsset\AssetConfig;
 
 class AssetsCompressorTest extends TestCase
 {

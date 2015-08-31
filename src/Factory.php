@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress;
 
-use AssetCompress\Filter\FilterRegistry;
 use AssetCompress\AssetScanner;
+use AssetCompress\Filter\FilterRegistry;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use MiniAsset\AssetCollection;
@@ -28,7 +28,7 @@ class Factory extends BaseFactory
      * Create an AssetWriter
      *
      * @param string $path The path to use
-     * @return AssetCompress\AssetWriter
+     * @return \MiniAsset\AssetWriter
      */
     public function writer($path = TMP)
     {
@@ -38,7 +38,8 @@ class Factory extends BaseFactory
     /**
      * Create an AssetCacher
      *
-     * @return AssetCompress\AssetCacher
+     * @param string $path The path to read from. Defaults to the application CACHE path.
+     * @return \MiniAsset\AssetCacher
      */
     public function cacher($path = '')
     {
@@ -48,6 +49,12 @@ class Factory extends BaseFactory
         return parent::cacher($path);
     }
 
+    /**
+     * Create an AssetScanner
+     *
+     * @param array $paths The paths to read from.
+     * @return \AssetCompress\AssetScanner
+     */
     public function scanner($paths)
     {
         return new AssetScanner($paths, $this->config->theme());
@@ -74,7 +81,7 @@ class Factory extends BaseFactory
      * Create an AssetCompiler
      *
      * @param bool $debug Not used - Configure is used instead.
-     * @return MiniAsset\AssetCompiler
+     * @return \MiniAsset\AssetCompiler
      */
     public function compiler($debug = false)
     {

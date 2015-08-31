@@ -60,11 +60,13 @@ class AssetCompressHelper extends Helper
     /**
      * Constructor - finds and parses the ini file the plugin uses.
      *
+     * @param \Cake\View\View $view The view instance to use.
+     * @param array $settings The settings for the helper.
      * @return void
      */
-    public function __construct(View $View, $settings = [])
+    public function __construct(View $view, $settings = [])
     {
-        parent::__construct($View, $settings);
+        parent::__construct($view, $settings);
         if (empty($settings['noconfig'])) {
             $configFinder = new ConfigFinder();
             $this->assetConfig($configFinder->loadAll());
@@ -251,7 +253,7 @@ class AssetCompressHelper extends Helper
      * to that build file.
      *
      * @param string $file The build file that you want a URL for.
-     * @param array $options Options for URL generation.
+     * @param bool|array $full Whether or not the URL should have the full base path.
      * @return string The generated URL.
      * @throws RuntimeException when the build file does not exist.
      */
@@ -345,7 +347,7 @@ class AssetCompressHelper extends Helper
      * Check if a build exists (is defined and have at least one file) in the ini file.
      *
      * @param string $file Name of the build that will be checked if exists.
-     * @return boolean True if the build file exists.
+     * @return bool True if the build file exists.
      */
     public function exists($file)
     {

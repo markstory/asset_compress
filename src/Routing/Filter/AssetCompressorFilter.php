@@ -31,7 +31,7 @@ class AssetCompressorFilter extends DispatcherFilter
      *
      * @param Event $event containing the request and response object
      * @throws NotFoundException
-     * @return Response if the client is requesting a recognized asset, null otherwise
+     * @return void|Response if the client is requesting a recognized asset, null otherwise
      */
     public function beforeDispatch(Event $event)
     {
@@ -81,7 +81,9 @@ class AssetCompressorFilter extends DispatcherFilter
     /**
      * Returns the build name for a requested asset
      *
-     * @return boolean|string false if no build can be parsed from URL
+     * @param \MiniAsset\AssetConfig $config The config object to use.
+     * @param string $url The url to get an asset name from.
+     * @return bool|string false if no build can be parsed from URL
      * with url path otherwise
      */
     protected function getName($config, $url)
@@ -107,6 +109,8 @@ class AssetCompressorFilter extends DispatcherFilter
 
     /**
      * Config setter, used for testing the filter.
+     *
+     * @return \MiniAsset\Config The completed config instance.
      */
     protected function _getConfig()
     {

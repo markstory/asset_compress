@@ -16,15 +16,31 @@ use DirectoryIterator;
 class AssetCompressShell extends Shell
 {
 
+    /**
+     * Tasks used by this shell.
+     *
+     * @var array
+     */
     public $tasks = ['AssetCompress.AssetBuild'];
 
+    /**
+     * Config instance
+     *
+     * @var \MiniAsset\Config
+     */
     protected $config;
 
+    /**
+     * Factory instance.
+     *
+     * @var \AssetCompress\Factory
+     */
     protected $factory;
 
     /**
      * Create the configuration object used in other classes.
      *
+     * @return void
      */
     public function startup()
     {
@@ -37,7 +53,7 @@ class AssetCompressShell extends Shell
     /**
      * Set the config object.
      *
-     * @var \AssetCompress\AssetConfig $config The config instance.
+     * @param \MiniAsset\AssetConfig $config The config instance.
      * @return void
      */
     public function setConfig($config)
@@ -78,7 +94,9 @@ class AssetCompressShell extends Shell
      * Clears the build timestamp. Try to clear it out even if they do not have ts file enabled in
      * the INI.
      *
-     * build timestamp file is only created when build() is run from this shell
+     * Build timestamp file is only created when build() is run from this shell
+     *
+     * @return void
      */
     public function clearBuildTs()
     {
@@ -108,7 +126,7 @@ class AssetCompressShell extends Shell
         }, iterator_to_array($assets));
 
 
-        $this->_clearPath(CACHE . 'asset_compress' .DS, $themes, $targets);
+        $this->_clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
         $this->_clearPath($this->config->cachePath('js'), $themes, $targets);
         $this->_clearPath($this->config->cachePath('css'), $themes, $targets);
     }
@@ -154,7 +172,7 @@ class AssetCompressShell extends Shell
     /**
      * get the option parser.
      *
-     * @return void
+     * @return \Cake\Console\ConsoleOptionParser
      */
     public function getOptionParser()
     {

@@ -7,8 +7,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\Router;
-use Cake\View\View;
 use Cake\TestSuite\TestCase;
+use Cake\View\View;
 use MiniAsset\AssetConfig;
 
 class AssetCompressHelperTest extends TestCase

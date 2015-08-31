@@ -44,7 +44,6 @@ class AssetScanner extends BaseScanner
      * Resolve a plugin or theme path into the file path without the search paths.
      *
      * @param string $path Path to resolve
-     * @param bool $full Gives absolute paths
      * @return string resolved path
      */
     protected function _expandPrefix($path)

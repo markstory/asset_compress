@@ -1,8 +1,8 @@
 <?php
 namespace AssetCompress\Config;
 
-use MiniAsset\AssetConfig;
 use Cake\Core\Plugin;
+use MiniAsset\AssetConfig;
 
 /**
  * Find and create a configuration object by
@@ -16,6 +16,20 @@ use Cake\Core\Plugin;
 class ConfigFinder
 {
 
+    /**
+     * Load all configuration files in the application.
+     *
+     * Loads:
+     *
+     * - The app config (asset_compress.ini)
+     * - The asset_compress.ini file in each plugin.
+     *
+     * In addition for each file found the `asset_compress.local.ini`
+     * will be loaded if it is present.
+     *
+     * @param string $path The configuration file path to start loading from.
+     * @return \MiniAsset\Config The completed configuration object.
+     */
     public function loadAll($path = null)
     {
         if (!$path) {
@@ -37,8 +51,9 @@ class ConfigFinder
     /**
      * Load a config file and its `.local` file if it exists.
      *
-     * @param AssetCompress\AssetConfig $config The config object to update.
+     * @param \MiniAsset\AssetConfig $config The config object to update.
      * @param string $path The config file to load.
+     * @param string $prefix The prefix to use.
      * @return void
      */
     protected function _load($config, $path, $prefix = '')

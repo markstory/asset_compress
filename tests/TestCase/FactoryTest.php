@@ -1,11 +1,11 @@
 <?php
 namespace AssetCompress;
 
-use MiniAsset\AssetConfig;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use MiniAsset\AssetConfig;
 
 class FactoryTest extends TestCase
 {
