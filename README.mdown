@@ -1,9 +1,10 @@
 # Asset Compress
 
-[![Build Status](https://img.shields.io/travis/markstory/asset_compress/master.svg?style=flat-square)](https://travis-ci.org/markstory/asset_compress)
-[![Coverage](https://img.shields.io/coveralls/markstory/asset_compress/master.svg?style=flat-square)](https://coveralls.io/r/markstory/asset_compress)
+[![Build Status](https://travis-ci.org/markstory/asset_compress.svg?branch=master)](https://travis-ci.org/markstory/asset_compress)
+[![codecov.io](https://codecov.io/github/markstory/asset_compress/coverage.svg?branch=master)](https://codecov.io/github/markstory/asset_compress?branch=master)
 [![Total Downloads](https://img.shields.io/packagist/dt/markstory/asset_compress.svg?style=flat-square)](https://packagist.org/packages/markstory/asset_compress)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+
 
 Asset Compress is CakePHP plugin for helping reduce the number of requests, and optimizing the remaining requests your application makes for Javascript and CSS files.
 
