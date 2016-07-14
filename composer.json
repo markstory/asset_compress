@@ -1,0 +1,44 @@
+{
+	"name": "markstory/asset_compress",
+	"description": "An asset compression plugin for CakePHP. Provides file concatenation and a flexible filter system for preprocessing and minification.",
+	"type": "cakephp-plugin",
+	"keywords": ["cakephp", "assets", "minifier", "less", "coffee-script", "sass"],
+	"homepage": "https://github.com/markstory/asset_compress",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Mark Story",
+			"homepage": "http://mark-story.com",
+			"role": "Author"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/markstory/asset_compress/issues",
+		"source": "https://github.com/markstory/asset_compress"
+	},
+	"require": {
+		"cakephp/cakephp": "~3.0",
+		"markstory/mini-asset": "*"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "4.1.*",
+		"cakephp/cakephp-codesniffer": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"AssetCompress\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"AssetCompress\\Test\\": "tests"
+		}
+	},
+	"suggest": {
+		"natxet/CssMin": "For using the CssMin filter.",
+		"tedivm/jshrink": "For using the JShrink filter.",
+		"linkorb/jsmin-php": "For using the JSMin filter.",
+		"leafo/scssphp": "For using the ScssPHP filter.",
+		"leafo/lessphp": "For using the LessPHP filter."
+	}
+}

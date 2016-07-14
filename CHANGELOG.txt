@@ -1,0 +1,22 @@
+3.0.0 Changes
+
+### Breaking Changes
+
+* Dynamic build files and all features related to them have been removed.
+  Dynamic build files presented a few challenges around maintenance and went
+  against my goals of creating a fast and simple way to integrate all your
+  asset pipeline features into one plugin.
+* Prefixes on build files have been removed. In previous versions if you
+  started a build file with `js_` or `css_`, these prefixes would be removed
+  and used as the file suffix. You must now always include the file extension
+  in the build target.
+* New `inlineCss` and `inlineScript` methods were added to the
+  AssetCompressHelper. These new methods allow you to inline js/css
+  on the page. Note that the assets will be rebuilt on each page request.
+
+### Other Changes
+
+* Adopted PSR-2
+
+See [github releases](https://github.com/markstory/asset_compress/releases)
+for changelogs on previous releases.

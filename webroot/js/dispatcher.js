@@ -1,4 +1,3 @@
-
 /*
 Fire Application events. Used to trigger logic for blocks of your application's Javascript
 When combined with the automatic javascript includer on the server you can call
@@ -59,4 +58,3 @@ App.makeController = function (name) {
 	}
 	return this[name];
 };
-

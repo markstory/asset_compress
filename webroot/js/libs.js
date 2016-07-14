@@ -50,7 +50,7 @@ AssetCompress.load = function () {
 		i, className,
 		filename;
 
-	if (typeof args[args.length -1] == 'function') {
+	if (typeof args[args.length - 1] == 'function') {
 		readyCallback = args.pop();
 	}
 
@@ -67,7 +67,7 @@ AssetCompress.load = function () {
 
 	_appendScript(filename, readyCallback);
 };
+
 AssetCompress.underscore = function (camelCased) {
 	return camelCased.replace(/([A-Z])(?=[a-z0-9])/g, '_$1', '_\1').toLowerCase().substring(1);
 }
-

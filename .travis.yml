@@ -1,0 +1,36 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+
+matrix:
+  fast_finish: true
+
+  include:
+    - php: 7.0
+      env: PHPCS=1
+
+    - php: 7.0
+      env: COVERAGE=1
+
+before_script:
+  - phpenv rehash
+
+install:
+  - composer self-update
+  - composer install --prefer-dist --no-interaction --dev
+
+script:
+  - sh -c "if [ '$PHPCS' != '1' & '$COVERAGE' != '1' ]; then phpunit; fi"
+
+  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
+
+  - sh -c "if [ '$COVERAGE' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
+  - sh -c "if [ '$COVERAGE' = '1' ]; then wget -O codecov.sh https://codecov.io/bash; fi"
+  - sh -c "if [ '$COVERAGE' = '1' ]; then bash codecov.sh; fi"
+
+notifications:
+  email: false
