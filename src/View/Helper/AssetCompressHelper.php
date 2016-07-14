@@ -173,6 +173,9 @@ class AssetCompressHelper extends Helper
             $target = $this->collection()->get($file);
             foreach ($target->files() as $part) {
                 $path = $this->_relativizePath($part->path());
+                if (DS === '\\') {
+                    $path = str_replace(DS, '/', $path);
+                }
                 $output .= $this->Html->css($path, $options);
             }
             return $output;
@@ -213,6 +216,9 @@ class AssetCompressHelper extends Helper
             $target = $this->collection()->get($file);
             foreach ($target->files() as $part) {
                 $path = $this->_relativizePath($part->path());
+                if (DS === '\\') {
+                    $path = str_replace(DS, '/', $path);
+                }
                 $output .= $this->Html->script($path, $options);
             }
             return $output;
