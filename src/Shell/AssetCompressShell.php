@@ -119,6 +119,7 @@ class AssetCompressShell extends Shell
         $assets = $this->factory->assetCollection();
         if (count($assets) === 0) {
             $this->err('No build targets defined, skipping');
+
             return;
         }
         $targets = array_map(function ($target) {
@@ -177,6 +178,7 @@ class AssetCompressShell extends Shell
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();
+
         return $parser->description([
             'Asset Compress Shell',
             '',

@@ -45,6 +45,7 @@ class ConfigFinder
             $pluginConfig = Plugin::path($plugin) . 'config' . DS . 'asset_compress.ini';
             $this->_load($config, $pluginConfig, $plugin . '.');
         }
+
         return $config;
     }
 

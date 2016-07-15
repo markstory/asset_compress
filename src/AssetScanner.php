@@ -54,6 +54,7 @@ class AssetScanner extends BaseScanner
         if ($this->theme && preg_match(self::THEME_PATTERN, $path)) {
             return $this->_expandTheme($path);
         }
+
         return $path;
     }
 
@@ -67,6 +68,7 @@ class AssetScanner extends BaseScanner
     protected function _expandTheme($file)
     {
         $file = preg_replace(self::THEME_PATTERN, '', $file);
+
         return Plugin::path($this->theme) . 'webroot' . DS . $file;
     }
 
@@ -87,6 +89,7 @@ class AssetScanner extends BaseScanner
             throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
         }
         $path = Plugin::path($matches[1]);
+
         return $path . 'webroot' . DS . $matches[2];
     }
 }

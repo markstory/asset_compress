@@ -8,7 +8,6 @@
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 
 require_once 'vendor/autoload.php';

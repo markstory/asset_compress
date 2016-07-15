@@ -63,6 +63,7 @@ class AssetBuildTask extends Shell
         $name = $writer->buildFileName($build);
         if ($writer->isFresh($build) && empty($this->params['force'])) {
             $this->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
+
             return;
         }
 

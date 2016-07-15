@@ -46,6 +46,7 @@ class Factory extends BaseFactory
         if ($path == '') {
             $path = CACHE . 'asset_compress' . DS;
         }
+
         return parent::cacher($path);
     }
 
@@ -74,6 +75,7 @@ class Factory extends BaseFactory
             $className = App::className('AssetCompress.' . $name, 'Filter');
         }
         $className = $className ?: $name;
+
         return parent::buildFilter($className, $config);
     }
 

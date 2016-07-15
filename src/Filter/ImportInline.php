@@ -25,6 +25,7 @@ class ImportInline extends BaseImportInline
             $this->_settings['paths'],
             isset($this->_settings['theme']) ? $this->_settings['theme'] : null
         );
+
         return $this->scanner;
     }
 }

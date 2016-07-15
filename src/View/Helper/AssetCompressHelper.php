@@ -99,6 +99,7 @@ class AssetCompressHelper extends Helper
             $this->config->theme($this->theme);
             $this->factory = new Factory($this->config);
         }
+
         return $this->factory;
     }
 
@@ -112,6 +113,7 @@ class AssetCompressHelper extends Helper
         if (empty($this->collection)) {
             $this->collection = $this->factory()->assetCollection();
         }
+
         return $this->collection;
     }
 
@@ -125,6 +127,7 @@ class AssetCompressHelper extends Helper
         if (empty($this->writer)) {
             $this->writer = $this->factory()->writer();
         }
+
         return $this->writer;
     }
 
@@ -140,6 +143,7 @@ class AssetCompressHelper extends Helper
         if (substr($file, strlen($ext) * -1) !== $ext) {
             $file .= $ext;
         }
+
         return $file;
     }
 
@@ -178,11 +182,13 @@ class AssetCompressHelper extends Helper
                 }
                 $output .= $this->Html->css($path, $options);
             }
+
             return $output;
         }
 
         $url = $this->url($file, $options);
         unset($options['full']);
+
         return $this->Html->css($url, $options);
     }
 
@@ -221,6 +227,7 @@ class AssetCompressHelper extends Helper
                 }
                 $output .= $this->Html->script($path, $options);
             }
+
             return $output;
         }
 
@@ -249,6 +256,7 @@ class AssetCompressHelper extends Helper
             }
         }
         $path = str_replace(WWW_ROOT, '/', $path);
+
         return str_replace(DS, '/', $path);
     }
 
@@ -307,6 +315,7 @@ class AssetCompressHelper extends Helper
 
         if ($options['full']) {
             $base = Router::fullBaseUrl();
+
             return $base . $route;
         }
 
@@ -346,6 +355,7 @@ class AssetCompressHelper extends Helper
 
         $base = rtrim($base, '/') . '/';
         $query = empty($query) ? '' : '?' . http_build_query($query);
+
         return $base . $file->name() . $query;
     }
 
@@ -408,6 +418,7 @@ class AssetCompressHelper extends Helper
         }
         $compiler = $this->factory()->compiler();
         $results = $compiler->generate($collection->get($file));
+
         return $this->Html->tag('script', $results);
     }
 }

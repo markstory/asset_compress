@@ -75,6 +75,7 @@ class AssetCompressorFilter extends DispatcherFilter
         $response->type($build->ext());
         $response->body($contents);
         $event->stopPropagation();
+
         return $response;
     }
 
@@ -104,6 +105,7 @@ class AssetCompressorFilter extends DispatcherFilter
         if (strpos($url, $path) !== 0) {
             return false;
         }
+
         return str_replace($path, '', $url);
     }
 
@@ -118,6 +120,7 @@ class AssetCompressorFilter extends DispatcherFilter
             $configFinder = new ConfigFinder();
             $this->config = $configFinder->loadAll();
         }
+
         return $this->config;
     }
 }

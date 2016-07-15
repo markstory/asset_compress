@@ -25,6 +25,7 @@ class Sprockets extends BaseSprockets
             $this->_settings['paths'],
             isset($this->_settings['theme']) ? $this->_settings['theme'] : null
         );
+
         return $this->_scanner;
     }
 }
