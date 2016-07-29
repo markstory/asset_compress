@@ -72,8 +72,9 @@ class FactoryTest extends TestCase
         $asset = $collection->get('libs.js');
         $this->assertCount(2, $asset->files(), 'Not enough files');
         $paths = [
-            APP . 'js',
-            APP . 'js/**'
+            APP . 'js/',
+            APP . 'js/classes/',
+            APP . 'js/secondary/',
         ];
         $this->assertEquals($paths, $asset->paths(), 'Paths are incorrect');
         $this->assertEquals(['Sprockets'], $asset->filterNames(), 'Filters are incorrect');
