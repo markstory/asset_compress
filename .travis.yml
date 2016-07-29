@@ -24,7 +24,7 @@ install:
   - composer install --prefer-dist --no-interaction --dev
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' & '$COVERAGE' != '1' ]; then phpunit; fi"
+  - sh -c "if [ '$PHPCS' != '1' && '$COVERAGE' != '1' ]; then phpunit; fi"
 
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
