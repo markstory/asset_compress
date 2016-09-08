@@ -53,6 +53,7 @@ class AssetsCompressMiddlewareTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload('TestAssetIni');
+        Plugin::unload('Blue');
     }
 
     /**
@@ -71,8 +72,8 @@ class AssetsCompressMiddlewareTest extends TestCase
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
-        $this->assertRegExp('/var BaseClass = new Class/', $body);
-        $this->assertRegExp('/var Template = new Class/', $body);
+        $this->assertContains('var BaseClass = new Class', $body);
+        $this->assertContains('var Template = new Class', $body);
     }
 
     /**
@@ -93,8 +94,8 @@ class AssetsCompressMiddlewareTest extends TestCase
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
-        $this->assertRegExp('/var BaseClass = new Class/', $body);
-        $this->assertRegExp('/var Template = new Class/', $body);
+        $this->assertContains('var BaseClass = new Class', $body);
+        $this->assertContains('var Template = new Class', $body);
     }
 
     /**
@@ -116,5 +117,53 @@ class AssetsCompressMiddlewareTest extends TestCase
 
         $this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
         unlink(CACHE . 'asset_compress' . DS . 'libs.js');
+    }
+
+    public function testProductionMode()
+    {
+        Configure::write('debug', false);
+        $uri = $this->request->getUri()->withPath('cache_js/libs.js');
+        $request = $this->request->withUri($uri);
+
+        $mw = $this->middleware;
+        $result = $mw($request, $this->response, $this->next);
+        $this->assertNull($result);
+        $this->assertTrue($this->nextInvoked);
+    }
+
+    public function testBuildThemedAsset()
+    {
+        Plugin::load('Blue');
+
+        $configFile = APP . 'config' . DS . 'themed.ini';
+        $map = [
+            'WEBROOT' => WWW_ROOT,
+            'TEST_FILES' => APP
+        ];
+        $config = new AssetConfig([], $map);
+        $config->load($configFile);
+        $this->middleware = new AssetCompressMiddleware($config);
+
+        $uri = $this->request->getUri()->withPath('cache_css/themed.css');
+        $request = $this->request->withUri($uri)
+            ->withQueryParams(['theme' => 'Blue']);
+
+        $mw = $this->middleware;
+        $result = $mw($request, $this->response, $this->next);
+
+        $body = $result->getBody()->getContents();
+        $this->assertEquals('application/css', $result->getHeaderLine('Content-Type'));
+        $this->assertContains('color: blue', $body);
+    }
+
+    public function testDelegateOnUndefinedAsset()
+    {
+        $uri = $this->request->getUri()->withPath('cache_js/derpy.js');
+        $request = $this->request->withUri($uri);
+
+        $mw = $this->middleware;
+        $result = $mw($request, $this->response, $this->next);
+        $this->assertNull($result);
+        $this->assertTrue($this->nextInvoked);
     }
 }

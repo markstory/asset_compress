@@ -22,7 +22,6 @@ class ConfigFinderTest extends TestCase
         parent::setUp();
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
-        $this->_themeConfig = $this->_testFiles . 'config' . DS . 'themed.ini';
 
         Plugin::load('TestAssetIni');
     }
