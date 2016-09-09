@@ -6,8 +6,8 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
-use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequest;
 
 class AssetsCompressMiddlewareTest extends TestCase
 {

@@ -79,10 +79,19 @@ class AssetCompressMiddleware
         } catch (Exception $e) {
             throw new NotFoundException($e->getMessage());
         }
+
         return $this->respond($response, $contents, $build);
     }
 
-    private function respond($response, $contents, $build)
+    /**
+     * Respond with the asset.
+     *
+     * @param \Psr\Http\Message\ResponseInterface $response The response to augment
+     * @param string $contents The asset contents.
+     * @param \MiniAsset\AssetTarget $build The build target.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    protected function respond($response, $contents, $build)
     {
         // Deliver built asset.
         $body = $response->getBody();
@@ -92,13 +101,20 @@ class AssetCompressMiddleware
         return $response->withHeader('Content-Type', $this->mapType($build));
     }
 
-    private function mapType($build)
+    /**
+     * Map an extension to a content type
+     *
+     * @param \MiniAsset\AssetTarget $build The build target.
+     * @return string The mapped content type.
+     */
+    protected function mapType($build)
     {
         $ext = $build->ext();
         $types = [
             'css' => 'application/css',
             'js' => 'application/javascript'
         ];
+
         return isset($types[$ext]) ? $types[$ext] : 'application/octet-stream';
     }
 
