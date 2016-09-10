@@ -17,7 +17,7 @@
 		"source": "https://github.com/markstory/asset_compress"
 	},
 	"require": {
-		"cakephp/cakephp": "~3.0",
+		"cakephp/cakephp": ">=3.3.3 <4.0.0",
 		"markstory/mini-asset": "*"
 	},
 	"require-dev": {
