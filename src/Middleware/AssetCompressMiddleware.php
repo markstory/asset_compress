@@ -111,7 +111,7 @@ class AssetCompressMiddleware
     {
         $ext = $build->ext();
         $types = [
-            'css' => 'application/css',
+            'css' => 'text/css',
             'js' => 'application/javascript'
         ];
 
@@ -141,6 +141,7 @@ class AssetCompressMiddleware
         $root = str_replace('\\', '/', WWW_ROOT);
         $path = str_replace('\\', '/', $path);
         $path = str_replace($root, '', $path);
+        $path = '/' . ltrim($path, '/');
         if (strpos($url, $path) !== 0) {
             return false;
         }

@@ -63,7 +63,7 @@ class AssetsCompressMiddlewareTest extends TestCase
      */
     public function testBuildFile()
     {
-        $uri = $this->request->getUri()->withPath('cache_js/libs.js');
+        $uri = $this->request->getUri()->withPath('/cache_js/libs.js');
         $request = $this->request->withUri($uri);
 
         $mw = $this->middleware;
@@ -85,7 +85,7 @@ class AssetsCompressMiddlewareTest extends TestCase
     {
         Plugin::load('TestAssetIni');
 
-        $uri = $this->request->getUri()->withPath('cache_js/TestAssetIni.libs.js');
+        $uri = $this->request->getUri()->withPath('/cache_js/TestAssetIni.libs.js');
         $request = $this->request->withUri($uri);
 
         $mw = $this->middleware;
@@ -105,7 +105,7 @@ class AssetsCompressMiddlewareTest extends TestCase
      */
     public function testBuildFileIsCached()
     {
-        $uri = $this->request->getUri()->withPath('cache_js/libs.js');
+        $uri = $this->request->getUri()->withPath('/cache_js/libs.js');
         $request = $this->request->withUri($uri);
 
         $mw = $this->middleware;
@@ -122,7 +122,7 @@ class AssetsCompressMiddlewareTest extends TestCase
     public function testProductionMode()
     {
         Configure::write('debug', false);
-        $uri = $this->request->getUri()->withPath('cache_js/libs.js');
+        $uri = $this->request->getUri()->withPath('/cache_js/libs.js');
         $request = $this->request->withUri($uri);
 
         $mw = $this->middleware;
@@ -144,7 +144,7 @@ class AssetsCompressMiddlewareTest extends TestCase
         $config->load($configFile);
         $this->middleware = new AssetCompressMiddleware($config);
 
-        $uri = $this->request->getUri()->withPath('cache_css/themed.css');
+        $uri = $this->request->getUri()->withPath('/cache_css/themed.css');
         $request = $this->request->withUri($uri)
             ->withQueryParams(['theme' => 'Blue']);
 
@@ -152,13 +152,13 @@ class AssetsCompressMiddlewareTest extends TestCase
         $result = $mw($request, $this->response, $this->next);
 
         $body = $result->getBody()->getContents();
-        $this->assertEquals('application/css', $result->getHeaderLine('Content-Type'));
+        $this->assertEquals('text/css', $result->getHeaderLine('Content-Type'));
         $this->assertContains('color: blue', $body);
     }
 
     public function testDelegateOnUndefinedAsset()
     {
-        $uri = $this->request->getUri()->withPath('cache_js/derpy.js');
+        $uri = $this->request->getUri()->withPath('/cache_js/derpy.js');
         $request = $this->request->withUri($uri);
 
         $mw = $this->middleware;
