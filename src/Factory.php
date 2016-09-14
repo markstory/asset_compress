@@ -28,7 +28,7 @@ class Factory extends BaseFactory
      * Create an AssetWriter
      *
      * @param string $path The path to use
-     * @return \MiniAsset\AssetWriter
+     * @return \MiniAsset\Output\AssetWriter
      */
     public function writer($path = TMP)
     {
@@ -39,7 +39,7 @@ class Factory extends BaseFactory
      * Create an AssetCacher
      *
      * @param string $path The path to read from. Defaults to the application CACHE path.
-     * @return \MiniAsset\AssetCacher
+     * @return \MiniAsset\Output\AssetCacher
      */
     public function cacher($path = '')
     {
@@ -66,7 +66,7 @@ class Factory extends BaseFactory
      *
      * @param string $name The name of the filter to build.
      * @param array $config The configuration for the filter.
-     * @return AssetCompress\Filter\AssetFilterInterface
+     * @return \MiniAsset\Filter\FilterInterface
      */
     protected function buildFilter($name, $config)
     {

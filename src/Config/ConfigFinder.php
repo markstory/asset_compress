@@ -28,7 +28,7 @@ class ConfigFinder
      * will be loaded if it is present.
      *
      * @param string $path The configuration file path to start loading from.
-     * @return \MiniAsset\Config The completed configuration object.
+     * @return \MiniAsset\AssetConfig The completed configuration object.
      */
     public function loadAll($path = null)
     {
