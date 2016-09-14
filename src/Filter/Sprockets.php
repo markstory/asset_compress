@@ -14,7 +14,7 @@ class Sprockets extends BaseSprockets
      *
      * This allows Sprockets to support theme & plugin prefixes.
      *
-     * @return AssetCompress\AssetScanner
+     * @return \AssetCompress\AssetScanner
      */
     protected function _scanner()
     {

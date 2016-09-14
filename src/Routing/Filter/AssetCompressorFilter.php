@@ -6,8 +6,9 @@ use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Network\Exception\NotFoundException;
 use Cake\Routing\DispatcherFilter;
-use RuntimeException;
+use Exception;
 
 class AssetCompressorFilter extends DispatcherFilter
 {
@@ -22,7 +23,7 @@ class AssetCompressorFilter extends DispatcherFilter
     /**
      * Object containing configuration settings for asset compressor
      *
-     * @var AssetConfig
+     * @var \MiniAsset\AssetConfig
      */
     protected $config;
 
@@ -30,8 +31,8 @@ class AssetCompressorFilter extends DispatcherFilter
      * Checks if request is for a compiled asset, otherwise skip any operation
      *
      * @param Event $event containing the request and response object
-     * @throws NotFoundException
-     * @return void|Response if the client is requesting a recognized asset, null otherwise
+     * @throws \Cake\Network\Exception\NotFoundException
+     * @return \Cake\Network\Response|null Response if the client is requesting a recognized asset, null otherwise
      */
     public function beforeDispatch(Event $event)
     {
@@ -40,13 +41,13 @@ class AssetCompressorFilter extends DispatcherFilter
         $config = $this->_getConfig();
         $production = !Configure::read('debug');
         if ($production && !$config->general('alwaysEnableController')) {
-            return;
+            return null;
         }
 
         // Make sure the request looks like an asset.
         $targetName = $this->getName($config, $request->url);
         if (!$targetName) {
-            return;
+            return null;
         }
 
         if (isset($request->query['theme'])) {
@@ -55,7 +56,7 @@ class AssetCompressorFilter extends DispatcherFilter
         $factory = new Factory($config);
         $assets = $factory->assetCollection();
         if (!$assets->contains($targetName)) {
-            return;
+            return null;
         }
         $build = $assets->get($targetName);
 
@@ -112,11 +113,11 @@ class AssetCompressorFilter extends DispatcherFilter
     /**
      * Config setter, used for testing the filter.
      *
-     * @return \MiniAsset\Config The completed config instance.
+     * @return \MiniAsset\AssetConfig The completed config instance.
      */
     protected function _getConfig()
     {
-        if (empty($this->config)) {
+        if ($this->config === null) {
             $configFinder = new ConfigFinder();
             $this->config = $configFinder->loadAll();
         }

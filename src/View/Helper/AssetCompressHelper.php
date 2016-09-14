@@ -32,28 +32,28 @@ class AssetCompressHelper extends Helper
     /**
      * Configuration object
      *
-     * @var AssetConfig
+     * @var \MiniAsset\AssetConfig
      */
     protected $config;
 
     /**
      * Factory for other AssetCompress objects.
      *
-     * @var AssetCompress\Factory
+     * @var \AssetCompress\Factory
      */
     protected $factory;
 
     /**
      * AssetCollection for the current config set.
      *
-     * @var AssetCompress\AssetCollection
+     * @var \MiniAsset\AssetCollection
      */
     protected $collection;
 
     /**
      * AssetWriter instance
      *
-     * @var AssetCompress\AssetWriter
+     * @var \MiniAsset\Output\AssetWriter
      */
     protected $writer;
 
@@ -77,8 +77,8 @@ class AssetCompressHelper extends Helper
      * Modify the runtime configuration of the helper.
      * Used as a get/set for the ini file values.
      *
-     * @param AssetCompress\AssetConfig $config The config instance to set.
-     * @return Either the current config object or null.
+     * @param \MiniAsset\AssetConfig $config The config instance to set.
+     * @return \MiniAsset\AssetConfig|null Either the current config object or null.
      */
     public function assetConfig($config = null)
     {
@@ -91,7 +91,7 @@ class AssetCompressHelper extends Helper
     /**
      * Get the AssetCompress factory based on the config object.
      *
-     * @return AssetCompress\Factory
+     * @return \AssetCompress\Factory
      */
     protected function factory()
     {
@@ -106,7 +106,7 @@ class AssetCompressHelper extends Helper
     /**
      * Get the AssetCollection
      *
-     * @return AssetCompress\AssetCollection
+     * @return \MiniAsset\AssetCollection
      */
     protected function collection()
     {
@@ -120,7 +120,7 @@ class AssetCompressHelper extends Helper
     /**
      * Get the AssetWriter
      *
-     * @return AssetCompress\AssetWriter
+     * @return \MiniAsset\Output\AssetWriter
      */
     protected function writer()
     {
@@ -161,7 +161,7 @@ class AssetCompressHelper extends Helper
      * @param string $file A build target to include.
      * @param array $options An array of options for the stylesheet tag.
      * @throws RuntimeException
-     * @return A stylesheet tag
+     * @return string A stylesheet tag
      */
     public function css($file, $options = [])
     {
@@ -301,6 +301,7 @@ class AssetCompressHelper extends Helper
         $path = str_replace('\\', '/', $target->outputDir());
         $path = str_replace($root, '/', $path);
 
+        $route = null;
         if (!$devMode) {
             $path = rtrim($path, '/') . '/';
             $route = $path . $this->_getBuildName($target);
@@ -328,7 +329,7 @@ class AssetCompressHelper extends Helper
      * Generates filenames that are intended for production use
      * with statically generated files.
      *
-     * @param AssetCompress\AssetTarget $build The build being resolved.
+     * @param \MiniAsset\AssetTarget $build The build being resolved.
      * @return string The resolved build name.
      */
     protected function _getBuildName(AssetTarget $build)
@@ -341,7 +342,7 @@ class AssetCompressHelper extends Helper
      *
      * This generates URLs that work with the development dispatcher filter.
      *
-     * @param string $file The build file you want to make a url for.
+     * @param \MiniAsset\AssetTarget $file The build file you want to make a url for.
      * @param string $base The base path to fetch a url with.
      * @return string Generated URL.
      */

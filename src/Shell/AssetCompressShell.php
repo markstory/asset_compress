@@ -26,7 +26,7 @@ class AssetCompressShell extends Shell
     /**
      * Config instance
      *
-     * @var \MiniAsset\Config
+     * @var \MiniAsset\AssetConfig
      */
     protected $config;
 
@@ -152,7 +152,7 @@ class AssetCompressShell extends Shell
             if (in_array($name, ['.', '..'])) {
                 continue;
             }
-            // timestampped files.
+            // timestamped files.
             if (preg_match('/^(.*)\.v\d+(\.[a-z]+)$/', $name, $matches)) {
                 $base = $matches[1] . $matches[2];
             }

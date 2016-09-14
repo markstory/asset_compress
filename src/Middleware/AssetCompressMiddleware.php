@@ -15,14 +15,14 @@ class AssetCompressMiddleware
     /**
      * Object containing configuration settings for asset compressor
      *
-     * @var \AssetCompress\AssetConfig
+     * @var \MiniAsset\AssetConfig
      */
     protected $config;
 
     /**
      * Constructor
      *
-     * @param \AssetCompress\AssetConfig $config The config object to use.
+     * @param \MiniAsset\AssetConfig|null $config The config object to use.
      *   If null, \AssetCompress\ConfigFinder::loadAll() will be used.
      */
     public function __construct(AssetConfig $config = null)

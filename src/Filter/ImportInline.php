@@ -14,7 +14,7 @@ class ImportInline extends BaseImportInline
      *
      * This allows ImportInline to support theme & plugin prefixes.
      *
-     * @return AssetCompress\AssetScanner
+     * @return \AssetCompress\AssetScanner
      */
     protected function scanner()
     {
