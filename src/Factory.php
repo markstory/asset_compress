@@ -36,6 +36,19 @@ class Factory extends BaseFactory
     }
 
     /**
+     * Create a Caching Compiler
+     *
+     * @param bool $debug Whether or not to enable debugging mode for the compiler.
+     * @return \MiniAsset\Output\CachedCompiler
+     */
+    public function cachedCompiler($outputDir = '', $debug = false)
+    {
+        $outputDir = $outputDir ?: CACHE . 'asset_compress' . DS;
+        $debug = $debug ?: Configure::read('debug');
+        return parent::cachedCompiler($outputDir, $debug);
+    }
+
+    /**
      * Create an AssetCacher
      *
      * @param string $path The path to read from. Defaults to the application CACHE path.
