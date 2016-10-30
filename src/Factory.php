@@ -38,6 +38,7 @@ class Factory extends BaseFactory
     /**
      * Create a Caching Compiler
      *
+     * @param string $outputDir The directory to output cached files to.
      * @param bool $debug Whether or not to enable debugging mode for the compiler.
      * @return \MiniAsset\Output\CachedCompiler
      */
@@ -45,6 +46,7 @@ class Factory extends BaseFactory
     {
         $outputDir = $outputDir ?: CACHE . 'asset_compress' . DS;
         $debug = $debug ?: Configure::read('debug');
+
         return parent::cachedCompiler($outputDir, $debug);
     }
 
