@@ -68,14 +68,8 @@ class AssetCompressMiddleware
         $build = $assets->get($targetName);
 
         try {
-            $compiler = $factory->compiler();
-            $cacher = $factory->cacher();
-            if ($cacher->isFresh($build)) {
-                $contents = $cacher->read($build);
-            } else {
-                $contents = $compiler->generate($build);
-                $cacher->write($build, $contents);
-            }
+            $compiler = $factory->cachedCompiler();
+            $contents = $compiler->generate($build);
         } catch (Exception $e) {
             throw new NotFoundException($e->getMessage());
         }

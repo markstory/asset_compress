@@ -206,4 +206,19 @@ class FactoryTest extends TestCase
         $compiler = $factory->compiler();
         $this->assertAttributeEquals(false, 'debug', $compiler);
     }
+
+    public function testCachedCompiler()
+    {
+        $config = AssetConfig::buildFromIniFile($this->overrideFile, [
+            'WEBROOT' => APP
+        ]);
+        $factory = new Factory($config);
+        $compiler = $factory->cachedCompiler();
+
+        $innerCompiler = $this->readAttribute($compiler, 'compiler');
+        $this->assertAttributeEquals(true, 'debug', $innerCompiler);
+
+        $cacher = $this->readAttribute($compiler, 'cacher');
+        $this->assertAttributeEquals(CACHE . 'asset_compress' . DS, 'path', $cacher);
+    }
 }
