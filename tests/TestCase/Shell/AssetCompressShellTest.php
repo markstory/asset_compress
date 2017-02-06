@@ -21,7 +21,9 @@ class AssetCompressShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
+        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->Shell = new AssetCompressShell($io);
         $this->Shell->initialize();

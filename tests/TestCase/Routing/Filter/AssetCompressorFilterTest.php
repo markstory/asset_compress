@@ -10,7 +10,7 @@ use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 
-class AssetsCompressorTest extends TestCase
+class AssetsCompressorFilterTest extends TestCase
 {
 
     /**
@@ -34,16 +34,17 @@ class AssetsCompressorTest extends TestCase
         $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.ini', 'TestAssetIni.');
         $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.local.ini', 'TestAssetIni.');
 
-        $this->Compressor = $this->getMock(
-            'AssetCompress\Routing\Filter\AssetCompressorFilter',
-            ['_getConfig']
-        );
+        $this->Compressor = $this->getMockBuilder('AssetCompress\Routing\Filter\AssetCompressorFilter')
+            ->setMethods(['_getConfig'])
+            ->getMock();
         $this->Compressor->expects($this->atLeastOnce())
             ->method('_getConfig')
             ->will($this->returnValue($config));
 
         $this->request = new Request();
-        $this->response = $this->getMock('Cake\Network\Response', ['checkNotModified', 'type', 'send']);
+        $this->response = $this->getMockBuilder('Cake\Network\Response')
+            ->setMethods(['checkNotModified', 'type', 'send'])
+            ->getMock();
     }
 
     /**
