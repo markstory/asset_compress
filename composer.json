@@ -1,44 +1,44 @@
 {
-	"name": "markstory/asset_compress",
-	"description": "An asset compression plugin for CakePHP. Provides file concatenation and a flexible filter system for preprocessing and minification.",
-	"type": "cakephp-plugin",
-	"keywords": ["cakephp", "assets", "minifier", "less", "coffee-script", "sass"],
-	"homepage": "https://github.com/markstory/asset_compress",
-	"license": "MIT",
-	"authors": [
-		{
-			"name": "Mark Story",
-			"homepage": "http://mark-story.com",
-			"role": "Author"
-		}
-	],
-	"support": {
-		"issues": "https://github.com/markstory/asset_compress/issues",
-		"source": "https://github.com/markstory/asset_compress"
-	},
-	"require": {
-		"cakephp/cakephp": ">=3.3.3 <4.0.0",
-		"markstory/mini-asset": ">=1.3.0 <2.0.0"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "5.*",
-		"cakephp/cakephp-codesniffer": "~2.1"
-	},
-	"autoload": {
-		"psr-4": {
-			"AssetCompress\\": "src"
-		}
-	},
-	"autoload-dev": {
-		"psr-4": {
-			"AssetCompress\\Test\\": "tests"
-		}
-	},
-	"suggest": {
-		"natxet/CssMin": "For using the CssMin filter.",
-		"tchwork/jsqueeze": "For using the JSqueeze filter.",
-		"tedivm/jshrink": "For using the JShrink filter.",
-		"leafo/scssphp": "For using the ScssPHP filter.",
-		"leafo/lessphp": "For using the LessPHP filter."
-	}
+  "name": "markstory/asset_compress",
+  "description": "An asset compression plugin for CakePHP. Provides file concatenation and a flexible filter system for preprocessing and minification.",
+  "type": "cakephp-plugin",
+  "keywords": ["cakephp", "assets", "minifier", "less", "coffee-script", "sass"],
+  "homepage": "https://github.com/markstory/asset_compress",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mark Story",
+      "homepage": "http://mark-story.com",
+      "role": "Author"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/markstory/asset_compress/issues",
+    "source": "https://github.com/markstory/asset_compress"
+  },
+  "require": {
+    "cakephp/cakephp": ">=3.3.3 <4.0.0",
+    "markstory/mini-asset": ">=1.3.0 <2.0.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.*",
+    "cakephp/cakephp-codesniffer": "~2.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "AssetCompress\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AssetCompress\\Test\\": "tests"
+    }
+  },
+  "suggest": {
+    "natxet/CssMin": "For using the CssMin filter.",
+    "tchwork/jsqueeze": "For using the JSqueeze filter.",
+    "tedivm/jshrink": "For using the JShrink filter.",
+    "leafo/scssphp": "For using the ScssPHP filter.",
+    "leafo/lessphp": "For using the LessPHP filter."
+  }
 }
