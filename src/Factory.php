@@ -32,7 +32,7 @@ class Factory extends BaseFactory
      */
     public function writer($path = TMP)
     {
-        return parent::writer($path);
+        return parent::writer($this->config->get('general.timestampPath') ?: $path);
     }
 
     /**
