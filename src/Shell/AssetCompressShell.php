@@ -126,7 +126,6 @@ class AssetCompressShell extends Shell
             return $target->name();
         }, iterator_to_array($assets));
 
-
         $this->_clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
         $this->_clearPath($this->config->cachePath('js'), $themes, $targets);
         $this->_clearPath($this->config->cachePath('css'), $themes, $targets);

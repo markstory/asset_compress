@@ -291,7 +291,6 @@ class AssetCompressHelper extends Helper
         $baseUrl = $config->get($type . '.baseUrl');
         $devMode = Configure::read('debug');
 
-
         // CDN routes.
         if ($baseUrl && !$devMode) {
             return $baseUrl . $this->_getBuildName($target);
