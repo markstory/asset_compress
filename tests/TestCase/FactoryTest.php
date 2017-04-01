@@ -20,6 +20,7 @@ class FactoryTest extends TestCase
         $this->themedFile = APP . 'config' . DS . 'themed.ini';
         $this->pluginFile = APP . 'config' . DS . 'plugins.ini';
         $this->overrideFile = APP . 'config' . DS . 'overridable.local.ini';
+        $this->timestampFile = APP . 'config' . DS . 'timestamp.ini';
     }
 
     public function testFilterRegistry()
@@ -189,6 +190,26 @@ class FactoryTest extends TestCase
             ],
             'path' => TMP,
             'theme' => 'Red'
+        ];
+        $this->assertEquals($expected, $writer->config());
+    }
+
+    public function testWriterWithTimestampPath()
+    {
+        $config = AssetConfig::buildFromIniFile($this->timestampFile, [
+            'TEST_FILES' => APP,
+            'WEBROOT' => TMP
+        ]);
+        $factory = new Factory($config);
+        $writer = $factory->writer();
+
+        $expected = [
+            'timestamp' => [
+                'js' => true,
+                'css' => false
+            ],
+            'path' => TMP . 'timestamp' . DIRECTORY_SEPARATOR,
+            'theme' => '',
         ];
         $this->assertEquals($expected, $writer->config());
     }
