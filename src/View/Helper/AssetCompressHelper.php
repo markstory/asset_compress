@@ -206,7 +206,7 @@ class AssetCompressHelper extends Helper
      * @param string $file A build target to include.
      * @param array $options An array of options for the script tag.
      * @throws RuntimeException
-     * @return A script tag
+     * @return string A script tag
      */
     public function script($file, $options = [])
     {
