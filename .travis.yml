@@ -6,16 +6,16 @@ php:
   - 5.6
 
 env:
-  - CAKE_VERSION=2.5.8
-  - CAKE_VERSION=2.6
-  - CAKE_VERSION=2.7
+  - CAKE_VERSION=2.8.9
+  - CAKE_VERSION=2.9.9
+  - CAKE_VERSION=2.x
 
 install:
   - git clone git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp && git checkout $CAKE_VERSION
   - cp -R ../asset_compress plugins/AssetCompress
   - chmod -R 777 ../cakephp/app/tmp
-  - sh -c "composer global require 'phpunit/phpunit=3.7.33'"
-  - sh -c "ln -s ~/.composer/vendor/phpunit/phpunit/PHPUnit ../cakephp/vendors/PHPUnit"
+  - sh -c "composer require 'phpunit/phpunit=3.7.33'"
+  - sh -c "ln -s ./vendor/phpunit/phpunit/PHPUnit ../cakephp/vendors/PHPUnit"
 
 before_script:
   - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
