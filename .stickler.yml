@@ -1,0 +1,6 @@
+linters:
+  phpcs:
+    standard: CakePHP
+
+branches:
+  ignore: ['2.x']
