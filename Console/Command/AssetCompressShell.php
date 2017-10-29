@@ -23,7 +23,6 @@ class AssetCompressShell extends AppShell {
 	public function startup() {
 		parent::startup();
 
-		AssetConfig::clearAllCachedKeys();
 		$this->_Config = AssetConfig::buildFromIniFile($this->params['config']);
 		$this->AssetBuild->setThemes($this->_findThemes());
 		$this->out();
@@ -62,7 +61,7 @@ class AssetCompressShell extends AppShell {
  * @return void
  */
 	public function clear() {
-		$this->clear_build_ts();
+		$this->clear_cache();
 
 		$this->out('Clearing Javascript build files:');
 		$this->hr();
@@ -86,6 +85,7 @@ class AssetCompressShell extends AppShell {
  */
 	public function clear_cache() {
 		$this->out('Clearing all cache keys:');
+		AssetConfig::clearAllCachedKeys();
 		$this->hr();
 	}
 
