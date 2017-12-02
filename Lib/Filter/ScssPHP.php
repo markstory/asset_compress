@@ -30,11 +30,16 @@ class ScssPHP extends AssetFilter {
 		if (substr($filename, strlen($this->_settings['ext']) * -1) !== $this->_settings['ext']) {
 			return $input;
 		}
-		App::import('Vendor', 'scssc', array('file' => $this->_settings['path']));
-		if (!class_exists('scssc')) {
-			throw new Exception(sprintf('Cannot not load filter class "%s".', 'scssc'));
+		require($this->_settings['path']);
+		if (class_exists('scssc')) {
+			// in order to keep compatibility with older ScssPHP versions
+			$sc = new scssc();
+			$sc->addImportPath(dirname($filename));
+			return $sc->compile($input);
+		} elseif (!class_exists('Leafo\\ScssPhp\\Compiler')) {
+			throw new Exception(sprintf('Cannot not load filter class "%s".', 'Leafo\\ScssPhp\\Compiler'));
 		}
-		$sc = new scssc();
+		$sc = new Leafo\ScssPhp\Compiler();
 		$sc->addImportPath(dirname($filename));
 		return $sc->compile($input);
 	}
