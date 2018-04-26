@@ -5,8 +5,8 @@ use AssetCompress\Routing\Filter\AssetCompressorFilter;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Http\ServerRequest;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 
