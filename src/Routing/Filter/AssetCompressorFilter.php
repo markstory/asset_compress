@@ -6,7 +6,7 @@ use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Routing\DispatcherFilter;
 use Exception;
 
@@ -36,6 +36,10 @@ class AssetCompressorFilter extends DispatcherFilter
      */
     public function beforeDispatch(Event $event)
     {
+        deprecationWarning(
+            'AssetCompressorFilter is deprecated. ' .
+            'You should update to use AssetCompress\Middleware\AssetCompressMiddleware instead.'
+        );
         $request = $event->data['request'];
         $response = $event->data['response'];
         $config = $this->_getConfig();
