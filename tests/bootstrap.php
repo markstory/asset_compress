@@ -51,7 +51,7 @@ Configure::write('App', [
     ]
 ]);
 
-Cache::config([
+Cache::setConfig([
     '_cake_core_' => [
         'engine' => 'File',
         'prefix' => 'cake_core_',

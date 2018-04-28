@@ -178,7 +178,7 @@ class AssetCompressShell extends Shell
     {
         $parser = parent::getOptionParser();
 
-        return $parser->description([
+        return $parser->setDescription([
             'Asset Compress Shell',
             '',
             'Builds and clears assets defined in your asset_compress.ini',

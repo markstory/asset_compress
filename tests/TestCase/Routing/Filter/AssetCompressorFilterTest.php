@@ -5,8 +5,8 @@ use AssetCompress\Routing\Filter\AssetCompressorFilter;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 
@@ -21,6 +21,9 @@ class AssetsCompressorFilterTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        $this->level = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
 
         $map = [
@@ -41,8 +44,8 @@ class AssetsCompressorFilterTest extends TestCase
             ->method('_getConfig')
             ->will($this->returnValue($config));
 
-        $this->request = new Request();
-        $this->response = $this->getMockBuilder('Cake\Network\Response')
+        $this->request = new ServerRequest();
+        $this->response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['checkNotModified', 'type', 'send'])
             ->getMock();
     }
@@ -56,6 +59,7 @@ class AssetsCompressorFilterTest extends TestCase
     {
         parent::tearDown();
         Plugin::unload('TestAssetIni');
+        error_reporting($this->level);
     }
 
     /**

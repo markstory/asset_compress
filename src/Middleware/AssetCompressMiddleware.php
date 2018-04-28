@@ -4,7 +4,7 @@ namespace AssetCompress\Middleware;
 use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 use MiniAsset\AssetConfig;
 
 /**
