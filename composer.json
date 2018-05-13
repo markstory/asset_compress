@@ -31,7 +31,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "AssetCompress\\Test\\": "tests"
+      "AssetCompress\\Test\\": "tests",
+      "TestApp\\": "tests/test_files/src"
     }
   },
   "suggest": {

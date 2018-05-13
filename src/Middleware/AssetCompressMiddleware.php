@@ -5,6 +5,7 @@ use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
+use Exception;
 use MiniAsset\AssetConfig;
 
 /**
