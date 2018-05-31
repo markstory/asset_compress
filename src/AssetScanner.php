@@ -2,7 +2,7 @@
 namespace AssetCompress;
 
 use Cake\Core\App;
-use Cake\Core\Plugin;
+use Cake\Core\Plugin as CorePlugin;
 use Cake\Utility\Inflector;
 use MiniAsset\AssetScanner as BaseScanner;
 use RuntimeException;
@@ -69,7 +69,7 @@ class AssetScanner extends BaseScanner
     {
         $file = preg_replace(self::THEME_PATTERN, '', $file);
 
-        return Plugin::path($this->theme) . 'webroot' . DS . $file;
+        return CorePlugin::path($this->theme) . 'webroot' . DS . $file;
     }
 
     /**
@@ -85,10 +85,10 @@ class AssetScanner extends BaseScanner
         if (empty($matches[1]) || empty($matches[2])) {
             throw new RuntimeException('Missing required parameters');
         }
-        if (!Plugin::loaded($matches[1])) {
+        if (!CorePlugin::loaded($matches[1])) {
             throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
         }
-        $path = Plugin::path($matches[1]);
+        $path = CorePlugin::path($matches[1]);
 
         return $path . 'webroot' . DS . $matches[2];
     }
