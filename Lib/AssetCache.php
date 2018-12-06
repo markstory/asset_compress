@@ -43,40 +43,93 @@ class AssetCache {
  * @param string $target The target file being built.
  * @return boolean
  */
-	public function isFresh($target) {
-		$ext = $this->_Config->getExt($target);
-		$files = $this->_Config->files($target);
+    public function isFresh($target) {
+        $ext = $this->_Config->getExt($target);
+        $files = $this->_Config->files($target);
 
-		$theme = $this->_Config->theme();
-		$target = $this->buildFileName($target);
+        $theme = $this->_Config->theme();
+        $target = $this->buildFileName($target);
 
-		$buildFile = $this->_Config->cachePath($ext) . $target;
+        $buildFile = $this->_Config->cachePath($ext) . $target;
 
-		if (!file_exists($buildFile)) {
-			return false;
-		}
-		$configTime = $this->_Config->modifiedTime();
-		$buildTime = filemtime($buildFile);
+        if (!file_exists($buildFile)) {
+            return false;
+        }
+        $configTime = $this->_Config->modifiedTime();
+        $buildTime = filemtime($buildFile);
 
-		if ($configTime >= $buildTime) {
-			return false;
-		}
+        if ($configTime >= $buildTime) {
+            return false;
+        }
 
-		$Scanner = new AssetScanner($this->_Config->paths($ext, $target), $theme);
+        $Scanner = new AssetScanner($this->_Config->paths($ext, $target), $theme);
 
-		foreach ($files as $file) {
-			$path = $Scanner->find($file);
-			if ($Scanner->isRemote($path)) {
-				$time = $this->getRemoteFileLastModified($path);
-			} else {
-				$time = filemtime($path);
-			}
-			if ($time === false || $time >= $buildTime) {
-				return false;
-			}
-		}
-		return true;
-	}
+        foreach ($files as $file) {
+            $path = $Scanner->find($file);
+            if ($Scanner->isRemote($path)) {
+                $time = $this->getRemoteFileLastModified($path);
+            } else {
+                $time = filemtime($path);
+            }
+            if ($time === false || $time >= $buildTime) {
+                return false;
+            }
+
+            // If this is a SASS or LESS file, check any imports defined to see if they are not fresh.
+            $currentFileExt = $this->_Config->getExt($file);
+            $isSass = $currentFileExt === 'scss';
+            $isLess = $currentFileExt === 'less';
+
+            if ($isSass || $isLess) {
+                $content = '';
+                if ($Scanner->isRemote($path)) {
+                    $handle = fopen($path, 'rb');
+                    if ($handle) {
+                        $content = stream_get_contents($handle);
+                        fclose($handle);
+                    }
+                } else {
+                    $content = file_get_contents($path);
+                }
+
+                $importPattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)))(\s.*)?;/m';
+                preg_match_all($importPattern, $content, $matches, PREG_SET_ORDER);
+
+                if (!empty($matches)) {
+                    foreach ($matches as $match) {
+                        $importPath = empty($match[2]) ? $match[4] : $match[2];
+
+                        // Transform file based import paths for SASS
+                        if ($isSass && preg_match('/^(url\(|http).*/', $importPath) === 0) {
+                            $importPath .= '.scss';
+
+                            if (strpos($importPath, '/') !== false) {
+                                $lastSlashPosition = strrpos($importPath, '/');
+                                $importPath = substr($importPath, 0, $lastSlashPosition + 1) . '_' . substr($importPath, $lastSlashPosition + 1);
+                            } else {
+                                $importPath = '_' . $importPath;
+                            }
+                        } else {
+                            $importPath = str_replace(['url("', ');'], '', $importPath);
+                        }
+
+                        $importFile = $Scanner->find($importPath, false);
+
+                        if ($Scanner->isRemote($importFile)) {
+                            $time = $this->getRemoteFileLastModified($importFile);
+                        } else {
+                            $time = filemtime($importFile);
+                        }
+
+                        if ($time === false || $time >= $buildTime) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
 /**
  * Gets the modification time of a remote $url.
@@ -254,7 +307,7 @@ class AssetCache {
 	}
 
 /**
- * Get the cache name a build. 
+ * Get the cache name a build.
  *
  * @param string $build The build target name.
  * @return string The build cache name.
@@ -266,7 +319,7 @@ class AssetCache {
 		}
 		return $name;
 	}
-	
+
 /**
  * Modify a file name and append in the timestamp
  *
