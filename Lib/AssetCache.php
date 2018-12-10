@@ -66,7 +66,7 @@ class AssetCache {
 
 		foreach ($files as $file) {
 			$path = $Scanner->find($file);
-            if (!$this->_isFreshTimestamp($Scanner, $file, $buildTime)) {
+            if (!$this->_isFreshTimestamp($Scanner, $path, $buildTime)) {
                 return false;
             }
 
