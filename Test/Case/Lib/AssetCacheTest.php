@@ -55,6 +55,8 @@ class AssetCacheTest extends CakeTestCase {
 
 	public function testIsFreshConfigExpire() {
 		touch(TMP . '/libs.js');
+		touch(TMP . '/import.css');
+		touch(App::pluginPath('AssetCompress') . 'Test' . DS . 'test_files' . DS . 'css' . DS . '_sass_partial.css');
 
 		$data = parse_ini_file($this->testConfig, true);
 		$constants = array(
@@ -74,7 +76,15 @@ class AssetCacheTest extends CakeTestCase {
 		$cache = new AssetCache($config);
 		$this->assertFalse($cache->isFresh('libs.js'));
 
-		unlink(TMP . '/libs.js');
+		$config = new AssetConfig($data, $constants, strtotime('+1 minute'));
+		$config->cachePath('css', TMP);
+		$config->set('css.timestamp', false);
+
+		$cache = new AssetCache($config);
+		$this->assertTrue($cache->isFresh('import.scss'));
+
+        unlink(TMP . '/libs.js');
+		unlink(TMP . '/import.css');
 	}
 
 	public function testThemeFileSaving() {
@@ -134,22 +144,22 @@ class AssetCacheTest extends CakeTestCase {
 		$result = $this->cache->buildFilename('libs.js');
 		$this->assertEquals('libs.v' . $time . '.js', $result);
 	}
-	
+
 	public function testInvalidateAndFinalizeBuildTimestamp() {
 		$this->config->general('cacheConfig', true);
 		$this->config->set('js.timestamp', true);
-		
+
 		$cacheName = $this->cache->buildCacheName('libs.js');
 		$this->cache->invalidate('libs.js');
 		$invalidatedCacheName = $this->cache->buildCacheName('libs.js');
 		$this->assertNotEquals($cacheName, $invalidatedCacheName);
-		
+
 		$time = $this->cache->getTimestamp('libs.js');
-		
+
 		$this->cache->finalize('libs.js');
 		$finalizedCacheName = $this->cache->buildCacheName('libs.js');
 		$this->assertEquals($cacheName, $finalizedCacheName);
-		
+
 		$finalizedTime = $this->cache->getTimestamp('libs.js');
 		$this->assertEquals($time, $finalizedTime);
 	}
