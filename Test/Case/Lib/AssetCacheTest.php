@@ -81,7 +81,7 @@ class AssetCacheTest extends CakeTestCase {
 		$config->set('css.timestamp', false);
 
 		$cache = new AssetCache($config);
-		$this->assertTrue($cache->isFresh('import.scss'));
+		$this->assertFalse($cache->isFresh('import.scss'));
 
 		unlink(TMP . '/libs.js');
 		unlink(TMP . '/import.css');
