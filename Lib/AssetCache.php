@@ -66,9 +66,9 @@ class AssetCache {
 
 		foreach ($files as $file) {
 			$path = $Scanner->find($file);
-            if (!$this->_isFreshTimestamp($Scanner, $path, $buildTime)) {
-                return false;
-            }
+			if (!$this->_isFreshTimestamp($Scanner, $path, $buildTime)) {
+				return false;
+			}
 
 			$currentFileExt = $this->_Config->getExt($file);
 
