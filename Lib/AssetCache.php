@@ -66,21 +66,13 @@ class AssetCache {
 
 		foreach ($files as $file) {
 			$path = $Scanner->find($file);
-			if ($Scanner->isRemote($path)) {
-				$time = $this->getRemoteFileLastModified($path);
-			} else {
-				$time = filemtime($path);
-			}
-			if ($time === false || $time >= $buildTime) {
-				return false;
-			}
+            if (!$this->_isFreshTimestamp($Scanner, $file, $buildTime)) {
+                return false;
+            }
 
-			// If this is a SASS or LESS file, check any imports defined to see if they are not fresh.
 			$currentFileExt = $this->_Config->getExt($file);
-			$isSass = $currentFileExt === 'scss';
-			$isLess = $currentFileExt === 'less';
 
-			if ($isSass || $isLess) {
+			if ($this->_isCssLanguageExtension($currentFileExt)) {
 				$content = '';
 				if ($Scanner->isRemote($path)) {
 					$handle = fopen($path, 'rb');
@@ -92,39 +84,8 @@ class AssetCache {
 					$content = file_get_contents($path);
 				}
 
-				$importPattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)))(\s.*)?;/m';
-				preg_match_all($importPattern, $content, $matches, PREG_SET_ORDER);
-
-				if (!empty($matches)) {
-					foreach ($matches as $match) {
-						$importPath = empty($match[2]) ? $match[4] : $match[2];
-
-						// Transform file based import paths for SASS
-						if ($isSass && preg_match('/^(url\(|http).*/', $importPath) === 0) {
-							$importPath .= '.scss';
-
-							if (strpos($importPath, '/') !== false) {
-								$lastSlashPosition = strrpos($importPath, '/');
-								$importPath = substr($importPath, 0, $lastSlashPosition + 1) . '_' . substr($importPath, $lastSlashPosition + 1);
-							} else {
-								$importPath = '_' . $importPath;
-							}
-						} else {
-							$importPath = str_replace(['url("', ');'], '', $importPath);
-						}
-
-						$importFile = $Scanner->find($importPath, false);
-
-						if ($Scanner->isRemote($importFile)) {
-							$time = $this->getRemoteFileLastModified($importFile);
-						} else {
-							$time = filemtime($importFile);
-						}
-
-						if ($time === false || $time >= $buildTime) {
-							return false;
-						}
-					}
+				if (!empty($content) && !$this->_areCssLanguageFileImportsFresh($currentFileExt, $content, $Scanner, $buildTime)) {
+					return false;
 				}
 			}
 		}
@@ -335,5 +296,98 @@ class AssetCache {
 		$name = substr($file, 0, $pos);
 		$ext = substr($file, $pos);
 		return $name . '.v' . $time . $ext;
+	}
+
+/**
+ * Modify a file name and append in the timestamp
+ *
+ * @param AssetScanner $Scanner
+ * @param string $path The path of the filename.
+ * @param integer $buildTime The timestamp of the build.
+ * @return boolean
+ */
+	protected function _isFreshTimestamp($Scanner, $path, $buildTime) {
+		if ($Scanner->isRemote($path)) {
+			$time = $this->getRemoteFileLastModified($path);
+		} else {
+			$time = filemtime($path);
+		}
+		if ($time === false || $time >= $buildTime) {
+			return false;
+		}
+
+		return true;
+	}
+
+/**
+ * Check if a file is a CSS language extension file
+ *
+ * @param string $fileExt The file extension.
+ * @return boolean
+ */
+	protected function _isCssLanguageExtension($fileExt) {
+		return $this->_isSass($fileExt) || $this->_isLess($fileExt);
+	}
+
+	/**
+ * Check if a file is a SASS file
+ *
+ * @param string $fileExt The file extension.
+ * @return boolean
+ */
+	protected function _isSass($fileExt) {
+		return $fileExt === 'scss';
+	}
+
+/**
+ * Check if a file is a LESS file
+ *
+ * @param string $fileExt The file extension.
+ * @return boolean
+ */
+	protected function _isLess($fileExt) {
+		return $fileExt === 'less';
+	}
+
+/**
+ * Check all files imported by CSS language extension file fresh
+ *
+ * @param string $fileExt The file extension.
+ * @param AssetScanner $Scanner
+ * @param string $content The content of the file.
+ * @param string $buildTime The timestamp to check for freshness.
+ * @return boolean
+ */
+	protected function _areCssLanguageFileImportsFresh($fileExt, $content, $Scanner, $buildTime) {
+		$importPattern = '/^\s*@import\s*(?:(?:([\'"])([^\'"]+)\\1)|(?:url\(([\'"])([^\'"]+)\\3\)))(\s.*)?;/m';
+		preg_match_all($importPattern, $content, $matches, PREG_SET_ORDER);
+
+		if (empty($matches)) {
+			return true;
+		}
+
+		foreach ($matches as $match) {
+			$importPath = empty($match[2]) ? $match[4] : $match[2];
+
+			if ($this->_isSass($fileExt) && preg_match('/^(url\(|http).*/', $importPath) === 0) {
+				$importPath .= '.scss';
+
+				if (strpos($importPath, '/') !== false) {
+					$lastSlashPosition = strrpos($importPath, '/');
+					$importPath = substr($importPath, 0, $lastSlashPosition + 1) . '_' . substr($importPath, $lastSlashPosition + 1);
+				} else {
+					$importPath = '_' . $importPath;
+				}
+			} else {
+				$importPath = str_replace(['url("', ');'], '', $importPath);
+			}
+
+			$importFile = $Scanner->find($importPath, false);
+			if (!$this->_isFreshTimestamp($Scanner, $importFile, $buildTime)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
