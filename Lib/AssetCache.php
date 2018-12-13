@@ -329,7 +329,7 @@ class AssetCache {
 		return $this->_isSass($fileExt) || $this->_isLess($fileExt);
 	}
 
-	/**
+/**
  * Check if a file is a SASS file
  *
  * @param string $fileExt The file extension.
