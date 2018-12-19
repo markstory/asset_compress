@@ -85,7 +85,7 @@ class AssetScanner extends BaseScanner
         if (empty($matches[1]) || empty($matches[2])) {
             throw new RuntimeException('Missing required parameters');
         }
-        if (!CorePlugin::loaded($matches[1])) {
+        if (!CorePlugin::isLoaded($matches[1])) {
             throw new RuntimeException($matches[1] . ' is not a loaded plugin.');
         }
         $path = CorePlugin::path($matches[1]);
