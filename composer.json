@@ -40,6 +40,6 @@
     "328/jsqueeze": "For using the JSqueeze filter.",
     "patchwork/jshrink": "For using the JShrink filter.",
     "leafo/scssphp": "For using the ScssPHP filter.",
-    "leafo/lessphp": "For using the LessPHP filter."
+    "leafo/less.php": "For using the LessPHP filter."
   }
 }
