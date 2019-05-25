@@ -2,7 +2,6 @@
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\Config\ConfigFinder;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -11,7 +10,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConfigFinderTest extends TestCase
 {
-
     /**
      * setup method
      *
@@ -70,7 +68,7 @@ class ConfigFinderTest extends TestCase
             'TestAssetIni.foo.bar.js',
             'TestAssetIni.all.css',
             'TestAssetIni.overridable_scripts.js',
-            'TestAssetIni.overridable_styles.css'
+            'TestAssetIni.overridable_styles.css',
         ];
         $result = $config->targets();
         $this->assertEquals($expected, $result);

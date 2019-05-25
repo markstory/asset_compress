@@ -1,14 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\Sprockets;
-use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class SprocketsTest extends TestCase
 {
-
     public function setUp(): void
     {
         parent::setUp();
@@ -20,7 +19,7 @@ class SprocketsTest extends TestCase
             'paths' => [
                 $this->_jsDir,
                 $this->_jsDir . 'classes' . DS,
-            ]
+            ],
         ];
         $this->filter->settings($settings);
     }

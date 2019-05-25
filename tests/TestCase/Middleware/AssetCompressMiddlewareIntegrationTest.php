@@ -1,15 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Middleware;
 
-use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\IntegrationTestCase;
-use MiniAsset\AssetConfig;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
-class AssetsCompressMiddlewareIntegrationTest extends IntegrationTestCase
+class AssetCompressMiddlewareIntegrationTest extends IntegrationTestCase
 {
     /**
      * Setup method

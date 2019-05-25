@@ -1,18 +1,18 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Core\PluginCollection;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
-class AssetsCompressMiddlewareTest extends TestCase
+class AssetCompressMiddlewareTest extends TestCase
 {
-
     protected $nextInvoked = false;
 
     /**
@@ -28,7 +28,7 @@ class AssetsCompressMiddlewareTest extends TestCase
 
         $map = [
             'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP
+            'TEST_FILES' => APP,
         ];
         $this->loadPlugins(['TestAssetIni']);
 
@@ -138,7 +138,7 @@ class AssetsCompressMiddlewareTest extends TestCase
         $configFile = APP . 'config' . DS . 'themed.ini';
         $map = [
             'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP
+            'TEST_FILES' => APP,
         ];
         $config = new AssetConfig([], $map);
         $config->load($configFile);

@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress;
 
-use AssetCompress\Factory;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 
@@ -59,7 +59,7 @@ class FactoryTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -83,8 +83,11 @@ class FactoryTest extends TestCase
         $this->assertEquals('libs.js', $asset->name(), 'Asset name is wrong');
         $this->assertEquals('js', $asset->ext(), 'Asset ext is wrong');
         $this->assertEquals(str_replace(DS, '/', TMP . 'cache_js'), str_replace(DS, '/', $asset->outputDir()), 'Asset path is wrong');
-        $this->assertEquals(str_replace(DS, '/', TMP . 'cache_js/libs.js'), str_replace(DS, '/', $asset->path()),
-            'Asset path is wrong');
+        $this->assertEquals(
+            str_replace(DS, '/', TMP . 'cache_js/libs.js'),
+            str_replace(DS, '/', $asset->path()),
+            'Asset path is wrong'
+        );
     }
 
     /**
@@ -97,7 +100,7 @@ class FactoryTest extends TestCase
         $this->loadPlugins(['Red']);
         $config = AssetConfig::buildFromIniFile($this->themedFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $config->theme('Red');
 
@@ -111,8 +114,10 @@ class FactoryTest extends TestCase
 
         $files = $asset->files();
         $this->assertCount(1, $files);
-        $this->assertEquals(str_replace(DS, '/', APP . 'Plugin/Red/webroot/theme.css'),
-            str_replace(DS, '/', $files[0]->path()));
+        $this->assertEquals(
+            str_replace(DS, '/', APP . 'Plugin/Red/webroot/theme.css'),
+            str_replace(DS, '/', $files[0]->path())
+        );
     }
 
     /**
@@ -125,7 +130,7 @@ class FactoryTest extends TestCase
         $this->loadPlugins(['TestAsset']);
         $config = AssetConfig::buildFromIniFile($this->pluginFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -152,7 +157,7 @@ class FactoryTest extends TestCase
     public function testAssetCreationWithAdditionalPath()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT' => APP
+            'WEBROOT' => APP,
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -178,7 +183,7 @@ class FactoryTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $config->theme('Red');
         $config->set('js.timestamp', true);
@@ -188,10 +193,10 @@ class FactoryTest extends TestCase
         $expected = [
             'timestamp' => [
                 'js' => true,
-                'css' => false
+                'css' => false,
             ],
             'path' => TMP,
-            'theme' => 'Red'
+            'theme' => 'Red',
         ];
         $this->assertEquals($expected, $writer->config());
     }
@@ -200,7 +205,7 @@ class FactoryTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile($this->timestampFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $factory = new Factory($config);
         $writer = $factory->writer();
@@ -208,7 +213,7 @@ class FactoryTest extends TestCase
         $expected = [
             'timestamp' => [
                 'js' => true,
-                'css' => false
+                'css' => false,
             ],
             'path' => TMP . 'timestamp' . DIRECTORY_SEPARATOR,
             'theme' => '',
@@ -219,7 +224,7 @@ class FactoryTest extends TestCase
     public function testCompiler()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT' => APP
+            'WEBROOT' => APP,
         ]);
         $factory = new Factory($config);
         $compiler = $factory->compiler();
@@ -233,7 +238,7 @@ class FactoryTest extends TestCase
     public function testCachedCompiler()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT' => APP
+            'WEBROOT' => APP,
         ]);
         $factory = new Factory($config);
         $compiler = $factory->cachedCompiler();

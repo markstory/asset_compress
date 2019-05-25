@@ -1,31 +1,29 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\AssetScanner;
-use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class AssetScannerTest extends TestCase
 {
-
     public function setUp(): void
     {
         parent::setUp();
         $this->_testFiles = APP;
         $paths = [
             $this->_testFiles . 'js' . DS,
-            $this->_testFiles . 'js' . DS . 'classes' . DS
+            $this->_testFiles . 'js' . DS . 'classes' . DS,
         ];
         $this->Scanner = new AssetScanner($paths);
     }
 
     public function testFindResolveThemePaths()
     {
-		$this->loadPlugins(['Blue']);
+        $this->loadPlugins(['Blue']);
         $paths = [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ];
         $scanner = new AssetScanner($paths, 'Blue');
         $result = $scanner->find('t:theme.css');
@@ -41,7 +39,7 @@ class AssetScannerTest extends TestCase
         $this->loadPlugins(['TestAsset']);
 
         $paths = [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ];
         $scanner = new AssetScanner($paths);
         $result = $scanner->find('p:TestAsset:plugin.css');

@@ -15,7 +15,6 @@ use MiniAsset\AssetConfig;
  */
 class ConfigFinder
 {
-
     /**
      * Load all configuration files in the application.
      *

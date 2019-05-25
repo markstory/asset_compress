@@ -1,13 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ImportInline;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class ImportInlineTest extends TestCase
 {
-
     public function setUp(): void
     {
         parent::setUp();
@@ -15,7 +15,7 @@ class ImportInlineTest extends TestCase
         $this->filter = new ImportInline();
         $settings = [
             'paths' => [
-                APP . 'css/'
+                APP . 'css/',
             ],
             'theme' => 'Red',
         ];

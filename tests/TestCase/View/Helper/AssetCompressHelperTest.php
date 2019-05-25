@@ -1,10 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\View\Helper;
 
 use AssetCompress\View\Helper\AssetCompressHelper;
-use Cake\Cache\Cache;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -13,7 +13,6 @@ use MiniAsset\AssetConfig;
 
 class AssetCompressHelperTest extends TestCase
 {
-
     /**
      * start a test
      *
@@ -33,7 +32,7 @@ class AssetCompressHelperTest extends TestCase
         $this->Helper = new AssetCompressHelper($view, ['noconfig' => true]);
         $config = AssetConfig::buildFromIniFile($testFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => WWW_ROOT
+            'WEBROOT' => WWW_ROOT,
         ]);
         $this->Helper->assetConfig($config);
 
@@ -63,8 +62,8 @@ class AssetCompressHelperTest extends TestCase
         $expected = [
             ['script' => [
                 'defer' => 'defer',
-                'src' => '/cache_js/libs.js'
-            ]]
+                'src' => '/cache_js/libs.js',
+            ]],
         ];
         $this->assertHtml($expected, $result);
 
@@ -73,8 +72,8 @@ class AssetCompressHelperTest extends TestCase
             'link' => [
                 'test' => 'value',
                 'rel' => 'stylesheet',
-                'href' => '/cache_css/all.css'
-            ]
+                'href' => '/cache_css/all.css',
+            ],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -94,8 +93,8 @@ class AssetCompressHelperTest extends TestCase
         $result = $this->Helper->script('libs.js');
         $expected = [
             ['script' => [
-                'src' => 'http://cdn.example.com/js/libs.js'
-            ]]
+                'src' => 'http://cdn.example.com/js/libs.js',
+            ]],
         ];
         $this->assertHtml($expected, $result);
 
@@ -103,8 +102,8 @@ class AssetCompressHelperTest extends TestCase
         $result = $this->Helper->script('libs.js');
         $expected = [
             ['script' => [
-                'src' => '/cache_js/libs.js'
-            ]]
+                'src' => '/cache_js/libs.js',
+            ]],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -117,19 +116,18 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testDefinedBuildWithThemeNoBuiltAsset()
     {
-
         $this->loadPlugins(['Blue']);
         $this->Helper->getView()->setTheme('Blue');
         $config = $this->Helper->assetConfig();
         $config->addTarget('themed.js', [
             'theme' => true,
-            'files' => ['base.js']
+            'files' => ['base.js'],
         ]);
         $result = $this->Helper->script('themed.js');
         $expected = [
             ['script' => [
-                'src' => '/cache_js/themed.js?theme=Blue'
-            ]]
+                'src' => '/cache_js/themed.js?theme=Blue',
+            ]],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -138,20 +136,20 @@ class AssetCompressHelperTest extends TestCase
     {
         $config = $this->Helper->assetConfig();
         $config->addTarget('raw.js', [
-            'files' => ['classes/base_class.js', 'classes/base_class_two.js']
+            'files' => ['classes/base_class.js', 'classes/base_class_two.js'],
         ]);
 
         $result = $this->Helper->script('raw.js', ['raw' => true]);
         $expected = [
             [
                 'script' => [
-                    'src' => '/js/classes/base_class.js'
+                    'src' => '/js/classes/base_class.js',
                 ],
             ],
             '/script',
             [
                 'script' => [
-                    'src' => '/js/classes/base_class_two.js'
+                    'src' => '/js/classes/base_class_two.js',
                 ],
             ],
             '/script',
@@ -169,14 +167,14 @@ class AssetCompressHelperTest extends TestCase
         Configure::write('debug', false);
 
         $config = new AssetConfig([], [
-            'WEBROOT/' => WWW_ROOT
+            'WEBROOT/' => WWW_ROOT,
         ]);
         $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.ini', 'TestAssetIni.');
         $config->paths('css', null, [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ]);
         $config->paths('js', null, [
-            $this->_testFiles . 'js' . DS
+            $this->_testFiles . 'js' . DS,
         ]);
         $config->cachePath('js', '/cache_js/');
         $this->Helper->assetConfig($config);
@@ -184,8 +182,8 @@ class AssetCompressHelperTest extends TestCase
         $result = $this->Helper->script('TestAssetIni.libs.js');
         $expected = [
             ['script' => [
-                'src' => '/cache_js/TestAssetIni.libs.js'
-            ]]
+                'src' => '/cache_js/TestAssetIni.libs.js',
+            ]],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -201,10 +199,10 @@ class AssetCompressHelperTest extends TestCase
 
         $config = AssetConfig::buildFromIniFile($this->_testFiles . 'config/plugins.ini');
         $config->paths('css', null, [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ]);
         $config->paths('js', null, [
-            $this->_testFiles . 'js' . DS
+            $this->_testFiles . 'js' . DS,
         ]);
         $this->Helper->assetConfig($config);
 
@@ -213,14 +211,14 @@ class AssetCompressHelperTest extends TestCase
             [
                 'link' => [
                     'rel' => 'stylesheet',
-                    'href' => 'preg:/.*css\/nav.css/'
-                ]
+                    'href' => 'preg:/.*css\/nav.css/',
+                ],
             ],
             [
                 'link' => [
                     'rel' => 'stylesheet',
-                    'href' => '/test_asset/plugin.css'
-                ]
+                    'href' => '/test_asset/plugin.css',
+                ],
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -229,9 +227,9 @@ class AssetCompressHelperTest extends TestCase
         $expected = [
             [
                 'script' => [
-                    'src' => '/test_asset/plugin.js'
-                ]
-            ]
+                    'src' => '/test_asset/plugin.js',
+                ],
+            ],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -248,7 +246,7 @@ class AssetCompressHelperTest extends TestCase
         $config->cachePath('js', TMP);
         $config->addTarget('asset_test.js', [
             'files' => ['base.js'],
-            'theme' => true
+            'theme' => true,
         ]);
 
         $this->Helper->getView()->setTheme('blue');
@@ -342,11 +340,11 @@ class AssetCompressHelperTest extends TestCase
     {
         $config = $this->Helper->assetConfig();
         $config->paths('css', null, [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ]);
 
         $config->addTarget('nav.css', [
-            'files' => ['nav.css']
+            'files' => ['nav.css'],
         ]);
 
         Configure::write('debug', true);
@@ -370,11 +368,11 @@ EOF;
     {
         $config = $this->Helper->assetConfig();
         $config->paths('css', null, [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ]);
 
         $config->addTarget('nav.css', [
-            'files' => ['nav.css']
+            'files' => ['nav.css'],
         ]);
 
         Configure::write('debug', false);
@@ -399,11 +397,11 @@ EOF;
     {
         $config = $this->Helper->assetConfig();
         $config->paths('css', null, [
-            $this->_testFiles . 'css' . DS
+            $this->_testFiles . 'css' . DS,
         ]);
 
         $config->addTarget('nav.css', [
-            'files' => ['nav.css', 'has_import.css']
+            'files' => ['nav.css', 'has_import.css'],
         ]);
         Configure::write('debug', false);
 
@@ -492,9 +490,9 @@ EOF;
         $expected = [
             [
                 'script' => [
-                    'src' => '/js/BlueController.js'
-                ]
-            ]
+                    'src' => '/js/BlueController.js',
+                ],
+            ],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -503,5 +501,4 @@ EOF;
     {
         return str_replace("\r\n", "\n", $s);
     }
-
 }
