@@ -5,6 +5,8 @@
  * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+// @codingStandardsIgnoreFile
+
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -14,6 +16,10 @@ if (is_file('vendor/autoload.php')) {
     require_once 'vendor/autoload.php';
 } else {
     require_once dirname(__DIR__) . '/vendor/autoload.php';
+}
+
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
 }
 
 // Path constants to a few helpful things.

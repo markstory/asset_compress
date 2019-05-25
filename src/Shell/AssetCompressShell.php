@@ -3,6 +3,7 @@ namespace AssetCompress\Shell;
 
 use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Utility\Folder;
 use DirectoryIterator;
@@ -42,7 +43,7 @@ class AssetCompressShell extends Shell
      *
      * @return void
      */
-    public function startup()
+    public function startup(): void
     {
         parent::startup();
         $configFinder = new ConfigFinder();
@@ -79,7 +80,7 @@ class AssetCompressShell extends Shell
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->clearBuildTs();
 
@@ -174,7 +175,7 @@ class AssetCompressShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 

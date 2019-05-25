@@ -10,7 +10,7 @@ use Cake\TestSuite\TestCase;
 class AssetScannerTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->_testFiles = APP;

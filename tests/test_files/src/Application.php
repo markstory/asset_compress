@@ -3,21 +3,22 @@ namespace TestApp;
 
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\RouteBuilder;
 
 class Application extends BaseApplication
 {
-    public function bootstrap()
+    public function bootstrap(): void
     {
         $this->addPlugin('AssetCompress');
     }
 
-    public function routes($routes)
+    public function routes(RouteBuilder $routes): void
     {
-        return $routes;
     }
 
-    public function middleware($middlewareQueue)
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue
             ->add(ErrorHandlerMiddleware::class)

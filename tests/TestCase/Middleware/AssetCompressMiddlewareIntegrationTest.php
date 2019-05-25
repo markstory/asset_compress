@@ -16,7 +16,7 @@ class AssetsCompressMiddlewareIntegrationTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         Configure::write('App.namespace', 'TestApp');
 

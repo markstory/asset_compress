@@ -17,12 +17,13 @@
     "source": "https://github.com/markstory/asset_compress"
   },
   "require": {
-    "cakephp/cakephp": ">=3.7.0 <4.0.0",
+    "php": ">=7.2.0",
+    "cakephp/cakephp": "4.x-dev as 4.0.0",
     "markstory/mini-asset": ">=1.4.0 <2.0.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6.0",
-    "cakephp/cakephp-codesniffer": "~2.1"
+    "phpunit/phpunit": "^7.0",
+    "cakephp/cakephp-codesniffer": "dev-next"
   },
   "autoload": {
     "psr-4": {
@@ -32,8 +33,7 @@
   "autoload-dev": {
     "psr-4": {
       "AssetCompress\\Test\\": "tests",
-      "TestApp\\": "tests/test_files/src",
-      "TestPlugin\\": "tests/test_files/Plugin"
+      "TestApp\\": "tests/test_files/src"
     }
   },
   "suggest": {

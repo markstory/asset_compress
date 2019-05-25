@@ -8,7 +8,7 @@ use Cake\TestSuite\TestCase;
 class ImportInlineTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['Red']);

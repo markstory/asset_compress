@@ -4,6 +4,7 @@ namespace AssetCompress;
 use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Core\BasePlugin;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
+use Cake\Http\MiddlewareQueue;
 
 /**
  * Plugin class defining framework hooks.
@@ -16,7 +17,7 @@ class Plugin extends BasePlugin
      * @param \Cake\Http\MiddlewareQueue $middlewareQueue The queue
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware($middlewareQueue)
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middleware = new AssetCompressMiddleware();
         $middlewareQueue->insertAfter(ErrorHandlerMiddleware::class, $middleware);

@@ -17,7 +17,7 @@ class ConfigFinderTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->_testFiles = APP;
@@ -31,7 +31,7 @@ class ConfigFinderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Plugin::getCollection()->clear();
