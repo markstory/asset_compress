@@ -30,7 +30,7 @@ class AssetsCompressorFilterTest extends TestCase
             'WEBROOT' => WWW_ROOT,
             'TEST_FILES' => APP
         ];
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
 
         $config = new AssetConfig([], $map);
         $config->load($this->testConfig);
@@ -58,7 +58,7 @@ class AssetsCompressorFilterTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestAssetIni');
+        Plugin::getCollection()->clear();
         error_reporting($this->level);
     }
 

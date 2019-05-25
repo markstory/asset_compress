@@ -5,7 +5,7 @@ use AssetCompress\View\Helper\AssetCompressHelper;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
@@ -26,10 +26,10 @@ class AssetCompressHelperTest extends TestCase
         $testFile = APP . 'config' . DS . 'integration.ini';
 
         $controller = null;
-        $request = new Request();
+        $request = new ServerRequest();
 
         $view = new View($controller);
-        $view->request = $request;
+        $view->setRequest($request);
         $this->Helper = new AssetCompressHelper($view, ['noconfig' => true]);
         $config = AssetConfig::buildFromIniFile($testFile, [
             'TEST_FILES' => APP,
@@ -117,7 +117,9 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testDefinedBuildWithThemeNoBuiltAsset()
     {
-        $this->Helper->theme = 'blue';
+
+        $this->loadPlugins(['Blue']);
+        $this->Helper->getView()->setTheme('Blue');
         $config = $this->Helper->assetConfig();
         $config->addTarget('themed.js', [
             'theme' => true,
@@ -126,7 +128,7 @@ class AssetCompressHelperTest extends TestCase
         $result = $this->Helper->script('themed.js');
         $expected = [
             ['script' => [
-                'src' => '/cache_js/themed.js?theme=blue'
+                'src' => '/cache_js/themed.js?theme=Blue'
             ]]
         ];
         $this->assertHtml($expected, $result);
@@ -195,7 +197,7 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testRawAssetsPlugin()
     {
-        Plugin::load('TestAsset');
+        $this->loadPlugins(['TestAsset']);
 
         $config = AssetConfig::buildFromIniFile($this->_testFiles . 'config/plugins.ini');
         $config->paths('css', null, [
@@ -249,7 +251,7 @@ class AssetCompressHelperTest extends TestCase
             'theme' => true
         ]);
 
-        $this->Helper->theme = 'blue';
+        $this->Helper->getView()->setTheme('blue');
         $result = $this->Helper->script('asset_test.js');
         $result = str_replace('/', DS, $result);
         $this->assertContains('blue-asset_test.js', $result);
@@ -420,7 +422,7 @@ body {
 EOF;
 
         $result = $this->Helper->inlineCss('nav.css');
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($this->__unifyEol($expected), $this->__unifyEol($result));
     }
 
     /**
@@ -447,7 +449,7 @@ var Template = new Class({
 });</script>
 EOF;
 
-        $this->assertEquals($expected, $results);
+        $this->assertEquals($this->__unifyEol($expected), $this->__unifyEol($results));
     }
 
     /**
@@ -474,7 +476,7 @@ var Template = new Class({
 EOF;
 
         $result = $this->Helper->inlineScript('libs.js');
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($this->__unifyEol($expected), $this->__unifyEol($result));
     }
 
     /**
@@ -484,7 +486,7 @@ EOF;
      */
     public function testNoConflictWithPluginName()
     {
-        Plugin::load('Blue');
+        $this->loadPlugins(['Blue']);
 
         $result = $this->Helper->script('blue-app.js', ['raw' => true]);
         $expected = [
@@ -496,4 +498,10 @@ EOF;
         ];
         $this->assertHtml($expected, $result);
     }
+
+    private function __unifyEol($s)
+    {
+        return str_replace("\r\n", "\n", $s);
+    }
+
 }

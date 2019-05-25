@@ -75,8 +75,7 @@ class AssetCompressShellTest extends TestCase
      */
     public function testBuildFilesWithTheme()
     {
-        Plugin::load('Red');
-        Plugin::load('Blue');
+        $this->loadPlugins(['Red', 'Blue']);
         $config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'themed.ini',
             ['TEST_FILES' => APP, 'WEBROOT' => TMP]
@@ -127,8 +126,7 @@ class AssetCompressShellTest extends TestCase
      */
     public function testClearFilesWithTheme()
     {
-        Plugin::load('Red');
-        Plugin::load('Blue');
+        $this->loadPlugins(['Red', 'Blue']);
         $files = [
             TMP . 'cache_css/Blue-themed.css',
             TMP . 'cache_css/Red-themed.css',

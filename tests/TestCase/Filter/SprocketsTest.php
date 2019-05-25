@@ -27,8 +27,7 @@ class SprocketsTest extends TestCase
 
     public function testThemeAndPluginInclusion()
     {
-        Plugin::load('TestAsset');
-        Plugin::load('Red');
+        $this->loadPlugins(['TestAsset', 'Red']);
 
         $settings = [
             'paths' => [],

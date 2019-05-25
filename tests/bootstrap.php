@@ -10,7 +10,11 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\I18n\I18n;
 
-require_once 'vendor/autoload.php';
+if (is_file('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} else {
+    require_once dirname(__DIR__) . '/vendor/autoload.php';
+}
 
 // Path constants to a few helpful things.
 define('ROOT', dirname(__DIR__) . DS);
@@ -69,4 +73,7 @@ Cache::setConfig([
     ],
 ]);
 
-Plugin::load('AssetCompress', ['path' => ROOT]);
+Plugin::getCollection()->add(new \AssetCompress\Plugin(['path' => ROOT . DS]));
+$app = new \TestApp\Application(CONFIG);
+$app->bootstrap();
+$app->pluginBootstrap();

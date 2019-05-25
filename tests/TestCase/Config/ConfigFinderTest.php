@@ -23,7 +23,7 @@ class ConfigFinderTest extends TestCase
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
 
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
     }
 
     /**
@@ -34,7 +34,7 @@ class ConfigFinderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestAssetIni');
+        Plugin::getCollection()->clear();
     }
 
     public function testPluginIni()
@@ -111,7 +111,7 @@ class ConfigFinderTest extends TestCase
         $expectedJsPaths = [WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*'];
         $this->assertEquals($expectedJsPaths, $result);
 
-        $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
+        $this->assertEquals(str_replace(DS, '/', WWW_ROOT . 'cache_js/'), str_replace(DS, '/', $config->cachePath('js')));
 
         $result = $config->filters('js');
         $expectedJsFilters = ['Sprockets', 'YuiJs'];
