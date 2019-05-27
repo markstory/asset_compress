@@ -52,7 +52,6 @@
         "cs-check": "phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/",
         "cs-fix": "phpcbf --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/",
         "test": "phpunit --stderr",
-        "_stan": "phpstan analyse -l 3 src",
         "stan": "phpstan analyse src/ && psalm --show-info=false",
         "stan-test": "phpstan analyse tests/",
         "psalm": "psalm",
