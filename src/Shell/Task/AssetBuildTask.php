@@ -5,6 +5,7 @@ namespace AssetCompress\Shell\Task;
 
 use AssetCompress\Factory;
 use Cake\Console\Shell;
+use Exception;
 use MiniAsset\AssetConfig;
 use MiniAsset\AssetTarget;
 
