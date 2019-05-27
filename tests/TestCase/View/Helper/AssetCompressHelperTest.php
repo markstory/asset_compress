@@ -241,6 +241,7 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testCompiledBuildWithThemes()
     {
+        $this->loadPlugins(['Blue']);
         Configure::write('debug', false);
         $config = $this->Helper->assetConfig();
         $config->cachePath('js', TMP);
@@ -249,10 +250,10 @@ class AssetCompressHelperTest extends TestCase
             'theme' => true,
         ]);
 
-        $this->Helper->getView()->setTheme('blue');
+        $this->Helper->getView()->setTheme('Blue');
         $result = $this->Helper->script('asset_test.js');
         $result = str_replace('/', DS, $result);
-        $this->assertContains('blue-asset_test.js', $result);
+        $this->assertContains('Blue-asset_test.js', $result);
     }
 
     /**
