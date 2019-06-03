@@ -1,16 +1,16 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Shell\Task;
 
-use App\Console\Command\AppShell;
 use AssetCompress\Factory;
 use Cake\Console\Shell;
-use Cake\Utility\Folder;
+use Exception;
 use MiniAsset\AssetConfig;
 use MiniAsset\AssetTarget;
 
 class AssetBuildTask extends Shell
 {
-
     protected $config;
     protected $factory;
 
@@ -52,7 +52,7 @@ class AssetBuildTask extends Shell
     /**
      * Generate and save the cached file for a build target.
      *
-     * @param AssetTarget $build The build to generate.
+     * @param \MiniAsset\AssetTarget $build The build to generate.
      * @return void
      */
     protected function _buildTarget(AssetTarget $build)

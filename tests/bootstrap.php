@@ -5,12 +5,22 @@
  * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+// @codingStandardsIgnoreFile
+
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\I18n\I18n;
 
-require_once 'vendor/autoload.php';
+if (is_file('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} else {
+    require_once dirname(__DIR__) . '/vendor/autoload.php';
+}
+
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 
 // Path constants to a few helpful things.
 define('ROOT', dirname(__DIR__) . DS);
@@ -69,4 +79,7 @@ Cache::setConfig([
     ],
 ]);
 
-Plugin::load('AssetCompress', ['path' => ROOT]);
+Plugin::getCollection()->add(new \AssetCompress\Plugin(['path' => ROOT . DS]));
+$app = new \TestApp\Application(CONFIG);
+$app->bootstrap();
+$app->pluginBootstrap();

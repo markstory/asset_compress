@@ -2,7 +2,6 @@
 namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\Config\ConfigFinder;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
@@ -11,19 +10,18 @@ use Cake\TestSuite\TestCase;
  */
 class ConfigFinderTest extends TestCase
 {
-
     /**
      * setup method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
 
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
     }
 
     /**
@@ -31,10 +29,10 @@ class ConfigFinderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
-        Plugin::unload('TestAssetIni');
+        Plugin::getCollection()->clear();
     }
 
     public function testPluginIni()
@@ -70,7 +68,7 @@ class ConfigFinderTest extends TestCase
             'TestAssetIni.foo.bar.js',
             'TestAssetIni.all.css',
             'TestAssetIni.overridable_scripts.js',
-            'TestAssetIni.overridable_styles.css'
+            'TestAssetIni.overridable_styles.css',
         ];
         $result = $config->targets();
         $this->assertEquals($expected, $result);
@@ -111,7 +109,7 @@ class ConfigFinderTest extends TestCase
         $expectedJsPaths = [WWW_ROOT . 'js' . DS . '*', WWW_ROOT . 'js_local' . DS . '*'];
         $this->assertEquals($expectedJsPaths, $result);
 
-        $this->assertEquals(WWW_ROOT . 'cache_js/', $config->cachePath('js'));
+        $this->assertEquals(str_replace(DS, '/', WWW_ROOT . 'cache_js/'), str_replace(DS, '/', $config->cachePath('js')));
 
         $result = $config->filters('js');
         $expectedJsFilters = ['Sprockets', 'YuiJs'];

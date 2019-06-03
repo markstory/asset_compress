@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
@@ -9,9 +11,8 @@ use MiniAsset\AssetConfig;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
-class AssetsCompressMiddlewareTest extends TestCase
+class AssetCompressMiddlewareTest extends TestCase
 {
-
     protected $nextInvoked = false;
 
     /**
@@ -19,7 +20,7 @@ class AssetsCompressMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
@@ -27,9 +28,9 @@ class AssetsCompressMiddlewareTest extends TestCase
 
         $map = [
             'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP
+            'TEST_FILES' => APP,
         ];
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
 
         $config = new AssetConfig([], $map);
         $config->load($this->testConfig);
@@ -49,11 +50,10 @@ class AssetsCompressMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
-        Plugin::unload('TestAssetIni');
-        Plugin::unload('Blue');
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -83,7 +83,7 @@ class AssetsCompressMiddlewareTest extends TestCase
      */
     public function testPluginIniBuildFile()
     {
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
 
         $uri = $this->request->getUri()->withPath('/cache_js/TestAssetIni.libs.js');
         $request = $this->request->withUri($uri);
@@ -133,12 +133,12 @@ class AssetsCompressMiddlewareTest extends TestCase
 
     public function testBuildThemedAsset()
     {
-        Plugin::load('Blue');
+        $this->loadPlugins(['Blue']);
 
         $configFile = APP . 'config' . DS . 'themed.ini';
         $map = [
             'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP
+            'TEST_FILES' => APP,
         ];
         $config = new AssetConfig([], $map);
         $config->load($configFile);

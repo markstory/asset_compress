@@ -1,20 +1,13 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress;
 
-use AssetCompress\AssetScanner;
 use AssetCompress\Filter\FilterRegistry;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use MiniAsset\AssetCollection;
 use MiniAsset\AssetCompiler;
-use MiniAsset\AssetConfig;
-use MiniAsset\AssetTarget;
 use MiniAsset\Factory as BaseFactory;
-use MiniAsset\File\Local;
-use MiniAsset\File\Remote;
-use MiniAsset\Output\AssetCacher;
-use MiniAsset\Output\AssetWriter;
-use RuntimeException;
 
 /**
  * A factory for various object using a config file.
@@ -86,7 +79,7 @@ class Factory extends BaseFactory
     protected function buildFilter($name, $config)
     {
         $className = App::className($name, 'Filter');
-        if (!class_exists($className)) {
+        if (!class_exists((string)$className)) {
             $className = App::className('AssetCompress.' . $name, 'Filter');
         }
         $className = $className ?: $name;

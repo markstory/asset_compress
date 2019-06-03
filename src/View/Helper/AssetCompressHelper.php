@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\View\Helper;
 
 use AssetCompress\Config\ConfigFinder;
@@ -21,7 +23,6 @@ use RuntimeException;
  */
 class AssetCompressHelper extends Helper
 {
-
     /**
      * Helpers used.
      *
@@ -160,7 +161,7 @@ class AssetCompressHelper extends Helper
      *
      * @param string $file A build target to include.
      * @param array $options An array of options for the stylesheet tag.
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @return string A stylesheet tag
      */
     public function css($file, $options = [])
@@ -205,7 +206,7 @@ class AssetCompressHelper extends Helper
      *
      * @param string $file A build target to include.
      * @param array $options An array of options for the script tag.
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @return string A script tag
      */
     public function script($file, $options = [])
@@ -269,7 +270,7 @@ class AssetCompressHelper extends Helper
      * @param string $file The build file that you want a URL for.
      * @param bool|array $full Whether or not the URL should have the full base path.
      * @return string The generated URL.
-     * @throws RuntimeException when the build file does not exist.
+     * @throws \RuntimeException when the build file does not exist.
      */
     public function url($file = null, $full = false)
     {
@@ -350,7 +351,7 @@ class AssetCompressHelper extends Helper
         $query = [];
 
         if ($file->isThemed()) {
-            $query['theme'] = $this->theme;
+            $query['theme'] = $this->getView()->getTheme();
         }
 
         $base = rtrim($base, '/') . '/';
@@ -381,7 +382,7 @@ class AssetCompressHelper extends Helper
      * - All options supported by HtmlHelper::css() are supported.
      *
      * @param string $file A build target to include.
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @return string style tag
      */
     public function inlineCss($file)
@@ -407,7 +408,7 @@ class AssetCompressHelper extends Helper
      * - All options supported by HtmlHelper::css() are supported.
      *
      * @param string $file A build target to include.
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @return string script tag
      */
     public function inlineScript($file)

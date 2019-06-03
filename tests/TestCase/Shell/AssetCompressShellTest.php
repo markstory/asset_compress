@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Shell;
 
 use AssetCompress\Shell\AssetCompressShell;
-use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
@@ -12,13 +13,12 @@ use MiniAsset\AssetConfig;
  */
 class AssetCompressShellTest extends TestCase
 {
-
     /**
      * setup method.
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
@@ -44,7 +44,7 @@ class AssetCompressShellTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->Shell);
@@ -75,8 +75,7 @@ class AssetCompressShellTest extends TestCase
      */
     public function testBuildFilesWithTheme()
     {
-        Plugin::load('Red');
-        Plugin::load('Blue');
+        $this->loadPlugins(['Red', 'Blue']);
         $config = AssetConfig::buildFromIniFile(
             $this->testConfig . 'themed.ini',
             ['TEST_FILES' => APP, 'WEBROOT' => TMP]
@@ -107,7 +106,7 @@ class AssetCompressShellTest extends TestCase
             TMP . 'cache_css/all.css',
             TMP . 'cache_css/all.v12354.css',
             TMP . 'cache_js/libs.js',
-            TMP . 'cache_js/libs.v12354.js'
+            TMP . 'cache_js/libs.v12354.js',
         ];
         foreach ($files as $file) {
             touch($file);
@@ -127,8 +126,7 @@ class AssetCompressShellTest extends TestCase
      */
     public function testClearFilesWithTheme()
     {
-        Plugin::load('Red');
-        Plugin::load('Blue');
+        $this->loadPlugins(['Red', 'Blue']);
         $files = [
             TMP . 'cache_css/Blue-themed.css',
             TMP . 'cache_css/Red-themed.css',
@@ -163,7 +161,7 @@ class AssetCompressShellTest extends TestCase
 
         $files = [
             TMP . 'cache_js/nope.js',
-            TMP . 'cache_js/nope.v12354.js'
+            TMP . 'cache_js/nope.v12354.js',
         ];
         foreach ($files as $file) {
             touch($file);

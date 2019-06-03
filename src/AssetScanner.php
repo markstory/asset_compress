@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress;
 
-use Cake\Core\App;
 use Cake\Core\Plugin as CorePlugin;
-use Cake\Utility\Inflector;
 use MiniAsset\AssetScanner as BaseScanner;
 use RuntimeException;
 
@@ -18,8 +18,8 @@ class AssetScanner extends BaseScanner
     /**
      * @const Pattern for various prefixes.
      */
-    const THEME_PATTERN = '/^(?:t|theme)\:/';
-    const PLUGIN_PATTERN = '/^(?:p|plugin)\:(.*)\:(.*)$/';
+    public const THEME_PATTERN = '/^(?:t|theme)\:/';
+    public const PLUGIN_PATTERN = '/^(?:p|plugin)\:(.*)\:(.*)$/';
 
     /**
      * The current theme if there is one.
@@ -76,7 +76,7 @@ class AssetScanner extends BaseScanner
      * Resolve a plugin file to its full path.
      *
      * @param string $file The theme file to find.
-     * @throws RuntimeException when plugins are missing.
+     * @throws \RuntimeException when plugins are missing.
      * @return string The expanded path
      */
     protected function _expandPlugin($file)
