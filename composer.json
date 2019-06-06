@@ -39,7 +39,7 @@
     "natxet/CssMin": "For using the CssMin filter.",
     "328/jsqueeze": "For using the JSqueeze filter.",
     "patchwork/jshrink": "For using the JShrink filter.",
-    "leafo/scssphp": "For using the ScssPHP filter.",
+    "scssphp/scssphp": "For using the ScssPHP filter.",
     "leafo/lessphp": "For using the LessPHP filter."
   }
 }
