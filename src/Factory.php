@@ -6,7 +6,6 @@ use AssetCompress\Filter\FilterRegistry;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use MiniAsset\AssetCollection;
-use MiniAsset\AssetCompiler;
 use MiniAsset\AssetConfig;
 use MiniAsset\AssetTarget;
 use MiniAsset\Factory as BaseFactory;
@@ -14,6 +13,7 @@ use MiniAsset\File\Local;
 use MiniAsset\File\Remote;
 use MiniAsset\Output\AssetCacher;
 use MiniAsset\Output\AssetWriter;
+use MiniAsset\Output\Compiler;
 use RuntimeException;
 
 /**
@@ -98,10 +98,10 @@ class Factory extends BaseFactory
      * Create an AssetCompiler
      *
      * @param bool $debug Not used - Configure is used instead.
-     * @return \MiniAsset\AssetCompiler
+     * @return \MiniAsset\Output\Compiler
      */
     public function compiler($debug = false)
     {
-        return new AssetCompiler($this->filterRegistry(), Configure::read('debug'));
+        return new Compiler($this->filterRegistry(), Configure::read('debug'));
     }
 }
