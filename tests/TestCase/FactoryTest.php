@@ -3,7 +3,6 @@ namespace AssetCompress;
 
 use AssetCompress\Factory;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 
