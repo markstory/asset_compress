@@ -13,7 +13,7 @@ class Plugin extends BasePlugin
     /**
      * Add middleware
      *
-     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The queue
+     * @param  \Cake\Http\MiddlewareQueue $middlewareQueue The queue
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware($middlewareQueue)

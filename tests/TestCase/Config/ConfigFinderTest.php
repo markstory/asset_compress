@@ -23,7 +23,7 @@ class ConfigFinderTest extends TestCase
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
 
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
     }
 
     /**
@@ -34,7 +34,7 @@ class ConfigFinderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestAssetIni');
+        $this->removePlugins(['TestAssetIni']);
     }
 
     public function testPluginIni()

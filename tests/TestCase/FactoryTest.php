@@ -93,7 +93,7 @@ class FactoryTest extends TestCase
      */
     public function testAssetCollectionThemed()
     {
-        Plugin::load('Red');
+        $this->loadPlugins(['Red']);
         $config = AssetConfig::buildFromIniFile($this->themedFile, [
             'TEST_FILES' => APP,
             'WEBROOT' => TMP
@@ -120,7 +120,7 @@ class FactoryTest extends TestCase
      */
     public function testAssetCollectionPlugins()
     {
-        Plugin::load('TestAsset');
+        $this->loadPlugins(['TestAsset']);
         $config = AssetConfig::buildFromIniFile($this->pluginFile, [
             'TEST_FILES' => APP,
             'WEBROOT' => TMP

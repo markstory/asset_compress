@@ -29,7 +29,7 @@ class AssetsCompressMiddlewareTest extends TestCase
             'WEBROOT' => WWW_ROOT,
             'TEST_FILES' => APP
         ];
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
 
         $config = new AssetConfig([], $map);
         $config->load($this->testConfig);
@@ -52,8 +52,7 @@ class AssetsCompressMiddlewareTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestAssetIni');
-        Plugin::unload('Blue');
+        $this->removePlugins(['Blue', 'TestAssetIni']);
     }
 
     /**
@@ -83,7 +82,7 @@ class AssetsCompressMiddlewareTest extends TestCase
      */
     public function testPluginIniBuildFile()
     {
-        Plugin::load('TestAssetIni');
+        $this->loadPlugins(['TestAssetIni']);
 
         $uri = $this->request->getUri()->withPath('/cache_js/TestAssetIni.libs.js');
         $request = $this->request->withUri($uri);
@@ -133,7 +132,7 @@ class AssetsCompressMiddlewareTest extends TestCase
 
     public function testBuildThemedAsset()
     {
-        Plugin::load('Blue');
+        $this->loadPlugins(['Blue']);
 
         $configFile = APP . 'config' . DS . 'themed.ini';
         $map = [

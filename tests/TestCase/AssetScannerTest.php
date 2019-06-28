@@ -23,7 +23,7 @@ class AssetScannerTest extends TestCase
 
     public function testFindResolveThemePaths()
     {
-        Plugin::load('Blue');
+        $this->loadPlugins(['Blue']);
         $paths = [
             $this->_testFiles . 'css' . DS
         ];
@@ -38,8 +38,7 @@ class AssetScannerTest extends TestCase
 
     public function testFindResolvePluginPaths()
     {
-        Plugin::load('TestAsset');
-
+        $this->loadPlugins(['TestAsset']);
         $paths = [
             $this->_testFiles . 'css' . DS
         ];

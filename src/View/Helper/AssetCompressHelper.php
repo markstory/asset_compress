@@ -350,7 +350,7 @@ class AssetCompressHelper extends Helper
         $query = [];
 
         if ($file->isThemed()) {
-            $query['theme'] = $this->theme;
+            $query['theme'] = $this->getView()->getTheme();
         }
 
         $base = rtrim($base, '/') . '/';

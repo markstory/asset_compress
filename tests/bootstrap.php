@@ -1,10 +1,4 @@
 <?php
-/**
- * Test suite bootstrap.
- *
- * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- */
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -34,7 +28,7 @@ mb_internal_encoding('UTF-8');
 
 Configure::write('debug', true);
 Configure::write('App', [
-    'namespace' => 'App',
+    'namespace' => 'TestApp',
     'encoding' => 'UTF-8',
     'base' => false,
     'baseUrl' => false,
@@ -69,4 +63,4 @@ Cache::setConfig([
     ],
 ]);
 
-Plugin::load('AssetCompress', ['path' => ROOT]);
+Plugin::getCollection()->add(new \AssetCompress\Plugin());

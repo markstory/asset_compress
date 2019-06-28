@@ -11,7 +11,7 @@ class ImportInlineTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load('Red');
+        $this->loadPlugins(['Red']);
         $this->filter = new ImportInline();
         $settings = [
             'paths' => [
