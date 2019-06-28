@@ -9,6 +9,8 @@ php:
 
 matrix:
   fast_finish: true
+  global:
+    - DEFAULT=1
 
   include:
     - php: 7.3
@@ -25,7 +27,7 @@ install:
   - composer install --prefer-dist --no-interaction --dev
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' && '$COVERAGE' != '1' ]; then phpunit; fi"
+  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
 
   - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
 
