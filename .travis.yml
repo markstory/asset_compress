@@ -31,7 +31,7 @@ install:
   - composer install --prefer-dist --no-interaction --dev
 
 script:
-  - if [[ $DEFAULT == 1 ]]; then phpunit; fi
+  - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS == 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
