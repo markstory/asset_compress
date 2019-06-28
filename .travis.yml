@@ -7,10 +7,14 @@ php:
   - 7.2
   - 7.3
 
-matrix:
-  fast_finish: true
+env:
   global:
     - DEFAULT=1
+    - COVERAGE=0
+    - PHPCS=0
+
+matrix:
+  fast_finish: true
 
   include:
     - php: 7.3
@@ -27,13 +31,16 @@ install:
   - composer install --prefer-dist --no-interaction --dev
 
 script:
-  - sh -c "if [ '$DEFAULT' = '1' ]; then phpunit; fi"
+  - if [[ $DEFAULT == 1 ]]; then phpunit; fi
 
-  - sh -c "if [ '$PHPCS' = '1' ]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi"
+  - if [[ $PHPCS == 1 ]]; then vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ./src ./tests; fi
 
-  - sh -c "if [ '$COVERAGE' = '1' ]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml || true; fi"
-  - sh -c "if [ '$COVERAGE' = '1' ]; then wget -O codecov.sh https://codecov.io/bash; fi"
-  - sh -c "if [ '$COVERAGE' = '1' ]; then bash codecov.sh; fi"
+  - if [[ $COVERAGE == 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml || true; fi
+  - if [[ $COVERAGE == 1 ]]; then wget -O codecov.sh https://codecov.io/bash; fi
+  - if [[ $COVERAGE == 1 ]]; then bash codecov.sh; fi
+
+after_success:
+  - if [[ $COVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false
