@@ -4,7 +4,6 @@ namespace AssetCompress\Test\TestCase;
 use AssetCompress\AssetScanner;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class AssetScannerTest extends TestCase

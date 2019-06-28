@@ -3,7 +3,6 @@ namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\Sprockets;
 use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class SprocketsTest extends TestCase

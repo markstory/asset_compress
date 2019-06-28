@@ -2,7 +2,6 @@
 namespace AssetCompress\Test\TestCase\Shell;
 
 use AssetCompress\Shell\AssetCompressShell;
-use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;

@@ -3,7 +3,6 @@ namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\IntegrationTestCase;
 use MiniAsset\AssetConfig;
 use Zend\Diactoros\Response;

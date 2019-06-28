@@ -4,7 +4,6 @@ namespace AssetCompress\Test\TestCase\View\Helper;
 use AssetCompress\View\Helper\AssetCompressHelper;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;

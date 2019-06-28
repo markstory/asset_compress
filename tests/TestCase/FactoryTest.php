@@ -1,5 +1,5 @@
 <?php
-namespace AssetCompress;
+namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\Factory;
 use Cake\Core\Configure;

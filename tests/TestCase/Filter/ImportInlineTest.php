@@ -2,7 +2,6 @@
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ImportInline;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 class ImportInlineTest extends TestCase

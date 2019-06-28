@@ -3,7 +3,6 @@ namespace AssetCompress\Test\TestCase;
 
 use AssetCompress\Config\ConfigFinder;
 use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
