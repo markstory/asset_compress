@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace AssetCompress;
 
-use AssetCompress\Filter\FilterRegistry;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use MiniAsset\AssetCompiler;
