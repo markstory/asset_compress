@@ -6,6 +6,7 @@ namespace AssetCompress;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
+use ReflectionClass;
 
 class FactoryTest extends TestCase
 {
@@ -43,12 +44,11 @@ class FactoryTest extends TestCase
         $this->assertInstanceOf('AssetCompress\Filter\Sprockets', $registry->get('Sprockets'));
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Cannot load filter "Derp"
-     */
     public function testFilterRegistryMissingFilter()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot load filter "Derp"');
+
         $this->config->filters('js', ['Derp']);
         $this->config->filterConfig('Derp', ['path' => '/test']);
         $factory = new Factory($this->config);
@@ -228,11 +228,11 @@ class FactoryTest extends TestCase
         ]);
         $factory = new Factory($config);
         $compiler = $factory->compiler();
-        $this->assertAttributeEquals(true, 'debug', $compiler);
+        $this->assertTrue($this->getPropertyValue($compiler, 'debug'));
 
         Configure::write('debug', false);
         $compiler = $factory->compiler();
-        $this->assertAttributeEquals(false, 'debug', $compiler);
+        $this->assertFalse($this->getPropertyValue($compiler, 'debug'));
     }
 
     public function testCachedCompiler()
@@ -243,10 +243,19 @@ class FactoryTest extends TestCase
         $factory = new Factory($config);
         $compiler = $factory->cachedCompiler();
 
-        $innerCompiler = $this->readAttribute($compiler, 'compiler');
-        $this->assertAttributeEquals(true, 'debug', $innerCompiler);
+        $innerCompiler = $this->getPropertyValue($compiler, 'compiler');
+        $this->assertTrue($this->getPropertyValue($innerCompiler, 'debug'));
 
-        $cacher = $this->readAttribute($compiler, 'cacher');
-        $this->assertAttributeEquals(CACHE . 'asset_compress' . DS, 'path', $cacher);
+        $cacher = $this->getPropertyValue($compiler, 'cacher');
+        $this->assertEquals(CACHE . 'asset_compress' . DS, $this->getPropertyValue($cacher, 'path'));
+    }
+
+    protected function getPropertyValue($obj, $prop)
+    {
+        $reflection = new ReflectionClass($obj);
+        $property = $reflection->getProperty($prop);
+        $property->setAccessible(true);
+
+        return $property->getValue($obj);
     }
 }

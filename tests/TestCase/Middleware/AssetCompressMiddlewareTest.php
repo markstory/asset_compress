@@ -72,8 +72,8 @@ class AssetCompressMiddlewareTest extends TestCase
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
-        $this->assertContains('var BaseClass = new Class', $body);
-        $this->assertContains('var Template = new Class', $body);
+        $this->assertStringContainsString('var BaseClass = new Class', $body);
+        $this->assertStringContainsString('var Template = new Class', $body);
     }
 
     /**
@@ -94,8 +94,8 @@ class AssetCompressMiddlewareTest extends TestCase
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
-        $this->assertContains('var BaseClass = new Class', $body);
-        $this->assertContains('var Template = new Class', $body);
+        $this->assertStringContainsString('var BaseClass = new Class', $body);
+        $this->assertStringContainsString('var Template = new Class', $body);
     }
 
     /**
@@ -113,7 +113,7 @@ class AssetCompressMiddlewareTest extends TestCase
 
         $body = $result->getBody()->getContents();
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
-        $this->assertContains('BaseClass', $body);
+        $this->assertStringContainsString('BaseClass', $body);
 
         $this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
         unlink(CACHE . 'asset_compress' . DS . 'libs.js');
@@ -153,7 +153,7 @@ class AssetCompressMiddlewareTest extends TestCase
 
         $body = $result->getBody()->getContents();
         $this->assertEquals('text/css', $result->getHeaderLine('Content-Type'));
-        $this->assertContains('color: blue', $body);
+        $this->assertStringContainsString('color: blue', $body);
     }
 
     public function testDelegateOnUndefinedAsset()
