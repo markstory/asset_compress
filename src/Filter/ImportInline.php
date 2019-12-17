@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Filter;
 
 use AssetCompress\AssetScanner;
@@ -23,7 +25,7 @@ class ImportInline extends BaseImportInline
         }
         $this->scanner = new AssetScanner(
             $this->_settings['paths'],
-            isset($this->_settings['theme']) ? $this->_settings['theme'] : null
+            $this->_settings['theme'] ?? null
         );
 
         return $this->scanner;

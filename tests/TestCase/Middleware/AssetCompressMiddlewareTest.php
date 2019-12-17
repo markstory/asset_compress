@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
@@ -8,9 +10,8 @@ use MiniAsset\AssetConfig;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 
-class AssetsCompressMiddlewareTest extends TestCase
+class AssetCompressMiddlewareTest extends TestCase
 {
-
     protected $nextInvoked = false;
 
     /**
@@ -18,7 +19,7 @@ class AssetsCompressMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
@@ -26,7 +27,7 @@ class AssetsCompressMiddlewareTest extends TestCase
 
         $map = [
             'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP
+            'TEST_FILES' => APP,
         ];
         $this->loadPlugins(['TestAssetIni']);
 
@@ -48,10 +49,10 @@ class AssetsCompressMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
-        $this->removePlugins(['Blue', 'TestAssetIni']);
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -70,8 +71,8 @@ class AssetsCompressMiddlewareTest extends TestCase
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
-        $this->assertContains('var BaseClass = new Class', $body);
-        $this->assertContains('var Template = new Class', $body);
+        $this->assertStringContainsString('var BaseClass = new Class', $body);
+        $this->assertStringContainsString('var Template = new Class', $body);
     }
 
     /**
@@ -92,8 +93,8 @@ class AssetsCompressMiddlewareTest extends TestCase
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
-        $this->assertContains('var BaseClass = new Class', $body);
-        $this->assertContains('var Template = new Class', $body);
+        $this->assertStringContainsString('var BaseClass = new Class', $body);
+        $this->assertStringContainsString('var Template = new Class', $body);
     }
 
     /**
@@ -111,7 +112,7 @@ class AssetsCompressMiddlewareTest extends TestCase
 
         $body = $result->getBody()->getContents();
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
-        $this->assertContains('BaseClass', $body);
+        $this->assertStringContainsString('BaseClass', $body);
 
         $this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
         unlink(CACHE . 'asset_compress' . DS . 'libs.js');
@@ -136,7 +137,7 @@ class AssetsCompressMiddlewareTest extends TestCase
         $configFile = APP . 'config' . DS . 'themed.ini';
         $map = [
             'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP
+            'TEST_FILES' => APP,
         ];
         $config = new AssetConfig([], $map);
         $config->load($configFile);
@@ -151,7 +152,7 @@ class AssetsCompressMiddlewareTest extends TestCase
 
         $body = $result->getBody()->getContents();
         $this->assertEquals('text/css', $result->getHeaderLine('Content-Type'));
-        $this->assertContains('color: blue', $body);
+        $this->assertStringContainsString('color: blue', $body);
     }
 
     public function testDelegateOnUndefinedAsset()

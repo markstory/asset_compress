@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Test\TestCase\Filter;
 
 use AssetCompress\Filter\ImportInline;
@@ -6,15 +8,14 @@ use Cake\TestSuite\TestCase;
 
 class ImportInlineTest extends TestCase
 {
-
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['Red']);
         $this->filter = new ImportInline();
         $settings = [
             'paths' => [
-                APP . 'css/'
+                APP . 'css/',
             ],
             'theme' => 'Red',
         ];

@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Shell;
 
 use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Utility\Folder;
 use DirectoryIterator;
 
 /**
@@ -15,7 +17,6 @@ use DirectoryIterator;
  */
 class AssetCompressShell extends Shell
 {
-
     /**
      * Tasks used by this shell.
      *
@@ -42,7 +43,7 @@ class AssetCompressShell extends Shell
      *
      * @return void
      */
-    public function startup()
+    public function startup(): void
     {
         parent::startup();
         $configFinder = new ConfigFinder();
@@ -79,7 +80,7 @@ class AssetCompressShell extends Shell
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->clearBuildTs();
 
@@ -158,7 +159,7 @@ class AssetCompressShell extends Shell
             // themed files
             foreach ($themes as $theme) {
                 if (strpos($base, $theme) === 0 && strpos($base, '-') !== false) {
-                    list($themePrefix, $base) = explode('-', $base);
+                    [$themePrefix, $base] = explode('-', $base);
                 }
             }
             if (in_array($base, $targets)) {
@@ -174,7 +175,7 @@ class AssetCompressShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 
@@ -182,15 +183,15 @@ class AssetCompressShell extends Shell
             'Asset Compress Shell',
             '',
             'Builds and clears assets defined in your asset_compress.ini',
-            'file and in your view files.'
+            'file and in your view files.',
         ])->addSubcommand('clear', [
-            'help' => 'Clears all builds defined in the ini file.'
+            'help' => 'Clears all builds defined in the ini file.',
         ])->addSubcommand('build', [
-            'help' => 'Generate all builds defined in the ini files.'
+            'help' => 'Generate all builds defined in the ini files.',
         ])->addOption('force', [
             'help' => 'Force assets to rebuild. Ignores timestamp rules.',
             'short' => 'f',
-            'boolean' => true
+            'boolean' => true,
         ]);
     }
 }

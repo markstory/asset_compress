@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace AssetCompress\Middleware;
 
 use AssetCompress\Config\ConfigFinder;
@@ -26,7 +28,7 @@ class AssetCompressMiddleware
      * @param \MiniAsset\AssetConfig|null $config The config object to use.
      *   If null, \AssetCompress\ConfigFinder::loadAll() will be used.
      */
-    public function __construct(AssetConfig $config = null)
+    public function __construct(?AssetConfig $config = null)
     {
         if ($config === null) {
             $finder = new ConfigFinder();
@@ -107,10 +109,10 @@ class AssetCompressMiddleware
         $ext = $build->ext();
         $types = [
             'css' => 'text/css',
-            'js' => 'application/javascript'
+            'js' => 'application/javascript',
         ];
 
-        return isset($types[$ext]) ? $types[$ext] : 'application/octet-stream';
+        return $types[$ext] ?? 'application/octet-stream';
     }
 
     /**

@@ -1,14 +1,16 @@
 <?php
-namespace AssetCompress\Test\TestCase;
+declare(strict_types=1);
 
-use AssetCompress\Factory;
+namespace AssetCompress;
+
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
+use ReflectionClass;
 
 class FactoryTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -42,12 +44,11 @@ class FactoryTest extends TestCase
         $this->assertInstanceOf('AssetCompress\Filter\Sprockets', $registry->get('Sprockets'));
     }
 
-    /**
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Cannot load filter "Derp"
-     */
     public function testFilterRegistryMissingFilter()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot load filter "Derp"');
+
         $this->config->filters('js', ['Derp']);
         $this->config->filterConfig('Derp', ['path' => '/test']);
         $factory = new Factory($this->config);
@@ -58,7 +59,7 @@ class FactoryTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -72,17 +73,21 @@ class FactoryTest extends TestCase
         $asset = $collection->get('libs.js');
         $this->assertCount(2, $asset->files(), 'Not enough files');
         $paths = [
-            APP . 'js/',
-            APP . 'js/classes/',
-            APP . 'js/secondary/',
+            APP . 'js' . DS,
+            APP . 'js' . DS . 'classes' . DS,
+            APP . 'js' . DS . 'secondary' . DS,
         ];
         $this->assertEquals($paths, $asset->paths(), 'Paths are incorrect');
         $this->assertEquals(['Sprockets'], $asset->filterNames(), 'Filters are incorrect');
         $this->assertFalse($asset->isThemed(), 'Themed is wrong');
         $this->assertEquals('libs.js', $asset->name(), 'Asset name is wrong');
         $this->assertEquals('js', $asset->ext(), 'Asset ext is wrong');
-        $this->assertEquals(TMP . 'cache_js', $asset->outputDir(), 'Asset path is wrong');
-        $this->assertEquals(TMP . 'cache_js/libs.js', $asset->path(), 'Asset path is wrong');
+        $this->assertEquals(str_replace(DS, '/', TMP . 'cache_js'), str_replace(DS, '/', $asset->outputDir()), 'Asset path is wrong');
+        $this->assertEquals(
+            str_replace(DS, '/', TMP . 'cache_js/libs.js'),
+            str_replace(DS, '/', $asset->path()),
+            'Asset path is wrong'
+        );
     }
 
     /**
@@ -95,7 +100,7 @@ class FactoryTest extends TestCase
         $this->loadPlugins(['Red']);
         $config = AssetConfig::buildFromIniFile($this->themedFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $config->theme('Red');
 
@@ -109,7 +114,10 @@ class FactoryTest extends TestCase
 
         $files = $asset->files();
         $this->assertCount(1, $files);
-        $this->assertEquals(APP . 'Plugin/Red/webroot/theme.css', $files[0]->path());
+        $this->assertEquals(
+            str_replace(DS, '/', APP . 'Plugin/Red/webroot/theme.css'),
+            str_replace(DS, '/', $files[0]->path())
+        );
     }
 
     /**
@@ -122,7 +130,7 @@ class FactoryTest extends TestCase
         $this->loadPlugins(['TestAsset']);
         $config = AssetConfig::buildFromIniFile($this->pluginFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -133,7 +141,7 @@ class FactoryTest extends TestCase
         $asset = $collection->get('plugins.js');
         $this->assertCount(1, $asset->files());
         $this->assertEquals(
-            APP . 'Plugin/TestAsset/webroot/plugin.js',
+            str_replace('/', DS, APP . 'Plugin/TestAsset/webroot/plugin.js'),
             $asset->files()[0]->path()
         );
 
@@ -141,7 +149,7 @@ class FactoryTest extends TestCase
         $files = $asset->files();
         $this->assertCount(2, $files);
         $this->assertEquals(
-            APP . 'css/nav.css',
+            APP . 'css' . DS . 'nav.css',
             $asset->files()[0]->path()
         );
     }
@@ -149,7 +157,7 @@ class FactoryTest extends TestCase
     public function testAssetCreationWithAdditionalPath()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT' => APP
+            'WEBROOT' => APP,
         ]);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
@@ -158,15 +166,15 @@ class FactoryTest extends TestCase
         $files = $asset->files();
         $this->assertCount(3, $files);
         $this->assertEquals(
-            APP . 'js/base.js',
+            APP . 'js' . DS . 'base.js',
             $files[0]->path()
         );
         $this->assertEquals(
-            APP . 'js/library_file.js',
+            APP . 'js' . DS . 'library_file.js',
             $files[1]->path()
         );
         $this->assertEquals(
-            APP . 'js/classes/base_class.js',
+            APP . 'js' . DS . 'classes' . DS . 'base_class.js',
             $files[2]->path()
         );
     }
@@ -175,7 +183,7 @@ class FactoryTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile($this->integrationFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $config->theme('Red');
         $config->set('js.timestamp', true);
@@ -185,10 +193,10 @@ class FactoryTest extends TestCase
         $expected = [
             'timestamp' => [
                 'js' => true,
-                'css' => false
+                'css' => false,
             ],
             'path' => TMP,
-            'theme' => 'Red'
+            'theme' => 'Red',
         ];
         $this->assertEquals($expected, $writer->config());
     }
@@ -197,7 +205,7 @@ class FactoryTest extends TestCase
     {
         $config = AssetConfig::buildFromIniFile($this->timestampFile, [
             'TEST_FILES' => APP,
-            'WEBROOT' => TMP
+            'WEBROOT' => TMP,
         ]);
         $factory = new Factory($config);
         $writer = $factory->writer();
@@ -205,7 +213,7 @@ class FactoryTest extends TestCase
         $expected = [
             'timestamp' => [
                 'js' => true,
-                'css' => false
+                'css' => false,
             ],
             'path' => TMP . 'timestamp' . DIRECTORY_SEPARATOR,
             'theme' => '',
@@ -216,29 +224,38 @@ class FactoryTest extends TestCase
     public function testCompiler()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT' => APP
+            'WEBROOT' => APP,
         ]);
         $factory = new Factory($config);
         $compiler = $factory->compiler();
-        $this->assertAttributeEquals(true, 'debug', $compiler);
+        $this->assertTrue($this->getPropertyValue($compiler, 'debug'));
 
         Configure::write('debug', false);
         $compiler = $factory->compiler();
-        $this->assertAttributeEquals(false, 'debug', $compiler);
+        $this->assertFalse($this->getPropertyValue($compiler, 'debug'));
     }
 
     public function testCachedCompiler()
     {
         $config = AssetConfig::buildFromIniFile($this->overrideFile, [
-            'WEBROOT' => APP
+            'WEBROOT' => APP,
         ]);
         $factory = new Factory($config);
         $compiler = $factory->cachedCompiler();
 
-        $innerCompiler = $this->readAttribute($compiler, 'compiler');
-        $this->assertAttributeEquals(true, 'debug', $innerCompiler);
+        $innerCompiler = $this->getPropertyValue($compiler, 'compiler');
+        $this->assertTrue($this->getPropertyValue($innerCompiler, 'debug'));
 
-        $cacher = $this->readAttribute($compiler, 'cacher');
-        $this->assertAttributeEquals(CACHE . 'asset_compress' . DS, 'path', $cacher);
+        $cacher = $this->getPropertyValue($compiler, 'cacher');
+        $this->assertEquals(CACHE . 'asset_compress' . DS, $this->getPropertyValue($cacher, 'path'));
+    }
+
+    protected function getPropertyValue($obj, $prop)
+    {
+        $reflection = new ReflectionClass($obj);
+        $property = $reflection->getProperty($prop);
+        $property->setAccessible(true);
+
+        return $property->getValue($obj);
     }
 }
