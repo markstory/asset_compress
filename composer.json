@@ -49,8 +49,8 @@
             "@test",
             "@stan"
         ],
-        "cs-check": "phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/",
-        "cs-fix": "phpcbf --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/",
+        "cs-check": "phpcs -p --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/TestCase/",
+        "cs-fix": "phpcbf --standard=vendor/cakephp/cakephp-codesniffer/CakePHP src/ tests/TestCase/",
         "test": "phpunit --stderr",
         "stan": "phpstan analyse src/ && psalm --show-info=false",
         "stan-test": "phpstan analyse tests/",
