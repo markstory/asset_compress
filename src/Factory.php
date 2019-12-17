@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace AssetCompress;
 
-use AssetCompress\Filter\FilterRegistry;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use MiniAsset\AssetCompiler;
 use MiniAsset\Factory as BaseFactory;
+use MiniAsset\Output\Compiler;
 
 /**
  * A factory for various object using a config file.
@@ -91,10 +90,10 @@ class Factory extends BaseFactory
      * Create an AssetCompiler
      *
      * @param bool $debug Not used - Configure is used instead.
-     * @return \MiniAsset\AssetCompiler
+     * @return \MiniAsset\Output\Compiler
      */
     public function compiler($debug = false)
     {
-        return new AssetCompiler($this->filterRegistry(), Configure::read('debug'));
+        return new Compiler($this->filterRegistry(), Configure::read('debug'));
     }
 }

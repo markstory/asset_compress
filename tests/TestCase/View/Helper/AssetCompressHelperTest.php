@@ -253,7 +253,7 @@ class AssetCompressHelperTest extends TestCase
         $this->Helper->getView()->setTheme('Blue');
         $result = $this->Helper->script('asset_test.js');
         $result = str_replace('/', DS, $result);
-        $this->assertContains('Blue-asset_test.js', $result);
+        $this->assertStringContainsString('Blue-asset_test.js', $result);
     }
 
     /**
@@ -324,11 +324,13 @@ class AssetCompressHelperTest extends TestCase
     /**
      * Test exceptions when getting URLs
      *
-     * @expectedException Exception
-     * @expectedExceptionMessage Cannot get URL for build file that does not exist.
+     * @return void
      */
     public function testUrlError()
     {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Cannot get URL for build file that does not exist.');
+
         $this->Helper->url('nope.js');
     }
 
