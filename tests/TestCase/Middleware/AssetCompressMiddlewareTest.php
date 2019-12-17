@@ -52,7 +52,7 @@ class AssetCompressMiddlewareTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
