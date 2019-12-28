@@ -48,7 +48,7 @@ class AssetCompressShell extends Shell
         parent::startup();
         $configFinder = new ConfigFinder();
         $this->setConfig($configFinder->loadAll());
-        $this->out();
+        $this->out('');
     }
 
     /**
