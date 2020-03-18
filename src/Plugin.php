@@ -13,6 +13,9 @@ use Cake\Http\MiddlewareQueue;
  */
 class Plugin extends BasePlugin
 {
+    protected $bootstrapEnabled = false;
+    protected $routesEnabled = false;
+
     /**
      * Add middleware
      *
