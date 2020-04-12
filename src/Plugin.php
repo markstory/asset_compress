@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace AssetCompress;
 
-use AssetCompress\Middleware\AssetCompressMiddleware;
 use AssetCompress\Command\BuildCommand;
 use AssetCompress\Command\ClearCommand;
+use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -33,6 +33,12 @@ class Plugin extends BasePlugin
         return $middlewareQueue;
     }
 
+    /**
+     * Console hook
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection
+     * @return \Cake\Console\CommandCollection
+     */
     public function console(CommandCollection $commands): CommandCollection
     {
         $commands->add('asset_compress build', BuildCommand::class);

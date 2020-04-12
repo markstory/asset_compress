@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace AssetCompress\Test\TestCase\Shell;
+namespace AssetCompress\Test\TestCase\Command;
 
 use Cake\Filesystem\Folder;
-use Cake\TestSuite\TestCase;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests for CLI commands.

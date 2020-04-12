@@ -130,7 +130,7 @@ class AssetCompressMiddleware
             return false;
         }
 
-        $path = $config->cachePath($parts[(count($parts) - 1)]);
+        $path = $config->cachePath($parts[count($parts) - 1]);
         if (empty($path)) {
             return false;
         }
