@@ -6,9 +6,9 @@ namespace AssetCompress\Test\TestCase\Middleware;
 use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ServerRequest;
 use MiniAsset\AssetConfig;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 
 class AssetCompressMiddlewareTest extends TestCase
 {
@@ -25,13 +25,9 @@ class AssetCompressMiddlewareTest extends TestCase
         $this->testConfig = APP . 'config' . DS . 'integration.ini';
         $this->nextInvoked = false;
 
-        $map = [
-            'WEBROOT' => WWW_ROOT,
-            'TEST_FILES' => APP,
-        ];
         $this->loadPlugins(['TestAssetIni']);
 
-        $config = new AssetConfig([], $map);
+        $config = new AssetConfig([]);
         $config->load($this->testConfig);
         $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.ini', 'TestAssetIni.');
         $config->load(APP . 'Plugin/TestAssetIni/config/asset_compress.local.ini', 'TestAssetIni.');
