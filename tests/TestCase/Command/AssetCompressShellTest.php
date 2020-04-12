@@ -52,7 +52,7 @@ class AssetCompressCommandsTest extends TestCase
      */
     public function testBuildFiles()
     {
-        $config = $this->testConfig. 'integration.ini';
+        $config = $this->testConfig . 'integration.ini';
         $this->exec("asset_compress build --config {$config}");
         $this->assertExitSuccess();
 

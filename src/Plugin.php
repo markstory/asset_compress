@@ -41,4 +41,3 @@ class Plugin extends BasePlugin
         return $commands;
     }
 }
-
