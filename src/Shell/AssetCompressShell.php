@@ -47,7 +47,7 @@ class AssetCompressShell extends Shell
     {
         parent::startup();
         $configFinder = new ConfigFinder();
-        $this->setConfig($configFinder->loadAll());
+        $this->setConfig($configFinder->loadAll($this->params['config']));
         $this->out('');
     }
 
@@ -188,6 +188,10 @@ class AssetCompressShell extends Shell
             'help' => 'Clears all builds defined in the ini file.',
         ])->addSubcommand('build', [
             'help' => 'Generate all builds defined in the ini files.',
+        ])->addOption('config', [
+            'help' => 'The config file to use.',
+            'short' => 'c',
+            'default' => CONFIG . 'asset_compress.ini',
         ])->addOption('force', [
             'help' => 'Force assets to rebuild. Ignores timestamp rules.',
             'short' => 'f',

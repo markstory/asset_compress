@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace AssetCompress\Test\TestCase\Shell;
 
-use AssetCompress\Shell\AssetCompressShell;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
-use MiniAsset\AssetConfig;
 
 /**
  * AssetCompressShell test case.
@@ -24,19 +22,11 @@ class AssetCompressShellTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->Shell = new AssetCompressShell($io);
-        $this->Shell->initialize();
-
         $this->testConfig = APP . 'config' . DS;
-
-        $this->config = AssetConfig::buildFromIniFile($this->testConfig . 'integration.ini');
-        $this->Shell->setConfig($this->config);
         mkdir(WWW_ROOT . 'cache_js');
         mkdir(WWW_ROOT . 'cache_css');
+
+        $this->loadPlugins(['AssetCompress']);
     }
 
     /**
@@ -61,7 +51,9 @@ class AssetCompressShellTest extends TestCase
      */
     public function testBuildFiles()
     {
-        $this->Shell->build();
+        $config = $this->testConfig. 'integration.ini';
+        $this->exec("asset_compress build --config {$config}");
+        $this->assertExitSuccess();
 
         $this->assertTrue(file_exists(WWW_ROOT . 'cache_css' . DS . 'all.css'), 'Css build missing');
         $this->assertTrue(file_exists(WWW_ROOT . 'cache_js' . DS . 'libs.js'), 'Js build missing');
@@ -76,9 +68,10 @@ class AssetCompressShellTest extends TestCase
     public function testBuildFilesWithTheme()
     {
         $this->loadPlugins(['Red', 'Blue']);
-        $config = AssetConfig::buildFromIniFile($this->testConfig . 'themed.ini');
-        $this->Shell->setConfig($config);
-        $this->Shell->build();
+
+        $config = $this->testConfig . 'themed.ini';
+        $this->exec("asset_compress build --config {$config}");
+        $this->assertExitSuccess();
 
         $this->assertFileExists(WWW_ROOT . 'cache_css' . DS . 'Blue-themed.css', 'Css build missing');
         $this->assertFileExists(WWW_ROOT . 'cache_css' . DS . 'Red-themed.css', 'Css build missing');
@@ -93,9 +86,6 @@ class AssetCompressShellTest extends TestCase
      */
     public function testClear()
     {
-        $config = AssetConfig::buildFromIniFile($this->testConfig . 'integration.ini');
-        $this->Shell->setConfig($config);
-
         $files = [
             WWW_ROOT . 'cache_css/all.css',
             WWW_ROOT . 'cache_css/all.v12354.css',
@@ -105,8 +95,9 @@ class AssetCompressShellTest extends TestCase
         foreach ($files as $file) {
             touch($file);
         }
-
-        $this->Shell->clear();
+        $config = $this->testConfig . 'integration.ini';
+        $this->exec("asset_compress clear --config {$config}");
+        $this->assertExitSuccess();
 
         foreach ($files as $file) {
             $this->assertFileNotExists($file, "$file was not cleared");
@@ -114,7 +105,7 @@ class AssetCompressShellTest extends TestCase
     }
 
     /**
-     * Test building files from the config file.
+     * Test clearing themed files.
      *
      * @return void
      */
@@ -128,10 +119,10 @@ class AssetCompressShellTest extends TestCase
         foreach ($files as $file) {
             touch($file);
         }
+        $config = $this->testConfig . 'themed.ini';
+        $this->exec("asset_compress clear --config {$config}");
+        $this->assertExitSuccess();
 
-        $config = AssetConfig::buildFromIniFile($this->testConfig . 'themed.ini');
-        $this->Shell->setConfig($config);
-        $this->Shell->clear();
         foreach ($files as $file) {
             $this->assertFileNotExists($file);
         }
@@ -144,9 +135,6 @@ class AssetCompressShellTest extends TestCase
      */
     public function testClearIgnoreUnmanagedFiles()
     {
-        $config = AssetConfig::buildFromIniFile($this->testConfig . 'integration.ini');
-        $this->Shell->setConfig($config);
-
         $files = [
             WWW_ROOT . 'cache_js/nope.js',
             WWW_ROOT . 'cache_js/nope.v12354.js',
@@ -154,11 +142,12 @@ class AssetCompressShellTest extends TestCase
         foreach ($files as $file) {
             touch($file);
         }
-
-        $this->Shell->clear();
+        $config = $this->testConfig . 'integration.ini';
+        $this->exec("asset_compress clear --config {$config}");
+        $this->assertExitSuccess();
 
         foreach ($files as $file) {
-            $this->assertTrue(file_exists($file), "$file should not be cleared");
+            $this->assertFileExists($file, "$file should not be cleared");
         }
     }
 }
