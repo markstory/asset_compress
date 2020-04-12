@@ -27,6 +27,7 @@ class AssetCompressShellTest extends TestCase
         mkdir(WWW_ROOT . 'cache_css');
 
         $this->loadPlugins(['AssetCompress']);
+        $this->useCommandRunner();
     }
 
     /**

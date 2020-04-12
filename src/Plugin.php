@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace AssetCompress;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
+use AssetCompress\Command\BuildCommand;
+use AssetCompress\Command\ClearCommand;
+use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\MiddlewareQueue;
@@ -29,4 +32,13 @@ class Plugin extends BasePlugin
 
         return $middlewareQueue;
     }
+
+    public function console(CommandCollection $commands): CommandCollection
+    {
+        $commands->add('asset_compress build', BuildCommand::class);
+        $commands->add('asset_compress clear', ClearCommand::class);
+
+        return $commands;
+    }
 }
+
