@@ -8,9 +8,9 @@ use Cake\TestSuite\TestCase;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 
 /**
- * AssetCompressShell test case.
+ * Tests for CLI commands.
  */
-class AssetCompressShellTest extends TestCase
+class AssetCompressCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
