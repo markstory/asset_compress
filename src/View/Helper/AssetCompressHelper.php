@@ -19,7 +19,6 @@ use RuntimeException;
  *
  * Handle inclusion assets using the AssetCompress features for concatenating and
  * compressing asset files.
- *
  */
 class AssetCompressHelper extends Helper
 {

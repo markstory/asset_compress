@@ -57,10 +57,7 @@ class FactoryTest extends TestCase
 
     public function testAssetCollection()
     {
-        $config = AssetConfig::buildFromIniFile($this->integrationFile, [
-            'TEST_FILES' => APP,
-            'WEBROOT' => TMP,
-        ]);
+        $config = AssetConfig::buildFromIniFile($this->integrationFile);
         $factory = new Factory($config);
         $collection = $factory->assetCollection();
 
@@ -82,9 +79,9 @@ class FactoryTest extends TestCase
         $this->assertFalse($asset->isThemed(), 'Themed is wrong');
         $this->assertEquals('libs.js', $asset->name(), 'Asset name is wrong');
         $this->assertEquals('js', $asset->ext(), 'Asset ext is wrong');
-        $this->assertEquals(str_replace(DS, '/', TMP . 'cache_js'), str_replace(DS, '/', $asset->outputDir()), 'Asset path is wrong');
+        $this->assertEquals(str_replace(DS, '/', WWW_ROOT . 'cache_js'), str_replace(DS, '/', $asset->outputDir()), 'Asset path is wrong');
         $this->assertEquals(
-            str_replace(DS, '/', TMP . 'cache_js/libs.js'),
+            str_replace(DS, '/', WWW_ROOT . 'cache_js/libs.js'),
             str_replace(DS, '/', $asset->path()),
             'Asset path is wrong'
         );
@@ -98,10 +95,7 @@ class FactoryTest extends TestCase
     public function testAssetCollectionThemed()
     {
         $this->loadPlugins(['Red']);
-        $config = AssetConfig::buildFromIniFile($this->themedFile, [
-            'TEST_FILES' => APP,
-            'WEBROOT' => TMP,
-        ]);
+        $config = AssetConfig::buildFromIniFile($this->themedFile);
         $config->theme('Red');
 
         $factory = new Factory($config);
@@ -181,10 +175,7 @@ class FactoryTest extends TestCase
 
     public function testWriter()
     {
-        $config = AssetConfig::buildFromIniFile($this->integrationFile, [
-            'TEST_FILES' => APP,
-            'WEBROOT' => TMP,
-        ]);
+        $config = AssetConfig::buildFromIniFile($this->integrationFile);
         $config->theme('Red');
         $config->set('js.timestamp', true);
         $factory = new Factory($config);
