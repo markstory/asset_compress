@@ -19,6 +19,8 @@ use RuntimeException;
  *
  * Handle inclusion assets using the AssetCompress features for concatenating and
  * compressing asset files.
+ *
+ * @property \Cake\View\Helper\HtmlHelper $Html
  */
 class AssetCompressHelper extends Helper
 {
