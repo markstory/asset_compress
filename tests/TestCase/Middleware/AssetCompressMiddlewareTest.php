@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
+use AssetCompress\Test\TestCase\Middleware\RequestHandlerStub;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response;
@@ -35,9 +36,11 @@ class AssetCompressMiddlewareTest extends TestCase
         $this->middleware = new AssetCompressMiddleware($config);
         $this->request = new ServerRequest();
         $this->response = new Response();
-        $this->next = function () {
+        $this->handler = new RequestHandlerStub(function () {
             $this->nextInvoked = true;
-        };
+
+            return new Response();
+        });
     }
 
     /**
@@ -61,9 +64,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $uri = $this->request->getUri()->withPath('/cache_js/libs.js');
         $request = $this->request->withUri($uri);
 
-        $mw = $this->middleware;
-        $result = $mw($request, $this->response, $this->next);
-
+        $result = $this->middleware->process($request, $this->handler);
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
@@ -83,8 +84,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $uri = $this->request->getUri()->withPath('/cache_js/TestAssetIni.libs.js');
         $request = $this->request->withUri($uri);
 
-        $mw = $this->middleware;
-        $result = $mw($request, $this->response, $this->next);
+        $result = $this->middleware->process($request, $this->handler);
 
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
@@ -103,8 +103,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $uri = $this->request->getUri()->withPath('/cache_js/libs.js');
         $request = $this->request->withUri($uri);
 
-        $mw = $this->middleware;
-        $result = $mw($request, $this->response, $this->next);
+        $result = $this->middleware->process($request, $this->handler);
 
         $body = $result->getBody()->getContents();
         $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
@@ -120,9 +119,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $uri = $this->request->getUri()->withPath('/cache_js/libs.js');
         $request = $this->request->withUri($uri);
 
-        $mw = $this->middleware;
-        $result = $mw($request, $this->response, $this->next);
-        $this->assertNull($result);
+        $this->middleware->process($request, $this->handler);
         $this->assertTrue($this->nextInvoked);
     }
 
@@ -143,8 +140,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $request = $this->request->withUri($uri)
             ->withQueryParams(['theme' => 'Blue']);
 
-        $mw = $this->middleware;
-        $result = $mw($request, $this->response, $this->next);
+        $result = $this->middleware->process($request, $this->handler);
 
         $body = $result->getBody()->getContents();
         $this->assertEquals('text/css', $result->getHeaderLine('Content-Type'));
@@ -156,9 +152,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $uri = $this->request->getUri()->withPath('/cache_js/derpy.js');
         $request = $this->request->withUri($uri);
 
-        $mw = $this->middleware;
-        $result = $mw($request, $this->response, $this->next);
-        $this->assertNull($result);
+        $this->middleware->process($request, $this->handler);
         $this->assertTrue($this->nextInvoked);
     }
 }
