@@ -88,6 +88,8 @@ class AssetCompressHelper extends Helper
             return $this->config;
         }
         $this->config = $config;
+
+        return null;
     }
 
     /**
@@ -179,9 +181,7 @@ class AssetCompressHelper extends Helper
             $target = $this->collection()->get($file);
             foreach ($target->files() as $part) {
                 $path = $this->_relativizePath($part->path());
-                if (DS === '\\') {
-                    $path = str_replace(DS, '/', $path);
-                }
+                $path = str_replace(DS, '/', $path);
                 $output .= $this->Html->css($path, $options);
             }
 
@@ -224,9 +224,7 @@ class AssetCompressHelper extends Helper
             $target = $this->collection()->get($file);
             foreach ($target->files() as $part) {
                 $path = $this->_relativizePath($part->path());
-                if (DS === '\\') {
-                    $path = str_replace(DS, '/', $path);
-                }
+                $path = str_replace(DS, '/', $path);
                 $output .= $this->Html->script($path, $options);
             }
 
@@ -284,6 +282,7 @@ class AssetCompressHelper extends Helper
         if (!is_array($full)) {
             $options = ['full' => $full];
         }
+        /** @var array $options */
         $options += ['full' => false];
 
         $target = $collection->get($file);
@@ -310,10 +309,7 @@ class AssetCompressHelper extends Helper
         if ($devMode || $config->general('alwaysEnableController')) {
             $route = $this->_getRoute($target, $path);
         }
-
-        if (DS === '\\') {
-            $route = str_replace(DS, '/', $route);
-        }
+        $route = str_replace(DS, '/', $route);
 
         if ($options['full']) {
             $base = Router::fullBaseUrl();
