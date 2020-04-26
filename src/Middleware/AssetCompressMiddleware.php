@@ -7,13 +7,18 @@ use AssetCompress\Config\ConfigFinder;
 use AssetCompress\Factory;
 use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Response;
 use Exception;
 use MiniAsset\AssetConfig;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * PSR7 Compatible middleware for the new HTTP stack.
  */
-class AssetCompressMiddleware
+class AssetCompressMiddleware implements MiddlewareInterface
 {
     /**
      * Object containing configuration settings for asset compressor
@@ -38,25 +43,24 @@ class AssetCompressMiddleware
     }
 
     /**
-     * Get an asset or delegate to the next middleware
+     * Callable implementation for the middleware stack.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @param callable $next Callback to invoke the next middleware.
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
-    public function __invoke($request, $response, $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $config = $this->config;
         $production = !Configure::read('debug');
         if ($production && !$config->general('alwaysEnableController')) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         // Make sure the request looks like an asset.
         $targetName = $this->getName($config, $request->getUri()->getPath());
         if (!$targetName) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         $queryParams = $request->getQueryParams();
@@ -66,7 +70,7 @@ class AssetCompressMiddleware
         $factory = new Factory($config);
         $assets = $factory->assetCollection();
         if (!$assets->contains($targetName)) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
         $build = $assets->get($targetName);
 
@@ -77,19 +81,20 @@ class AssetCompressMiddleware
             throw new NotFoundException($e->getMessage());
         }
 
-        return $this->respond($response, $contents, $build);
+        return $this->respond($contents, $build);
     }
 
     /**
      * Respond with the asset.
      *
-     * @param \Psr\Http\Message\ResponseInterface $response The response to augment
      * @param string $contents The asset contents.
      * @param \MiniAsset\AssetTarget $build The build target.
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function respond($response, $contents, $build)
+    protected function respond($contents, $build)
     {
+        $response = new Response();
+
         // Deliver built asset.
         $body = $response->getBody();
         $body->write($contents);

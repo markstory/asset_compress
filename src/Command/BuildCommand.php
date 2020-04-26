@@ -62,13 +62,13 @@ class BuildCommand extends Command
             $config->theme($theme);
             foreach ($factory->assetCollection() as $target) {
                 if ($target->isThemed()) {
-                    $this->buildTarget($target, $factory, $io);
+                    $this->buildTarget($target, $factory, $args, $io);
                 }
             }
         }
         $io->verbose('Building un-themed targets.');
         foreach ($factory->assetCollection() as $target) {
-            $this->buildTarget($target, $factory, $io);
+            $this->buildTarget($target, $factory, $args, $io);
         }
     }
 
@@ -77,16 +77,17 @@ class BuildCommand extends Command
      *
      * @param \MiniAsset\AssetTarget $build The build to generate.
      * @param \AssetCompress\Factory $factory Assetcompress factory
+     * @param \Cake\Console\Arguments $args Arguments instance
      * @param \Cake\Console\ConsoleIo $io ConsoleIo instance
      * @return void
      */
-    protected function buildTarget(AssetTarget $build, Factory $factory, ConsoleIo $io)
+    protected function buildTarget(AssetTarget $build, Factory $factory, Arguments $args, ConsoleIo $io)
     {
         $writer = $factory->writer();
         $compiler = $factory->compiler();
 
         $name = $writer->buildFileName($build);
-        if ($writer->isFresh($build) && empty($this->params['force'])) {
+        if ($writer->isFresh($build) && $args->getOption('force')) {
             $io->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 
             return;
