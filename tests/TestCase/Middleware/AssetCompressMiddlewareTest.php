@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
-use AssetCompress\Test\TestCase\Middleware\RequestHandlerStub;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Response;
