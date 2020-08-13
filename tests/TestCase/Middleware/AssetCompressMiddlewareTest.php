@@ -64,11 +64,35 @@ class AssetCompressMiddlewareTest extends TestCase
         $request = $this->request->withUri($uri);
 
         $result = $this->middleware->process($request, $this->handler);
-        $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
         $this->assertStringContainsString('var BaseClass = new Class', $body);
         $this->assertStringContainsString('var Template = new Class', $body);
+    }
+
+    public function contentTypesProvider()
+    {
+        return [
+            ['/cache_js/libs.js',      'application/javascript'],
+            ['/cache_css/all.css',     'text/css'],
+            ['/cache_svg/foo.bar.svg', 'image/svg+xml'],
+        ];
+    }
+
+    /**
+     * test returned content types
+     * @dataProvider contentTypesProvider
+     *
+     * @return void
+     */
+    public function testBuildFileContentTypes($path, $expected)
+    {
+        $uri = $this->request->getUri()->withPath($path);
+        $request = $this->request->withUri($uri);
+
+        $result = $this->middleware->process($request, $this->handler);
+
+        $this->assertEquals($expected, $result->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -84,8 +108,6 @@ class AssetCompressMiddlewareTest extends TestCase
         $request = $this->request->withUri($uri);
 
         $result = $this->middleware->process($request, $this->handler);
-
-        $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
 
         $body = $result->getBody()->getContents();
         $this->assertStringContainsString('var BaseClass = new Class', $body);
@@ -105,7 +127,6 @@ class AssetCompressMiddlewareTest extends TestCase
         $result = $this->middleware->process($request, $this->handler);
 
         $body = $result->getBody()->getContents();
-        $this->assertEquals('application/javascript', $result->getHeaderLine('Content-Type'));
         $this->assertStringContainsString('BaseClass', $body);
 
         $this->assertTrue(file_exists(CACHE . 'asset_compress' . DS . 'libs.js'), 'Cache file was created.');
@@ -142,7 +163,6 @@ class AssetCompressMiddlewareTest extends TestCase
         $result = $this->middleware->process($request, $this->handler);
 
         $body = $result->getBody()->getContents();
-        $this->assertEquals('text/css', $result->getHeaderLine('Content-Type'));
         $this->assertStringContainsString('color: blue', $body);
     }
 

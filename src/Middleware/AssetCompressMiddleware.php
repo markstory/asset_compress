@@ -115,6 +115,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
         $types = [
             'css' => 'text/css',
             'js' => 'application/javascript',
+            'svg' => 'image/svg+xml',
         ];
 
         return $types[$ext] ?? 'application/octet-stream';
