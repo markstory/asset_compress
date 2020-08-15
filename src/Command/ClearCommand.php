@@ -82,13 +82,14 @@ class ClearCommand extends Command
 
             return;
         }
-        $targets = array_map(function ($target) {
-            return $target->name();
-        }, iterator_to_array($assets));
+
+        $targets = [];
+        foreach (iterator_to_array($assets) as $target) {
+            $this->clearPath($io, $target->outputDir() . DS, $themes, [$target->name()]);
+            $targets[] = $target->name();
+        }
 
         $this->clearPath($io, CACHE . 'asset_compress' . DS, $themes, $targets);
-        $this->clearPath($io, $config->cachePath('js'), $themes, $targets);
-        $this->clearPath($io, $config->cachePath('css'), $themes, $targets);
     }
 
     /**

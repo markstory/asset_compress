@@ -25,6 +25,7 @@ class AssetCompressCommandsTest extends TestCase
         $this->testConfig = APP . 'config' . DS;
         mkdir(WWW_ROOT . 'cache_js');
         mkdir(WWW_ROOT . 'cache_css');
+        mkdir(WWW_ROOT . 'cache_svg');
 
         $this->loadPlugins(['AssetCompress']);
         $this->useCommandRunner();
@@ -42,6 +43,8 @@ class AssetCompressCommandsTest extends TestCase
         $dir = new Folder(WWW_ROOT . 'cache_js');
         $dir->delete();
         $dir = new Folder(WWW_ROOT . 'cache_css');
+        $dir->delete();
+        $dir = new Folder(WWW_ROOT . 'cache_svg');
         $dir->delete();
     }
 
@@ -92,6 +95,7 @@ class AssetCompressCommandsTest extends TestCase
             WWW_ROOT . 'cache_css/all.v12354.css',
             WWW_ROOT . 'cache_js/libs.js',
             WWW_ROOT . 'cache_js/libs.v12354.js',
+            WWW_ROOT . 'cache_svg/foo.bar.svg',
         ];
         foreach ($files as $file) {
             touch($file);
