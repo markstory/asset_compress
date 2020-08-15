@@ -85,7 +85,7 @@ class ClearCommand extends Command
 
         $targets = [];
         foreach (iterator_to_array($assets) as $target) {
-            $this->clearPath($io, $target->outputDir() . DS, $themes, [ $target->name() ]);
+            $this->clearPath($io, $target->outputDir() . DS, $themes, [$target->name()]);
             $targets[] = $target->name();
         }
 
