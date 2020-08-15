@@ -73,8 +73,8 @@ class AssetCompressMiddlewareTest extends TestCase
     public function contentTypesProvider()
     {
         return [
-            ['/cache_js/libs.js',      'application/javascript'],
-            ['/cache_css/all.css',     'text/css'],
+            ['/cache_js/libs.js', 'application/javascript'],
+            ['/cache_css/all.css', 'text/css'],
             ['/cache_svg/foo.bar.svg', 'image/svg+xml'],
         ];
     }
