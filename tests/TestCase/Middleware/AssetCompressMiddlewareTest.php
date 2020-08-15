@@ -81,8 +81,8 @@ class AssetCompressMiddlewareTest extends TestCase
 
     /**
      * test returned content types
-     * @dataProvider contentTypesProvider
      *
+     * @dataProvider contentTypesProvider
      * @return void
      */
     public function testBuildFileContentTypes($path, $expected)
