@@ -5,9 +5,9 @@ namespace AssetCompress\Test\TestCase\Middleware;
 
 use AssetCompress\Middleware\AssetCompressMiddleware;
 use Cake\Core\Configure;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Laminas\Diactoros\Response;
-use Laminas\Diactoros\ServerRequest;
 use MiniAsset\AssetConfig;
 
 class AssetCompressMiddlewareTest extends TestCase
