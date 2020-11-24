@@ -22,7 +22,7 @@ before_script:
   - phpenv rehash
 
 install:
-  - composer install --prefer-dist --no-interaction --dev
+  - composer install --prefer-dist --no-interaction
 
   - if [[ $CHECKS = 1 ]]; then composer stan-setup; fi
 
