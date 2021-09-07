@@ -83,7 +83,7 @@ jobs:
         php-version: '7.4'
         extensions: mbstring, intl
         coverage: none
-        tools: psalm:~4.1.0, phpstan:^0.12
+        tools: psalm:~4.1.0
 
     - name: Composer Install
       run: composer install
@@ -93,6 +93,3 @@ jobs:
 
     - name: Run psalm
       run: psalm --output-format=github
-
-    - name: Run phpstan
-      run: phpstan analyse
