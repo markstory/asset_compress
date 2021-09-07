@@ -72,6 +72,18 @@ class ConfigFinderTest extends TestCase
         ];
         $result = $config->targets();
         $this->assertEquals($expected, $result);
+
+        $config = $configFinder->loadAll($this->testConfig, true);
+
+        $expected = [
+            'libs.js',
+            'foo.bar.js',
+            'new_file.js',
+            'all.css',
+            'pink.css',
+        ];
+        $result = $config->targets();
+        $this->assertEquals($expected, $result);
     }
 
     public function testLocalPluginConfig()

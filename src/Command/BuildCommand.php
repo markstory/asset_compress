@@ -38,6 +38,10 @@ class BuildCommand extends Command
                 'help' => 'The config file to use.',
                 'short' => 'c',
                 'default' => CONFIG . 'asset_compress.ini',
+            ])
+            ->addOption('skip-plugins', [
+                'help' => 'Don\'t load config files from plugin\'s .',
+                'boolean' => true,
             ]);
 
         return $parser;
@@ -53,7 +57,10 @@ class BuildCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $configFinder = new ConfigFinder();
-        $config = $configFinder->loadAll($args->getOption('config'));
+        $config = $configFinder->loadAll(
+            $args->getOption('config'),
+            (bool)$args->getOption('skip-plugins')
+        );
         $factory = new Factory($config);
 
         $themes = (array)$config->general('themes');
