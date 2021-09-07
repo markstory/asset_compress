@@ -27,9 +27,10 @@ class ConfigFinder
      * will be loaded if it is present.
      *
      * @param string $path The configuration file path to start loading from.
+     * @param bool $skipPlugins Whether to skip config files from plugins. Default `false`.
      * @return \MiniAsset\AssetConfig The completed configuration object.
      */
-    public function loadAll($path = null)
+    public function loadAll($path = null, $skipPlugins = false)
     {
         if (!$path) {
             $path = CONFIG . 'asset_compress.ini';
@@ -38,6 +39,10 @@ class ConfigFinder
             'WEBROOT' => WWW_ROOT,
         ]);
         $this->_load($config, $path);
+
+        if ($skipPlugins) {
+            return $config;
+        }
 
         $plugins = Plugin::loaded();
         foreach ($plugins as $plugin) {
