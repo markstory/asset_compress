@@ -45,19 +45,19 @@
     "scssphp/scssphp": "For using the ScssPHP filter.",
     "leafo/lessphp": "For using the LessPHP filter."
   },
-    "scripts": {
-        "check": [
-            "@cs-check",
-            "@test",
-            "@stan"
-        ],
-        "cs-check": "phpcs -p src/ tests/TestCase/",
-        "cs-fix": "phpcbf src/ tests/TestCase/",
-        "test": "phpunit --stderr",
-        "stan": "phpstan analyse src/ && psalm --show-info=false",
-        "stan-test": "phpstan analyse tests/",
-        "psalm": "psalm",
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12 vimeo/psalm:~4.1.0 && mv composer.backup composer.json",
-        "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
-    }
+  "scripts": {
+    "check": [
+      "@cs-check",
+      "@test",
+      "@stan"
+    ],
+    "cs-check": "phpcs -p src/ tests/TestCase/",
+    "cs-fix": "phpcbf src/ tests/TestCase/",
+    "test": "phpunit --stderr",
+    "stan": "phpstan analyse src/ && psalm --show-info=false",
+    "stan-test": "phpstan analyse tests/",
+    "psalm": "psalm",
+    "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12 vimeo/psalm:~4.1.0 && mv composer.backup composer.json",
+    "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
+  }
 }
