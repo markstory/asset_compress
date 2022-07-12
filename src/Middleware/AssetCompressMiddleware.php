@@ -10,6 +10,7 @@ use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Exception;
 use MiniAsset\AssetConfig;
+use MiniAsset\AssetTarget;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,7 +26,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
      *
      * @var \MiniAsset\AssetConfig
      */
-    protected $config;
+    protected AssetConfig $config;
 
     /**
      * Constructor
@@ -91,7 +92,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
      * @param \MiniAsset\AssetTarget $build The build target.
      * @return \Psr\Http\Message\ResponseInterface
      */
-    protected function respond($contents, $build)
+    protected function respond(string $contents, AssetTarget $build): ResponseInterface
     {
         $response = new Response();
 
@@ -109,7 +110,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
      * @param \MiniAsset\AssetTarget $build The build target.
      * @return string The mapped content type.
      */
-    protected function mapType($build)
+    protected function mapType(AssetTarget $build): string
     {
         $ext = $build->ext();
         $types = [
@@ -126,10 +127,10 @@ class AssetCompressMiddleware implements MiddlewareInterface
      *
      * @param \MiniAsset\AssetConfig $config The config object to use.
      * @param string $url The url to get an asset name from.
-     * @return bool|string false if no build can be parsed from URL
+     * @return string|bool false if no build can be parsed from URL
      * with url path otherwise
      */
-    protected function getName($config, $url)
+    protected function getName(AssetConfig $config, string $url): bool|string
     {
         $parts = explode('.', $url);
         if (count($parts) < 2) {

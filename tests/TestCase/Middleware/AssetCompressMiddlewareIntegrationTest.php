@@ -4,10 +4,13 @@ declare(strict_types=1);
 namespace AssetCompress\Test\TestCase\Middleware;
 
 use Cake\Core\Configure;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
-class AssetCompressMiddlewareIntegrationTest extends IntegrationTestCase
+class AssetCompressMiddlewareIntegrationTest extends TestCase
 {
+    use IntegrationTestTrait;
+
     /**
      * Setup method
      *
@@ -18,7 +21,6 @@ class AssetCompressMiddlewareIntegrationTest extends IntegrationTestCase
         Configure::write('App.namespace', 'TestApp');
 
         parent::setUp();
-        $this->useHttpServer(true);
     }
 
     public function testInvokeSuccess()

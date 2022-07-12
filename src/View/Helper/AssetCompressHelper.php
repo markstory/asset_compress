@@ -11,7 +11,10 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\View;
+use MiniAsset\AssetCollection;
+use MiniAsset\AssetConfig;
 use MiniAsset\AssetTarget;
+use MiniAsset\Output\AssetWriter;
 use RuntimeException;
 
 /**
@@ -29,35 +32,35 @@ class AssetCompressHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Html'];
+    public array $helpers = ['Html'];
 
     /**
      * Configuration object
      *
      * @var \MiniAsset\AssetConfig
      */
-    protected $config;
+    protected AssetConfig $config;
 
     /**
      * Factory for other AssetCompress objects.
      *
      * @var \AssetCompress\Factory
      */
-    protected $factory;
+    protected Factory $factory;
 
     /**
      * AssetCollection for the current config set.
      *
      * @var \MiniAsset\AssetCollection
      */
-    protected $collection;
+    protected AssetCollection $collection;
 
     /**
      * AssetWriter instance
      *
      * @var \MiniAsset\Output\AssetWriter
      */
-    protected $writer;
+    protected AssetWriter $writer;
 
     /**
      * Constructor - finds and parses the ini file the plugin uses.
@@ -66,7 +69,7 @@ class AssetCompressHelper extends Helper
      * @param array $settings The settings for the helper.
      * @return void
      */
-    public function __construct(View $view, $settings = [])
+    public function __construct(View $view, array $settings = [])
     {
         parent::__construct($view, $settings);
         if (empty($settings['noconfig'])) {
@@ -82,7 +85,7 @@ class AssetCompressHelper extends Helper
      * @param \MiniAsset\AssetConfig $config The config instance to set.
      * @return \MiniAsset\AssetConfig|null Either the current config object or null.
      */
-    public function assetConfig($config = null)
+    public function assetConfig(?AssetConfig $config = null): ?AssetConfig
     {
         if ($config === null) {
             return $this->config;
@@ -97,7 +100,7 @@ class AssetCompressHelper extends Helper
      *
      * @return \AssetCompress\Factory
      */
-    protected function factory()
+    protected function factory(): Factory
     {
         if (empty($this->factory)) {
             $this->config->theme($this->getView()->getTheme());
@@ -112,7 +115,7 @@ class AssetCompressHelper extends Helper
      *
      * @return \MiniAsset\AssetCollection
      */
-    protected function collection()
+    protected function collection(): AssetCollection
     {
         if (empty($this->collection)) {
             $this->collection = $this->factory()->assetCollection();
@@ -126,7 +129,7 @@ class AssetCompressHelper extends Helper
      *
      * @return \MiniAsset\Output\AssetWriter
      */
-    protected function writer()
+    protected function writer(): AssetWriter
     {
         if (empty($this->writer)) {
             $this->writer = $this->factory()->writer();
@@ -142,7 +145,7 @@ class AssetCompressHelper extends Helper
      * @param string $ext Extension with .
      * @return string
      */
-    protected function _addExt($file, $ext)
+    protected function _addExt(string $file, string $ext): string
     {
         if (substr($file, strlen($ext) * -1) !== $ext) {
             $file .= $ext;
@@ -167,7 +170,7 @@ class AssetCompressHelper extends Helper
      * @throws \RuntimeException
      * @return string A stylesheet tag
      */
-    public function css($file, $options = [])
+    public function css(string $file, array $options = []): string
     {
         $file = $this->_addExt($file, '.css');
         if (!$this->collection()->contains($file)) {
@@ -210,7 +213,7 @@ class AssetCompressHelper extends Helper
      * @throws \RuntimeException
      * @return string A script tag
      */
-    public function script($file, $options = [])
+    public function script(string $file, array $options = []): string
     {
         $file = $this->_addExt($file, '.js');
         if (!$this->collection()->contains($file)) {
@@ -243,7 +246,7 @@ class AssetCompressHelper extends Helper
      * @param string $path The path to convert
      * @return string A webroot relative string.
      */
-    protected function _relativizePath($path)
+    protected function _relativizePath(string $path): string
     {
         $plugins = Plugin::loaded();
         $index = array_search('AssetCompress', $plugins);
@@ -267,11 +270,11 @@ class AssetCompressHelper extends Helper
      * to that build file.
      *
      * @param string $file The build file that you want a URL for.
-     * @param bool|array $full Whether or not the URL should have the full base path.
+     * @param array|bool $full Whether or not the URL should have the full base path.
      * @return string The generated URL.
      * @throws \RuntimeException when the build file does not exist.
      */
-    public function url($file = null, $full = false)
+    public function url(?string $file = null, bool|array $full = false): string
     {
         $collection = $this->collection();
         if (!$collection->contains($file)) {
@@ -329,7 +332,7 @@ class AssetCompressHelper extends Helper
      * @param \MiniAsset\AssetTarget $build The build being resolved.
      * @return string The resolved build name.
      */
-    protected function _getBuildName(AssetTarget $build)
+    protected function _getBuildName(AssetTarget $build): string
     {
         return $this->writer()->buildFileName($build);
     }
@@ -343,7 +346,7 @@ class AssetCompressHelper extends Helper
      * @param string $base The base path to fetch a url with.
      * @return string Generated URL.
      */
-    protected function _getRoute(AssetTarget $file, $base)
+    protected function _getRoute(AssetTarget $file, string $base): string
     {
         $query = [];
 
@@ -363,7 +366,7 @@ class AssetCompressHelper extends Helper
      * @param string $file Name of the build that will be checked if exists.
      * @return bool True if the build file exists.
      */
-    public function exists($file)
+    public function exists(string $file): bool
     {
         return $this->collection()->contains($file);
     }
@@ -382,7 +385,7 @@ class AssetCompressHelper extends Helper
      * @throws \RuntimeException
      * @return string style tag
      */
-    public function inlineCss($file)
+    public function inlineCss(string $file): string
     {
         $collection = $this->collection();
         if (!$collection->contains($file)) {
@@ -408,7 +411,7 @@ class AssetCompressHelper extends Helper
      * @throws \RuntimeException
      * @return string script tag
      */
-    public function inlineScript($file)
+    public function inlineScript(string $file): string
     {
         $collection = $this->collection();
         if (!$collection->contains($file)) {

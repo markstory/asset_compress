@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace AssetCompress\Test\TestCase\Command;
 
-use Cake\Filesystem\Folder;
-use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Filesystem;
 
 /**
  * Tests for CLI commands.
@@ -28,7 +28,6 @@ class AssetCompressCommandsTest extends TestCase
         mkdir(WWW_ROOT . 'cache_svg');
 
         $this->loadPlugins(['AssetCompress']);
-        $this->useCommandRunner();
     }
 
     /**
@@ -40,12 +39,10 @@ class AssetCompressCommandsTest extends TestCase
     {
         parent::tearDown();
         unset($this->Shell);
-        $dir = new Folder(WWW_ROOT . 'cache_js');
-        $dir->delete();
-        $dir = new Folder(WWW_ROOT . 'cache_css');
-        $dir->delete();
-        $dir = new Folder(WWW_ROOT . 'cache_svg');
-        $dir->delete();
+        $fs = new Filesystem();
+        $fs->deleteDir(WWW_ROOT . 'cache_js');
+        $fs->deleteDir(WWW_ROOT . 'cache_css');
+        $fs->deleteDir(WWW_ROOT . 'cache_svg');
     }
 
     /**
@@ -105,7 +102,7 @@ class AssetCompressCommandsTest extends TestCase
         $this->assertExitSuccess();
 
         foreach ($files as $file) {
-            $this->assertFileNotExists($file, "$file was not cleared");
+            $this->assertFileDoesNotExist($file, "$file was not cleared");
         }
     }
 
@@ -129,7 +126,7 @@ class AssetCompressCommandsTest extends TestCase
         $this->assertExitSuccess();
 
         foreach ($files as $file) {
-            $this->assertFileNotExists($file);
+            $this->assertFileDoesNotExist($file);
         }
     }
 

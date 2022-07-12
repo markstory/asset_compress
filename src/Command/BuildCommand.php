@@ -52,9 +52,9 @@ class BuildCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int The exit code
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $configFinder = new ConfigFinder();
         $config = $configFinder->loadAll(
@@ -77,6 +77,8 @@ class BuildCommand extends Command
         foreach ($factory->assetCollection() as $target) {
             $this->buildTarget($target, $factory, $args, $io);
         }
+
+        return static::CODE_SUCCESS;
     }
 
     /**
@@ -88,7 +90,7 @@ class BuildCommand extends Command
      * @param \Cake\Console\ConsoleIo $io ConsoleIo instance
      * @return void
      */
-    protected function buildTarget(AssetTarget $build, Factory $factory, Arguments $args, ConsoleIo $io)
+    protected function buildTarget(AssetTarget $build, Factory $factory, Arguments $args, ConsoleIo $io): void
     {
         $writer = $factory->writer();
         $compiler = $factory->compiler();

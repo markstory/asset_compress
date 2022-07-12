@@ -6,6 +6,10 @@ namespace AssetCompress;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use MiniAsset\Factory as BaseFactory;
+use MiniAsset\Filter\FilterInterface;
+use MiniAsset\Output\AssetCacher;
+use MiniAsset\Output\AssetWriter;
+use MiniAsset\Output\CachedCompiler;
 use MiniAsset\Output\Compiler;
 
 /**
@@ -22,7 +26,7 @@ class Factory extends BaseFactory
      * @param string $path The path to use
      * @return \MiniAsset\Output\AssetWriter
      */
-    public function writer($path = TMP)
+    public function writer($path = TMP): AssetWriter
     {
         return parent::writer($this->config->get('general.timestampPath') ?: $path);
     }
@@ -34,7 +38,7 @@ class Factory extends BaseFactory
      * @param bool $debug Whether or not to enable debugging mode for the compiler.
      * @return \MiniAsset\Output\CachedCompiler
      */
-    public function cachedCompiler($outputDir = '', $debug = false)
+    public function cachedCompiler($outputDir = '', $debug = false): CachedCompiler
     {
         $outputDir = $outputDir ?: CACHE . 'asset_compress' . DS;
         $debug = $debug ?: Configure::read('debug');
@@ -48,7 +52,7 @@ class Factory extends BaseFactory
      * @param string $path The path to read from. Defaults to the application CACHE path.
      * @return \MiniAsset\Output\AssetCacher
      */
-    public function cacher($path = '')
+    public function cacher($path = ''): AssetCacher
     {
         if ($path == '') {
             $path = CACHE . 'asset_compress' . DS;
@@ -63,7 +67,7 @@ class Factory extends BaseFactory
      * @param array $paths The paths to read from.
      * @return \AssetCompress\AssetScanner
      */
-    public function scanner($paths)
+    public function scanner($paths): AssetScanner
     {
         return new AssetScanner($paths, $this->config->theme());
     }
@@ -75,7 +79,7 @@ class Factory extends BaseFactory
      * @param array $config The configuration for the filter.
      * @return \MiniAsset\Filter\FilterInterface
      */
-    protected function buildFilter($name, $config)
+    protected function buildFilter($name, $config): FilterInterface
     {
         $className = App::className($name, 'Filter');
         if (!class_exists((string)$className)) {
@@ -92,7 +96,7 @@ class Factory extends BaseFactory
      * @param bool $debug Not used - Configure is used instead.
      * @return \MiniAsset\Output\Compiler
      */
-    public function compiler($debug = false)
+    public function compiler($debug = false): Compiler
     {
         return new Compiler($this->filterRegistry(), Configure::read('debug'));
     }

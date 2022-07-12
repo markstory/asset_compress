@@ -14,15 +14,15 @@ use Cake\Http\MiddlewareQueue;
 /**
  * Plugin class defining framework hooks.
  */
-class Plugin extends BasePlugin
+class AssetCompressPlugin extends BasePlugin
 {
-    protected $bootstrapEnabled = false;
-    protected $routesEnabled = false;
+    protected bool $bootstrapEnabled = false;
+    protected bool $routesEnabled = false;
 
     /**
      * Add middleware
      *
-     * @param  \Cake\Http\MiddlewareQueue $middlewareQueue The queue
+     * @param \Cake\Http\MiddlewareQueue $middlewareQueue The queue
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue

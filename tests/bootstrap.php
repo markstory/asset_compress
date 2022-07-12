@@ -1,16 +1,18 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Test suite bootstrap.
  *
  * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-// @codingStandardsIgnoreFile
 
+use AssetCompress\AssetCompressPlugin;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\I18n\I18n;
+use TestApp\Application;
 
 if (is_file('vendor/autoload.php')) {
     require_once 'vendor/autoload.php';
@@ -57,29 +59,29 @@ Configure::write('App', [
     'cssBaseUrl' => 'css/',
     'paths' => [
         'plugins' => [APP . 'Plugin' . DS],
-        'templates' => [APP . DS . 'src' . DS . 'Template' . DS]
-    ]
+        'templates' => [APP . DS . 'src' . DS . 'Template' . DS],
+    ],
 ]);
 
 Cache::setConfig([
     '_cake_core_' => [
         'engine' => 'File',
         'prefix' => 'cake_core_',
-        'serialize' => true
+        'serialize' => true,
     ],
     '_cake_model_' => [
         'engine' => 'File',
         'prefix' => 'cake_model_',
-        'serialize' => true
+        'serialize' => true,
     ],
     'default' => [
         'engine' => 'File',
         'prefix' => 'default_',
-        'serialize' => true
+        'serialize' => true,
     ],
 ]);
 
-Plugin::getCollection()->add(new \AssetCompress\Plugin(['path' => ROOT . DS]));
-$app = new \TestApp\Application(CONFIG);
+Plugin::getCollection()->add(new AssetCompressPlugin(['path' => ROOT . DS]));
+$app = new Application(CONFIG);
 $app->bootstrap();
 $app->pluginBootstrap();

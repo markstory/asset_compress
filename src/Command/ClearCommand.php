@@ -43,9 +43,9 @@ class ClearCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return null|void|int The exit code or null for success
+     * @return int The exit code
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         $configFinder = new ConfigFinder();
         $config = $configFinder->loadAll($args->getOption('config'));
@@ -60,6 +60,8 @@ class ClearCommand extends Command
 
         $io->verbose('');
         $io->out('<success>Complete</success>');
+
+        return static::CODE_SUCCESS;
     }
 
     /**
@@ -101,7 +103,7 @@ class ClearCommand extends Command
      * @param array $targets The build targets to clear.
      * @return void
      */
-    protected function clearPath(ConsoleIo $io, string $path, array $themes, array $targets)
+    protected function clearPath(ConsoleIo $io, string $path, array $themes, array $targets): void
     {
         if (!file_exists($path)) {
             return;
