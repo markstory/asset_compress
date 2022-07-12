@@ -23,9 +23,9 @@ class AssetScanner extends BaseScanner
     /**
      * The current theme if there is one.
      *
-     * @var string
+     * @var string|null
      */
-    protected $theme;
+    protected ?string $theme;
 
     /**
      * Constructor.
@@ -33,7 +33,7 @@ class AssetScanner extends BaseScanner
      * @param array $paths The paths to scan.
      * @param string $theme The current theme.
      */
-    public function __construct(array $paths, $theme = null)
+    public function __construct(array $paths, ?string $theme = null)
     {
         $this->theme = $theme;
         parent::__construct($paths);
@@ -45,7 +45,7 @@ class AssetScanner extends BaseScanner
      * @param string $path Path to resolve
      * @return string resolved path
      */
-    protected function _expandPrefix($path)
+    protected function _expandPrefix($path): string
     {
         if (preg_match(self::PLUGIN_PATTERN, $path)) {
             return $this->_expandPlugin($path);
@@ -64,7 +64,7 @@ class AssetScanner extends BaseScanner
      * @param string $file The theme file to find.
      * @return string The expanded path
      */
-    protected function _expandTheme($file)
+    protected function _expandTheme(string $file): string
     {
         $file = preg_replace(self::THEME_PATTERN, '', $file);
 
@@ -78,7 +78,7 @@ class AssetScanner extends BaseScanner
      * @throws \RuntimeException when plugins are missing.
      * @return string The expanded path
      */
-    protected function _expandPlugin($file)
+    protected function _expandPlugin(string $file): string
     {
         preg_match(self::PLUGIN_PATTERN, $file, $matches);
         if (empty($matches[1]) || empty($matches[2])) {

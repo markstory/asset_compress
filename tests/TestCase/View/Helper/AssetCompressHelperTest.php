@@ -9,6 +9,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use Exception;
 use MiniAsset\AssetConfig;
 
 class AssetCompressHelperTest extends TestCase
@@ -318,7 +319,7 @@ class AssetCompressHelperTest extends TestCase
 
         $result = $this->Helper->url('libs.js');
         $expected = '#^http://cdn\.example\.com/js/libs\.v\d+\.js$#';
-        $this->assertRegExp($expected, $result);
+        $this->assertMatchesRegularExpression($expected, $result);
     }
 
     /**
@@ -328,7 +329,7 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testUrlError()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot get URL for build file that does not exist.');
 
         $this->Helper->url('nope.js');

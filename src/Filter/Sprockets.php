@@ -18,7 +18,7 @@ class Sprockets extends BaseSprockets
      *
      * @return \AssetCompress\AssetScanner
      */
-    protected function _scanner()
+    protected function _scanner(): AssetScanner
     {
         if (isset($this->_scanner)) {
             return $this->_scanner;

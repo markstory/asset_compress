@@ -30,7 +30,7 @@ class ConfigFinder
      * @param bool $skipPlugins Whether to skip config files from plugins. Default `false`.
      * @return \MiniAsset\AssetConfig The completed configuration object.
      */
-    public function loadAll($path = null, $skipPlugins = false)
+    public function loadAll(?string $path = null, bool $skipPlugins = false): AssetConfig
     {
         if (!$path) {
             $path = CONFIG . 'asset_compress.ini';
@@ -61,7 +61,7 @@ class ConfigFinder
      * @param string $prefix The prefix to use.
      * @return void
      */
-    protected function _load($config, $path, $prefix = '')
+    protected function _load(AssetConfig $config, string $path, string $prefix = ''): void
     {
         if (file_exists($path)) {
             $config->load($path, $prefix);

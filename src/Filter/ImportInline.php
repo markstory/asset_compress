@@ -18,7 +18,7 @@ class ImportInline extends BaseImportInline
      *
      * @return \AssetCompress\AssetScanner
      */
-    protected function scanner()
+    protected function scanner(): AssetScanner
     {
         if (isset($this->scanner)) {
             return $this->scanner;

@@ -7,6 +7,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
 use ReflectionClass;
+use RuntimeException;
 
 class FactoryTest extends TestCase
 {
@@ -46,7 +47,7 @@ class FactoryTest extends TestCase
 
     public function testFilterRegistryMissingFilter()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot load filter "Derp"');
 
         $this->config->filters('js', ['Derp']);
