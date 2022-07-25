@@ -434,7 +434,7 @@ EOF;
      */
     public function testInlineScriptDevelopment()
     {
-        Configure::write('debug', 1);
+        Configure::write('debug', true);
         $results = $this->Helper->inlineScript('libs.js');
 
         $expected = <<<EOF
@@ -461,7 +461,7 @@ EOF;
      */
     public function testInlineScript()
     {
-        Configure::write('debug', 0);
+        Configure::write('debug', false);
 
         $expected = <<<EOF
 <script>var BaseClass = new Class({

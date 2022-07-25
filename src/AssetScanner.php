@@ -45,7 +45,7 @@ class AssetScanner extends BaseScanner
      * @param string $path Path to resolve
      * @return string resolved path
      */
-    protected function _expandPrefix($path): string
+    protected function _expandPrefix(string $path): string
     {
         if (preg_match(self::PLUGIN_PATTERN, $path)) {
             return $this->_expandPlugin($path);

@@ -26,7 +26,7 @@ class Factory extends BaseFactory
      * @param string $path The path to use
      * @return \MiniAsset\Output\AssetWriter
      */
-    public function writer($path = TMP): AssetWriter
+    public function writer(string $path = TMP): AssetWriter
     {
         return parent::writer($this->config->get('general.timestampPath') ?: $path);
     }
@@ -38,7 +38,7 @@ class Factory extends BaseFactory
      * @param bool $debug Whether or not to enable debugging mode for the compiler.
      * @return \MiniAsset\Output\CachedCompiler
      */
-    public function cachedCompiler($outputDir = '', $debug = false): CachedCompiler
+    public function cachedCompiler(string $outputDir = '', bool $debug = false): CachedCompiler
     {
         $outputDir = $outputDir ?: CACHE . 'asset_compress' . DS;
         $debug = $debug ?: Configure::read('debug');
@@ -52,7 +52,7 @@ class Factory extends BaseFactory
      * @param string $path The path to read from. Defaults to the application CACHE path.
      * @return \MiniAsset\Output\AssetCacher
      */
-    public function cacher($path = ''): AssetCacher
+    public function cacher(string $path = ''): AssetCacher
     {
         if ($path == '') {
             $path = CACHE . 'asset_compress' . DS;
@@ -67,7 +67,7 @@ class Factory extends BaseFactory
      * @param array $paths The paths to read from.
      * @return \AssetCompress\AssetScanner
      */
-    public function scanner($paths): AssetScanner
+    public function scanner(array $paths): AssetScanner
     {
         return new AssetScanner($paths, $this->config->theme());
     }
@@ -79,7 +79,7 @@ class Factory extends BaseFactory
      * @param array $config The configuration for the filter.
      * @return \MiniAsset\Filter\FilterInterface
      */
-    protected function buildFilter($name, $config): FilterInterface
+    protected function buildFilter(string $name, array $config): FilterInterface
     {
         $className = App::className($name, 'Filter');
         if (!class_exists((string)$className)) {
@@ -96,7 +96,7 @@ class Factory extends BaseFactory
      * @param bool $debug Not used - Configure is used instead.
      * @return \MiniAsset\Output\Compiler
      */
-    public function compiler($debug = false): Compiler
+    public function compiler(bool $debug = false): Compiler
     {
         return new Compiler($this->filterRegistry(), Configure::read('debug'));
     }

@@ -1,0 +1,11 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method AssetCompress\\\\Filter\\\\ImportInline\\:\\:scanner\\(\\) should return AssetCompress\\\\AssetScanner but returns MiniAsset\\\\AssetScanner\\.$#"
+			count: 1
+			path: src/Filter/ImportInline.php
+
+		-
+			message: "#^Method AssetCompress\\\\Filter\\\\Sprockets\\:\\:_scanner\\(\\) should return AssetCompress\\\\AssetScanner but returns MiniAsset\\\\AssetScanner\\.$#"
+			count: 1
+			path: src/Filter/Sprockets.php

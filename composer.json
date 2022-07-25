@@ -19,7 +19,7 @@
   "require": {
     "php": ">=8.1.0",
     "cakephp/cakephp": "5.x-dev",
-    "markstory/mini-asset": ">=1.9.1 <2.0.0",
+    "markstory/mini-asset": "2.x-dev",
     "psr/http-server-handler": "^1.0",
     "psr/http-server-middleware": "^1.0"
   },
@@ -57,12 +57,13 @@
     "stan": "phpstan analyse src/ && psalm --show-info=false",
     "stan-test": "phpstan analyse tests/",
     "psalm": "psalm",
-    "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12 vimeo/psalm:~4.1.0 && mv composer.backup composer.json",
+    "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:~1.8 vimeo/psalm:~4.23 && mv composer.backup composer.json",
     "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
   },
   "config": {
     "allow-plugins": {
-        "dealerdirect/phpcodesniffer-composer-installer": true
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "composer/package-versions-deprecated": true
     }
   }
 }
