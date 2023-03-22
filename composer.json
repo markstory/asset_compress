@@ -59,5 +59,10 @@
     "psalm": "psalm",
     "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.12 vimeo/psalm:~4.1.0 && mv composer.backup composer.json",
     "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
