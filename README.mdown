@@ -5,15 +5,23 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/markstory/asset_compress.svg?style=flat-square)](https://packagist.org/packages/markstory/asset_compress)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
+Asset Compress is a CakePHP plugin that provides a simple asset pipeline, and
+asset builder for server rendered HTML based applications. This plugin is not
+a good fit for single-page applications as you those use-cases require
+more complex configuration and build tool libraries.
 
-Asset Compress is CakePHP plugin for helping reduce the number of requests, and optimizing the remaining requests your application makes for Javascript and CSS files.
+Asset Compress is a great fit for applications that generate HTML, and need
+a bit of interactive components. Asset Compress is also great for building
+CSS with a pre-processor. Both Saas, LESS and vanilla CSS are well supported.
+
 
 ### Features
 
 * Development mode builder that rebuilds assets on each request.
 * Command line build tool to compile static assets for deployment.
-* Built-in support for LESScss, Sass and CoffeeScript, as well as several
-  minifiers.
+* Built-in support for [LESS](https://lesscss.org/), [Sass](https://sass-lang.com/).
+* JavaScript build tools like [Sprockets](https://github.com/rails/sprockets),
+  TypeScript, and several minifiers.
 * Powerful and flexible filter system allowing you to add your own
   minifiers/pre-processors.
 * Simple configuration file.
@@ -24,13 +32,17 @@ Asset Compress is CakePHP plugin for helping reduce the number of requests, and 
 
 Add this plugin to your application with composer:
 
-    php composer.phar require markstory/asset_compress
+```bash
+php composer.phar require markstory/asset_compress
+```
 
 Then make sure you load the plugin:
 
-    // in src/Application.php
-    // in the bootstrap() method add
-    $this->addPlugin('AssetCompress');
+```php
+// in src/Application.php
+// in the bootstrap() method add
+$this->addPlugin('AssetCompress');
+````
 
 Copy the `config/asset_compress.sample.ini` from the plugin to your app's
 `config/asset_compress.ini`. From there read the [wiki](http://github.com/markstory/asset_compress/wiki)
@@ -38,11 +50,11 @@ for more information.
 
 ## Documentation
 
-Documentation for AssetCompress is available on the [github wiki pages](http://github.com/markstory/asset_compress/wiki)
+Documentation for AssetCompress is available on the [GitHub wiki pages](http://github.com/markstory/asset_compress/wiki)
 
 ## Issues
 
-Please report any issues you have with the plugin to the [issue tracker](http://github.com/markstory/asset_compress/issues) on github.
+Please report any issues you have with the plugin to the [issue tracker](http://github.com/markstory/asset_compress/issues) on GitHub.
 
 ## License
 
@@ -50,9 +62,9 @@ Asset Compress is offered under an [MIT license](http://www.opensource.org/licen
 
 ### Authors
 
-See the [github contributors list](https://github.com/markstory/asset_compress/graphs/contributors)
+See the [GitHub contributors list](https://github.com/markstory/asset_compress/graphs/contributors)
 
 ### Changelog
 
 See CHANGELOG for changes only available on `master`. See
-[github releases](https://github.com/markstory/asset_compress/releases) for changelogs on previous releases.
+[GitHub releases](https://github.com/markstory/asset_compress/releases) for changelogs on previous releases.
