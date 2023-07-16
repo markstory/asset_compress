@@ -70,7 +70,7 @@ class AssetCompressMiddlewareTest extends TestCase
         $this->assertStringContainsString('var Template = new Class', $body);
     }
 
-    public function contentTypesProvider()
+    public static function contentTypesProvider()
     {
         return [
             ['/cache_js/libs.js', 'application/javascript'],
