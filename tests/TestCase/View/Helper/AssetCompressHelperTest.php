@@ -30,6 +30,7 @@ class AssetCompressHelperTest extends TestCase
 
         $view = new View($controller);
         $view->setRequest($request);
+        $this->View = $view;
         $this->Helper = new AssetCompressHelper($view, ['noconfig' => true]);
         $config = AssetConfig::buildFromIniFile($testFile, [
             'TEST_FILES' => APP,
@@ -76,6 +77,34 @@ class AssetCompressHelperTest extends TestCase
                 'href' => '/cache_css/all.css',
             ],
         ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test that generated elements can have attributes added.
+     *
+     * @return void
+     */
+    public function testAssetsToBlock()
+    {
+        $result = $this->Helper->script('libs.js', ['block' => 'custom']);
+        $this->assertNull($result);
+
+        $result = $this->Helper->css('all.css', ['block' => 'custom']);
+        $this->assertNull($result);
+
+        $expected = [
+            ['script' => [
+                'defer' => 'defer',
+                'src' => '/cache_js/libs.js',
+            ]],
+            ['link' => [
+                'test' => 'value',
+                'rel' => 'stylesheet',
+                'href' => '/cache_css/all.css',
+            ]],
+        ];
+        $result = $this->View->getBlock('custom');
         $this->assertHtml($expected, $result);
     }
 

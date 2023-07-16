@@ -168,9 +168,9 @@ class AssetCompressHelper extends Helper
      * @param string $file A build target to include.
      * @param array $options An array of options for the stylesheet tag.
      * @throws \RuntimeException
-     * @return string A stylesheet tag
+     * @return ?string A stylesheet tag
      */
-    public function css(string $file, array $options = []): string
+    public function css(string $file, array $options = []): ?string
     {
         $file = $this->_addExt($file, '.css');
         if (!$this->collection()->contains($file)) {
@@ -211,9 +211,9 @@ class AssetCompressHelper extends Helper
      * @param string $file A build target to include.
      * @param array $options An array of options for the script tag.
      * @throws \RuntimeException
-     * @return string A script tag
+     * @return ?string A script tag
      */
-    public function script(string $file, array $options = []): string
+    public function script(string $file, array $options = []): ?string
     {
         $file = $this->_addExt($file, '.js');
         if (!$this->collection()->contains($file)) {
