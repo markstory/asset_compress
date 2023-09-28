@@ -87,10 +87,10 @@ class AssetCompressHelperTest extends TestCase
      */
     public function testAssetsToBlock()
     {
-        $result = $this->Helper->script('libs.js', ['block' => 'custom']);
+        $result = $this->Helper->script('libs.js', ['block' => 'custom', 'defer' => true]);
         $this->assertNull($result);
 
-        $result = $this->Helper->css('all.css', ['block' => 'custom']);
+        $result = $this->Helper->css('all.css', ['block' => 'custom', 'test' => 'value']);
         $this->assertNull($result);
 
         $expected = [
@@ -98,13 +98,14 @@ class AssetCompressHelperTest extends TestCase
                 'defer' => 'defer',
                 'src' => '/cache_js/libs.js',
             ]],
+            '/script',
             ['link' => [
                 'test' => 'value',
                 'rel' => 'stylesheet',
                 'href' => '/cache_css/all.css',
             ]],
         ];
-        $result = $this->View->getBlock('custom');
+        $result = $this->View->fetch('custom');
         $this->assertHtml($expected, $result);
     }
 
