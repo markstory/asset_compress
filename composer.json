@@ -19,7 +19,7 @@
   "require": {
     "php": ">=8.1.0",
     "cakephp/cakephp": "^5.0",
-    "markstory/mini-asset": "2.x-dev",
+    "markstory/mini-asset": "^2.0",
     "psr/http-server-handler": "^1.0",
     "psr/http-server-middleware": "^1.0"
   },
