@@ -8,6 +8,10 @@
 phpunit.xml.dist export-ignore
 psalm.xml export-ignore
 psalm-baseline.xml export-ignore
-.travis.yml export-ignore
+phpstan.neon
+phpcs.xml
+.stickler.yml export-ignore
+.github export-ignore
+.phive export-ignore
 .editorconfig export-ignore
 tests/ export-ignore

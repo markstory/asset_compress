@@ -122,7 +122,7 @@ class ClearCommand extends Command
             // themed files
             foreach ($themes as $theme) {
                 if (strpos($base, $theme) === 0 && strpos($base, '-') !== false) {
-                    [$themePrefix, $base] = explode('-', $base);
+                    [, $base] = explode('-', $base);
                 }
             }
             if (in_array($base, $targets)) {

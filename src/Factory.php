@@ -23,12 +23,12 @@ class Factory extends BaseFactory
     /**
      * Create an AssetWriter
      *
-     * @param string $path The path to use
+     * @param string $tmpPath The path to use
      * @return \MiniAsset\Output\AssetWriter
      */
-    public function writer(string $path = TMP): AssetWriter
+    public function writer(string $tmpPath = TMP): AssetWriter
     {
-        return parent::writer($this->config->get('general.timestampPath') ?: $path);
+        return parent::writer($this->config->get('general.timestampPath') ?: $tmpPath);
     }
 
     /**
