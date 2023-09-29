@@ -60,7 +60,6 @@
     "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:~1.8 vimeo/psalm:~4.23 && mv composer.backup composer.json",
     "coverage-test": "phpunit --stderr --coverage-clover=clover.xml"
   },
-  "minimum-stability": "dev",
   "prefer-stable": true,
   "config": {
     "allow-plugins": {
