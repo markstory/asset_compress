@@ -96,7 +96,7 @@ class BuildCommand extends Command
         $compiler = $factory->compiler();
 
         $name = $writer->buildFileName($build);
-        if ($writer->isFresh($build) && $args->getOption('force')) {
+        if ($writer->isFresh($build) && $args->getOption('force') === false) {
             $io->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 
             return;
