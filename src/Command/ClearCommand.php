@@ -48,7 +48,7 @@ class ClearCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): int
     {
         $configFinder = new ConfigFinder();
-        $config = $configFinder->loadAll($args->getOption('config'));
+        $config = $configFinder->loadAll((string)$args->getOption('config'));
         $factory = new Factory($config);
 
         $io->verbose('Clearing build timestamp.');
