@@ -33,6 +33,11 @@ class ConfigFinder
      */
     public function loadAll(?string $path = null, bool $skipPlugins = false, bool $skipLocal = false): AssetConfig
     {
+        $cachedConfig = \Cake\Cache\Cache::read('asset_compress_config');
+        if ($cachedConfig) {
+            return $cachedConfig;
+        }
+
         if (!$path) {
             $path = CONFIG . 'asset_compress.ini';
         }
@@ -42,6 +47,8 @@ class ConfigFinder
         $this->_load($config, $path, '', $skipLocal);
 
         if ($skipPlugins) {
+            \Cake\Cache\Cache::write('asset_compress_config', $config);
+
             return $config;
         }
 
@@ -50,6 +57,8 @@ class ConfigFinder
             $pluginConfig = Plugin::path($plugin) . 'config' . DS . 'asset_compress.ini';
             $this->_load($config, $pluginConfig, $plugin . '.', $skipLocal);
         }
+
+        \Cake\Cache\Cache::write('asset_compress_config', $config);
 
         return $config;
     }
