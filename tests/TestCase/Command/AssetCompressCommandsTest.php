@@ -26,8 +26,6 @@ class AssetCompressCommandsTest extends TestCase
         mkdir(WWW_ROOT . 'cache_js');
         mkdir(WWW_ROOT . 'cache_css');
         mkdir(WWW_ROOT . 'cache_svg');
-
-        $this->loadPlugins(['AssetCompress']);
     }
 
     /**

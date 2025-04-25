@@ -14,6 +14,12 @@ class AssetCompressMiddlewareTest extends TestCase
 {
     protected $nextInvoked = false;
 
+    protected $testConfig;
+    protected $middleware;
+    protected $request;
+    protected $response;
+    protected $handler;
+
     /**
      * Setup method
      *

@@ -60,7 +60,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
 
         // Make sure the request looks like an asset.
         $targetName = $this->getName($config, $request->getUri()->getPath());
-        if (!$targetName) {
+        if (!is_string($targetName)) {
             return $handler->handle($request);
         }
 
