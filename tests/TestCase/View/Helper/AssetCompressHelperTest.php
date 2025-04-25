@@ -325,13 +325,13 @@ class AssetCompressHelperTest extends TestCase
         $result = $this->Helper->url('libs.js', ['full' => true]);
         $this->assertEquals(
             'http://localhost/cache_js/libs.js',
-            $result
+            $result,
         );
 
         $result = $this->Helper->url('libs.js', true);
         $this->assertEquals(
             'http://localhost/cache_js/libs.js',
-            $result
+            $result,
         );
     }
 

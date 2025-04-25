@@ -175,7 +175,7 @@ class AssetCompressHelper extends Helper
         $file = $this->_addExt($file, '.css');
         if (!$this->collection()->contains($file)) {
             throw new RuntimeException(
-                "Cannot create a stylesheet tag for a '$file'. That build is not defined."
+                "Cannot create a stylesheet tag for a '$file'. That build is not defined.",
             );
         }
         $output = '';
@@ -218,7 +218,7 @@ class AssetCompressHelper extends Helper
         $file = $this->_addExt($file, '.js');
         if (!$this->collection()->contains($file)) {
             throw new RuntimeException(
-                "Cannot create a script tag for a '$file'. That build is not defined."
+                "Cannot create a script tag for a '$file'. That build is not defined.",
             );
         }
         $output = '';
