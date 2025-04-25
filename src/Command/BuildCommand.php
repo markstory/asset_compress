@@ -58,7 +58,7 @@ class BuildCommand extends Command
     {
         $configFinder = new ConfigFinder();
         $config = $configFinder->loadAll(
-            $args->getOption('config'),
+            (string)$args->getOption('config'),
             (bool)$args->getOption('skip-plugins'),
         );
         $factory = new Factory($config);
