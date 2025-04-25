@@ -25,7 +25,7 @@ class ImportInline extends BaseImportInline
         }
         $this->scanner = new AssetScanner(
             $this->_settings['paths'],
-            $this->_settings['theme'] ?? null
+            $this->_settings['theme'] ?? null,
         );
 
         return $this->scanner;

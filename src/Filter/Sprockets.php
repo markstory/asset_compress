@@ -25,7 +25,7 @@ class Sprockets extends BaseSprockets
         }
         $this->_scanner = new AssetScanner(
             $this->_settings['paths'],
-            $this->_settings['theme'] ?? null
+            $this->_settings['theme'] ?? null,
         );
 
         return $this->_scanner;
