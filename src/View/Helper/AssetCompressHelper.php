@@ -250,7 +250,9 @@ class AssetCompressHelper extends Helper
     {
         $plugins = Plugin::loaded();
         $index = array_search('AssetCompress', $plugins);
-        unset($plugins[$index]);
+        if ($index !== false) {
+            unset($plugins[$index]);
+        }
 
         foreach ($plugins as $plugin) {
             $pluginPath = Plugin::path($plugin) . 'webroot';
