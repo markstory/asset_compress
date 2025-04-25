@@ -14,6 +14,10 @@ use MiniAsset\AssetConfig;
 
 class AssetCompressHelperTest extends TestCase
 {
+    protected $_testFiles;
+    protected $View;
+    protected $Helper;
+
     /**
      * start a test
      *

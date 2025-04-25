@@ -11,6 +11,13 @@ use RuntimeException;
 
 class FactoryTest extends TestCase
 {
+    protected $config;
+    protected $integrationFile;
+    protected $themedFile;
+    protected $pluginFile;
+    protected $overrideFile;
+    protected $timestampFile;
+
     public function setUp(): void
     {
         parent::setUp();
