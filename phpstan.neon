@@ -2,9 +2,11 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    level: 6
+    level: 7
     checkMissingIterableValueType: false
     bootstrapFiles:
         - tests/bootstrap.php
     paths:
         - src/
+    ignoreErrors:
+        - identifier: missingType.iterableValue
