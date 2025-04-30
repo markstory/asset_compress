@@ -1,6 +1,8 @@
 <?php
 namespace AssetCompress\Config;
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use MiniAsset\AssetConfig;
 
@@ -29,13 +31,26 @@ class ConfigFinder
      * @param string|null $path The configuration file path to start loading from.
      * @param bool $skipPlugins Whether to skip config files from plugins. Default `false`.
      * @param bool $skipLocal Whether to skip config *local* files. Default `false`.
+     * @param string|bool|null $cache Whether to cache the loaded config. Defaults to debug mode level.
      * @return \MiniAsset\AssetConfig The completed configuration object.
      */
-    public function loadAll(?string $path = null, bool $skipPlugins = false, bool $skipLocal = false): AssetConfig
-    {
-        $cachedConfig = \Cake\Cache\Cache::read('asset_compress_config');
-        if ($cachedConfig) {
-            return $cachedConfig;
+    public function loadAll(
+        ?string $path = null,
+        bool $skipPlugins = false,
+        bool $skipLocal = false,
+        bool|string|null $cache = null,
+    ): AssetConfig {
+        if ($cache === null) {
+            $cache = Configure::read('AssetCompress.cache', !Configure::read('debug'));
+        }
+        if ($cache === true) {
+            $cache = 'default';
+        }
+        if ($cache) {
+            $cachedConfig = Cache::read('asset_compress_config', $cache);
+            if ($cachedConfig) {
+                return $cachedConfig;
+            }
         }
 
         if (!$path) {
@@ -47,7 +62,9 @@ class ConfigFinder
         $this->_load($config, $path, '', $skipLocal);
 
         if ($skipPlugins) {
-            \Cake\Cache\Cache::write('asset_compress_config', $config);
+            if ($cache) {
+                Cache::write('asset_compress_config', $config, $cache);
+            }
 
             return $config;
         }
@@ -58,7 +75,9 @@ class ConfigFinder
             $this->_load($config, $pluginConfig, $plugin . '.', $skipLocal);
         }
 
-        \Cake\Cache\Cache::write('asset_compress_config', $config);
+        if ($cache) {
+            Cache::write('asset_compress_config', $config, $cache);
+        }
 
         return $config;
     }
