@@ -10,7 +10,6 @@ class SprocketsTest extends TestCase
 {
     protected string $_testFiles;
     protected string $_jsDir;
-    protected string $_jsDir;
     protected Sprockets $filter;
 
     public function setUp(): void
