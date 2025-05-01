@@ -40,6 +40,8 @@ class AssetCompressHelper extends Helper
     protected array $_defaultConfig = [
         'skipPlugins' => false,
         'skipLocal' => false,
+        'configPath' => CONFIG . 'asset_compress.ini',
+        'noconfig' => false,
     ];
 
     /**
@@ -80,11 +82,13 @@ class AssetCompressHelper extends Helper
     public function __construct(View $view, array $config = [])
     {
         parent::__construct($view, $config);
-        if (empty($config['noconfig'])) {
+        if (!$this->getConfig('noconfig')) {
             $skipPlugins = $this->getConfig('skipPlugins');
             $skipLocal = $this->getConfig('skipLocal');
             $configFinder = new ConfigFinder();
-            $this->assetConfig($configFinder->loadAll(null, $skipPlugins, $skipLocal));
+            $this->assetConfig(
+                $configFinder->loadAll($this->getConfig('configPath'), $skipPlugins, $skipLocal),
+            );
         }
     }
 
