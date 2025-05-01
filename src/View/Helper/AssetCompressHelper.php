@@ -35,6 +35,16 @@ class AssetCompressHelper extends Helper
     public array $helpers = ['Html'];
 
     /**
+     * @var array<string, mixed>
+     */
+    protected array $_defaultConfig = [
+        'skipPlugins' => false,
+        'skipLocal' => false,
+        'configPath' => CONFIG . 'asset_compress.ini',
+        'noconfig' => false,
+    ];
+
+    /**
      * Configuration object
      *
      * @var \MiniAsset\AssetConfig
@@ -66,15 +76,19 @@ class AssetCompressHelper extends Helper
      * Constructor - finds and parses the ini file the plugin uses.
      *
      * @param \Cake\View\View $view The view instance to use.
-     * @param array $settings The settings for the helper.
+     * @param array $config The settings for the helper.
      * @return void
      */
-    public function __construct(View $view, array $settings = [])
+    public function __construct(View $view, array $config = [])
     {
-        parent::__construct($view, $settings);
-        if (empty($settings['noconfig'])) {
+        parent::__construct($view, $config);
+        if (!$this->getConfig('noconfig')) {
+            $skipPlugins = $this->getConfig('skipPlugins');
+            $skipLocal = $this->getConfig('skipLocal');
             $configFinder = new ConfigFinder();
-            $this->assetConfig($configFinder->loadAll());
+            $this->assetConfig(
+                $configFinder->loadAll($this->getConfig('configPath'), $skipPlugins, $skipLocal),
+            );
         }
     }
 

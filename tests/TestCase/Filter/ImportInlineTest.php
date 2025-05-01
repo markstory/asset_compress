@@ -8,6 +8,8 @@ use Cake\TestSuite\TestCase;
 
 class ImportInlineTest extends TestCase
 {
+    protected ImportInline $filter;
+
     public function setUp(): void
     {
         parent::setUp();

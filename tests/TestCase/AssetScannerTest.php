@@ -8,6 +8,9 @@ use Cake\TestSuite\TestCase;
 
 class AssetScannerTest extends TestCase
 {
+    protected string $_testFiles;
+    protected AssetScanner $Scanner;
+
     public function setUp(): void
     {
         parent::setUp();
