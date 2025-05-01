@@ -14,6 +14,8 @@ class AssetCompressCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
+    protected string $testConfig;
+
     /**
      * setup method.
      *
@@ -36,7 +38,6 @@ class AssetCompressCommandsTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        unset($this->Shell);
         $fs = new Filesystem();
         $fs->deleteDir(WWW_ROOT . 'cache_js');
         $fs->deleteDir(WWW_ROOT . 'cache_css');

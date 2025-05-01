@@ -10,6 +10,9 @@ use Cake\TestSuite\TestCase;
  */
 class ConfigFinderTest extends TestCase
 {
+    protected $_testFiles;
+    protected $testConfig;
+
     /**
      * setup method
      *
