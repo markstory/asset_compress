@@ -85,7 +85,7 @@ class FactoryTest extends TestCase
         $this->assertEquals(
             str_replace(DS, '/', WWW_ROOT . 'cache_js/libs.js'),
             str_replace(DS, '/', $asset->path()),
-            'Asset path is wrong'
+            'Asset path is wrong',
         );
     }
 
@@ -112,7 +112,7 @@ class FactoryTest extends TestCase
         $this->assertCount(1, $files);
         $this->assertEquals(
             str_replace(DS, '/', APP . 'Plugin/Red/webroot/theme.css'),
-            str_replace(DS, '/', $files[0]->path())
+            str_replace(DS, '/', $files[0]->path()),
         );
     }
 
@@ -138,7 +138,7 @@ class FactoryTest extends TestCase
         $this->assertCount(1, $asset->files());
         $this->assertEquals(
             str_replace('/', DS, APP . 'Plugin/TestAsset/webroot/plugin.js'),
-            $asset->files()[0]->path()
+            $asset->files()[0]->path(),
         );
 
         $asset = $collection->get('plugins.css');
@@ -146,7 +146,7 @@ class FactoryTest extends TestCase
         $this->assertCount(2, $files);
         $this->assertEquals(
             APP . 'css' . DS . 'nav.css',
-            $asset->files()[0]->path()
+            $asset->files()[0]->path(),
         );
     }
 
@@ -163,15 +163,15 @@ class FactoryTest extends TestCase
         $this->assertCount(3, $files);
         $this->assertEquals(
             APP . 'js' . DS . 'base.js',
-            $files[0]->path()
+            $files[0]->path(),
         );
         $this->assertEquals(
             APP . 'js' . DS . 'library_file.js',
-            $files[1]->path()
+            $files[1]->path(),
         );
         $this->assertEquals(
             APP . 'js' . DS . 'classes' . DS . 'base_class.js',
-            $files[2]->path()
+            $files[2]->path(),
         );
     }
 
