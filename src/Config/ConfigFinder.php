@@ -1,6 +1,8 @@
 <?php
 namespace AssetCompress\Config;
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use MiniAsset\AssetConfig;
 
@@ -26,12 +28,30 @@ class ConfigFinder
      * In addition for each file found the `asset_compress.local.ini`
      * will be loaded if it is present.
      *
-     * @param string $path The configuration file path to start loading from.
+     * @param string|null $path The configuration file path to start loading from.
      * @param bool $skipPlugins Whether to skip config files from plugins. Default `false`.
+     * @param string|bool|null $cache Cache configuration. If `true`, 'default' cache will be used.
      * @return \MiniAsset\AssetConfig The completed configuration object.
      */
-    public function loadAll(?string $path = null, bool $skipPlugins = false): AssetConfig
-    {
+    public function loadAll(
+        ?string $path = null,
+        bool $skipPlugins = false,
+        bool|string|null $cache = null,
+    ): AssetConfig {
+        if ($cache === null) {
+            $cache = Configure::read('AssetCompress.cache', !Configure::read('debug'));
+        }
+        if ($cache === true) {
+            $cache = 'default';
+        }
+        if ($cache) {
+            /** @var \MiniAsset\AssetConfig|null $cachedConfig */
+            $cachedConfig = Cache::read('asset_compress_config', $cache);
+            if ($cachedConfig) {
+                return $cachedConfig;
+            }
+        }
+
         if (!$path) {
             $path = CONFIG . 'asset_compress.ini';
         }
