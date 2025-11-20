@@ -8,6 +8,10 @@ use Cake\TestSuite\TestCase;
 
 class SprocketsTest extends TestCase
 {
+    protected string $_testFiles;
+    protected string $_jsDir;
+    protected Sprockets $filter;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -34,9 +38,9 @@ class SprocketsTest extends TestCase
         ];
         $this->filter->settings($settings);
 
-        $this->_themeDir = $this->_testFiles . 'Plugin' . DS . $settings['theme'] . DS;
+        $themeDir = $this->_testFiles . 'Plugin' . DS . $settings['theme'] . DS;
 
-        $content = file_get_contents($this->_themeDir . 'webroot' . DS . 'theme.js');
+        $content = file_get_contents($themeDir . 'webroot' . DS . 'theme.js');
         $result = $this->filter->input('theme.js', $content);
         $expected = <<<TEXT
 var Theme = new Class({

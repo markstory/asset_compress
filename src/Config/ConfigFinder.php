@@ -30,12 +30,14 @@ class ConfigFinder
      *
      * @param string|null $path The configuration file path to start loading from.
      * @param bool $skipPlugins Whether to skip config files from plugins. Default `false`.
-     * @param string|bool|null $cache Cache configuration. If `true`, 'default' cache will be used.
+     * @param bool $skipLocal Whether to skip config *local* files. Default `false`.
+     * @param string|bool|null $cache Whether to cache the loaded config. Defaults to debug mode level.
      * @return \MiniAsset\AssetConfig The completed configuration object.
      */
     public function loadAll(
         ?string $path = null,
         bool $skipPlugins = false,
+        bool $skipLocal = false,
         bool|string|null $cache = null,
     ): AssetConfig {
         if ($cache === null) {
@@ -45,7 +47,6 @@ class ConfigFinder
             $cache = 'default';
         }
         if ($cache) {
-            /** @var \MiniAsset\AssetConfig|null $cachedConfig */
             $cachedConfig = Cache::read('asset_compress_config', $cache);
             if ($cachedConfig) {
                 return $cachedConfig;
@@ -58,16 +59,24 @@ class ConfigFinder
         $config = new AssetConfig([], [
             'WEBROOT' => WWW_ROOT,
         ]);
-        $this->_load($config, $path);
+        $this->_load($config, $path, '', $skipLocal);
 
         if ($skipPlugins) {
+            if ($cache) {
+                Cache::write('asset_compress_config', $config, $cache);
+            }
+
             return $config;
         }
 
         $plugins = Plugin::loaded();
         foreach ($plugins as $plugin) {
             $pluginConfig = Plugin::path($plugin) . 'config' . DS . 'asset_compress.ini';
-            $this->_load($config, $pluginConfig, $plugin . '.');
+            $this->_load($config, $pluginConfig, $plugin . '.', $skipLocal);
+        }
+
+        if ($cache) {
+            Cache::write('asset_compress_config', $config, $cache);
         }
 
         return $config;
@@ -79,15 +88,20 @@ class ConfigFinder
      * @param \MiniAsset\AssetConfig $config The config object to update.
      * @param string $path The config file to load.
      * @param string $prefix The prefix to use.
+     * @param bool $skipLocal Skip *.local.ini file lookup
      * @return void
      */
-    protected function _load(AssetConfig $config, string $path, string $prefix = ''): void
+    protected function _load(AssetConfig $config, string $path, string $prefix = '', bool $skipLocal = false): void
     {
         if (file_exists($path)) {
             $config->load($path, $prefix);
         }
 
-        $localConfig = preg_replace('/(.*)\.ini$/', '$1.local.ini', $path);
+        if ($skipLocal) {
+            return;
+        }
+
+        $localConfig = (string)preg_replace('/(.*)\.ini$/', '$1.local.ini', $path);
         if (file_exists($localConfig)) {
             $config->load($localConfig, $prefix);
         }

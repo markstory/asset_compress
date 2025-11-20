@@ -14,6 +14,10 @@ use MiniAsset\AssetConfig;
 
 class AssetCompressHelperTest extends TestCase
 {
+    protected $_testFiles;
+    protected $View;
+    protected $Helper;
+
     /**
      * start a test
      *
@@ -50,6 +54,72 @@ class AssetCompressHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->Helper);
+    }
+
+    /**
+     * Test that plugin scans are enabled
+     */
+    public function testConfigPathWithPlugins(): void
+    {
+        $this->loadPlugins(['TestAssetIni']);
+        $helper = new AssetCompressHelper($this->View, [
+            'configPath' => APP . 'config/bare.ini',
+        ]);
+        $config = $helper->assetConfig();
+        $this->assertTrue($config->hasTarget('pink.css'));
+        $this->assertTrue($config->hasTarget('TestAssetIni.all.css'));
+    }
+
+    /**
+     * Test that plugin scans can be disabled.
+     */
+    public function testSkipPluginsOption(): void
+    {
+        $this->loadPlugins(['TestAssetIni']);
+        $helper = new AssetCompressHelper($this->View, [
+            'skipPlugins' => true,
+            'configPath' => APP . 'config/bare.ini',
+        ]);
+        $config = $helper->assetConfig();
+        $this->assertTrue($config->hasTarget('pink.css'));
+        $this->assertFalse($config->hasTarget('TestAssetIni.all.css'));
+    }
+
+    /**
+     * Test that .local file scans can be disabled.
+     */
+    public function testLoadLocalOption(): void
+    {
+        $this->loadPlugins(['TestAssetIni']);
+        $helper = new AssetCompressHelper($this->View, [
+            'skipPlugins' => true,
+            'configPath' => APP . 'config/overridable.ini',
+        ]);
+        $config = $helper->assetConfig();
+        $this->assertEquals('', $config->get('general.cacheConfig'));
+        $this->assertEquals(
+            '/path/to/local/yuicompressor',
+            $config->filterConfig('YuiJs')['path'],
+        );
+    }
+
+    /**
+     * Test that .local file scans can be disabled.
+     */
+    public function testSkipLocalOption(): void
+    {
+        $this->loadPlugins(['TestAssetIni']);
+        $helper = new AssetCompressHelper($this->View, [
+            'skipPlugins' => true,
+            'skipLocal' => true,
+            'configPath' => APP . 'config/overridable.ini',
+        ]);
+        $config = $helper->assetConfig();
+        $this->assertEquals('1', $config->get('general.cacheConfig'));
+        $this->assertEquals(
+            '/path/to/yuicompressor',
+            $config->filterConfig('YuiJs')['path'],
+        );
     }
 
     /**

@@ -60,7 +60,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
 
         // Make sure the request looks like an asset.
         $targetName = $this->getName($config, $request->getUri()->getPath());
-        if (!$targetName) {
+        if (!is_string($targetName)) {
             return $handler->handle($request);
         }
 
@@ -127,7 +127,7 @@ class AssetCompressMiddleware implements MiddlewareInterface
      *
      * @param \MiniAsset\AssetConfig $config The config object to use.
      * @param string $url The url to get an asset name from.
-     * @return string|bool false if no build can be parsed from URL
+     * @return string|false false if no build can be parsed from URL
      * with url path otherwise
      */
     protected function getName(AssetConfig $config, string $url): bool|string
