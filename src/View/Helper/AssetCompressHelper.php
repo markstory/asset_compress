@@ -116,7 +116,10 @@ class AssetCompressHelper extends Helper
      */
     protected function factory(): Factory
     {
-        if (empty($this->factory)) {
+        if (!isset($this->factory)) {
+            if (!isset($this->config)) {
+                $this->assetConfig();
+            }
             $this->config->theme($this->getView()->getTheme());
             $this->factory = new Factory($this->config);
         }
