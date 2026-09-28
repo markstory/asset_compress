@@ -9,6 +9,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use MiniAsset\AssetConfig;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AssetCompressMiddlewareTest extends TestCase
 {
@@ -88,9 +89,9 @@ class AssetCompressMiddlewareTest extends TestCase
     /**
      * test returned content types
      *
-     * @dataProvider contentTypesProvider
      * @return void
      */
+    #[DataProvider('contentTypesProvider')]
     public function testBuildFileContentTypes($path, $expected)
     {
         $uri = $this->request->getUri()->withPath($path);
