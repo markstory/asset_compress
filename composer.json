@@ -36,6 +36,7 @@
     "psr-4": {
       "AssetCompress\\Test\\": "tests",
       "Blue\\": "tests/test_files/Plugin/Blue/src",
+      "Red\\": "tests/test_files/Plugin/Red/src",
       "TestApp\\": "tests/test_files/src",
       "TestAsset\\": "tests/test_files/Plugin/TestAsset/src",
       "TestAssetIni\\": "tests/test_files/Plugin/TestAssetIni/src"
