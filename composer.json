@@ -35,7 +35,10 @@
   "autoload-dev": {
     "psr-4": {
       "AssetCompress\\Test\\": "tests",
-      "TestApp\\": "tests/test_files/src"
+      "Blue\\": "tests/test_files/Plugin/Blue/src",
+      "TestApp\\": "tests/test_files/src",
+      "TestAsset\\": "tests/test_files/Plugin/TestAsset/src",
+      "TestAssetIni\\": "tests/test_files/Plugin/TestAssetIni/src"
     }
   },
   "suggest": {

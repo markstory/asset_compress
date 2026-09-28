@@ -24,7 +24,7 @@ class ConfigFinderTest extends TestCase
         $this->_testFiles = APP;
         $this->testConfig = $this->_testFiles . 'config' . DS . 'config.ini';
 
-        $this->loadPlugins(['TestAssetIni']);
+        $this->loadPlugins(['TestAssetIni', 'TestAsset', 'Blue']);
     }
 
     /**
