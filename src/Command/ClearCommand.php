@@ -45,22 +45,18 @@ class ClearCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int The exit code
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(): int
     {
         $configFinder = new ConfigFinder();
-        $config = $configFinder->loadAll((string)$args->getOption('config'));
+        $config = $configFinder->loadAll((string)$this->args->getOption('config'));
         $factory = new Factory($config);
-
-        $io->verbose('Clearing build timestamp.');
+        $this->io->verbose('Clearing build timestamp.');
         $writer = $factory->writer();
         $writer->clearTimestamps();
-
-        $io->verbose('Clearing build files:');
-        $this->clearBuilds($config, $factory, $io);
-
-        $io->verbose('');
-        $io->out('<success>Complete</success>');
-
+        $this->io->verbose('Clearing build files:');
+        $this->clearBuilds($config, $factory);
+        $this->io->verbose('');
+        $this->io->out('<success>Complete</success>');
         return static::CODE_SUCCESS;
     }
 
@@ -72,7 +68,7 @@ class ClearCommand extends Command
      * @param \Cake\Console\ConsoleIo $io Consoleio
      * @return void
      */
-    protected function clearBuilds(AssetConfig $config, Factory $factory, ConsoleIo $io): void
+    protected function clearBuilds(AssetConfig $config, Factory $factory): void
     {
         $themes = (array)$config->general('themes');
         if ($themes) {
@@ -80,18 +76,18 @@ class ClearCommand extends Command
         }
         $assets = $factory->assetCollection();
         if (count($assets) === 0) {
-            $io->err('No build targets defined, skipping');
+            $this->io->err('No build targets defined, skipping');
 
             return;
         }
 
         $targets = [];
         foreach (iterator_to_array($assets) as $target) {
-            $this->clearPath($io, $target->outputDir() . DS, $themes, [$target->name()]);
+            $this->clearPath($target->outputDir() . DS, $themes, [$target->name()]);
             $targets[] = $target->name();
         }
 
-        $this->clearPath($io, CACHE . 'asset_compress' . DS, $themes, $targets);
+        $this->clearPath(CACHE . 'asset_compress' . DS, $themes, $targets);
     }
 
     /**
@@ -103,7 +99,7 @@ class ClearCommand extends Command
      * @param array $targets The build targets to clear.
      * @return void
      */
-    protected function clearPath(ConsoleIo $io, string $path, array $themes, array $targets): void
+    protected function clearPath(string $path, array $themes, array $targets): void
     {
         if (!file_exists($path)) {
             return;
@@ -126,7 +122,7 @@ class ClearCommand extends Command
                 }
             }
             if (in_array($base, $targets)) {
-                $io->verbose(' - Deleting ' . $path . $name);
+                $this->io->verbose(' - Deleting ' . $path . $name);
                 unlink($path . $name);
                 continue;
             }

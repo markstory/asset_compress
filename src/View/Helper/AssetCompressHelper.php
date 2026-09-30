@@ -38,7 +38,7 @@ class AssetCompressHelper extends Helper
     /**
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'skipPlugins' => false,
         'skipLocal' => false,
         'configPath' => CONFIG . 'asset_compress.ini',
@@ -50,7 +50,7 @@ class AssetCompressHelper extends Helper
      *
      * @var \MiniAsset\AssetConfig
      */
-    protected AssetConfig $config;
+    protected AssetConfig $assetConfig;
 
     /**
      * Factory for other AssetCompress objects.
@@ -103,9 +103,9 @@ class AssetCompressHelper extends Helper
     public function assetConfig(?AssetConfig $config = null): ?AssetConfig
     {
         if ($config === null) {
-            return $this->config;
+            return $this->assetConfig;
         }
-        $this->config = $config;
+        $this->assetConfig = $config;
 
         return null;
     }
@@ -118,11 +118,11 @@ class AssetCompressHelper extends Helper
     protected function factory(): Factory
     {
         if (!isset($this->factory)) {
-            if (!isset($this->config)) {
+            if (!isset($this->assetConfig)) {
                 $this->assetConfig();
             }
-            $this->config->theme($this->getView()->getTheme());
-            $this->factory = new Factory($this->config);
+            $this->assetConfig->theme($this->getView()->getTheme());
+            $this->factory = new Factory($this->assetConfig);
         }
 
         return $this->factory;

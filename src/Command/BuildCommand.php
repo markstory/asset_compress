@@ -54,30 +54,28 @@ class BuildCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int The exit code
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(): int
     {
         $configFinder = new ConfigFinder();
         $config = $configFinder->loadAll(
-            (string)$args->getOption('config'),
-            (bool)$args->getOption('skip-plugins'),
+            (string)$this->args->getOption('config'),
+            (bool)$this->args->getOption('skip-plugins'),
         );
         $factory = new Factory($config);
-
         $themes = (array)$config->general('themes');
         foreach ($themes as $theme) {
-            $io->verbose('Building with theme = ' . $theme);
+            $this->io->verbose('Building with theme = ' . $theme);
             $config->theme($theme);
             foreach ($factory->assetCollection() as $target) {
                 if ($target->isThemed()) {
-                    $this->buildTarget($target, $factory, $args, $io);
+                    $this->buildTarget($target, $factory);
                 }
             }
         }
-        $io->verbose('Building un-themed targets.');
+        $this->io->verbose('Building un-themed targets.');
         foreach ($factory->assetCollection() as $target) {
-            $this->buildTarget($target, $factory, $args, $io);
+            $this->buildTarget($target, $factory);
         }
-
         return static::CODE_SUCCESS;
     }
 
@@ -90,14 +88,14 @@ class BuildCommand extends Command
      * @param \Cake\Console\ConsoleIo $io ConsoleIo instance
      * @return void
      */
-    protected function buildTarget(AssetTarget $build, Factory $factory, Arguments $args, ConsoleIo $io): void
+    protected function buildTarget(AssetTarget $build, Factory $factory): void
     {
         $writer = $factory->writer();
         $compiler = $factory->compiler();
 
         $name = $writer->buildFileName($build);
-        if ($writer->isFresh($build) && $args->getOption('force') === false) {
-            $io->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
+        if ($writer->isFresh($build) && $this->args->getOption('force') === false) {
+            $this->io->out('<info>Skip building</info> ' . $name . ' existing file is still fresh.');
 
             return;
         }
@@ -105,11 +103,11 @@ class BuildCommand extends Command
         $writer->invalidate($build);
         $name = $writer->buildFileName($build);
         try {
-            $io->out('<success>Saving file</success> for ' . $name);
+            $this->io->out('<success>Saving file</success> for ' . $name);
             $contents = $compiler->generate($build);
             $writer->write($build, $contents);
         } catch (Exception $e) {
-            $io->err('Error: ' . $e->getMessage());
+            $this->io->err('Error: ' . $e->getMessage());
         }
     }
 }
