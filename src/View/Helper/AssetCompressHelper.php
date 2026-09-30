@@ -24,13 +24,14 @@ use RuntimeException;
  * compressing asset files.
  *
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class AssetCompressHelper extends Helper
 {
     /**
      * Helpers used.
      *
-     * @var array
+     * @var array<string|int , array<string, mixed> | string>
      */
     public array $helpers = ['Html'];
 
